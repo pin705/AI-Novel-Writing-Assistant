@@ -66,18 +66,8 @@ function getNovelPriorityScore(novel: HomeNovelItem): number {
   return 6;
 }
 
-function getNovelLeadSummary(novel: HomeNovelItem): string {
-  const workflowDescription = getWorkflowDescription(novel.latestAutoDirectorTask ?? null);
-  if (workflowDescription) {
-    return workflowDescription;
-  }
-  if (novel.description?.trim()) {
-    return novel.description.trim();
-  }
-  if (novel.world?.name) {
-    return `当前项目已绑定世界观「${novel.world.name}」，可以直接继续创作。`;
-  }
-  return "当前项目暂无简介，可以直接进入编辑页继续推进。";
+function getNovelLeadSummary(novel: HomeNovelItem): string | null {
+  return novel.description?.trim() || null;
 }
 
 function MetricCard(props: {
@@ -127,15 +117,17 @@ export default function Home() {
         queryClient.invalidateQueries({ queryKey: queryKeys.novels.all }),
         queryClient.invalidateQueries({ queryKey: ["tasks"] }),
       ]);
-      toast.success(input.mode === "auto_execute_front10" ? "已继续自动执行前 10 章。" : "自动导演已继续推进。");
+      toast.success(input.mode === "auto_execute_front10"
+        ? t("workflow.toast.continueFront10.success")
+        : t("workflow.toast.continueDirector.success"));
     },
     onError: (error, input) => {
       toast.error(
         error instanceof Error
           ? error.message
           : input.mode === "auto_execute_front10"
-            ? "继续自动执行前 10 章失败。"
-            : "继续自动导演失败。",
+            ? t("workflow.toast.continueFront10.failure")
+            : t("workflow.toast.continueDirector.failure"),
       );
     },
   });
@@ -220,7 +212,7 @@ export default function Home() {
           }}
           disabled={isWorkflowPending}
         >
-          {isWorkflowPending ? "继续执行中..." : (task?.resumeAction ?? "继续自动执行前 10 章")}
+          {isWorkflowPending ? t("workflow.action.continueExecuting") : (task?.resumeAction ?? t("workflow.action.continueFront10"))}
         </Button>
       );
     }
@@ -240,7 +232,7 @@ export default function Home() {
           }}
           disabled={isWorkflowPending}
         >
-          {isWorkflowPending ? "继续中..." : (task?.resumeAction ?? "继续导演")}
+          {isWorkflowPending ? t("workflow.action.continuing") : (task?.resumeAction ?? t("workflow.action.continueDirector"))}
         </Button>
       );
     }
@@ -252,7 +244,7 @@ export default function Home() {
             to={getCandidateSelectionLink(task!.id)}
             onClick={stopPropagation ? stopCardClick : undefined}
           >
-            {task!.resumeAction ?? "继续确认书级方向"}
+            {task!.resumeAction ?? t("workflow.action.confirmDirection")}
           </Link>
         </Button>
       );
@@ -387,7 +379,7 @@ export default function Home() {
                       {primaryNovel.latestAutoDirectorTask ? (
                         <>
                           {(() => {
-                            const workflowBadge = getWorkflowBadge(primaryNovel.latestAutoDirectorTask);
+                            const workflowBadge = getWorkflowBadge(t, primaryNovel.latestAutoDirectorTask);
                             return workflowBadge ? (
                               <Badge variant={workflowBadge.variant}>
                                 {workflowBadge.label}
@@ -410,7 +402,11 @@ export default function Home() {
                     </div>
                   </div>
                   <div className="max-w-3xl text-sm text-muted-foreground">
-                    {getNovelLeadSummary(primaryNovel)}
+                    {getWorkflowDescription(t, primaryNovel.latestAutoDirectorTask ?? null)
+                      ?? getNovelLeadSummary(primaryNovel)
+                      ?? (primaryNovel.world?.name
+                        ? t("novels.progress.world", { value: primaryNovel.world.name })
+                        : t("novels.noSummary"))}
                   </div>
                   <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
                     <span>{t("common.updatedAt", { value: formatDate(primaryNovel.updatedAt, locale, t("common.notAvailable")) })}</span>
@@ -508,7 +504,7 @@ export default function Home() {
             <div className="grid gap-3 md:grid-cols-2">
               {recentNovels.map((novel) => {
                 const workflowTask = novel.latestAutoDirectorTask ?? null;
-                const workflowBadge = getWorkflowBadge(workflowTask);
+                const workflowBadge = getWorkflowBadge(t, workflowTask);
 
                 return (
                   <Card

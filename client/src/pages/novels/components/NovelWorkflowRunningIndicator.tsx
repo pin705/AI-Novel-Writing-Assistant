@@ -1,4 +1,5 @@
 import WorkflowProgressBar, { normalizeProgressPercent } from "@/components/workflow/WorkflowProgressBar";
+import { useI18n } from "@/i18n";
 import { cn } from "@/lib/utils";
 
 interface NovelWorkflowRunningIndicatorProps {
@@ -8,10 +9,11 @@ interface NovelWorkflowRunningIndicatorProps {
 }
 
 export default function NovelWorkflowRunningIndicator(props: NovelWorkflowRunningIndicatorProps) {
+  const { t } = useI18n();
   const {
     progress,
     className,
-    label = "AI 正在后台持续推进",
+    label = t("workflow.running.default"),
   } = props;
   const percent = normalizeProgressPercent(progress);
 

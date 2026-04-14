@@ -9,6 +9,7 @@ import { queryKeys } from "@/api/queryKeys";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useI18n } from "@/i18n";
 import { cn } from "@/lib/utils";
 import {
   canContinueDirector,
@@ -40,32 +41,42 @@ function createDownload(blob: Blob, fileName: string): void {
   URL.revokeObjectURL(url);
 }
 
-function formatProgressStatus(status?: ProjectProgressStatus | null): string {
+function formatProgressStatus(
+  status: ProjectProgressStatus | null | undefined,
+  labels: {
+    completed: string;
+    inProgress: string;
+    rework: string;
+    blocked: string;
+    notStarted: string;
+  },
+): string {
   if (status === "completed") {
-    return "已完成";
+    return labels.completed;
   }
   if (status === "in_progress") {
-    return "进行中";
+    return labels.inProgress;
   }
   if (status === "rework") {
-    return "待返工";
+    return labels.rework;
   }
   if (status === "blocked") {
-    return "受阻";
+    return labels.blocked;
   }
-  return "未开始";
+  return labels.notStarted;
 }
 
-function formatTokenCount(value?: number | null): string {
+function formatTokenCount(locale: string, value?: number | null): string {
   const normalized = typeof value === "number" && Number.isFinite(value)
     ? Math.max(0, Math.round(value))
     : 0;
-  return new Intl.NumberFormat("zh-CN").format(normalized);
+  return new Intl.NumberFormat(locale).format(normalized);
 }
 
 export default function NovelList() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { locale, t } = useI18n();
   const [status, setStatus] = useState<StatusFilter>("all");
   const [writingMode, setWritingMode] = useState<WritingModeFilter>("all");
 
@@ -78,10 +89,10 @@ export default function NovelList() {
     mutationFn: (id: string) => deleteNovel(id),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: queryKeys.novels.all });
-      toast.success("小说已删除。");
+      toast.success(t("novels.delete.success"));
     },
     onError: (error) => {
-      toast.error(error instanceof Error ? error.message : "删除小说失败。");
+      toast.error(error instanceof Error ? error.message : t("novels.delete.failure"));
     },
   });
 
@@ -93,10 +104,10 @@ export default function NovelList() {
     ),
     onSuccess: ({ blob, fileName }) => {
       createDownload(blob, fileName);
-      toast.success("导出已开始。");
+      toast.success(t("novels.export.success"));
     },
     onError: (error) => {
-      toast.error(error instanceof Error ? error.message : "导出小说失败。");
+      toast.error(error instanceof Error ? error.message : t("novels.export.failure"));
     },
   });
 
@@ -110,15 +121,17 @@ export default function NovelList() {
         queryClient.invalidateQueries({ queryKey: queryKeys.novels.all }),
         queryClient.invalidateQueries({ queryKey: ["tasks"] }),
       ]);
-      toast.success(input.mode === "auto_execute_front10" ? "已继续自动执行前 10 章。" : "自动导演已继续推进。");
+      toast.success(input.mode === "auto_execute_front10"
+        ? t("workflow.toast.continueFront10.success")
+        : t("workflow.toast.continueDirector.success"));
     },
     onError: (error, input) => {
       toast.error(
         error instanceof Error
           ? error.message
           : input.mode === "auto_execute_front10"
-            ? "继续自动执行前 10 章失败。"
-            : "继续自动导演失败。",
+            ? t("workflow.toast.continueFront10.failure")
+            : t("workflow.toast.continueDirector.failure"),
       );
     },
   });
@@ -138,7 +151,7 @@ export default function NovelList() {
   }, [allNovels, status, writingMode]);
 
   const handleDelete = (novelId: string, title: string) => {
-    const confirmed = window.confirm(`确认删除《${title}》吗？该操作会直接删除当前小说。`);
+    const confirmed = window.confirm(t("novels.delete.confirm", { title }));
     if (!confirmed) {
       return;
     }
@@ -162,19 +175,19 @@ export default function NovelList() {
               variant={status === "all" ? "default" : "secondary"}
               onClick={() => setStatus("all")}
             >
-              全部
+              {t("novels.filter.all")}
             </Button>
             <Button
               variant={status === "draft" ? "default" : "secondary"}
               onClick={() => setStatus("draft")}
             >
-              草稿
+              {t("novels.filter.draft")}
             </Button>
             <Button
               variant={status === "published" ? "default" : "secondary"}
               onClick={() => setStatus("published")}
             >
-              已发布
+              {t("novels.filter.published")}
             </Button>
           </div>
           <div className="flex items-center gap-2">
@@ -183,31 +196,31 @@ export default function NovelList() {
               variant={writingMode === "all" ? "default" : "secondary"}
               onClick={() => setWritingMode("all")}
             >
-              创作类型: 全部
+              {t("novels.filter.writingModeAll")}
             </Button>
             <Button
               size="sm"
               variant={writingMode === "original" ? "default" : "secondary"}
               onClick={() => setWritingMode("original")}
             >
-              原创
+              {t("common.original")}
             </Button>
             <Button
               size="sm"
               variant={writingMode === "continuation" ? "default" : "secondary"}
               onClick={() => setWritingMode("continuation")}
             >
-              续写
+              {t("common.continuation")}
             </Button>
           </div>
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
           <Button asChild>
-            <Link to={DIRECTOR_CREATE_LINK}>AI 自动导演开书</Link>
+            <Link to={DIRECTOR_CREATE_LINK}>{t("home.action.autoDirector")}</Link>
           </Button>
           <Button asChild variant="outline">
-            <Link to={MANUAL_CREATE_LINK}>手动创建小说</Link>
+            <Link to={MANUAL_CREATE_LINK}>{t("home.action.manualCreate")}</Link>
           </Button>
         </div>
       </div>
@@ -235,30 +248,30 @@ export default function NovelList() {
       ) : novelListQuery.isError ? (
         <Card>
           <CardHeader>
-            <CardTitle>加载小说列表失败</CardTitle>
-            <CardDescription>当前无法读取项目列表，可以重试一次。</CardDescription>
+            <CardTitle>{t("novels.loadError.title")}</CardTitle>
+            <CardDescription>{t("novels.loadError.description")}</CardDescription>
           </CardHeader>
           <CardContent>
-            <Button onClick={() => void novelListQuery.refetch()}>重新加载</Button>
+            <Button onClick={() => void novelListQuery.refetch()}>{t("common.reload")}</Button>
           </CardContent>
         </Card>
       ) : novels.length === 0 ? (
         <Card>
           <CardHeader>
-            <CardTitle>{allNovels.length === 0 ? "暂无小说" : "暂无符合筛选条件的小说"}</CardTitle>
+            <CardTitle>{allNovels.length === 0 ? t("novels.empty.none.title") : t("novels.empty.filtered.title")}</CardTitle>
             <CardDescription>
               {allNovels.length === 0
-                ? "第一次使用时，推荐直接点右上角“AI 自动导演开书”，让系统先帮你搭好方向与开写准备。"
-                : "可以调整上方筛选条件，或直接创建新的小说项目。"}
+                ? t("novels.empty.none.description")
+                : t("novels.empty.filtered.description")}
             </CardDescription>
           </CardHeader>
           {allNovels.length === 0 ? (
             <CardContent className="flex flex-wrap gap-2">
               <Button asChild>
-                <Link to={DIRECTOR_CREATE_LINK}>AI 自动导演开书</Link>
+                <Link to={DIRECTOR_CREATE_LINK}>{t("home.action.autoDirector")}</Link>
               </Button>
               <Button asChild variant="outline">
-                <Link to={MANUAL_CREATE_LINK}>手动创建小说</Link>
+                <Link to={MANUAL_CREATE_LINK}>{t("home.action.manualCreate")}</Link>
               </Button>
             </CardContent>
           ) : null}
@@ -267,8 +280,8 @@ export default function NovelList() {
         <div className="grid gap-3 md:grid-cols-2">
           {novels.map((novel) => {
             const workflowTask = novel.latestAutoDirectorTask ?? null;
-            const workflowBadge = getWorkflowBadge(workflowTask);
-            const workflowDescription = getWorkflowDescription(workflowTask);
+            const workflowBadge = getWorkflowBadge(t, workflowTask);
+            const workflowDescription = getWorkflowDescription(t, workflowTask);
             const isWorkflowRunning = isWorkflowRunningInBackground(workflowTask);
             const isWorkflowPending = continueWorkflowMutation.isPending
               && continueWorkflowMutation.variables?.taskId === workflowTask?.id;
@@ -298,24 +311,26 @@ export default function NovelList() {
                     </CardTitle>
                     <div className="flex flex-wrap items-center justify-end gap-2">
                       <Badge variant={novel.status === "published" ? "default" : "secondary"}>
-                        {novel.status === "published" ? "已发布" : "草稿"}
+                        {novel.status === "published" ? t("common.published") : t("common.draft")}
                       </Badge>
                       {novel.writingMode === "continuation" ? (
-                        <Badge variant="outline">续写</Badge>
+                        <Badge variant="outline">{t("common.continuation")}</Badge>
                       ) : (
-                        <Badge variant="outline">原创</Badge>
+                        <Badge variant="outline">{t("common.original")}</Badge>
                       )}
                     </div>
                   </div>
                   <CardDescription className="line-clamp-2">
-                    {novel.description || "暂无简介"}
+                    {novel.description || t("novels.noSummary")}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div className="text-xs text-muted-foreground">
-                    章节数：{novel._count.chapters}，角色数：{novel._count.characters}，累计 Token：{formatTokenCount(
-                      novel.tokenUsage?.totalTokens,
-                    )}
+                    {t("novels.stats.summary", {
+                      chapters: novel._count.chapters,
+                      characters: novel._count.characters,
+                      tokens: formatTokenCount(locale, novel.tokenUsage?.totalTokens),
+                    })}
                   </div>
 
                   {workflowTask ? (
@@ -331,9 +346,9 @@ export default function NovelList() {
                         {workflowBadge ? (
                           <Badge variant={workflowBadge.variant}>{workflowBadge.label}</Badge>
                         ) : null}
-                        <Badge variant="outline">进度 {Math.round(workflowTask.progress * 100)}%</Badge>
+                        <Badge variant="outline">{t("common.progress", { value: Math.round(workflowTask.progress * 100) })}</Badge>
                         {isWorkflowRunning ? (
-                          <Badge variant="outline">后台运行中</Badge>
+                          <Badge variant="outline">{t("common.backgroundRunning")}</Badge>
                         ) : null}
                       </div>
                       {workflowDescription ? (
@@ -343,39 +358,66 @@ export default function NovelList() {
                         <NovelWorkflowRunningIndicator
                           className="mt-3"
                           progress={workflowTask.progress}
-                          label={workflowTask.currentItemLabel?.trim() || "AI 正在后台持续推进"}
+                          label={workflowTask.currentItemLabel?.trim() || t("workflow.running.default")}
                         />
                       ) : null}
                       <div className="mt-2 text-xs text-muted-foreground">
-                        当前阶段：{workflowTask.currentStage ?? "自动导演"}{workflowTask.currentItemLabel ? ` · ${workflowTask.currentItemLabel}` : ""}
+                        {t("novels.progress.currentStage", {
+                          value: workflowTask.currentStage ?? t("workflow.checkpoint.default"),
+                        })}
+                        {workflowTask.currentItemLabel ? ` · ${workflowTask.currentItemLabel}` : ""}
                       </div>
                       {workflowTask.lastHealthyStage ? (
                         <div className="mt-1 text-xs text-muted-foreground">
-                          最近健康阶段：{workflowTask.lastHealthyStage}
+                          {t("novels.progress.lastHealthyStage", { value: workflowTask.lastHealthyStage })}
                         </div>
                       ) : null}
                       {workflowTask.resumeAction ? (
                         <div className="mt-1 text-xs text-muted-foreground">
-                          建议继续：{workflowTask.resumeAction}
+                          {t("novels.progress.resumeAction", { value: workflowTask.resumeAction })}
                         </div>
                       ) : null}
                     </div>
                   ) : (
                     <div className="rounded-xl border border-dashed bg-muted/10 p-3 text-xs text-muted-foreground">
-                      当前未检测到自动导演任务，列表按小说基础资产展示。
+                      {t("novels.noWorkflowTask")}
                     </div>
                   )}
 
                   <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
-                    <span>项目：{formatProgressStatus(novel.projectStatus)}</span>
-                    <span>主线：{formatProgressStatus(novel.storylineStatus)}</span>
-                    <span>大纲：{formatProgressStatus(novel.outlineStatus)}</span>
-                    <span>资源：{novel.resourceReadyScore ?? 0}/100</span>
+                    <span>{t("novels.progress.project", {
+                      value: formatProgressStatus(novel.projectStatus, {
+                        completed: t("common.progressStatus.completed"),
+                        inProgress: t("common.progressStatus.inProgress"),
+                        rework: t("common.progressStatus.rework"),
+                        blocked: t("common.progressStatus.blocked"),
+                        notStarted: t("common.progressStatus.notStarted"),
+                      }),
+                    })}</span>
+                    <span>{t("novels.progress.storyline", {
+                      value: formatProgressStatus(novel.storylineStatus, {
+                        completed: t("common.progressStatus.completed"),
+                        inProgress: t("common.progressStatus.inProgress"),
+                        rework: t("common.progressStatus.rework"),
+                        blocked: t("common.progressStatus.blocked"),
+                        notStarted: t("common.progressStatus.notStarted"),
+                      }),
+                    })}</span>
+                    <span>{t("novels.progress.outline", {
+                      value: formatProgressStatus(novel.outlineStatus, {
+                        completed: t("common.progressStatus.completed"),
+                        inProgress: t("common.progressStatus.inProgress"),
+                        rework: t("common.progressStatus.rework"),
+                        blocked: t("common.progressStatus.blocked"),
+                        notStarted: t("common.progressStatus.notStarted"),
+                      }),
+                    })}</span>
+                    <span>{t("novels.progress.resource", { value: novel.resourceReadyScore ?? 0 })}</span>
                   </div>
 
                   {novel.world ? (
                     <div className="text-xs text-muted-foreground">
-                      世界观：{novel.world.name}
+                      {t("novels.progress.world", { value: novel.world.name })}
                     </div>
                   ) : null}
 
@@ -395,7 +437,7 @@ export default function NovelList() {
                         }}
                         disabled={isWorkflowPending}
                       >
-                        {isWorkflowPending ? "继续执行中..." : (workflowTask?.resumeAction ?? "继续自动执行前 10 章")}
+                        {isWorkflowPending ? t("workflow.action.continueExecuting") : (workflowTask?.resumeAction ?? t("workflow.action.continueFront10"))}
                       </Button>
                     ) : canContinueDirector(workflowTask) ? (
                       <Button
@@ -411,27 +453,27 @@ export default function NovelList() {
                         }}
                         disabled={isWorkflowPending}
                       >
-                        {isWorkflowPending ? "继续中..." : (workflowTask?.resumeAction ?? "继续导演")}
+                        {isWorkflowPending ? t("workflow.action.continuing") : (workflowTask?.resumeAction ?? t("workflow.action.continueDirector"))}
                       </Button>
                     ) : requiresCandidateSelection(workflowTask) ? (
                       <Button asChild size="sm">
                         <Link to={getCandidateSelectionLink(workflowTask!.id)} onClick={stopCardClick}>
-                          {workflowTask!.resumeAction ?? "继续确认书级方向"}
+                          {workflowTask!.resumeAction ?? t("workflow.action.confirmDirection")}
                         </Link>
                       </Button>
                     ) : canEnterChapterExecution(workflowTask) ? (
                       <Button asChild size="sm">
-                        <Link to={`/novels/${novel.id}/edit`} onClick={stopCardClick}>进入章节执行</Link>
+                        <Link to={`/novels/${novel.id}/edit`} onClick={stopCardClick}>{t("common.enterChapterExecution")}</Link>
                       </Button>
                     ) : workflowTask ? (
                       <Button asChild size="sm">
-                        <Link to={getTaskCenterLink(workflowTask.id)} onClick={stopCardClick}>查看任务</Link>
+                        <Link to={getTaskCenterLink(workflowTask.id)} onClick={stopCardClick}>{t("common.viewTask")}</Link>
                       </Button>
                     ) : null}
 
                     {workflowTask ? (
                       <Button asChild size="sm" variant="outline">
-                        <Link to={getTaskCenterLink(workflowTask.id)} onClick={stopCardClick}>任务中心</Link>
+                        <Link to={getTaskCenterLink(workflowTask.id)} onClick={stopCardClick}>{t("common.taskCenter")}</Link>
                       </Button>
                     ) : null}
 
@@ -447,7 +489,7 @@ export default function NovelList() {
                       }}
                       disabled={isDownloadPending}
                     >
-                      {isDownloadPending ? "导出中..." : "导出"}
+                      {isDownloadPending ? t("common.exporting") : t("common.export")}
                     </Button>
                     <Button
                       size="sm"
@@ -458,7 +500,7 @@ export default function NovelList() {
                       }}
                       disabled={isDeletePending}
                     >
-                      {isDeletePending ? "删除中..." : "删除"}
+                      {isDeletePending ? t("common.deleting") : t("common.delete")}
                     </Button>
                   </div>
                 </CardContent>
