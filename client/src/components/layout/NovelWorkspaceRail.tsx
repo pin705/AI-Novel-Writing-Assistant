@@ -17,6 +17,7 @@ import { queryKeys } from "@/api/queryKeys";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useI18n, type TranslationKey } from "@/i18n";
 import {
   getNovelWorkspaceTabLabel,
   NOVEL_WORKSPACE_FLOW_STEPS,
@@ -62,16 +63,17 @@ function hasChapterPlanContent(chapter: VolumePlan["chapters"][number]): boolean
     || chapter.payoffRefs.length > 0;
 }
 
-function formatTaskStatus(status: string | null | undefined): string {
-  if (status === "running") return "进行中";
-  if (status === "queued") return "排队中";
-  if (status === "waiting_approval") return "待审核";
-  if (status === "failed") return "异常";
-  if (status === "succeeded") return "已完成";
-  return "空闲";
+function formatTaskStatus(status: string | null | undefined): TranslationKey {
+  if (status === "running") return "novelTaskDrawer.status.running";
+  if (status === "queued") return "novelTaskDrawer.status.queued";
+  if (status === "waiting_approval") return "novelTaskDrawer.status.waitingApproval";
+  if (status === "failed") return "novelTaskDrawer.status.failed";
+  if (status === "succeeded") return "novelTaskDrawer.status.succeeded";
+  return "novelWorkspaceRail.cockpit.idle";
 }
 
 export default function NovelWorkspaceRail(props: NovelWorkspaceRailProps) {
+  const { t } = useI18n();
   const { novelId, chapterId = "", collapsed, onToggle, onSwitchToProjectNav } = props;
   const navigate = useNavigate();
   const location = useLocation();
@@ -174,32 +176,33 @@ export default function NovelWorkspaceRail(props: NovelWorkspaceRailProps) {
       const isWorkflowCurrent = workflowCurrentTab === step.key;
       const isDone = stepReadiness[step.key] || (workflowIndex >= 0 && index < workflowIndex);
       const statusLabel = isWorkflowCurrent
-        ? isSelected ? "当前步骤" : "流程中"
+        ? isSelected ? t("novelWorkspaceRail.stepStatus.current") : t("novelWorkspaceRail.stepStatus.flowing")
         : isSelected
-          ? "查看中"
+          ? t("novelWorkspaceRail.stepStatus.viewing")
           : isDone
-            ? "已完成"
-            : "待推进";
+            ? t("novelWorkspaceRail.stepStatus.done")
+            : t("novelWorkspaceRail.stepStatus.pending");
 
       return {
         ...step,
+        label: t(step.labelKey),
         isSelected,
         isWorkflowCurrent,
         isDone,
         statusLabel,
       };
     })
-  ), [activeTab, stepReadiness, workflowCurrentTab, workflowIndex]);
+  ), [activeTab, stepReadiness, t, workflowCurrentTab, workflowIndex]);
 
   const completedStepCount = stepStates.filter((item) => item.isDone).length;
-  const novelTitle = novelDetail?.title?.trim() || "小说创作工作台";
+  const novelTitle = novelDetail?.title?.trim() || t("novelWorkspaceRail.title");
   const cockpitSummary = activeTask
     ? activeTask.status === "failed"
-      ? activeTask.lastError || "后台任务已中断，建议先查看任务中心。"
+      ? activeTask.lastError || t("novelWorkspaceRail.cockpit.failed")
       : activeTask.status === "waiting_approval"
-        ? `等待处理：${getNovelWorkspaceTabLabel(workflowCurrentTab ?? activeTab)}`
-        : activeTask.currentItemLabel || `AI 正在推进 ${getNovelWorkspaceTabLabel(workflowCurrentTab ?? activeTab)}`
-    : "当前没有后台导演任务，可以直接继续手动创作。";
+        ? t("novelWorkspaceRail.cockpit.waitingApproval", { value: getNovelWorkspaceTabLabel(workflowCurrentTab ?? activeTab, t) })
+        : activeTask.currentItemLabel || t("novelWorkspaceRail.cockpit.running", { value: getNovelWorkspaceTabLabel(workflowCurrentTab ?? activeTab, t) })
+    : t("novelWorkspaceRail.cockpit.idle");
   const cockpitVariant = activeTask?.status === "failed"
     ? "destructive"
     : activeTask?.status === "running" || activeTask?.status === "queued"
@@ -242,7 +245,7 @@ export default function NovelWorkspaceRail(props: NovelWorkspaceRailProps) {
               </div>
               <div className="min-w-0">
                 <div className="text-[11px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
-                  创作工作台
+                  {t("novelWorkspaceRail.workspaceTitle")}
                 </div>
                 <div className="truncate text-sm font-semibold text-foreground">{novelTitle}</div>
               </div>
@@ -254,8 +257,8 @@ export default function NovelWorkspaceRail(props: NovelWorkspaceRailProps) {
             size="icon"
             className="h-8 w-8 shrink-0 text-muted-foreground"
             onClick={onToggle}
-            aria-label={collapsed ? "展开创作导航" : "收起创作导航"}
-            title={collapsed ? "展开创作导航" : "收起创作导航"}
+            aria-label={collapsed ? t("novelWorkspaceRail.expand") : t("novelWorkspaceRail.collapse")}
+            title={collapsed ? t("novelWorkspaceRail.expand") : t("novelWorkspaceRail.collapse")}
           >
             {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
           </Button>
@@ -268,7 +271,7 @@ export default function NovelWorkspaceRail(props: NovelWorkspaceRailProps) {
             className="justify-start"
             onClick={() => navigate("/novels")}
           >
-            返回小说列表
+            {t("novelWorkspaceRail.backToNovelList")}
           </Button>
         ) : (
           <Button
@@ -277,8 +280,8 @@ export default function NovelWorkspaceRail(props: NovelWorkspaceRailProps) {
             size="icon"
             className="mx-auto h-9 w-9"
             onClick={() => navigate("/novels")}
-            title="返回小说列表"
-            aria-label="返回小说列表"
+            title={t("novelWorkspaceRail.backToNovelList")}
+            aria-label={t("novelWorkspaceRail.backToNovelList")}
           >
             <BookOpenText className="h-4 w-4" />
           </Button>
@@ -287,7 +290,7 @@ export default function NovelWorkspaceRail(props: NovelWorkspaceRailProps) {
         {!collapsed ? (
           <div className="rounded-2xl border border-border/70 bg-muted/20 px-3 py-2 text-xs text-muted-foreground">
             <div className="flex items-center justify-between gap-2">
-              <span>流程：{getNovelWorkspaceTabLabel(workflowCurrentTab ?? activeTab)}</span>
+              <span>{t("novelWorkspaceRail.flowPrefix", { value: getNovelWorkspaceTabLabel(workflowCurrentTab ?? activeTab, t) })}</span>
               <span>{completedStepCount}/{NOVEL_WORKSPACE_FLOW_STEPS.length}</span>
             </div>
           </div>
@@ -359,7 +362,7 @@ export default function NovelWorkspaceRail(props: NovelWorkspaceRailProps) {
           <button
             type="button"
             onClick={() => goToTab("history")}
-            title="版本历史"
+            title={t("novelEdit.workspaceTab.history")}
             className={cn(
               "flex w-full items-center rounded-2xl border border-border/70 transition-colors hover:bg-muted/40",
               collapsed ? "justify-center px-2 py-3" : "gap-3 px-3 py-3 text-left",
@@ -367,14 +370,14 @@ export default function NovelWorkspaceRail(props: NovelWorkspaceRailProps) {
             )}
           >
             <History className="h-4 w-4 shrink-0" />
-            {!collapsed ? <span className="text-sm font-medium">版本历史</span> : null}
+            {!collapsed ? <span className="text-sm font-medium">{t("novelEdit.workspaceTab.history")}</span> : null}
           </button>
 
           {!collapsed ? (
             <div className="rounded-2xl border border-border/70 bg-muted/20 p-3">
               <div className="flex items-center justify-between gap-2">
-                <div className="text-sm font-semibold text-foreground">AI 驾驶舱</div>
-                <Badge variant={cockpitVariant}>{formatTaskStatus(activeTask?.status)}</Badge>
+                <div className="text-sm font-semibold text-foreground">{t("novelWorkspaceRail.cockpit.title")}</div>
+                <Badge variant={cockpitVariant}>{t(formatTaskStatus(activeTask?.status))}</Badge>
               </div>
               <div className="mt-2 text-xs leading-5 text-muted-foreground">
                 {cockpitSummary}

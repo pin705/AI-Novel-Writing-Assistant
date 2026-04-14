@@ -20,6 +20,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { toast } from "@/components/ui/toast";
+import { useI18n, type TranslateFn } from "@/i18n";
 import { useLLMStore } from "@/store/llmStore";
 import type { NovelBasicFormState } from "../novelBasicInfo.shared";
 import {
@@ -37,23 +38,6 @@ interface NovelExistingProjectTakeoverDialogProps {
   worldOptions: Array<{ id: string; name: string }>;
 }
 
-const RUN_MODE_OPTIONS: Array<{
-  value: DirectorRunMode;
-  label: string;
-  description: string;
-}> = [
-  {
-    value: "auto_to_ready",
-    label: "直接推进到可开写",
-    description: "AI 会持续推进到章节执行资源准备好后再交接。",
-  },
-  {
-    value: "auto_to_execution",
-    label: "继续自动执行章节批次",
-    description: "默认执行前 10 章，也可以改成指定章节范围或按卷执行。",
-  },
-];
-
 const DEFAULT_VISIBLE_RUN_MODE: DirectorRunMode = "auto_to_ready";
 
 function summarizeCurrentContext(
@@ -61,6 +45,7 @@ function summarizeCurrentContext(
   genreOptions: Array<{ id: string; path: string; label: string }>,
   storyModeOptions: Array<{ id: string; path: string; name: string }>,
   worldOptions: Array<{ id: string; name: string }>,
+  t: TranslateFn,
 ): string[] {
   const commercialTags = normalizeCommercialTags(basicForm.commercialTagsText);
   const genrePath = genreOptions.find((item) => item.id === basicForm.genreId)?.path ?? basicForm.genreId;
@@ -70,17 +55,17 @@ function summarizeCurrentContext(
     ?? basicForm.secondaryStoryModeId;
   const worldName = worldOptions.find((item) => item.id === basicForm.worldId)?.name ?? basicForm.worldId;
   return [
-    basicForm.description.trim() ? `概述：${basicForm.description.trim()}` : "",
-    basicForm.targetAudience.trim() ? `目标读者：${basicForm.targetAudience.trim()}` : "",
-    basicForm.bookSellingPoint.trim() ? `书级卖点：${basicForm.bookSellingPoint.trim()}` : "",
-    basicForm.competingFeel.trim() ? `对标气质：${basicForm.competingFeel.trim()}` : "",
-    basicForm.first30ChapterPromise.trim() ? `前30章承诺：${basicForm.first30ChapterPromise.trim()}` : "",
-    commercialTags.length > 0 ? `商业标签：${commercialTags.join(" / ")}` : "",
-    genrePath ? `题材基底：${genrePath}` : "",
-    primaryStoryModePath ? `主推进模式：${primaryStoryModePath}` : "",
-    secondaryStoryModePath ? `副推进模式：${secondaryStoryModePath}` : "",
-    worldName ? `世界观：${worldName}` : "",
-    `预计章节：${basicForm.estimatedChapterCount}`,
+    basicForm.description.trim() ? t("novelTakeover.context.description", { value: basicForm.description.trim() }) : "",
+    basicForm.targetAudience.trim() ? t("novelTakeover.context.targetAudience", { value: basicForm.targetAudience.trim() }) : "",
+    basicForm.bookSellingPoint.trim() ? t("novelTakeover.context.bookSellingPoint", { value: basicForm.bookSellingPoint.trim() }) : "",
+    basicForm.competingFeel.trim() ? t("novelTakeover.context.competingFeel", { value: basicForm.competingFeel.trim() }) : "",
+    basicForm.first30ChapterPromise.trim() ? t("novelTakeover.context.first30ChapterPromise", { value: basicForm.first30ChapterPromise.trim() }) : "",
+    commercialTags.length > 0 ? t("novelTakeover.context.commercialTags", { value: commercialTags.join(" / ") }) : "",
+    genrePath ? t("novelTakeover.context.genre", { value: genrePath }) : "",
+    primaryStoryModePath ? t("novelTakeover.context.primaryStoryMode", { value: primaryStoryModePath }) : "",
+    secondaryStoryModePath ? t("novelTakeover.context.secondaryStoryMode", { value: secondaryStoryModePath }) : "",
+    worldName ? t("novelTakeover.context.world", { value: worldName }) : "",
+    t("novelTakeover.context.estimatedChapters", { value: basicForm.estimatedChapterCount }),
   ].filter(Boolean);
 }
 
@@ -112,6 +97,7 @@ export default function NovelExistingProjectTakeoverDialog({
   storyModeOptions,
   worldOptions,
 }: NovelExistingProjectTakeoverDialogProps) {
+  const { t } = useI18n();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const llm = useLLMStore();
@@ -129,9 +115,25 @@ export default function NovelExistingProjectTakeoverDialog({
 
   const readiness = readinessQuery.data?.data ?? null;
   const contextLines = useMemo(
-    () => summarizeCurrentContext(basicForm, genreOptions, storyModeOptions, worldOptions),
-    [basicForm, genreOptions, storyModeOptions, worldOptions],
+    () => summarizeCurrentContext(basicForm, genreOptions, storyModeOptions, worldOptions, t),
+    [basicForm, genreOptions, storyModeOptions, worldOptions, t],
   );
+  const runModeOptions: Array<{
+    value: DirectorRunMode;
+    label: string;
+    description: string;
+  }> = [
+    {
+      value: "auto_to_ready",
+      label: t("novelCreate.autoDirector.runMode.autoToReady.label"),
+      description: t("novelCreate.autoDirector.runMode.autoToReady.description"),
+    },
+    {
+      value: "auto_to_execution",
+      label: t("novelCreate.autoDirector.runMode.autoToExecution.label"),
+      description: t("novelCreate.autoDirector.runMode.autoToExecution.description"),
+    },
+  ];
   const selectedStage = readiness?.stages.find((item) => item.phase === selectedPhase) ?? null;
   const autoExecutionPlan: DirectorAutoExecutionPlan | undefined = runMode === "auto_to_execution"
     ? buildDirectorAutoExecutionPlanFromDraft(autoExecutionDraft)
@@ -168,7 +170,7 @@ export default function NovelExistingProjectTakeoverDialog({
     onSuccess: async (response) => {
       const data = response.data;
       if (!data?.workflowTaskId) {
-        toast.error("启动自动导演失败，未返回任务信息。");
+        toast.error(t("novelTakeover.toast.noTask"));
         return;
       }
       await queryClient.invalidateQueries({ queryKey: queryKeys.novels.autoDirectorTask(novelId) });
@@ -177,10 +179,10 @@ export default function NovelExistingProjectTakeoverDialog({
       setOpen(false);
       toast.success(
         runMode === "stage_review"
-          ? "自动导演已接管当前项目，会在关键阶段停下等你审核。"
+          ? t("novelTakeover.toast.stageReviewSuccess")
           : runMode === "auto_to_execution"
-            ? `自动导演已接管当前项目，会继续自动执行${buildDirectorAutoExecutionPlanLabel(autoExecutionPlan)}。`
-            : "自动导演已接管当前项目，会持续推进到可开写阶段。",
+            ? t("novelTakeover.toast.autoExecutionSuccess", { value: buildDirectorAutoExecutionPlanLabel(autoExecutionPlan, t) })
+            : t("novelTakeover.toast.autoToReadySuccess"),
       );
       navigate(buildEditRoute({
         novelId,
@@ -191,7 +193,7 @@ export default function NovelExistingProjectTakeoverDialog({
       }));
     },
     onError: (error) => {
-      const message = error instanceof Error ? error.message : "启动自动导演接管失败。";
+      const message = error instanceof Error ? error.message : t("novelTakeover.toast.failure");
       toast.error(message);
     },
   });
@@ -199,44 +201,42 @@ export default function NovelExistingProjectTakeoverDialog({
   return (
     <>
       <Button type="button" variant="outline" size="sm" onClick={() => setOpen(true)}>
-        AI 自动导演接管
+        {t("novelTakeover.trigger")}
       </Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="flex h-[min(90vh,860px)] w-[calc(100vw-1.5rem)] max-w-4xl flex-col overflow-hidden p-0">
           <DialogHeader className="shrink-0 border-b px-6 pb-4 pr-12 pt-6">
-            <DialogTitle>让 AI 从现有项目继续自动导演</DialogTitle>
-            <DialogDescription>
-              适合你已经手动填完基本信息，后续想让 AI 接手书级规划、角色、卷战略和章节批量执行。
-            </DialogDescription>
+            <DialogTitle>{t("novelTakeover.title")}</DialogTitle>
+            <DialogDescription>{t("novelTakeover.description")}</DialogDescription>
           </DialogHeader>
 
           <div className="min-h-0 flex-1 overflow-y-auto px-6 pb-6 pt-4">
             <div className="space-y-4">
             <div className="rounded-xl border bg-muted/15 p-4">
-              <div className="text-sm font-medium text-foreground">当前项目信息会作为自动导演输入</div>
+              <div className="text-sm font-medium text-foreground">{t("novelTakeover.context.title")}</div>
               <div className="mt-2 flex flex-wrap gap-2">
                 {contextLines.length > 0 ? contextLines.map((line) => (
                   <Badge key={line} variant="secondary">{line}</Badge>
                 )) : (
                   <span className="text-sm text-muted-foreground">
-                    当前信息比较少，建议先补一句故事概述或书级卖点，再启动自动导演。
+                    {t("novelTakeover.context.empty")}
                   </span>
                 )}
               </div>
             </div>
 
             <div className="rounded-xl border bg-background/80 p-4">
-              <div className="text-sm font-medium text-foreground">模型设置</div>
+              <div className="text-sm font-medium text-foreground">{t("novelTakeover.modelSettings")}</div>
               <div className="mt-3">
                 <LLMSelector />
               </div>
             </div>
 
             <div className="rounded-xl border bg-background/80 p-4">
-              <div className="text-sm font-medium text-foreground">自动导演运行方式</div>
+              <div className="text-sm font-medium text-foreground">{t("novelTakeover.runMode.title")}</div>
               <div className="mt-3 grid gap-3 md:grid-cols-2">
-                {RUN_MODE_OPTIONS.map((option) => {
+                {runModeOptions.map((option) => {
                   const active = option.value === runMode;
                   return (
                     <button
@@ -265,17 +265,17 @@ export default function NovelExistingProjectTakeoverDialog({
 
             <div className="rounded-xl border bg-background/80 p-4">
               <div className="flex items-center justify-between gap-3">
-                <div className="text-sm font-medium text-foreground">从哪一步开始接管</div>
-                {readinessQuery.isLoading ? <Badge variant="outline">读取中</Badge> : null}
+                <div className="text-sm font-medium text-foreground">{t("novelTakeover.startPhase.title")}</div>
+                {readinessQuery.isLoading ? <Badge variant="outline">{t("novelTakeover.loading")}</Badge> : null}
               </div>
 
               {readinessQuery.isLoading ? (
-                <div className="mt-3 text-sm text-muted-foreground">正在读取当前项目资产和可接管阶段。</div>
+                <div className="mt-3 text-sm text-muted-foreground">{t("novelTakeover.loadingDescription")}</div>
               ) : null}
 
               {readinessQuery.isError ? (
                 <div className="mt-3 rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2 text-sm text-destructive">
-                  {readinessQuery.error instanceof Error ? readinessQuery.error.message : "读取接管阶段失败。"}
+                  {readinessQuery.error instanceof Error ? readinessQuery.error.message : t("novelTakeover.loadFailed")}
                 </div>
               ) : null}
 
@@ -283,23 +283,23 @@ export default function NovelExistingProjectTakeoverDialog({
                 <>
                   <div className="mt-3 grid gap-3 md:grid-cols-4">
                     <div className="rounded-lg border bg-muted/15 p-3">
-                      <div className="text-xs text-muted-foreground">Story Macro</div>
+                      <div className="text-xs text-muted-foreground">{t("novelTakeover.snapshot.storyMacro")}</div>
                       <div className="mt-1 text-sm font-medium text-foreground">
-                        {readiness.snapshot.hasStoryMacroPlan ? "已具备" : "未具备"}
+                        {readiness.snapshot.hasStoryMacroPlan ? t("novelTakeover.snapshot.ready") : t("novelTakeover.snapshot.notReady")}
                       </div>
                     </div>
                     <div className="rounded-lg border bg-muted/15 p-3">
-                      <div className="text-xs text-muted-foreground">Book Contract</div>
+                      <div className="text-xs text-muted-foreground">{t("novelTakeover.snapshot.bookContract")}</div>
                       <div className="mt-1 text-sm font-medium text-foreground">
-                        {readiness.snapshot.hasBookContract ? "已具备" : "未具备"}
+                        {readiness.snapshot.hasBookContract ? t("novelTakeover.snapshot.ready") : t("novelTakeover.snapshot.notReady")}
                       </div>
                     </div>
                     <div className="rounded-lg border bg-muted/15 p-3">
-                      <div className="text-xs text-muted-foreground">角色数量</div>
+                      <div className="text-xs text-muted-foreground">{t("novelTakeover.snapshot.characterCount")}</div>
                       <div className="mt-1 text-sm font-medium text-foreground">{readiness.snapshot.characterCount}</div>
                     </div>
                     <div className="rounded-lg border bg-muted/15 p-3">
-                      <div className="text-xs text-muted-foreground">卷 / 第1卷章节</div>
+                      <div className="text-xs text-muted-foreground">{t("novelTakeover.snapshot.volumeAndChapterCount")}</div>
                       <div className="mt-1 text-sm font-medium text-foreground">
                         {readiness.snapshot.volumeCount} / {readiness.snapshot.firstVolumeChapterCount}
                       </div>
@@ -308,9 +308,9 @@ export default function NovelExistingProjectTakeoverDialog({
 
                   {readiness.hasActiveTask ? (
                     <div className="mt-4 rounded-lg border border-amber-500/30 bg-amber-500/10 p-4">
-                      <div className="text-sm font-medium text-foreground">当前已有自动导演任务</div>
+                      <div className="text-sm font-medium text-foreground">{t("novelTakeover.activeTask.title")}</div>
                       <div className="mt-1 text-sm text-muted-foreground">
-                        为避免重复接管，请先去任务中心继续或取消当前自动导演任务。
+                        {t("novelTakeover.activeTask.description")}
                       </div>
                       <div className="mt-3 flex justify-end">
                         <Button
@@ -323,7 +323,7 @@ export default function NovelExistingProjectTakeoverDialog({
                               : "/tasks");
                           }}
                         >
-                          去任务中心
+                          {t("novelTakeover.activeTask.openTaskCenter")}
                         </Button>
                       </div>
                     </div>
@@ -347,12 +347,12 @@ export default function NovelExistingProjectTakeoverDialog({
                               onClick={() => setSelectedPhase(stage.phase)}
                             >
                               <div className="flex items-center justify-between gap-2">
-                                <div className="text-sm font-medium text-foreground">{stage.label}</div>
-                                <div className="flex items-center gap-2">
-                                  {stage.recommended ? <Badge>推荐</Badge> : null}
-                                  {!stage.available ? <Badge variant="outline">暂不可用</Badge> : null}
+                                  <div className="text-sm font-medium text-foreground">{stage.label}</div>
+                                  <div className="flex items-center gap-2">
+                                  {stage.recommended ? <Badge>{t("novelTakeover.stage.recommended")}</Badge> : null}
+                                  {!stage.available ? <Badge variant="outline">{t("novelTakeover.stage.unavailable")}</Badge> : null}
+                                  </div>
                                 </div>
-                              </div>
                               <div className="mt-2 text-xs leading-5 text-muted-foreground">{stage.description}</div>
                               <div className="mt-3 text-xs leading-5 text-muted-foreground">{stage.reason}</div>
                             </button>
@@ -362,7 +362,7 @@ export default function NovelExistingProjectTakeoverDialog({
 
                       {selectedStage ? (
                         <div className="mt-4 rounded-lg border bg-muted/15 p-3 text-sm text-muted-foreground">
-                          当前选择：{selectedStage.label}。{selectedStage.reason}
+                          {t("novelTakeover.selectedStage", { label: selectedStage.label, reason: selectedStage.reason })}
                         </div>
                       ) : null}
 
@@ -376,7 +376,7 @@ export default function NovelExistingProjectTakeoverDialog({
                           }
                           onClick={() => startMutation.mutate()}
                         >
-                          {startMutation.isPending ? "启动中..." : "从这一阶段开始接管"}
+                          {startMutation.isPending ? t("novelTakeover.start.loading") : t("novelTakeover.start.action")}
                         </Button>
                       </div>
                     </>

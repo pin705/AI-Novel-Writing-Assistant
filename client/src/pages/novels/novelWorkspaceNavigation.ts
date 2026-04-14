@@ -1,4 +1,5 @@
 import type { DirectorLockScope } from "@ai-novel/shared/types/novelDirector";
+import type { TranslateFn, TranslationKey } from "@/i18n";
 
 export type NovelWorkspaceFlowTab =
   | "basic"
@@ -11,18 +12,32 @@ export type NovelWorkspaceFlowTab =
 
 export type NovelWorkspaceTab = NovelWorkspaceFlowTab | "history";
 
-export const NOVEL_WORKSPACE_FLOW_STEPS: Array<{ key: NovelWorkspaceFlowTab; label: string }> = [
-  { key: "basic", label: "项目设定" },
-  { key: "story_macro", label: "故事宏观规划" },
-  { key: "character", label: "角色准备" },
-  { key: "outline", label: "卷战略 / 卷骨架" },
-  { key: "structured", label: "节奏 / 拆章" },
-  { key: "chapter", label: "章节执行" },
-  { key: "pipeline", label: "质量修复" },
+const NOVEL_WORKSPACE_FLOW_STEP_LABEL_KEYS: Record<NovelWorkspaceFlowTab, TranslationKey> = {
+  basic: "novelEdit.workspaceTab.basic",
+  story_macro: "novelEdit.workspaceTab.storyMacro",
+  character: "novelEdit.workspaceTab.character",
+  outline: "novelEdit.workspaceTab.outline",
+  structured: "novelEdit.workspaceTab.structured",
+  chapter: "novelEdit.workspaceTab.chapter",
+  pipeline: "novelEdit.workspaceTab.pipeline",
+};
+
+const NOVEL_WORKSPACE_TOOL_TAB_LABEL_KEYS: Record<Extract<NovelWorkspaceTab, "history">, TranslationKey> = {
+  history: "novelEdit.workspaceTab.history",
+};
+
+export const NOVEL_WORKSPACE_FLOW_STEPS: Array<{ key: NovelWorkspaceFlowTab; labelKey: TranslationKey }> = [
+  { key: "basic", labelKey: NOVEL_WORKSPACE_FLOW_STEP_LABEL_KEYS.basic },
+  { key: "story_macro", labelKey: NOVEL_WORKSPACE_FLOW_STEP_LABEL_KEYS.story_macro },
+  { key: "character", labelKey: NOVEL_WORKSPACE_FLOW_STEP_LABEL_KEYS.character },
+  { key: "outline", labelKey: NOVEL_WORKSPACE_FLOW_STEP_LABEL_KEYS.outline },
+  { key: "structured", labelKey: NOVEL_WORKSPACE_FLOW_STEP_LABEL_KEYS.structured },
+  { key: "chapter", labelKey: NOVEL_WORKSPACE_FLOW_STEP_LABEL_KEYS.chapter },
+  { key: "pipeline", labelKey: NOVEL_WORKSPACE_FLOW_STEP_LABEL_KEYS.pipeline },
 ];
 
-export const NOVEL_WORKSPACE_TOOL_TABS: Array<{ key: Extract<NovelWorkspaceTab, "history">; label: string }> = [
-  { key: "history", label: "版本历史" },
+export const NOVEL_WORKSPACE_TOOL_TABS: Array<{ key: Extract<NovelWorkspaceTab, "history">; labelKey: TranslationKey }> = [
+  { key: "history", labelKey: NOVEL_WORKSPACE_TOOL_TAB_LABEL_KEYS.history },
 ];
 
 const NOVEL_WORKSPACE_TAB_SET = new Set<NovelWorkspaceTab>([
@@ -64,9 +79,11 @@ export function getNextNovelWorkspaceFlowTab(value: string | null | undefined): 
   return NOVEL_WORKSPACE_FLOW_STEPS[currentIndex + 1]?.key ?? null;
 }
 
-export function getNovelWorkspaceTabLabel(value: string | null | undefined): string {
+export function getNovelWorkspaceTabLabel(value: string | null | undefined, t: TranslateFn): string {
   const normalized = normalizeNovelWorkspaceTab(value);
-  return [...NOVEL_WORKSPACE_FLOW_STEPS, ...NOVEL_WORKSPACE_TOOL_TABS].find((item) => item.key === normalized)?.label ?? "项目设定";
+  const labelKey = [...NOVEL_WORKSPACE_FLOW_STEPS, ...NOVEL_WORKSPACE_TOOL_TABS].find((item) => item.key === normalized)?.labelKey
+    ?? NOVEL_WORKSPACE_FLOW_STEP_LABEL_KEYS.basic;
+  return t(labelKey);
 }
 
 export function scopeFromWorkspaceTab(tab: string): DirectorLockScope | null {

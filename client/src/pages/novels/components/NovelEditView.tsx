@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import AITakeoverContainer from "@/components/workflow/AITakeoverContainer";
 import KnowledgeBindingPanel from "@/components/knowledge/KnowledgeBindingPanel";
+import { useI18n, type TranslateFn } from "@/i18n";
 import NovelTaskDrawer from "./NovelTaskDrawer";
 import NovelCharacterPanel from "./NovelCharacterPanel";
 import BasicInfoTab from "./BasicInfoTab";
@@ -28,32 +29,33 @@ function getStepGuidanceDescription(input: {
   tab: string;
   totalChapters: number;
   pendingRepairs: number;
-}) {
+}, t: TranslateFn) {
   switch (input.tab) {
     case "basic":
-      return "先把这本书的标题、题材和一句话想法定清楚，后面的规划才不会跑偏。";
+      return t("novelEdit.guidance.basic");
     case "story_macro":
-      return "这里先确认主卖点、前 30 章承诺和整体方向，再继续往下拆。";
+      return t("novelEdit.guidance.storyMacro");
     case "character":
-      return "先凑齐能支撑前期剧情的核心角色，不必一口气把所有配角都补完。";
+      return t("novelEdit.guidance.character");
     case "outline":
-      return "先把每一卷要解决什么、冲突怎么升级和卷末钩子想明白。";
+      return t("novelEdit.guidance.outline");
     case "structured":
-      return "把章节目标和节奏拆清楚，后面进入正文写作会更顺。";
+      return t("novelEdit.guidance.structured");
     case "chapter":
       return input.totalChapters > 0
-        ? "选中当前要推进的一章，正文留在中间，其他能力都放到次级区域。"
-        : "先创建至少一章，再开始正文写作。";
+        ? t("novelEdit.guidance.chapter.hasChapters")
+        : t("novelEdit.guidance.chapter.empty");
     case "pipeline":
       return input.pendingRepairs > 0
-        ? `当前还有 ${input.pendingRepairs} 章待修，先把高风险章节处理掉。`
-        : "这里主要处理审校和修复，问题不多时不需要长时间停留。";
+        ? t("novelEdit.guidance.pipeline.hasRepairs", { value: input.pendingRepairs })
+        : t("novelEdit.guidance.pipeline.empty");
     default:
-      return "按步骤推进，当前页面只保留最需要看的内容。";
+      return t("novelEdit.guidance.default");
   }
 }
 
 export default function NovelEditView(props: NovelEditViewProps) {
+  const { t } = useI18n();
   const {
     id,
     activeTab,
@@ -87,19 +89,19 @@ export default function NovelEditView(props: NovelEditViewProps) {
 
   const taskAttentionLabel = taskDrawer?.task
     ? taskDrawer.task.status === "failed"
-      ? "异常"
+      ? t("novelEdit.taskAttention.failed")
       : taskDrawer.task.status === "waiting_approval"
-        ? "待审核"
+        ? t("novelEdit.taskAttention.waitingApproval")
         : taskDrawer.task.status === "running" || taskDrawer.task.status === "queued"
-          ? "进行中"
-          : "最近任务"
+          ? t("novelEdit.taskAttention.running")
+          : t("novelEdit.taskAttention.recent")
     : null;
 
   const normalizedActiveTab = normalizeNovelWorkspaceTab(activeTab);
   const normalizedWorkflowTab = normalizeNovelWorkspaceTab(workflowCurrentTab ?? activeTab);
-  const novelTitle = basicTab.basicForm.title.trim() || "未命名小说";
-  const currentStepLabel = getNovelWorkspaceTabLabel(normalizedActiveTab);
-  const workflowStepLabel = getNovelWorkspaceTabLabel(normalizedWorkflowTab);
+  const novelTitle = basicTab.basicForm.title.trim() || t("novelEdit.fallbackNovelTitle");
+  const currentStepLabel = getNovelWorkspaceTabLabel(normalizedActiveTab, t);
+  const workflowStepLabel = getNovelWorkspaceTabLabel(normalizedWorkflowTab, t);
   const guidedFlowTab = normalizedActiveTab === "history"
     ? normalizedWorkflowTab === "history"
       ? "basic"
@@ -109,25 +111,28 @@ export default function NovelEditView(props: NovelEditViewProps) {
   const previousStep = getPreviousNovelWorkspaceFlowTab(guidedFlowTab);
   const nextStep = getNextNovelWorkspaceFlowTab(guidedFlowTab);
   const progressLabel = stepIndex >= 0
-    ? `第 ${stepIndex + 1} 步 / 共 ${NOVEL_WORKSPACE_FLOW_STEPS.length} 步`
+    ? t("novelEdit.progressLabel", { current: stepIndex + 1, total: NOVEL_WORKSPACE_FLOW_STEPS.length })
     : null;
   const guidanceDescription = normalizedActiveTab === "history"
-    ? "这里保留最近可恢复的创作版本。恢复前系统会先自动备份一次当前状态。"
+    ? t("novelEdit.guidance.history")
     : getStepGuidanceDescription({
       tab: guidedFlowTab,
       totalChapters,
       pendingRepairs,
-    });
+    }, t);
   const currentChapterLabel = normalizedActiveTab === "chapter"
     ? chapterTab.selectedChapter
-      ? `当前章节：第 ${chapterTab.selectedChapter.order} 章 · ${chapterTab.selectedChapter.title?.trim() || "未命名章节"}`
-      : "当前章节：请选择要继续创作的章节"
+      ? t("novelEdit.currentChapterLabel", {
+        order: chapterTab.selectedChapter.order,
+        title: chapterTab.selectedChapter.title?.trim() || t("novelEdit.fallbackChapterTitle"),
+      })
+      : t("novelEdit.currentChapterEmpty")
     : null;
   const primaryActionLabel = normalizedActiveTab === "history"
-    ? `返回当前步骤：${getNovelWorkspaceTabLabel(guidedFlowTab)}`
+    ? t("novelEdit.returnToCurrentStep", { value: getNovelWorkspaceTabLabel(guidedFlowTab, t) })
     : nextStep
-      ? `下一步：${getNovelWorkspaceTabLabel(nextStep)}`
-      : "查看版本历史";
+      ? t("novelEdit.nextStep", { value: getNovelWorkspaceTabLabel(nextStep, t) })
+      : t("novelEdit.viewVersionHistory");
   const handlePreviousStep = () => {
     if (!previousStep) {
       return;
@@ -183,7 +188,7 @@ export default function NovelEditView(props: NovelEditViewProps) {
           <div className="flex min-w-0 flex-wrap items-center gap-3 text-sm">
             <span className="truncate font-semibold text-foreground">{novelTitle}</span>
             <span className="h-1 w-1 shrink-0 rounded-full bg-border" />
-            <span className="shrink-0 text-muted-foreground">当前步骤：{currentStepLabel}</span>
+            <span className="shrink-0 text-muted-foreground">{t("novelEdit.currentStepPrefix", { value: currentStepLabel })}</span>
             {progressLabel ? (
               <>
                 <span className="h-1 w-1 shrink-0 rounded-full bg-border" />
@@ -193,7 +198,7 @@ export default function NovelEditView(props: NovelEditViewProps) {
             {normalizedWorkflowTab !== normalizedActiveTab ? (
               <>
                 <span className="h-1 w-1 shrink-0 rounded-full bg-border" />
-                <span className="shrink-0 text-sky-700">流程推荐：{workflowStepLabel}</span>
+                <span className="shrink-0 text-sky-700">{t("novelEdit.workflowRecommendationPrefix", { value: workflowStepLabel })}</span>
               </>
             ) : null}
           </div>
@@ -202,9 +207,11 @@ export default function NovelEditView(props: NovelEditViewProps) {
             <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
               <div className="min-w-0 flex-1 space-y-2">
                 <div className="flex flex-wrap items-center gap-2">
-                  <Badge variant="outline">{progressLabel ?? "恢复入口"}</Badge>
+                  <Badge variant="outline">{progressLabel ?? t("novelEdit.resumeEntry")}</Badge>
                   <Badge variant={normalizedActiveTab === "history" ? "secondary" : "default"}>
-                    {normalizedActiveTab === "history" ? "版本恢复区" : `正在处理：${getNovelWorkspaceTabLabel(guidedFlowTab)}`}
+                    {normalizedActiveTab === "history"
+                      ? t("novelEdit.versionRestoreArea")
+                      : t("novelEdit.processing", { value: getNovelWorkspaceTabLabel(guidedFlowTab, t) })}
                   </Badge>
                   {currentChapterLabel ? <Badge variant="secondary">{currentChapterLabel}</Badge> : null}
                 </div>
@@ -215,10 +222,10 @@ export default function NovelEditView(props: NovelEditViewProps) {
 
               <div className="flex flex-wrap items-center gap-2">
                 <Button variant="outline" onClick={handlePreviousStep} disabled={!previousStep}>
-                  上一步
+                  {t("novelEdit.previousStep")}
                 </Button>
                 <Button variant="secondary" onClick={handleHistoryAction}>
-                  {normalizedActiveTab === "history" ? "返回当前步骤" : "版本历史"}
+                  {normalizedActiveTab === "history" ? t("novelEdit.returnToCurrentStepButton") : t("novelEdit.versionHistory")}
                 </Button>
                 <Button onClick={handlePrimaryAction}>
                   {primaryActionLabel}
@@ -230,27 +237,25 @@ export default function NovelEditView(props: NovelEditViewProps) {
           <div className="flex flex-wrap items-center justify-end gap-2">
             <Dialog open={isProjectToolsOpen} onOpenChange={setIsProjectToolsOpen}>
               <DialogTrigger asChild>
-                <Button variant="outline">项目工具</Button>
+                <Button variant="outline">{t("novelEdit.projectTools.trigger")}</Button>
               </DialogTrigger>
               <DialogContent className="max-h-[90vh] w-[calc(100vw-2rem)] max-w-4xl overflow-auto">
                 <DialogHeader>
-                  <DialogTitle>项目工具</DialogTitle>
-                  <DialogDescription>
-                    这里收纳次级信息。首屏只保留当前步骤、继续按钮和恢复入口，避免主工作区被项目信息挤满。
-                  </DialogDescription>
+                  <DialogTitle>{t("novelEdit.projectTools.title")}</DialogTitle>
+                  <DialogDescription>{t("novelEdit.projectTools.description")}</DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-3 md:grid-cols-2">
                   <Card>
                     <CardHeader>
-                      <CardTitle>章节进度</CardTitle>
+                      <CardTitle>{t("novelEdit.projectTools.chapterProgress")}</CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <p>{generatedChapters} / {Math.max(totalChapters, 1)} 已生成</p>
+                      <p>{t("novelEdit.projectTools.chapterProgressValue", { generated: generatedChapters, total: Math.max(totalChapters, 1) })}</p>
                     </CardContent>
                   </Card>
                   <Card>
                     <CardHeader>
-                      <CardTitle>待修复章节</CardTitle>
+                      <CardTitle>{t("novelEdit.projectTools.pendingRepairs")}</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <p>{pendingRepairs}</p>
@@ -258,7 +263,7 @@ export default function NovelEditView(props: NovelEditViewProps) {
                   </Card>
                   <Card>
                     <CardHeader>
-                      <CardTitle>当前模型</CardTitle>
+                      <CardTitle>{t("novelEdit.projectTools.currentModel")}</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <p>{currentModel}</p>
@@ -266,14 +271,14 @@ export default function NovelEditView(props: NovelEditViewProps) {
                   </Card>
                   <Card>
                     <CardHeader>
-                      <CardTitle>最近任务</CardTitle>
+                      <CardTitle>{t("novelEdit.projectTools.recentTask")}</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <p>{pipelineTab.pipelineJob?.status ?? "idle"}</p>
                     </CardContent>
                   </Card>
                 </div>
-                <KnowledgeBindingPanel targetType="novel" targetId={id} title="参考知识" />
+                <KnowledgeBindingPanel targetType="novel" targetId={id} title={t("novelEdit.projectTools.knowledgeReference")} />
               </DialogContent>
             </Dialog>
 
@@ -281,7 +286,7 @@ export default function NovelEditView(props: NovelEditViewProps) {
               variant={taskDrawer?.task?.status === "failed" ? "destructive" : "outline"}
               onClick={() => taskDrawer?.onOpenChange(true)}
             >
-              任务面板
+              {t("novelEdit.taskDrawer.open")}
               {taskAttentionLabel ? <Badge variant="secondary">{taskAttentionLabel}</Badge> : null}
             </Button>
           </div>
