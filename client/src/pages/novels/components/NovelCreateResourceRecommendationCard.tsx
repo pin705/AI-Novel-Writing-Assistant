@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import type { NovelCreateResourceRecommendation } from "@ai-novel/shared/types/novelResourceRecommendation";
 import { recommendNovelCreateResources } from "@/api/novel";
+import { useI18n } from "@/i18n";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useLLMStore } from "@/store/llmStore";
@@ -69,6 +70,7 @@ export default function NovelCreateResourceRecommendationCard(
 ) {
   const { basicForm, onApplySuggestion, contextHint = "" } = props;
   const llm = useLLMStore();
+  const { t } = useI18n();
   const [recommendation, setRecommendation] = useState<NovelCreateResourceRecommendation | null>(null);
   const [message, setMessage] = useState("");
   const [recommendedSignature, setRecommendedSignature] = useState("");
@@ -111,7 +113,7 @@ export default function NovelCreateResourceRecommendationCard(
       setMessage("");
     },
     onError: (error) => {
-      setMessage(error instanceof Error ? error.message : "AI 推荐资源组合失败，请稍后再试。");
+      setMessage(error instanceof Error ? error.message : t("novelCreate.resourceRecommendation.failure"));
     },
   });
 
@@ -119,9 +121,9 @@ export default function NovelCreateResourceRecommendationCard(
     <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-4">
       <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
         <div className="space-y-1">
-          <div className="text-sm font-semibold text-foreground">先让 AI 推荐一套开书底座</div>
+          <div className="text-sm font-semibold text-foreground">{t("novelCreate.resourceRecommendation.title")}</div>
           <div className="text-sm leading-6 text-muted-foreground">
-            你不用先理解题材基底库和推进模式库。先写一句灵感、卖点或前 30 章承诺，系统会帮你推荐一套更适合新手起步的默认组合。
+            {t("novelCreate.resourceRecommendation.description")}
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-2">
@@ -130,17 +132,21 @@ export default function NovelCreateResourceRecommendationCard(
             onClick={() => recommendMutation.mutate()}
             disabled={!canRecommend || recommendMutation.isPending}
           >
-            {recommendMutation.isPending ? "正在推荐..." : recommendation ? "重新推荐" : "AI 推荐资源组合"}
+            {recommendMutation.isPending
+              ? t("novelCreate.resourceRecommendation.loading")
+              : recommendation
+                ? t("novelCreate.resourceRecommendation.retry")
+                : t("novelCreate.resourceRecommendation.action")}
           </Button>
           {hasAppliedRecommendation ? (
-            <Badge variant="outline">已填入当前表单</Badge>
+            <Badge variant="outline">{t("novelCreate.resourceRecommendation.appliedBadge")}</Badge>
           ) : null}
         </div>
       </div>
 
       {!canRecommend ? (
         <div className="mt-3 rounded-md border border-dashed bg-background/70 p-3 text-sm text-muted-foreground">
-          先补一句灵感、概述、目标读者、卖点或前 30 章承诺中的任意一项，AI 才能更稳地判断你该从哪种题材和推进模式起步。
+          {t("novelCreate.resourceRecommendation.empty")}
         </div>
       ) : null}
 
@@ -152,25 +158,25 @@ export default function NovelCreateResourceRecommendationCard(
 
           {recommendationIsStale ? (
             <div className="rounded-md border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-sm text-amber-800">
-              你刚刚改过开书信息，建议重新推荐一次，让题材和推进模式跟上最新方向。
+              {t("novelCreate.resourceRecommendation.stale")}
             </div>
           ) : null}
 
           <div className="grid gap-3 lg:grid-cols-3">
             <div className="rounded-lg border bg-background/80 p-3">
-              <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">推荐题材基底</div>
+              <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{t("novelCreate.resourceRecommendation.genre.title")}</div>
               <div className="mt-1 text-sm font-semibold text-foreground">{recommendation.genre.path}</div>
               <div className="mt-2 text-xs leading-5 text-muted-foreground">{recommendation.genre.reason}</div>
             </div>
 
             <div className="rounded-lg border bg-background/80 p-3">
-              <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">推荐主推进模式</div>
+              <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{t("novelCreate.resourceRecommendation.primaryStoryMode.title")}</div>
               <div className="mt-1 text-sm font-semibold text-foreground">{recommendation.primaryStoryMode.path}</div>
               <div className="mt-2 text-xs leading-5 text-muted-foreground">{recommendation.primaryStoryMode.reason}</div>
             </div>
 
             <div className="rounded-lg border bg-background/80 p-3">
-              <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">推荐副推进模式</div>
+              <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{t("novelCreate.resourceRecommendation.secondaryStoryMode.title")}</div>
               {recommendation.secondaryStoryMode ? (
                 <>
                   <div className="mt-1 text-sm font-semibold text-foreground">{recommendation.secondaryStoryMode.path}</div>
@@ -178,7 +184,7 @@ export default function NovelCreateResourceRecommendationCard(
                 </>
               ) : (
                 <div className="mt-2 text-xs leading-5 text-muted-foreground">
-                  当前更适合先把主推进模式跑稳，不建议一开始叠太多风味。
+                  {t("novelCreate.resourceRecommendation.secondaryStoryMode.none")}
                 </div>
               )}
             </div>
@@ -186,7 +192,7 @@ export default function NovelCreateResourceRecommendationCard(
 
           {recommendation.caution ? (
             <div className="rounded-md border bg-background/80 px-3 py-2 text-sm text-muted-foreground">
-              注意：{recommendation.caution}
+              {t("novelCreate.resourceRecommendation.caution", { value: recommendation.caution })}
             </div>
           ) : null}
 
@@ -200,10 +206,12 @@ export default function NovelCreateResourceRecommendationCard(
                   primaryStoryModeId: recommendation.primaryStoryMode.id,
                   secondaryStoryModeId: recommendation.secondaryStoryMode?.id ?? "",
                 });
-                setMessage("已将 AI 推荐的题材基底和推进模式填入当前表单。你可以继续微调，也可以直接进入 AI 自动导演。");
+                setMessage(t("novelCreate.resourceRecommendation.applySuccess"));
               }}
             >
-              {hasAppliedRecommendation ? "当前已应用" : "应用到当前表单"}
+              {hasAppliedRecommendation
+                ? t("novelCreate.resourceRecommendation.appliedAction")
+                : t("novelCreate.resourceRecommendation.applyAction")}
             </Button>
           </div>
         </div>

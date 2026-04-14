@@ -1,24 +1,27 @@
 import type { LLMProvider } from "@ai-novel/shared/types/llm";
 import { normalizeCommercialTags } from "@ai-novel/shared/types/novelFraming";
 import type { DirectorRunMode } from "@ai-novel/shared/types/novelDirector";
+import type { TranslateFn } from "@/i18n";
 import type { NovelBasicFormState } from "../novelBasicInfo.shared";
 
-export const RUN_MODE_OPTIONS: Array<{
+export function getDirectorRunModeOptions(t: TranslateFn): Array<{
   value: DirectorRunMode;
   label: string;
   description: string;
-}> = [
-  {
-    value: "auto_to_ready",
-    label: "自动推进到可开写",
-    description: "AI 会持续推进到章节执行资源准备好后再交给你。",
-  },
-  {
-    value: "auto_to_execution",
-    label: "继续自动执行章节批次",
-    description: "默认执行前 10 章，也可以改成指定章节范围或按卷执行。",
-  },
-];
+}> {
+  return [
+    {
+      value: "auto_to_ready",
+      label: t("novelCreate.autoDirector.runMode.autoToReady.label"),
+      description: t("novelCreate.autoDirector.runMode.autoToReady.description"),
+    },
+    {
+      value: "auto_to_execution",
+      label: t("novelCreate.autoDirector.runMode.autoToExecution.label"),
+      description: t("novelCreate.autoDirector.runMode.autoToExecution.description"),
+    },
+  ];
+}
 
 export const DEFAULT_VISIBLE_RUN_MODE: DirectorRunMode = "auto_to_ready";
 
@@ -28,11 +31,11 @@ export interface AutoDirectorRequestLlmOptions {
   temperature?: number;
 }
 
-export function buildInitialIdea(basicForm: NovelBasicFormState): string {
+export function buildInitialIdea(basicForm: NovelBasicFormState, t: TranslateFn): string {
   const lines = [
     basicForm.description.trim(),
-    basicForm.title.trim() ? `我想写一本暂名为《${basicForm.title.trim()}》的小说。` : "",
-    basicForm.styleTone.trim() ? `文风希望偏 ${basicForm.styleTone.trim()}。` : "",
+    basicForm.title.trim() ? t("novelCreate.autoDirector.idea.titleLine", { title: basicForm.title.trim() }) : "",
+    basicForm.styleTone.trim() ? t("novelCreate.autoDirector.idea.styleLine", { value: basicForm.styleTone.trim() }) : "",
   ].filter(Boolean);
   return lines.join("\n");
 }

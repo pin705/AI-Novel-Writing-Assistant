@@ -10,6 +10,7 @@ import { queryKeys } from "@/api/queryKeys";
 import { flattenStoryModeTreeOptions, getStoryModeTree } from "@/api/storyMode";
 import { getWorldList } from "@/api/world";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useI18n } from "@/i18n";
 import NovelAutoDirectorDialog from "./components/NovelAutoDirectorDialog";
 import NovelBasicInfoForm from "./components/NovelBasicInfoForm";
 import NovelCreateResourceRecommendationCard from "./components/NovelCreateResourceRecommendationCard";
@@ -25,6 +26,7 @@ import {
 export default function NovelCreate() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { t } = useI18n();
   const [searchParams, setSearchParams] = useSearchParams();
   const [basicForm, setBasicForm] = useState(() => createDefaultNovelBasicFormState());
   const [restoredWorkflowTask, setRestoredWorkflowTask] = useState<UnifiedTaskDetail | null>(null);
@@ -173,9 +175,9 @@ export default function NovelCreate() {
     <div className="mx-auto max-w-5xl space-y-4">
       <Card>
         <CardHeader>
-          <CardTitle>创建小说项目</CardTitle>
+          <CardTitle>{t("novelCreate.page.title")}</CardTitle>
           <CardDescription>
-            先把这本书写给谁、靠什么吸引追读、前 30 章要兑现什么定义清楚。这里的设置会直接影响后续主线规划、世界边界、写法建议和 AI 生成行为，创建后仍可继续调整。
+            {t("novelCreate.page.description")}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -192,7 +194,7 @@ export default function NovelCreate() {
             onFormChange={(patch) => setBasicForm((prev) => patchNovelBasicForm(prev, patch))}
             onSubmit={() => createNovelMutation.mutate()}
             isSubmitting={createNovelMutation.isPending}
-            submitLabel="创建并进入项目"
+            submitLabel={t("novelCreate.page.submit")}
             showPublicationStatus={false}
             framingQuickFill={(
               <BookFramingQuickFillButton

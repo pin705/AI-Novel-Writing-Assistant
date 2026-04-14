@@ -2,13 +2,11 @@ import type { DirectorRunMode } from "@ai-novel/shared/types/novelDirector";
 import LLMSelector from "@/components/common/LLMSelector";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useI18n } from "@/i18n";
 import type { NovelBasicFormState } from "../novelBasicInfo.shared";
 import {
-  BASIC_INFO_FIELD_HINTS,
   DEFAULT_ESTIMATED_CHAPTER_COUNT,
-  EMOTION_OPTIONS,
-  PACE_OPTIONS,
-  POV_OPTIONS,
+  buildNovelBasicInfoI18n,
 } from "../novelBasicInfo.shared";
 import {
   type DirectorAutoExecutionDraftState,
@@ -69,29 +67,31 @@ export default function NovelAutoDirectorSetupPanel(props: NovelAutoDirectorSetu
   } = props;
 
   const hasEditableBasicForm = typeof onBasicFormChange === "function";
+  const { t } = useI18n();
+  const { fieldHints, povOptions, paceOptions, emotionOptions } = buildNovelBasicInfoI18n(t);
 
   return (
     <div className="rounded-lg border bg-background/80 p-4">
-      <div className="text-sm font-medium text-foreground">你的起始想法</div>
+      <div className="text-sm font-medium text-foreground">{t("novelCreate.autoDirector.setup.idea.label")}</div>
       <textarea
         className="mt-2 min-h-[128px] w-full rounded-md border bg-background px-3 py-2 text-sm outline-none transition focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
         value={idea}
         onChange={(event) => onIdeaChange(event.target.value)}
-        placeholder="例如：普通女大学生误入异能组织，一边上学打工，一边调查父亲失踪真相。"
+        placeholder={t("novelCreate.autoDirector.setup.idea.placeholder")}
       />
 
       <div className="mt-4 grid gap-4 xl:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]">
         <div className="space-y-4">
           {hasEditableBasicForm ? (
             <section className="rounded-xl border bg-muted/20 p-4">
-              <div className="text-sm font-medium text-foreground">导演起始设置</div>
+              <div className="text-sm font-medium text-foreground">{t("novelCreate.autoDirector.setup.title")}</div>
               <div className="mt-1 text-xs leading-5 text-muted-foreground">
-                这里只保留自动导演真正需要你快速确认的参数。先保持默认也可以，只有你明确想要某种手感时再调整。
+                {t("novelCreate.autoDirector.setup.description")}
               </div>
 
               <div className="mt-3 grid gap-3 md:grid-cols-2">
                 <div className="space-y-2">
-                  <FieldLabel htmlFor="director-basic-pov" hint={BASIC_INFO_FIELD_HINTS.narrativePov}>叙事视角</FieldLabel>
+                  <FieldLabel htmlFor="director-basic-pov" hint={fieldHints.narrativePov}>{t("novelCreate.form.narrativePov.label")}</FieldLabel>
                   <select
                     id="director-basic-pov"
                     className="w-full rounded-md border bg-background p-2 text-sm"
@@ -100,15 +100,15 @@ export default function NovelAutoDirectorSetupPanel(props: NovelAutoDirectorSetu
                       narrativePov: event.target.value as NovelBasicFormState["narrativePov"],
                     })}
                   >
-                    {POV_OPTIONS.map((option) => (
+                    {povOptions.map((option) => (
                       <option key={option.value} value={option.value}>{option.label}</option>
                     ))}
                   </select>
-                  <div className="text-xs text-muted-foreground">{findOptionSummary(POV_OPTIONS, basicForm.narrativePov)}</div>
+                  <div className="text-xs text-muted-foreground">{findOptionSummary(povOptions, basicForm.narrativePov)}</div>
                 </div>
 
                 <div className="space-y-2">
-                  <FieldLabel htmlFor="director-basic-pace" hint={BASIC_INFO_FIELD_HINTS.pacePreference}>节奏偏好</FieldLabel>
+                  <FieldLabel htmlFor="director-basic-pace" hint={fieldHints.pacePreference}>{t("novelCreate.form.pacePreference.label")}</FieldLabel>
                   <select
                     id="director-basic-pace"
                     className="w-full rounded-md border bg-background p-2 text-sm"
@@ -117,15 +117,15 @@ export default function NovelAutoDirectorSetupPanel(props: NovelAutoDirectorSetu
                       pacePreference: event.target.value as NovelBasicFormState["pacePreference"],
                     })}
                   >
-                    {PACE_OPTIONS.map((option) => (
+                    {paceOptions.map((option) => (
                       <option key={option.value} value={option.value}>{option.label}</option>
                     ))}
                   </select>
-                  <div className="text-xs text-muted-foreground">{findOptionSummary(PACE_OPTIONS, basicForm.pacePreference)}</div>
+                  <div className="text-xs text-muted-foreground">{findOptionSummary(paceOptions, basicForm.pacePreference)}</div>
                 </div>
 
                 <div className="space-y-2">
-                  <FieldLabel htmlFor="director-basic-emotion" hint={BASIC_INFO_FIELD_HINTS.emotionIntensity}>情绪浓度</FieldLabel>
+                  <FieldLabel htmlFor="director-basic-emotion" hint={fieldHints.emotionIntensity}>{t("novelCreate.form.emotionIntensity.label")}</FieldLabel>
                   <select
                     id="director-basic-emotion"
                     className="w-full rounded-md border bg-background p-2 text-sm"
@@ -134,15 +134,15 @@ export default function NovelAutoDirectorSetupPanel(props: NovelAutoDirectorSetu
                       emotionIntensity: event.target.value as NovelBasicFormState["emotionIntensity"],
                     })}
                   >
-                    {EMOTION_OPTIONS.map((option) => (
+                    {emotionOptions.map((option) => (
                       <option key={option.value} value={option.value}>{option.label}</option>
                     ))}
                   </select>
-                  <div className="text-xs text-muted-foreground">{findOptionSummary(EMOTION_OPTIONS, basicForm.emotionIntensity)}</div>
+                  <div className="text-xs text-muted-foreground">{findOptionSummary(emotionOptions, basicForm.emotionIntensity)}</div>
                 </div>
 
                 <div className="space-y-2">
-                  <FieldLabel htmlFor="director-basic-estimated" hint={BASIC_INFO_FIELD_HINTS.estimatedChapterCount}>预计章节数</FieldLabel>
+                  <FieldLabel htmlFor="director-basic-estimated" hint={fieldHints.estimatedChapterCount}>{t("novelCreate.form.estimatedChapterCount.label")}</FieldLabel>
                   <Input
                     id="director-basic-estimated"
                     type="number"
@@ -157,7 +157,7 @@ export default function NovelAutoDirectorSetupPanel(props: NovelAutoDirectorSetu
                     })}
                   />
                   <div className="text-xs text-muted-foreground">
-                    会作为整书结构密度和后续卷章规划的参考，不是硬性上限。
+                    {t("novelCreate.autoDirector.setup.estimatedChapters.helper")}
                   </div>
                 </div>
               </div>
@@ -182,14 +182,14 @@ export default function NovelAutoDirectorSetupPanel(props: NovelAutoDirectorSetu
 
         <div className="space-y-4">
           <section className="rounded-xl border bg-background/70 p-4">
-            <div className="text-sm font-medium text-foreground">模型设置</div>
+            <div className="text-sm font-medium text-foreground">{t("novelCreate.autoDirector.setup.modelSettings")}</div>
             <div className="mt-3">
               <LLMSelector />
             </div>
           </section>
 
           <section className="rounded-xl border bg-background/70 p-4">
-            <div className="text-sm font-medium text-foreground">自动导演运行方式</div>
+            <div className="text-sm font-medium text-foreground">{t("novelCreate.autoDirector.setup.runMode")}</div>
             <div className="mt-3 grid gap-3 md:grid-cols-2 xl:grid-cols-1">
               {runModeOptions.map((option) => {
                 const active = option.value === runMode;
@@ -221,10 +221,10 @@ export default function NovelAutoDirectorSetupPanel(props: NovelAutoDirectorSetu
           <div className="flex justify-end">
             <Button type="button" onClick={onGenerate} disabled={!canGenerate}>
               {isGenerating
-                ? "生成中..."
+                ? t("novelCreate.autoDirector.setup.generating")
                 : batchCount === 0
-                  ? "生成第一批方案"
-                  : "按修正建议继续生成"}
+                  ? t("novelCreate.autoDirector.setup.generateFirstBatch")
+                  : t("novelCreate.autoDirector.setup.generateNextBatch")}
             </Button>
           </div>
         </div>

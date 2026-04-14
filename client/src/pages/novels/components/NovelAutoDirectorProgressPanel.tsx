@@ -3,6 +3,7 @@ import {
   DIRECTOR_CANDIDATE_SETUP_STEPS,
 } from "@ai-novel/shared/types/novelDirector";
 import type { UnifiedTaskDetail } from "@ai-novel/shared/types/task";
+import { useI18n, type TranslateFn, type TranslationKey } from "@/i18n";
 import { Button } from "@/components/ui/button";
 import AITakeoverContainer, { type AITakeoverMode } from "@/components/workflow/AITakeoverContainer";
 import {
@@ -29,14 +30,29 @@ type DirectorStepDefinition = {
   label: string;
 };
 
-const DIRECTOR_EXECUTION_STEPS: DirectorStepDefinition[] = [
-  { key: "novel_create", label: "创建项目" },
-  { key: "book_contract", label: "Book Contract + 故事宏观规划" },
-  { key: "character_setup", label: "角色准备" },
-  { key: "volume_strategy", label: "卷战略 + 卷骨架" },
-  { key: "beat_sheet", label: "第 1 卷节奏板 + 章节列表" },
-  { key: "chapter_detail_bundle", label: "章节批量细化" },
-];
+function getDirectorExecutionSteps(t: TranslateFn): DirectorStepDefinition[] {
+  return [
+    { key: "novel_create", label: t("novelCreate.autoDirector.progress.step.novelCreate") },
+    { key: "book_contract", label: t("novelCreate.autoDirector.progress.step.bookContract") },
+    { key: "character_setup", label: t("novelCreate.autoDirector.progress.step.characterSetup") },
+    { key: "volume_strategy", label: t("novelCreate.autoDirector.progress.step.volumeStrategy") },
+    { key: "beat_sheet", label: t("novelCreate.autoDirector.progress.step.beatSheet") },
+    { key: "chapter_detail_bundle", label: t("novelCreate.autoDirector.progress.step.chapterDetailBundle") },
+  ];
+}
+
+function getCandidateSetupSteps(t: TranslateFn): DirectorStepDefinition[] {
+  const labelByKey = {
+    candidate_seed_alignment: "novelCreate.autoDirector.progress.candidateStep.seedAlignment",
+    candidate_project_framing: "novelCreate.autoDirector.progress.candidateStep.projectFraming",
+    candidate_direction_batch: "novelCreate.autoDirector.progress.candidateStep.directionBatch",
+    candidate_title_pack: "novelCreate.autoDirector.progress.candidateStep.titlePack",
+  } as const satisfies Record<typeof DIRECTOR_CANDIDATE_SETUP_STEPS[number]["key"], Parameters<TranslateFn>[0]>;
+  return DIRECTOR_CANDIDATE_SETUP_STEPS.map((step) => ({
+    key: step.key,
+    label: t(labelByKey[step.key]),
+  }));
+}
 
 const DIRECTOR_CANDIDATE_SETUP_STEP_KEYS = new Set<string>(
   DIRECTOR_CANDIDATE_SETUP_STEPS.map((step) => step.key),
@@ -45,24 +61,26 @@ const DIRECTOR_CANDIDATE_SETUP_STEP_KEYS = new Set<string>(
 const AUTO_DIRECTOR_PLACEHOLDER_TITLES = new Set([
   "AI 自动导演小说",
   "小说流程任务",
+  "AI Auto Director Novel",
+  "Novel Workflow Task",
 ]);
 
 function formatDate(value: string | null | undefined): string {
   if (!value) {
-    return "暂无";
+    return "";
   }
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) {
-    return "暂无";
+    return "";
   }
   return date.toLocaleString();
 }
 
-function formatTokenCount(value: number | null | undefined): string {
-  return new Intl.NumberFormat("zh-CN").format(Math.max(0, Math.round(value ?? 0)));
+function formatTokenCount(value: number | null | undefined, locale: string): string {
+  return new Intl.NumberFormat(locale).format(Math.max(0, Math.round(value ?? 0)));
 }
 
-function resolveAutoExecutionScopeLabel(task: UnifiedTaskDetail | null): string {
+function resolveAutoExecutionScopeLabel(task: UnifiedTaskDetail | null, t: TranslateFn): string {
   const seedPayload = (task?.meta.seedPayload ?? null) as {
     autoExecution?: {
       scopeLabel?: string | null;
@@ -74,38 +92,43 @@ function resolveAutoExecutionScopeLabel(task: UnifiedTaskDetail | null): string 
     return scopeLabel;
   }
   const fallbackCount = Math.max(1, Math.round(seedPayload?.autoExecution?.totalChapterCount ?? 10));
-  return `前 ${fallbackCount} 章`;
+  return t("novelCreate.autoDirector.progress.scope.frontChapters", { value: fallbackCount });
 }
 
 function formatCheckpoint(
   checkpoint: NovelWorkflowCheckpoint | null | undefined,
   task: UnifiedTaskDetail | null,
+  t: TranslateFn,
 ): string {
   if (checkpoint === "candidate_selection_required") {
-    return "等待确认书级方向";
+    return t("workflow.checkpoint.candidate_selection_required");
   }
   if (checkpoint === "book_contract_ready") {
-    return "Book Contract 已就绪";
+    return t("workflow.checkpoint.book_contract_ready");
   }
   if (checkpoint === "character_setup_required") {
-    return "角色准备待审核";
+    return t("workflow.checkpoint.character_setup_required");
   }
   if (checkpoint === "volume_strategy_ready") {
-    return "卷战略已就绪";
+    return t("workflow.checkpoint.volume_strategy_ready");
   }
   if (checkpoint === "front10_ready") {
-    return `${resolveAutoExecutionScopeLabel(task)}可开写`;
+    return t("novelCreate.autoDirector.progress.checkpoint.front10Ready", {
+      value: resolveAutoExecutionScopeLabel(task, t),
+    });
   }
   if (checkpoint === "chapter_batch_ready") {
-    return `${resolveAutoExecutionScopeLabel(task)}自动执行已暂停`;
+    return t("novelCreate.autoDirector.progress.checkpoint.chapterBatchReady", {
+      value: resolveAutoExecutionScopeLabel(task, t),
+    });
   }
   if (checkpoint === "replan_required") {
-    return "需要重规划";
+    return t("workflow.checkpoint.replan_required");
   }
   if (checkpoint === "workflow_completed") {
-    return "主流程完成";
+    return t("novelCreate.autoDirector.progress.checkpoint.workflowCompleted");
   }
-  return "暂无";
+  return t("common.notAvailable");
 }
 
 function isCandidateSetupFlow(task: UnifiedTaskDetail | null): boolean {
@@ -205,17 +228,17 @@ function stepBadgeClasses(status: DirectorStepVisualStatus): string {
   return "bg-muted text-muted-foreground";
 }
 
-function stepStatusLabel(status: DirectorStepVisualStatus): string {
+function stepStatusLabel(status: DirectorStepVisualStatus): TranslationKey {
   if (status === "completed") {
-    return "已完成";
+    return "common.progressStatus.completed";
   }
   if (status === "running") {
-    return "进行中";
+    return "common.progressStatus.inProgress";
   }
   if (status === "failed") {
-    return "失败";
+    return "novelCreate.autoDirector.progress.stepStatus.failed";
   }
-  return "待推进";
+  return "novelCreate.autoDirector.progress.stepStatus.pending";
 }
 
 export default function NovelAutoDirectorProgressPanel({
@@ -227,13 +250,14 @@ export default function NovelAutoDirectorProgressPanel({
   onBackgroundContinue,
   onOpenTaskCenter,
 }: NovelAutoDirectorProgressPanelProps) {
+  const { locale, t } = useI18n();
   const taskChapterTitleWarning = resolveChapterTitleWarning(task);
   const chapterTitleRepairMutation = useDirectorChapterTitleRepair();
   const fallbackChapterTitleWarning = !taskChapterTitleWarning && isChapterTitleDiversitySummary(fallbackError)
     ? {
       summary: fallbackError?.trim() ?? "",
       route: null,
-      label: "快速修复章节标题",
+      label: t("novelCreate.autoDirector.progress.chapterTitleRepair"),
     }
     : null;
   const chapterTitleWarning = taskChapterTitleWarning ?? fallbackChapterTitleWarning;
@@ -243,31 +267,35 @@ export default function NovelAutoDirectorProgressPanel({
   const currentAction = (
     task?.status === "running"
     && task?.checkpointType === "chapter_batch_ready"
-    && task.currentItemLabel?.includes("已暂停")
+    && /已暂停|paused/i.test(task.currentItemLabel ?? "")
   )
-    ? `正在继续自动执行${resolveAutoExecutionScopeLabel(task)}`
+    ? t("novelCreate.autoDirector.progress.currentAction.autoExecuting", {
+      value: resolveAutoExecutionScopeLabel(task, t),
+    })
     : (
       task?.currentItemLabel?.trim()
       || (visualMode === "execution_failed"
-        ? "导演任务执行中断"
-        : (chapterTitleWarning ? "章节列表已生成，等待修复标题结构" : "正在准备导演任务"))
+        ? t("novelCreate.autoDirector.progress.currentAction.failed")
+        : (chapterTitleWarning
+          ? t("novelCreate.autoDirector.progress.currentAction.chapterTitlesReady")
+          : t("novelCreate.autoDirector.progress.currentAction.preparing")))
     );
   const workflowTitle = task?.title?.trim() || "";
   const hintedTitle = titleHint?.trim() || "";
   const taskTitle = (
     hintedTitle && (!workflowTitle || AUTO_DIRECTOR_PLACEHOLDER_TITLES.has(workflowTitle))
       ? hintedTitle
-      : workflowTitle || hintedTitle || "新小说项目"
+      : workflowTitle || hintedTitle || t("novelCreate.autoDirector.progress.defaultProjectTitle")
   );
   const milestones = Array.isArray(task?.meta.milestones)
     ? task.meta.milestones as Array<{ checkpointType: NovelWorkflowCheckpoint; summary: string; createdAt: string }>
     : [];
   const candidateSetupFlow = isCandidateSetupFlow(task);
   const stepDefinitions = candidateSetupFlow
-    ? DIRECTOR_CANDIDATE_SETUP_STEPS
-    : DIRECTOR_EXECUTION_STEPS;
+    ? getCandidateSetupSteps(t)
+    : getDirectorExecutionSteps(t);
   const steps = resolveDirectorStepStatuses(task, visualMode, stepDefinitions);
-  const failureMessage = task?.lastError?.trim() || fallbackError?.trim() || "导演任务执行失败，但没有记录明确错误。";
+  const failureMessage = task?.lastError?.trim() || fallbackError?.trim() || t("novelCreate.autoDirector.progress.failureMessage");
   const tokenUsage = task?.tokenUsage ?? null;
   const containerMode: AITakeoverMode = visualMode === "execution_failed"
     ? "failed"
@@ -279,28 +307,28 @@ export default function NovelAutoDirectorProgressPanel({
   const description = candidateSetupFlow
     ? (
       visualMode === "execution_failed"
-        ? "候选方向生成链已中断，你可以先去任务中心查看详情，再决定是否重试。"
-        : "系统会先整理项目设定、对齐书级 framing，再生成两套书级方案和对应标题组。"
+        ? t("novelCreate.autoDirector.progress.description.candidateFailed")
+        : t("novelCreate.autoDirector.progress.description.candidateRunning")
     )
     : (
       visualMode === "execution_failed"
-        ? "任务已经停在最近一步，你可以先去任务中心查看详情，再决定是否恢复。"
+        ? t("novelCreate.autoDirector.progress.description.executionFailed")
         : chapterTitleWarning
-          ? "章节列表已经保留，这是一条可直接处理的结构提醒。你可以快速修复标题，再决定是否继续后续导演流程。"
+          ? t("novelCreate.autoDirector.progress.description.chapterTitleWarning")
           : task?.status === "waiting_approval"
-            ? "当前导演流程已经停在审核点，你可以先检查产物，再决定是否继续自动推进。"
-            : "可离开当前页面，任务会继续运行，并且可以在任务中心恢复查看。"
+            ? t("novelCreate.autoDirector.progress.description.waitingApproval")
+            : t("novelCreate.autoDirector.progress.description.running")
     );
   const actions = [
     ...(visualMode === "execution_progress" && task?.status !== "waiting_approval" && !chapterTitleWarning
       ? [{
-        label: "后台继续",
+        label: t("novelCreate.autoDirector.progress.action.backgroundContinue"),
         onClick: onBackgroundContinue,
         variant: "outline" as const,
       }]
       : []),
     {
-      label: "去任务中心查看",
+      label: t("novelCreate.autoDirector.progress.action.openTaskCenter"),
       onClick: onOpenTaskCenter,
       variant: "default" as const,
     },
@@ -311,14 +339,14 @@ export default function NovelAutoDirectorProgressPanel({
       <AITakeoverContainer
         mode={containerMode}
         title={visualMode === "execution_failed"
-          ? (candidateSetupFlow ? "候选方案生成失败" : "导演执行失败")
+          ? (candidateSetupFlow ? t("novelCreate.autoDirector.progress.title.candidateFailed") : t("novelCreate.autoDirector.progress.title.executionFailed"))
           : candidateSetupFlow
-            ? "正在生成导演候选方案"
-            : `正在导演《${taskTitle}》`}
+            ? t("novelCreate.autoDirector.progress.title.candidateRunning")
+            : t("novelCreate.autoDirector.progress.title.executing", { value: taskTitle })}
         description={description}
         progress={task ? task.progress : null}
         currentAction={currentAction}
-        checkpointLabel={formatCheckpoint(task?.checkpointType, task)}
+        checkpointLabel={formatCheckpoint(task?.checkpointType, task, t)}
         taskId={taskId || task?.id}
         actions={actions}
       >
@@ -329,7 +357,7 @@ export default function NovelAutoDirectorProgressPanel({
                 <span className={`inline-flex h-7 w-7 items-center justify-center rounded-full text-xs font-semibold ${stepBadgeClasses(steps[index] ?? "pending")}`}>
                   {index + 1}
                 </span>
-                <span className="text-[11px] text-muted-foreground">{stepStatusLabel(steps[index] ?? "pending")}</span>
+                <span className="text-[11px] text-muted-foreground">{t(stepStatusLabel(steps[index] ?? "pending"))}</span>
               </div>
               <div className="mt-3 text-sm font-medium text-foreground">{step.label}</div>
             </div>
@@ -339,28 +367,32 @@ export default function NovelAutoDirectorProgressPanel({
         {tokenUsage ? (
           <div className="mt-4 grid gap-3 md:grid-cols-4">
             <div className="rounded-xl border bg-background/80 p-3">
-              <div className="text-xs text-muted-foreground">累计调用</div>
-              <div className="mt-1 text-sm font-medium text-foreground">{formatTokenCount(tokenUsage.llmCallCount)}</div>
+              <div className="text-xs text-muted-foreground">{t("novelCreate.autoDirector.progress.tokens.llmCallCount")}</div>
+              <div className="mt-1 text-sm font-medium text-foreground">{formatTokenCount(tokenUsage.llmCallCount, locale)}</div>
             </div>
             <div className="rounded-xl border bg-background/80 p-3">
-              <div className="text-xs text-muted-foreground">输入 Tokens</div>
-              <div className="mt-1 text-sm font-medium text-foreground">{formatTokenCount(tokenUsage.promptTokens)}</div>
+              <div className="text-xs text-muted-foreground">{t("novelCreate.autoDirector.progress.tokens.promptTokens")}</div>
+              <div className="mt-1 text-sm font-medium text-foreground">{formatTokenCount(tokenUsage.promptTokens, locale)}</div>
             </div>
             <div className="rounded-xl border bg-background/80 p-3">
-              <div className="text-xs text-muted-foreground">输出 Tokens</div>
-              <div className="mt-1 text-sm font-medium text-foreground">{formatTokenCount(tokenUsage.completionTokens)}</div>
+              <div className="text-xs text-muted-foreground">{t("novelCreate.autoDirector.progress.tokens.completionTokens")}</div>
+              <div className="mt-1 text-sm font-medium text-foreground">{formatTokenCount(tokenUsage.completionTokens, locale)}</div>
             </div>
             <div className="rounded-xl border bg-background/80 p-3">
-              <div className="text-xs text-muted-foreground">累计总 Tokens</div>
-              <div className="mt-1 text-sm font-medium text-foreground">{formatTokenCount(tokenUsage.totalTokens)}</div>
-              <div className="mt-1 text-[11px] text-muted-foreground">最近记录：{formatDate(tokenUsage.lastRecordedAt)}</div>
+              <div className="text-xs text-muted-foreground">{t("novelCreate.autoDirector.progress.tokens.totalTokens")}</div>
+              <div className="mt-1 text-sm font-medium text-foreground">{formatTokenCount(tokenUsage.totalTokens, locale)}</div>
+              <div className="mt-1 text-[11px] text-muted-foreground">
+                {t("novelCreate.autoDirector.progress.tokens.lastRecordedAt", {
+                  value: formatDate(tokenUsage.lastRecordedAt) || t("common.notAvailable"),
+                })}
+              </div>
             </div>
           </div>
         ) : null}
 
         {chapterTitleWarning ? (
           <div className="mt-4 rounded-xl border border-amber-300/60 bg-amber-50/80 p-4 text-sm text-amber-950">
-            <div className="font-medium">当前提醒</div>
+            <div className="font-medium">{t("novelCreate.autoDirector.progress.warning.title")}</div>
             <div className="mt-1">{chapterTitleWarning.summary}</div>
             <div className="mt-3 flex flex-wrap gap-2">
               {task && chapterTitleWarning ? (
@@ -373,7 +405,7 @@ export default function NovelAutoDirectorProgressPanel({
                   disabled={chapterTitleRepairMutation.isPending}
                 >
                   {chapterTitleRepairMutation.isPending && chapterTitleRepairMutation.pendingTaskId === task.id
-                    ? "AI 修复中..."
+                    ? t("novelCreate.autoDirector.progress.warning.repairing")
                     : chapterTitleWarning.label}
                 </Button>
               ) : null}
@@ -382,23 +414,23 @@ export default function NovelAutoDirectorProgressPanel({
                 variant="outline"
                 onClick={onOpenTaskCenter}
               >
-                去任务中心查看
+                {t("novelCreate.autoDirector.progress.action.openTaskCenter")}
               </Button>
             </div>
           </div>
         ) : visualMode === "execution_failed" ? (
           <div className="mt-4 rounded-xl border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive">
-            <div className="font-medium">失败摘要</div>
+            <div className="font-medium">{t("novelCreate.autoDirector.progress.failureSummary.title")}</div>
             <div className="mt-1">{failureMessage}</div>
             {task?.recoveryHint ? (
-              <div className="mt-2 text-xs text-destructive/80">恢复建议：{task.recoveryHint}</div>
+              <div className="mt-2 text-xs text-destructive/80">{t("novelCreate.autoDirector.progress.failureSummary.recoveryHint", { value: task.recoveryHint })}</div>
             ) : null}
           </div>
         ) : null}
       </AITakeoverContainer>
 
       <div className="rounded-xl border bg-background/70 p-4">
-        <div className="text-sm font-medium text-foreground">里程碑历史</div>
+        <div className="text-sm font-medium text-foreground">{t("novelCreate.autoDirector.progress.milestones.title")}</div>
         {milestones.length > 0 ? (
           <div className="mt-3 space-y-3">
             {milestones
@@ -406,15 +438,19 @@ export default function NovelAutoDirectorProgressPanel({
               .reverse()
               .map((item) => (
                 <div key={`${item.checkpointType}:${item.createdAt}`} className="rounded-lg border bg-muted/15 p-3">
-                  <div className="font-medium text-foreground">{formatCheckpoint(item.checkpointType, task)}</div>
+                  <div className="font-medium text-foreground">{formatCheckpoint(item.checkpointType, task, t)}</div>
                   <div className="mt-1 text-sm text-muted-foreground">{item.summary}</div>
-                  <div className="mt-1 text-xs text-muted-foreground">记录时间：{formatDate(item.createdAt)}</div>
+                  <div className="mt-1 text-xs text-muted-foreground">
+                    {t("novelCreate.autoDirector.progress.milestones.recordedAt", {
+                      value: formatDate(item.createdAt) || t("common.notAvailable"),
+                    })}
+                  </div>
                 </div>
               ))}
           </div>
         ) : (
           <div className="mt-3 text-sm text-muted-foreground">
-            任务已创建，正在等待第一个稳定里程碑写入。
+            {t("novelCreate.autoDirector.progress.milestones.empty")}
           </div>
         )}
       </div>

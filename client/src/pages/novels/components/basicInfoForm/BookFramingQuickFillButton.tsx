@@ -3,6 +3,7 @@ import { useMutation } from "@tanstack/react-query";
 import { formatCommercialTagsInput, type NovelBasicFormState } from "../../novelBasicInfo.shared";
 import { suggestBookFraming } from "@/api/novelFraming";
 import AiButton from "@/components/common/AiButton";
+import { useI18n } from "@/i18n";
 import { toast } from "@/components/ui/toast";
 import { useLLMStore } from "@/store/llmStore";
 
@@ -32,6 +33,7 @@ function hasExistingFramingContent(basicForm: NovelBasicFormState): boolean {
 export function BookFramingQuickFillButton(props: BookFramingQuickFillButtonProps) {
   const { basicForm, genreOptions, onApplySuggestion, descriptionOverride } = props;
   const llm = useLLMStore();
+  const { t } = useI18n();
   const effectiveDescription = basicForm.description.trim() || descriptionOverride?.trim() || "";
   const selectedGenreLabel = useMemo(
     () => genreOptions.find((item) => item.id === basicForm.genreId)?.path
@@ -53,7 +55,7 @@ export function BookFramingQuickFillButton(props: BookFramingQuickFillButtonProp
     onSuccess: (response) => {
       const suggestion = response.data;
       if (!suggestion) {
-        toast.error("AI 没有返回可用的书级 framing 建议。");
+        toast.error(t("novelCreate.quickFill.framing.noSuggestion"));
         return;
       }
       onApplySuggestion({
@@ -63,20 +65,20 @@ export function BookFramingQuickFillButton(props: BookFramingQuickFillButtonProp
         bookSellingPoint: suggestion.bookSellingPoint,
         first30ChapterPromise: suggestion.first30ChapterPromise,
       });
-      toast.success("已根据当前书名和概述填入书级 framing 建议。");
+      toast.success(t("novelCreate.quickFill.framing.success"));
     },
     onError: (error) => {
-      toast.error(error instanceof Error ? error.message : "书级 framing 自动填写失败，请稍后再试。");
+      toast.error(error instanceof Error ? error.message : t("novelCreate.quickFill.framing.failure"));
     },
   });
 
   const handleGenerate = () => {
     if (!basicForm.title.trim() && !effectiveDescription) {
-      toast.error("请先填写书名或一句话概述，再让 AI 帮你填写。");
+      toast.error(t("novelCreate.quickFill.framing.missingContext"));
       return;
     }
     if (hasExistingFramingContent(basicForm)) {
-      const confirmed = window.confirm("将用 AI 建议覆盖当前书级 framing 填写，是否继续？");
+      const confirmed = window.confirm(t("novelCreate.quickFill.framing.confirmOverwrite"));
       if (!confirmed) {
         return;
       }
@@ -92,7 +94,7 @@ export function BookFramingQuickFillButton(props: BookFramingQuickFillButtonProp
       onClick={handleGenerate}
       disabled={suggestionMutation.isPending}
     >
-      {suggestionMutation.isPending ? "填写中..." : "帮我填写"}
+      {suggestionMutation.isPending ? t("novelCreate.quickFill.framing.loading") : t("novelCreate.quickFill.framing.action")}
     </AiButton>
   );
 }

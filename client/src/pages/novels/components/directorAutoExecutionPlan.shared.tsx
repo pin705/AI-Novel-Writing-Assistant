@@ -3,6 +3,7 @@ import type {
   DirectorAutoExecutionPlan,
 } from "@ai-novel/shared/types/novelDirector";
 import { Input } from "@/components/ui/input";
+import { useI18n, type TranslateFn } from "@/i18n";
 
 export interface DirectorAutoExecutionDraftState {
   mode: DirectorAutoExecutionMode;
@@ -18,27 +19,29 @@ const DEFAULT_DIRECTOR_AUTO_EXECUTION_DRAFT: DirectorAutoExecutionDraftState = {
   volumeOrder: "1",
 };
 
-const AUTO_EXECUTION_SCOPE_OPTIONS: Array<{
+function getAutoExecutionScopeOptions(t: TranslateFn): Array<{
   value: DirectorAutoExecutionMode;
   label: string;
   description: string;
-}> = [
-  {
-    value: "front10",
-    label: "默认前 10 章",
-    description: "适合新书起盘，AI 会直接把前 10 章写作、审校和修复跑完。",
-  },
-  {
-    value: "chapter_range",
-    label: "指定章节范围",
-    description: "适合你只想让 AI 接手某一段，比如第 11-20 章。",
-  },
-  {
-    value: "volume",
-    label: "按卷执行",
-    description: "适合你想让 AI 一口气接管某一卷的章节批次。",
-  },
-];
+}> {
+  return [
+    {
+      value: "front10",
+      label: t("novelCreate.autoDirector.autoExecution.option.front10.label"),
+      description: t("novelCreate.autoDirector.autoExecution.option.front10.description"),
+    },
+    {
+      value: "chapter_range",
+      label: t("novelCreate.autoDirector.autoExecution.option.chapterRange.label"),
+      description: t("novelCreate.autoDirector.autoExecution.option.chapterRange.description"),
+    },
+    {
+      value: "volume",
+      label: t("novelCreate.autoDirector.autoExecution.option.volume.label"),
+      description: t("novelCreate.autoDirector.autoExecution.option.volume.description"),
+    },
+  ];
+}
 
 function normalizePositiveInteger(value: string | number | undefined, fallback: number): number {
   const numericValue = typeof value === "number" ? value : Number.parseInt(value ?? "", 10);
@@ -101,19 +104,27 @@ export function buildDirectorAutoExecutionPlanFromDraft(
 
 export function buildDirectorAutoExecutionPlanLabel(
   plan: DirectorAutoExecutionPlan | null | undefined,
+  t?: TranslateFn,
 ): string {
   if (plan?.mode === "chapter_range") {
     const startOrder = normalizePositiveInteger(plan.startOrder, 1);
     const endOrder = Math.max(startOrder, normalizePositiveInteger(plan.endOrder, startOrder));
     if (startOrder === endOrder) {
-      return `第 ${startOrder} 章`;
+      return t
+        ? t("novelCreate.autoDirector.autoExecution.scope.singleChapter", { start: startOrder })
+        : `第 ${startOrder} 章`;
     }
-    return `第 ${startOrder}-${endOrder} 章`;
+    return t
+      ? t("novelCreate.autoDirector.autoExecution.scope.chapterRange", { start: startOrder, end: endOrder })
+      : `第 ${startOrder}-${endOrder} 章`;
   }
   if (plan?.mode === "volume") {
-    return `第 ${normalizePositiveInteger(plan.volumeOrder, 1)} 卷`;
+    const volume = normalizePositiveInteger(plan.volumeOrder, 1);
+    return t
+      ? t("novelCreate.autoDirector.autoExecution.scope.volume", { value: volume })
+      : `第 ${volume} 卷`;
   }
-  return "前 10 章";
+  return t ? t("novelCreate.autoDirector.autoExecution.scope.front10") : "前 10 章";
 }
 
 interface DirectorAutoExecutionPlanFieldsProps {
@@ -125,18 +136,20 @@ export function DirectorAutoExecutionPlanFields({
   draft,
   onChange,
 }: DirectorAutoExecutionPlanFieldsProps) {
+  const { t } = useI18n();
   const plan = buildDirectorAutoExecutionPlanFromDraft(draft);
-  const scopeLabel = buildDirectorAutoExecutionPlanLabel(plan);
+  const scopeLabel = buildDirectorAutoExecutionPlanLabel(plan, t);
+  const scopeOptions = getAutoExecutionScopeOptions(t);
 
   return (
     <div className="mt-3 rounded-md border border-primary/15 bg-primary/5 p-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <div className="text-xs font-medium text-foreground">自动执行范围</div>
-        <div className="text-xs text-muted-foreground">当前将执行：{scopeLabel}</div>
+        <div className="text-xs font-medium text-foreground">{t("novelCreate.autoDirector.autoExecution.title")}</div>
+        <div className="text-xs text-muted-foreground">{t("novelCreate.autoDirector.autoExecution.current", { value: scopeLabel })}</div>
       </div>
 
       <div className="mt-3 grid gap-3 md:grid-cols-3">
-        {AUTO_EXECUTION_SCOPE_OPTIONS.map((option) => {
+        {scopeOptions.map((option) => {
           const active = option.value === draft.mode;
           return (
             <button
@@ -159,25 +172,25 @@ export function DirectorAutoExecutionPlanFields({
       {draft.mode === "chapter_range" ? (
         <div className="mt-4 grid gap-3 md:grid-cols-2">
           <div>
-            <div className="text-xs font-medium text-foreground">起始章节</div>
+            <div className="text-xs font-medium text-foreground">{t("novelCreate.autoDirector.autoExecution.startChapter.label")}</div>
             <Input
               className="mt-2"
               type="number"
               min={1}
               value={draft.startOrder}
               onChange={(event) => onChange({ startOrder: event.target.value })}
-              placeholder="例如 11"
+              placeholder={t("novelCreate.autoDirector.autoExecution.startChapter.placeholder")}
             />
           </div>
           <div>
-            <div className="text-xs font-medium text-foreground">结束章节</div>
+            <div className="text-xs font-medium text-foreground">{t("novelCreate.autoDirector.autoExecution.endChapter.label")}</div>
             <Input
               className="mt-2"
               type="number"
               min={1}
               value={draft.endOrder}
               onChange={(event) => onChange({ endOrder: event.target.value })}
-              placeholder="例如 20"
+              placeholder={t("novelCreate.autoDirector.autoExecution.endChapter.placeholder")}
             />
           </div>
         </div>
@@ -185,20 +198,20 @@ export function DirectorAutoExecutionPlanFields({
 
       {draft.mode === "volume" ? (
         <div className="mt-4 max-w-xs">
-          <div className="text-xs font-medium text-foreground">卷序号</div>
+          <div className="text-xs font-medium text-foreground">{t("novelCreate.autoDirector.autoExecution.volumeOrder.label")}</div>
           <Input
             className="mt-2"
             type="number"
             min={1}
             value={draft.volumeOrder}
             onChange={(event) => onChange({ volumeOrder: event.target.value })}
-            placeholder="例如 2"
+            placeholder={t("novelCreate.autoDirector.autoExecution.volumeOrder.placeholder")}
           />
         </div>
       ) : null}
 
       <div className="mt-3 text-xs leading-5 text-muted-foreground">
-        系统会按你选定的章节范围或卷，自动准备节奏板、拆章和章节执行资源，再继续写作、审校与修复。
+        {t("novelCreate.autoDirector.autoExecution.helper")}
       </div>
     </div>
   );

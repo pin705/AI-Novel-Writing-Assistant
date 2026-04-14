@@ -5,6 +5,7 @@ import {
   type DirectorCandidateBatch,
   type DirectorCorrectionPreset,
 } from "@ai-novel/shared/types/novelDirector";
+import { useI18n, type TranslateFn } from "@/i18n";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -30,34 +31,45 @@ interface NovelAutoDirectorCandidateBatchesProps {
   onGenerateNext: () => void;
 }
 
-function buildFallbackTitleOption(candidate: DirectorCandidate): TitleFactorySuggestion {
+function buildFallbackTitleOption(candidate: DirectorCandidate, t: TranslateFn): TitleFactorySuggestion {
   return {
     title: candidate.workingTitle,
     clickRate: 60,
     style: "high_concept",
-    angle: "当前方案书名",
-    reason: "当前沿用导演候选方案的书名。",
+    angle: t("novelCreate.autoDirector.candidates.fallbackTitle.angle"),
+    reason: t("novelCreate.autoDirector.candidates.fallbackTitle.reason"),
   };
 }
 
-function resolveCandidateTitleOptions(candidate: DirectorCandidate): TitleFactorySuggestion[] {
+function resolveCandidateTitleOptions(candidate: DirectorCandidate, t: TranslateFn): TitleFactorySuggestion[] {
   if (Array.isArray(candidate.titleOptions) && candidate.titleOptions.length > 0) {
     return candidate.titleOptions;
   }
-  return [buildFallbackTitleOption(candidate)];
+  return [buildFallbackTitleOption(candidate, t)];
 }
 
-function renderCandidateDetails(candidate: DirectorCandidate) {
+function renderCandidateDetails(candidate: DirectorCandidate, t: TranslateFn) {
   return [
-    { label: "作品定位", value: candidate.positioning },
-    { label: "核心卖点", value: candidate.sellingPoint },
-    { label: "主线冲突", value: candidate.coreConflict },
-    { label: "主角路径", value: candidate.protagonistPath },
-    { label: "主钩子", value: candidate.hookStrategy },
-    { label: "推进循环", value: candidate.progressionLoop },
-    { label: "结局方向", value: candidate.endingDirection },
-    { label: "章节规模", value: `约 ${candidate.targetChapterCount} 章` },
+    { label: t("novelCreate.autoDirector.candidates.detail.positioning"), value: candidate.positioning },
+    { label: t("novelCreate.autoDirector.candidates.detail.sellingPoint"), value: candidate.sellingPoint },
+    { label: t("novelCreate.autoDirector.candidates.detail.coreConflict"), value: candidate.coreConflict },
+    { label: t("novelCreate.autoDirector.candidates.detail.protagonistPath"), value: candidate.protagonistPath },
+    { label: t("novelCreate.autoDirector.candidates.detail.hookStrategy"), value: candidate.hookStrategy },
+    { label: t("novelCreate.autoDirector.candidates.detail.progressionLoop"), value: candidate.progressionLoop },
+    { label: t("novelCreate.autoDirector.candidates.detail.endingDirection"), value: candidate.endingDirection },
+    { label: t("novelCreate.autoDirector.candidates.detail.targetChapterCount"), value: t("novelCreate.autoDirector.candidates.detail.targetChapterCountValue", { value: candidate.targetChapterCount }) },
   ];
+}
+
+function getPresetLabel(preset: DirectorCorrectionPreset, t: TranslateFn): string {
+  const keyByValue = {
+    more_hooky: "novelCreate.autoDirector.candidates.preset.moreHooky",
+    stronger_conflict: "novelCreate.autoDirector.candidates.preset.strongerConflict",
+    sharper_protagonist: "novelCreate.autoDirector.candidates.preset.sharperProtagonist",
+    more_grounded: "novelCreate.autoDirector.candidates.preset.moreGrounded",
+    lighter_ending: "novelCreate.autoDirector.candidates.preset.lighterEnding",
+  } as const satisfies Record<DirectorCorrectionPreset, Parameters<TranslateFn>[0]>;
+  return t(keyByValue[preset]);
 }
 
 export default function NovelAutoDirectorCandidateBatches(props: NovelAutoDirectorCandidateBatchesProps) {
@@ -81,11 +93,12 @@ export default function NovelAutoDirectorCandidateBatches(props: NovelAutoDirect
     onConfirmCandidate,
     onGenerateNext,
   } = props;
+  const { t } = useI18n();
 
   if (batches.length === 0) {
     return (
       <div className="rounded-xl border border-dashed p-8 text-center text-sm text-muted-foreground">
-        先给 AI 一句灵感，它会先产出第一批整本书方向候选。
+        {t("novelCreate.autoDirector.candidates.empty")}
       </div>
     );
   }
@@ -98,27 +111,27 @@ export default function NovelAutoDirectorCandidateBatches(props: NovelAutoDirect
             <div>
               <div className="text-base font-semibold text-foreground">{batch.roundLabel}</div>
               <div className="text-sm text-muted-foreground">
-                {batch.refinementSummary?.trim() || "初始方案"}
+                {batch.refinementSummary?.trim() || t("novelCreate.autoDirector.candidates.initialBatch")}
               </div>
             </div>
             <div className="flex flex-wrap gap-2">
               {batch.presets.map((preset) => {
                 const meta = DIRECTOR_CORRECTION_PRESETS.find((item) => item.value === preset);
-                return meta ? <Badge key={preset} variant="outline">{meta.label}</Badge> : null;
+                return meta ? <Badge key={preset} variant="outline">{getPresetLabel(meta.value, t)}</Badge> : null;
               })}
             </div>
           </div>
 
           <div className="mt-4 grid gap-4 xl:grid-cols-2">
             {batch.candidates.map((candidate) => {
-              const titleOptions = resolveCandidateTitleOptions(candidate);
+              const titleOptions = resolveCandidateTitleOptions(candidate, t);
               return (
                 <article key={candidate.id} className="rounded-xl border bg-background p-4 shadow-sm">
                   <div className="space-y-2">
                     <div className="text-lg font-semibold text-foreground">{candidate.workingTitle}</div>
                     <div className="text-sm leading-6 text-muted-foreground">{candidate.logline}</div>
                     <div className="rounded-md border bg-muted/20 p-3">
-                      <div className="text-sm font-medium text-foreground">书名候选</div>
+                      <div className="text-sm font-medium text-foreground">{t("novelCreate.autoDirector.candidates.titleOptions.title")}</div>
                       <div className="mt-2 flex flex-wrap gap-2">
                         {titleOptions.map((option) => {
                           const active = option.title === candidate.workingTitle;
@@ -134,24 +147,24 @@ export default function NovelAutoDirectorCandidateBatches(props: NovelAutoDirect
                               onClick={() => onApplyCandidateTitleOption(batch.id, candidate.id, option)}
                             >
                               <span className="font-medium">{option.title}</span>
-                              <span className="ml-2 text-muted-foreground">预估 {option.clickRate}</span>
+                              <span className="ml-2 text-muted-foreground">{t("novelCreate.autoDirector.candidates.titleOptions.clickRate", { value: option.clickRate })}</span>
                             </button>
                           );
                         })}
                       </div>
                       <div className="mt-2 text-xs leading-5 text-muted-foreground">
-                        {titleOptions[0]?.reason?.trim() || "书名由标题工坊增强生成，你可以在这里切换当前方案名。"}
+                        {titleOptions[0]?.reason?.trim() || t("novelCreate.autoDirector.candidates.titleOptions.description")}
                       </div>
                       <div className="mt-3 border-t pt-3">
-                        <div className="text-xs font-medium text-foreground">AI 修正这组书名</div>
+                        <div className="text-xs font-medium text-foreground">{t("novelCreate.autoDirector.candidates.refineTitles.title")}</div>
                         <div className="mt-1 text-xs leading-5 text-muted-foreground">
-                          适合“这组标题太土 / 太老派 / 不够都市 / 不够悬疑”这种定向修正。
+                          {t("novelCreate.autoDirector.candidates.refineTitles.description")}
                         </div>
                         <Input
                           className="mt-2"
                           value={titlePatchFeedbacks[candidate.id] ?? ""}
                           onChange={(event) => onTitlePatchFeedbackChange(candidate.id, event.target.value)}
-                          placeholder="例如：当前这组太土气了，想更偏都市冷感一点，别像旧式升级文。"
+                          placeholder={t("novelCreate.autoDirector.candidates.refineTitles.placeholder")}
                         />
                         <div className="mt-2 flex justify-end">
                           <Button
@@ -161,17 +174,17 @@ export default function NovelAutoDirectorCandidateBatches(props: NovelAutoDirect
                             disabled={isRefiningTitle || !titlePatchFeedbacks[candidate.id]?.trim()}
                             onClick={() => onRefineTitle(batch.id, candidate, titlePatchFeedbacks[candidate.id] ?? "")}
                           >
-                            {isRefiningTitle ? "重做中..." : "AI 重做标题组"}
+                            {isRefiningTitle ? t("novelCreate.autoDirector.candidates.refineTitles.loading") : t("novelCreate.autoDirector.candidates.refineTitles.action")}
                           </Button>
                         </div>
                       </div>
                     </div>
                     <div className="rounded-md bg-muted/30 p-3 text-sm leading-6 text-foreground">
-                      <div className="font-medium">为什么推荐这套</div>
+                      <div className="font-medium">{t("novelCreate.autoDirector.candidates.whyFit.title")}</div>
                       <div className="mt-1 text-muted-foreground">{candidate.whyItFits}</div>
                     </div>
                     <div className="grid gap-2 text-sm">
-                      {renderCandidateDetails(candidate).map((item) => (
+                      {renderCandidateDetails(candidate, t).map((item) => (
                         <div key={item.label}>
                           <span className="font-medium text-foreground">{item.label}：</span>
                           <span className="text-muted-foreground">{item.value}</span>
@@ -184,15 +197,15 @@ export default function NovelAutoDirectorCandidateBatches(props: NovelAutoDirect
                       ))}
                     </div>
                     <div className="rounded-md border border-dashed p-3">
-                      <div className="text-sm font-medium text-foreground">AI 微调这套方案</div>
+                      <div className="text-sm font-medium text-foreground">{t("novelCreate.autoDirector.candidates.patchCandidate.title")}</div>
                       <div className="mt-1 text-xs leading-5 text-muted-foreground">
-                        适合“我就偏向这套，但还有点偏差”的情况。AI 会保留这套主方向，只定向修正不对味的部分。
+                        {t("novelCreate.autoDirector.candidates.patchCandidate.description")}
                       </div>
                       <Input
                         className="mt-3"
                         value={candidatePatchFeedbacks[candidate.id] ?? ""}
                         onChange={(event) => onCandidatePatchFeedbackChange(candidate.id, event.target.value)}
-                        placeholder="例如：保留这套，但更偏都市异能，主角更主动一点，别太像传统热血升级。"
+                        placeholder={t("novelCreate.autoDirector.candidates.patchCandidate.placeholder")}
                       />
                       <div className="mt-2 flex justify-end">
                         <Button
@@ -202,7 +215,7 @@ export default function NovelAutoDirectorCandidateBatches(props: NovelAutoDirect
                           disabled={isPatchingCandidate || !candidatePatchFeedbacks[candidate.id]?.trim()}
                           onClick={() => onPatchCandidate(batch.id, candidate, candidatePatchFeedbacks[candidate.id] ?? "")}
                         >
-                          {isPatchingCandidate ? "修正中..." : "AI 修这套方案"}
+                          {isPatchingCandidate ? t("novelCreate.autoDirector.candidates.patchCandidate.loading") : t("novelCreate.autoDirector.candidates.patchCandidate.action")}
                         </Button>
                       </div>
                     </div>
@@ -214,7 +227,7 @@ export default function NovelAutoDirectorCandidateBatches(props: NovelAutoDirect
                       onClick={() => void onConfirmCandidate(candidate)}
                       disabled={isConfirming}
                     >
-                      {isConfirming ? "正在进入导演流程..." : "选用这套并创建项目"}
+                      {isConfirming ? t("novelCreate.autoDirector.candidates.confirm.loading") : t("novelCreate.autoDirector.candidates.confirm.action")}
                     </Button>
                   </div>
                 </article>
@@ -225,9 +238,9 @@ export default function NovelAutoDirectorCandidateBatches(props: NovelAutoDirect
       ))}
 
       <section className="rounded-xl border border-dashed p-4">
-        <div className="text-base font-semibold text-foreground">继续修正并生成下一轮</div>
+        <div className="text-base font-semibold text-foreground">{t("novelCreate.autoDirector.candidates.nextRound.title")}</div>
         <div className="mt-1 text-sm text-muted-foreground">
-          如果这几套还不够对味，可以点几个方向，再补一句你真正想要的感觉。系统会保留上一轮，再给你一轮新的方案。
+          {t("novelCreate.autoDirector.candidates.nextRound.description")}
         </div>
 
         <div className="mt-4 flex flex-wrap gap-2">
@@ -244,7 +257,7 @@ export default function NovelAutoDirectorCandidateBatches(props: NovelAutoDirect
                 }`}
                 onClick={() => onTogglePreset(preset.value)}
               >
-                {preset.label}
+                {getPresetLabel(preset.value, t)}
               </button>
             );
           })}
@@ -252,13 +265,13 @@ export default function NovelAutoDirectorCandidateBatches(props: NovelAutoDirect
 
         <div className="mt-4 space-y-2">
           <label htmlFor="director-refine-feedback" className="text-sm font-medium text-foreground">
-            再补一句修正建议
+            {t("novelCreate.autoDirector.candidates.nextRound.feedbackLabel")}
           </label>
           <Input
             id="director-refine-feedback"
             value={feedback}
             onChange={(event) => onFeedbackChange(event.target.value)}
-            placeholder="例如：我想要女频成长感更强一点，别太像纯爱文，也不要太黑。"
+            placeholder={t("novelCreate.autoDirector.candidates.nextRound.feedbackPlaceholder")}
           />
         </div>
 
@@ -269,7 +282,7 @@ export default function NovelAutoDirectorCandidateBatches(props: NovelAutoDirect
             onClick={onGenerateNext}
             disabled={isGenerating}
           >
-            {isGenerating ? "生成中..." : "带修正建议继续生成"}
+            {isGenerating ? t("novelCreate.autoDirector.candidates.nextRound.loading") : t("novelCreate.autoDirector.candidates.nextRound.action")}
           </Button>
         </div>
       </section>

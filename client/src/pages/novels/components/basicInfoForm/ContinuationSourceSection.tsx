@@ -1,7 +1,8 @@
 import type { BookAnalysisSectionKey } from "@ai-novel/shared/types/bookAnalysis";
 import { Button } from "@/components/ui/button";
+import { useI18n } from "@/i18n";
 import {
-  BASIC_INFO_FIELD_HINTS,
+  buildNovelBasicInfoI18n,
   type NovelBasicFormState,
 } from "../../novelBasicInfo.shared";
 import {
@@ -38,20 +39,22 @@ export function ContinuationSourceSection(props: ContinuationSourceSectionProps)
     hasSelectedContinuationSource,
     onFormChange,
   } = props;
+  const { t } = useI18n();
+  const { fieldHints } = buildNovelBasicInfoI18n(t);
 
   return (
     <SectionBlock
-      title="续写来源"
-      description="续写模式下，需要明确引用的上游小说或知识文档，并决定是否注入拆书结果。"
+      title={t("novelCreate.continuation.title")}
+      description={t("novelCreate.continuation.description")}
     >
       <div className="space-y-2">
-        <FieldLabel hint={BASIC_INFO_FIELD_HINTS.continuationSourceType}>续写来源类型</FieldLabel>
+        <FieldLabel hint={fieldHints.continuationSourceType}>{t("novelCreate.continuation.sourceType.label")}</FieldLabel>
         <div className="grid gap-3 md:grid-cols-2">
           <SelectionCard
             option={{
               value: "novel",
-              label: "站内小说",
-              summary: "适合基于当前系统里的既有小说继续创作。",
+              label: t("novelCreate.continuation.sourceType.novel.label"),
+              summary: t("novelCreate.continuation.sourceType.novel.summary"),
             }}
             selected={basicForm.continuationSourceType === "novel"}
             onSelect={(value) => onFormChange({ continuationSourceType: value })}
@@ -59,8 +62,8 @@ export function ContinuationSourceSection(props: ContinuationSourceSectionProps)
           <SelectionCard
             option={{
               value: "knowledge_document",
-              label: "知识库文档",
-              summary: "适合基于外部导入的原著、设定集或拆书文档继续创作。",
+              label: t("novelCreate.continuation.sourceType.knowledge.label"),
+              summary: t("novelCreate.continuation.sourceType.knowledge.summary"),
             }}
             selected={basicForm.continuationSourceType === "knowledge_document"}
             onSelect={(value) => onFormChange({ continuationSourceType: value })}
@@ -70,14 +73,14 @@ export function ContinuationSourceSection(props: ContinuationSourceSectionProps)
 
       {basicForm.continuationSourceType === "novel" ? (
         <div className="space-y-2">
-          <FieldLabel htmlFor="basic-source-novel">前作小说</FieldLabel>
+          <FieldLabel htmlFor="basic-source-novel">{t("novelCreate.continuation.sourceNovel.label")}</FieldLabel>
           <select
             id="basic-source-novel"
             className="w-full rounded-md border bg-background p-2 text-sm"
             value={basicForm.sourceNovelId}
             onChange={(event) => onFormChange({ sourceNovelId: event.target.value })}
           >
-            <option value="">请选择前作小说</option>
+            <option value="">{t("novelCreate.continuation.sourceNovel.placeholder")}</option>
             {sourceNovelOptions.map((novel) => (
               <option key={novel.id} value={novel.id}>{novel.title}</option>
             ))}
@@ -85,14 +88,14 @@ export function ContinuationSourceSection(props: ContinuationSourceSectionProps)
         </div>
       ) : (
         <div className="space-y-2">
-          <FieldLabel htmlFor="basic-source-knowledge">知识库文档</FieldLabel>
+          <FieldLabel htmlFor="basic-source-knowledge">{t("novelCreate.continuation.sourceKnowledge.label")}</FieldLabel>
           <select
             id="basic-source-knowledge"
             className="w-full rounded-md border bg-background p-2 text-sm"
             value={basicForm.sourceKnowledgeDocumentId}
             onChange={(event) => onFormChange({ sourceKnowledgeDocumentId: event.target.value })}
           >
-            <option value="">请选择知识库文档</option>
+            <option value="">{t("novelCreate.continuation.sourceKnowledge.placeholder")}</option>
             {sourceKnowledgeOptions.map((doc) => (
               <option key={doc.id} value={doc.id}>{doc.title}</option>
             ))}
@@ -104,14 +107,14 @@ export function ContinuationSourceSection(props: ContinuationSourceSectionProps)
         <div className="space-y-3 rounded-lg border border-border/60 bg-background p-3">
           <div className="space-y-1">
             <div className="flex items-center gap-2 text-sm font-medium text-foreground">
-              拆书引用
-              <HelpHint text={BASIC_INFO_FIELD_HINTS.continuationBookAnalysis} />
+              {t("novelCreate.continuation.bookAnalysis.referenceTitle")}
+              <HelpHint text={fieldHints.continuationBookAnalysis} />
             </div>
-            <div className="text-xs text-muted-foreground">拆书结果会作为高权重结构化上下文注入后续规划和章节生成。</div>
+            <div className="text-xs text-muted-foreground">{t("novelCreate.continuation.bookAnalysis.referenceDescription")}</div>
           </div>
 
           <div className="space-y-2">
-            <FieldLabel htmlFor="basic-book-analysis">拆书结果</FieldLabel>
+            <FieldLabel htmlFor="basic-book-analysis">{t("novelCreate.continuation.bookAnalysis.label")}</FieldLabel>
             <select
               id="basic-book-analysis"
               className="w-full rounded-md border bg-background p-2 text-sm"
@@ -130,7 +133,7 @@ export function ContinuationSourceSection(props: ContinuationSourceSectionProps)
                 });
               }}
             >
-              <option value="">不引用拆书</option>
+              <option value="">{t("novelCreate.continuation.bookAnalysis.none")}</option>
               {sourceNovelBookAnalysisOptions.map((analysis) => (
                 <option key={analysis.id} value={analysis.id}>
                   {analysis.title} | {analysis.documentTitle} v{analysis.documentVersionNumber}
@@ -140,18 +143,18 @@ export function ContinuationSourceSection(props: ContinuationSourceSectionProps)
           </div>
 
           {isLoadingSourceNovelBookAnalyses ? (
-            <div className="text-xs text-muted-foreground">正在加载当前来源可用的拆书结果...</div>
+            <div className="text-xs text-muted-foreground">{t("novelCreate.continuation.bookAnalysis.loading")}</div>
           ) : null}
           {!isLoadingSourceNovelBookAnalyses && sourceNovelBookAnalysisOptions.length === 0 ? (
             <div className="text-xs text-muted-foreground">
-              当前续写来源暂无可用拆书结果，需要先完成成功的拆书分析。
+              {t("novelCreate.continuation.bookAnalysis.empty")}
             </div>
           ) : null}
 
           {basicForm.continuationBookAnalysisId ? (
             <div className="space-y-2">
               <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-                <span>选择要注入生成上下文的拆书章节：</span>
+                <span>{t("novelCreate.continuation.bookAnalysis.sectionsLabel")}</span>
                 <Button
                   size="sm"
                   variant="outline"
@@ -160,7 +163,7 @@ export function ContinuationSourceSection(props: ContinuationSourceSectionProps)
                     continuationBookAnalysisSections: availableBookAnalysisSections.map((item) => item.key),
                   })}
                 >
-                  全选
+                  {t("novelCreate.continuation.bookAnalysis.selectAll")}
                 </Button>
                 <Button
                   size="sm"
@@ -168,7 +171,7 @@ export function ContinuationSourceSection(props: ContinuationSourceSectionProps)
                   type="button"
                   onClick={() => onFormChange({ continuationBookAnalysisSections: [] })}
                 >
-                  清空
+                  {t("novelCreate.continuation.bookAnalysis.clear")}
                 </Button>
               </div>
               <div className="grid gap-2 sm:grid-cols-2">
