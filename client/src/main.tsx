@@ -5,6 +5,7 @@ import { BrowserRouter } from "react-router-dom";
 import "highlight.js/styles/github.css";
 import AppRouter from "./router";
 import { Toaster } from "./components/ui/toast";
+import { I18nProvider } from "./i18n";
 import "./index.css";
 
 const queryClient = new QueryClient({
@@ -19,10 +20,12 @@ const queryClient = new QueryClient({
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <AppRouter />
-        <Toaster />
-      </BrowserRouter>
+      <I18nProvider>
+        <BrowserRouter>
+          <AppRouter />
+          <Toaster />
+        </BrowserRouter>
+      </I18nProvider>
     </QueryClientProvider>
   </React.StrictMode>,
 );

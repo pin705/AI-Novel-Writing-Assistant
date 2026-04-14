@@ -23,6 +23,7 @@ import {
   requiresCandidateSelection,
 } from "@/lib/novelWorkflowTaskUi";
 import { toast } from "@/components/ui/toast";
+import { useI18n } from "@/i18n";
 
 const HOME_NOVEL_FETCH_LIMIT = 100;
 const HOME_RECENT_LIMIT = 6;
@@ -31,15 +32,15 @@ const MANUAL_CREATE_LINK = "/novels/create";
 
 type HomeNovelItem = NovelListResponse["items"][number];
 
-function formatDate(value: string | undefined): string {
+function formatDate(value: string | undefined, locale: string, fallback: string): string {
   if (!value) {
-    return "暂无";
+    return fallback;
   }
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) {
-    return "暂无";
+    return fallback;
   }
-  return date.toLocaleString();
+  return date.toLocaleString(locale);
 }
 
 function getNovelPriorityScore(novel: HomeNovelItem): number {
@@ -100,6 +101,7 @@ function MetricCard(props: {
 export default function Home() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { locale, t } = useI18n();
 
   const taskQuery = useQuery({
     queryKey: queryKeys.tasks.list("home"),
@@ -260,12 +262,12 @@ export default function Home() {
       return (
         <Button asChild size={size}>
           <Link
-            to={`/novels/${novel.id}/edit`}
-            onClick={stopPropagation ? stopCardClick : undefined}
-          >
-            进入章节执行
-          </Link>
-        </Button>
+          to={`/novels/${novel.id}/edit`}
+          onClick={stopPropagation ? stopCardClick : undefined}
+        >
+          {t("common.enterChapterExecution")}
+        </Link>
+      </Button>
       );
     }
 
@@ -273,12 +275,12 @@ export default function Home() {
       return (
         <Button asChild size={size}>
           <Link
-            to={getTaskCenterLink(task.id)}
-            onClick={stopPropagation ? stopCardClick : undefined}
-          >
-            查看任务
-          </Link>
-        </Button>
+          to={getTaskCenterLink(task.id)}
+          onClick={stopPropagation ? stopCardClick : undefined}
+        >
+          {t("common.viewTask")}
+        </Link>
+      </Button>
       );
     }
 
@@ -288,7 +290,7 @@ export default function Home() {
           to={`/novels/${novel.id}/edit`}
           onClick={stopPropagation ? stopCardClick : undefined}
         >
-          编辑小说
+          {t("common.editNovel")}
         </Link>
       </Button>
     );
@@ -298,27 +300,27 @@ export default function Home() {
     <div className="space-y-4">
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <MetricCard
-          title="自动推进中"
+          title={t("home.metrics.live.title")}
           value={liveWorkflowCount}
-          hint="当前仍在后台推进中的自动导演或自动执行项目。"
+          hint={t("home.metrics.live.hint")}
           pending={novelQuery.isPending}
         />
         <MetricCard
-          title="待你处理"
+          title={t("home.metrics.action.title")}
           value={actionRequiredCount}
-          hint="等待审核、失败或已取消后需要你决定下一步的项目。"
+          hint={t("home.metrics.action.hint")}
           pending={novelQuery.isPending}
         />
         <MetricCard
-          title="可进入章节执行"
+          title={t("home.metrics.ready.title")}
           value={readyForExecutionCount}
-          hint="已经准备到可开写阶段，可以直接进入章节写作。"
+          hint={t("home.metrics.ready.hint")}
           pending={novelQuery.isPending}
         />
         <MetricCard
-          title="后台失败任务"
+          title={t("home.metrics.failed.title")}
           value={failedTaskCount}
-          hint="来自任务中心的失败任务总数，可后续集中处理。"
+          hint={t("home.metrics.failed.hint")}
           pending={taskQuery.isPending}
         />
       </div>
@@ -326,27 +328,27 @@ export default function Home() {
       <Card className="border-primary/30 bg-gradient-to-br from-primary/10 via-background to-primary/5 shadow-sm">
         <CardHeader>
           <div className="flex flex-wrap items-center gap-2">
-            <Badge>新手推荐</Badge>
-            <Badge variant="outline">低门槛开书</Badge>
+            <Badge>{t("home.beginner")}</Badge>
+            <Badge variant="outline">{t("home.lowBarrier")}</Badge>
           </div>
           <CardTitle>
-            {hasNovels ? "想快速开启下一本书？先交给 AI 自动导演。" : "第一次使用？先让 AI 自动导演带你开一本书。"}
+            {hasNovels ? t("home.hero.withProjects") : t("home.hero.withoutProjects")}
           </CardTitle>
           <CardDescription>
-            你只需要提供一个模糊想法，AI 会先帮你生成方向方案、标题包和开书准备，并在关键阶段停下来等你确认，不需要你一开始就把结构全部想清楚。
+            {t("home.hero.description")}
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
-            <span>适合还没想清楚题材、卖点和前 30 章承诺时使用</span>
-            <span>也适合先快速搭起一本可继续推进的新项目</span>
+            <span>{t("home.hero.tip1")}</span>
+            <span>{t("home.hero.tip2")}</span>
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <Button asChild size="lg">
-              <Link to={DIRECTOR_CREATE_LINK}>AI 自动导演开书</Link>
+              <Link to={DIRECTOR_CREATE_LINK}>{t("home.action.autoDirector")}</Link>
             </Button>
             <Button asChild size="lg" variant="outline">
-              <Link to={MANUAL_CREATE_LINK}>手动创建小说</Link>
+              <Link to={MANUAL_CREATE_LINK}>{t("home.action.manualCreate")}</Link>
             </Button>
           </div>
         </CardContent>
@@ -354,8 +356,8 @@ export default function Home() {
 
       <Card>
         <CardHeader>
-          <CardTitle>继续最近项目</CardTitle>
-          <CardDescription>首页应该直接把你送回当前最值得继续的一本书。</CardDescription>
+          <CardTitle>{t("home.resume.title")}</CardTitle>
+          <CardDescription>{t("home.resume.description")}</CardDescription>
         </CardHeader>
         <CardContent>
           {novelQuery.isPending ? (
@@ -371,9 +373,9 @@ export default function Home() {
           ) : novelQuery.isError ? (
             <div className="space-y-3">
               <div className="text-sm text-muted-foreground">
-                当前无法读取项目列表，首页没法为你推荐下一步入口。
+                {t("home.resume.loadError")}
               </div>
-              <Button onClick={() => void novelQuery.refetch()}>重新加载项目</Button>
+              <Button onClick={() => void novelQuery.refetch()}>{t("home.resume.reload")}</Button>
             </div>
           ) : primaryNovel ? (
             <div className="space-y-4">
@@ -390,18 +392,20 @@ export default function Home() {
                               <Badge variant={workflowBadge.variant}>
                                 {workflowBadge.label}
                               </Badge>
-                            ) : null;
-                          })()}
-                          <Badge variant="outline">
-                            进度 {Math.round((primaryNovel.latestAutoDirectorTask.progress ?? 0) * 100)}%
-                          </Badge>
-                        </>
-                      ) : null}
+                          ) : null;
+                        })()}
+                        <Badge variant="outline">
+                            {t("common.progress", {
+                              value: Math.round((primaryNovel.latestAutoDirectorTask.progress ?? 0) * 100),
+                            })}
+                        </Badge>
+                      </>
+                    ) : null}
                       <Badge variant={primaryNovel.status === "published" ? "default" : "secondary"}>
-                        {primaryNovel.status === "published" ? "已发布" : "草稿"}
+                        {primaryNovel.status === "published" ? t("common.published") : t("common.draft")}
                       </Badge>
                       <Badge variant="outline">
-                        {primaryNovel.writingMode === "continuation" ? "续写" : "原创"}
+                        {primaryNovel.writingMode === "continuation" ? t("common.continuation") : t("common.original")}
                       </Badge>
                     </div>
                   </div>
@@ -409,14 +413,14 @@ export default function Home() {
                     {getNovelLeadSummary(primaryNovel)}
                   </div>
                   <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
-                    <span>更新时间：{formatDate(primaryNovel.updatedAt)}</span>
-                    <span>章节数：{primaryNovel._count.chapters}</span>
-                    <span>角色数：{primaryNovel._count.characters}</span>
+                    <span>{t("common.updatedAt", { value: formatDate(primaryNovel.updatedAt, locale, t("common.notAvailable")) })}</span>
+                    <span>{t("common.chapterCount", { value: primaryNovel._count.chapters })}</span>
+                    <span>{t("common.characterCount", { value: primaryNovel._count.characters })}</span>
                     {primaryNovel.latestAutoDirectorTask?.currentStage ? (
-                      <span>当前阶段：{primaryNovel.latestAutoDirectorTask.currentStage}</span>
+                      <span>{t("common.currentStage", { value: primaryNovel.latestAutoDirectorTask.currentStage })}</span>
                     ) : null}
                     {primaryNovel.latestAutoDirectorTask?.lastHealthyStage ? (
-                      <span>最近健康阶段：{primaryNovel.latestAutoDirectorTask.lastHealthyStage}</span>
+                      <span>{t("common.lastHealthyStage", { value: primaryNovel.latestAutoDirectorTask.lastHealthyStage })}</span>
                     ) : null}
                   </div>
                 </div>
@@ -424,11 +428,11 @@ export default function Home() {
                   {renderNovelPrimaryAction(primaryNovel, { size: "lg" })}
                   {primaryNovel.latestAutoDirectorTask ? (
                     <Button asChild size="lg" variant="outline">
-                      <Link to={getTaskCenterLink(primaryNovel.latestAutoDirectorTask.id)}>任务中心</Link>
+                      <Link to={getTaskCenterLink(primaryNovel.latestAutoDirectorTask.id)}>{t("common.taskCenter")}</Link>
                     </Button>
                   ) : (
                     <Button asChild size="lg" variant="outline">
-                      <Link to={`/novels/${primaryNovel.id}/edit`}>打开项目</Link>
+                      <Link to={`/novels/${primaryNovel.id}/edit`}>{t("common.openProject")}</Link>
                     </Button>
                   )}
                 </div>
@@ -437,14 +441,14 @@ export default function Home() {
           ) : (
             <div className="space-y-3">
               <div className="text-sm text-muted-foreground">
-                你还没有开始小说项目。第一次使用时，推荐直接走 AI 自动导演，它会先帮你搭好方向和开写准备。
+                {t("home.resume.noProjects")}
               </div>
               <div className="flex flex-wrap gap-2">
                 <Button asChild>
-                  <Link to={DIRECTOR_CREATE_LINK}>AI 自动导演开书</Link>
+                  <Link to={DIRECTOR_CREATE_LINK}>{t("home.action.autoDirector")}</Link>
                 </Button>
                 <Button asChild variant="outline">
-                  <Link to={MANUAL_CREATE_LINK}>手动创建小说</Link>
+                  <Link to={MANUAL_CREATE_LINK}>{t("home.action.manualCreate")}</Link>
                 </Button>
               </div>
             </div>
@@ -454,29 +458,29 @@ export default function Home() {
 
       <Card>
         <CardHeader>
-          <CardTitle>快捷操作</CardTitle>
-          <CardDescription>把常用入口和新手最容易上手的开书方式放在一起。</CardDescription>
+          <CardTitle>{t("home.quickActions.title")}</CardTitle>
+          <CardDescription>{t("home.quickActions.description")}</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-wrap gap-2">
           <Button asChild>
-            <Link to={DIRECTOR_CREATE_LINK}>AI 自动导演开书</Link>
+            <Link to={DIRECTOR_CREATE_LINK}>{t("home.action.autoDirector")}</Link>
           </Button>
           <Button asChild variant="outline">
-            <Link to={MANUAL_CREATE_LINK}>手动创建小说</Link>
+            <Link to={MANUAL_CREATE_LINK}>{t("home.action.manualCreate")}</Link>
           </Button>
           <Button asChild variant="outline">
-            <Link to="/book-analysis">新建拆书</Link>
+            <Link to="/book-analysis">{t("home.quickActions.bookAnalysis")}</Link>
           </Button>
           <Button asChild variant="outline">
-            <Link to="/tasks">打开任务中心</Link>
+            <Link to="/tasks">{t("home.quickActions.taskCenter")}</Link>
           </Button>
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader>
-          <CardTitle>最近项目</CardTitle>
-          <CardDescription>这里不只显示标题，也直接显示当前所处阶段和恢复入口。</CardDescription>
+          <CardTitle>{t("home.recent.title")}</CardTitle>
+          <CardDescription>{t("home.recent.description")}</CardDescription>
         </CardHeader>
         <CardContent>
           {novelQuery.isPending ? (
@@ -492,13 +496,13 @@ export default function Home() {
           ) : novelQuery.isError ? (
             <div className="space-y-3">
               <div className="text-sm text-muted-foreground">
-                当前无法加载最近项目，稍后可以重试。
+                {t("home.recent.loadError")}
               </div>
-              <Button variant="outline" onClick={() => void novelQuery.refetch()}>重新加载</Button>
+              <Button variant="outline" onClick={() => void novelQuery.refetch()}>{t("home.resume.reload")}</Button>
             </div>
           ) : recentNovels.length === 0 ? (
             <div className="rounded-md border border-dashed p-4 text-sm text-muted-foreground">
-              暂无小说项目，先从“新建小说”开始。
+              {t("home.recent.empty")}
             </div>
           ) : (
             <div className="grid gap-3 md:grid-cols-2">
@@ -528,19 +532,21 @@ export default function Home() {
                             {workflowBadge ? (
                               <Badge variant={workflowBadge.variant}>{workflowBadge.label}</Badge>
                             ) : (
-                              <Badge variant="outline">无自动导演任务</Badge>
+                              <Badge variant="outline">{t("home.noWorkflowTask")}</Badge>
                             )}
                             {workflowTask ? (
-                              <Badge variant="outline">进度 {Math.round(workflowTask.progress * 100)}%</Badge>
+                              <Badge variant="outline">
+                                {t("common.progress", { value: Math.round(workflowTask.progress * 100) })}
+                              </Badge>
                             ) : null}
                           </div>
                         </div>
                         <div className="flex flex-wrap items-center justify-end gap-2">
                           <Badge variant={novel.status === "published" ? "default" : "secondary"}>
-                            {novel.status === "published" ? "已发布" : "草稿"}
+                            {novel.status === "published" ? t("common.published") : t("common.draft")}
                           </Badge>
                           <Badge variant="outline">
-                            {novel.writingMode === "continuation" ? "续写" : "原创"}
+                            {novel.writingMode === "continuation" ? t("common.continuation") : t("common.original")}
                           </Badge>
                         </div>
                       </div>
@@ -550,14 +556,14 @@ export default function Home() {
                     </CardHeader>
                     <CardContent className="space-y-3">
                       <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
-                        <span>更新时间：{formatDate(novel.updatedAt)}</span>
-                        <span>章节数：{novel._count.chapters}</span>
-                        <span>角色数：{novel._count.characters}</span>
+                        <span>{t("common.updatedAt", { value: formatDate(novel.updatedAt, locale, t("common.notAvailable")) })}</span>
+                        <span>{t("common.chapterCount", { value: novel._count.chapters })}</span>
+                        <span>{t("common.characterCount", { value: novel._count.characters })}</span>
                         {workflowTask?.currentStage ? (
-                          <span>阶段：{workflowTask.currentStage}</span>
+                          <span>{t("common.stage", { value: workflowTask.currentStage })}</span>
                         ) : null}
                         {workflowTask?.lastHealthyStage ? (
-                          <span>最近健康阶段：{workflowTask.lastHealthyStage}</span>
+                          <span>{t("common.lastHealthyStage", { value: workflowTask.lastHealthyStage })}</span>
                         ) : null}
                       </div>
 
@@ -565,11 +571,11 @@ export default function Home() {
                         {renderNovelPrimaryAction(novel, { stopPropagation: true })}
                         {workflowTask ? (
                           <Button asChild size="sm" variant="outline">
-                            <Link to={getTaskCenterLink(workflowTask.id)} onClick={stopCardClick}>任务中心</Link>
+                            <Link to={getTaskCenterLink(workflowTask.id)} onClick={stopCardClick}>{t("common.taskCenter")}</Link>
                           </Button>
                         ) : (
                           <Button asChild size="sm" variant="outline">
-                            <Link to={`/novels/${novel.id}/edit`} onClick={stopCardClick}>打开项目</Link>
+                            <Link to={`/novels/${novel.id}/edit`} onClick={stopCardClick}>{t("common.openProject")}</Link>
                           </Button>
                         )}
                       </div>

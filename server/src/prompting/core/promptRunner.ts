@@ -1,6 +1,7 @@
-import { HumanMessage, type BaseMessage, type BaseMessageChunk } from "@langchain/core/messages";
+import { HumanMessage, SystemMessage, type BaseMessage, type BaseMessageChunk } from "@langchain/core/messages";
 import type { LLMProvider } from "@ai-novel/shared/types/llm";
 import { getLLM } from "../../llm/factory";
+import { buildAiOutputLanguageInstruction, getAppPreferences } from "../../services/settings/AppPreferencesService";
 import {
   invokeStructuredLlmDetailed,
   parseStructuredLlmRawContentDetailed,
@@ -225,6 +226,14 @@ function logPromptEvent(input: {
   );
 }
 
+async function appendRuntimeLanguageInstruction(messages: BaseMessage[]): Promise<BaseMessage[]> {
+  const preferences = await getAppPreferences();
+  return [
+    ...messages,
+    new SystemMessage(buildAiOutputLanguageInstruction(preferences.aiOutputLanguage)),
+  ];
+}
+
 function captureStreamOutput(rawStream: AsyncIterable<BaseMessageChunk>): {
   stream: AsyncIterable<BaseMessageChunk>;
   completedText: Promise<string>;
@@ -432,6 +441,7 @@ export async function runStructuredPrompt<I, O, R = O>(input: {
 
   const outputSchema = input.asset.outputSchema;
   const prepared = preparePromptExecution(input);
+  const localizedMessages = await appendRuntimeLanguageInstruction(prepared.messages);
   logPromptEvent({
     event: "started",
     asset: input.asset as PromptAsset<unknown, unknown, unknown>,
@@ -447,7 +457,7 @@ export async function runStructuredPrompt<I, O, R = O>(input: {
     temperature: input.options?.temperature,
     maxTokens: input.options?.maxTokens,
     taskType: input.asset.taskType,
-    messages: prepared.messages,
+    messages: localizedMessages,
     schema: outputSchema,
     maxRepairAttempts: resolveStructuredRepairAttempts(input.asset as PromptAsset<unknown, unknown, unknown>),
     promptMeta: prepared.invocation,
@@ -456,7 +466,7 @@ export async function runStructuredPrompt<I, O, R = O>(input: {
     asset: input.asset,
     promptInput: input.promptInput,
     context: prepared.context,
-    baseMessages: prepared.messages,
+    baseMessages: localizedMessages,
     outputSchema,
     initialResult: result,
     options: input.options,
@@ -482,6 +492,7 @@ export async function runTextPrompt<I>(input: {
   }
 
   const prepared = preparePromptExecution(input);
+  const localizedMessages = await appendRuntimeLanguageInstruction(prepared.messages);
   const startedAt = Date.now();
   const llm = await promptRunnerLLMFactory(input.options?.provider, {
     fallbackProvider: "deepseek",
@@ -491,7 +502,7 @@ export async function runTextPrompt<I>(input: {
     taskType: input.asset.taskType,
     promptMeta: prepared.invocation,
   });
-  const result = await llm.invoke(prepared.messages);
+  const result = await llm.invoke(localizedMessages);
   return buildPromptRunResult({
     output: applyPromptPostValidate({
       asset: input.asset,
@@ -525,6 +536,7 @@ export async function streamTextPrompt<I>(input: {
   }
 
   const prepared = preparePromptExecution(input);
+  const localizedMessages = await appendRuntimeLanguageInstruction(prepared.messages);
   const startedAt = Date.now();
   const llm = await promptRunnerLLMFactory(input.options?.provider, {
     fallbackProvider: "deepseek",
@@ -534,7 +546,7 @@ export async function streamTextPrompt<I>(input: {
     taskType: input.asset.taskType,
     promptMeta: prepared.invocation,
   });
-  const rawStream = await llm.stream(prepared.messages);
+  const rawStream = await llm.stream(localizedMessages);
   const captured = captureStreamOutput(rawStream as AsyncIterable<BaseMessageChunk>);
 
   return {
@@ -576,6 +588,7 @@ export async function streamStructuredPrompt<I, O, R = O>(input: {
 
   const outputSchema = input.asset.outputSchema;
   const prepared = preparePromptExecution(input);
+  const localizedMessages = await appendRuntimeLanguageInstruction(prepared.messages);
   const startedAt = Date.now();
   const llm = await promptRunnerLLMFactory(input.options?.provider, {
     fallbackProvider: "deepseek",
@@ -609,7 +622,7 @@ export async function streamStructuredPrompt<I, O, R = O>(input: {
   if (responseFormat) {
     invokeOptions.response_format = responseFormat;
   }
-  const rawStream = await llm.stream(prepared.messages, invokeOptions);
+  const rawStream = await llm.stream(localizedMessages, invokeOptions);
   const captured = captureStreamOutput(rawStream as AsyncIterable<BaseMessageChunk>);
 
   return {
@@ -633,7 +646,7 @@ export async function streamStructuredPrompt<I, O, R = O>(input: {
         asset: input.asset,
         promptInput: input.promptInput,
         context: prepared.context,
-        baseMessages: prepared.messages,
+        baseMessages: localizedMessages,
         outputSchema,
         initialResult: parsed,
         options: input.options,

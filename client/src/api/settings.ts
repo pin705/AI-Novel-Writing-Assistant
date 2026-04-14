@@ -1,4 +1,5 @@
 import type { ApiResponse } from "@ai-novel/shared/types/api";
+import type { AppPreferences } from "@ai-novel/shared/types/appPreferences";
 import type { LLMProvider } from "@ai-novel/shared/types/llm";
 import type { ModelRouteConfig, ModelRouteTaskType } from "@ai-novel/shared/types/novel";
 import { apiClient } from "./client";
@@ -125,6 +126,16 @@ export interface StructuredFallbackSettings {
   model: string;
   temperature: number;
   maxTokens: number | null;
+}
+
+export async function getAppPreferences() {
+  const { data } = await apiClient.get<ApiResponse<AppPreferences>>("/settings/app-preferences");
+  return data;
+}
+
+export async function saveAppPreferences(payload: AppPreferences) {
+  const { data } = await apiClient.put<ApiResponse<AppPreferences>>("/settings/app-preferences", payload);
+  return data;
 }
 
 export async function getAPIKeySettings() {

@@ -1,4 +1,5 @@
 export * from "./types/api";
+export * from "./types/appPreferences";
 export * from "./types/bookAnalysis";
 export * from "./types/characterDynamics";
 export * from "./types/chapterLengthControl";

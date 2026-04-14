@@ -98,6 +98,7 @@ export const queryKeys = {
     history: (threadId: string) => ["creative-hub", "history", threadId] as const,
   },
   settings: {
+    appPreferences: ["settings", "app-preferences"] as const,
     apiKeys: ["settings", "api-keys"] as const,
     apiKeyBalances: ["settings", "api-key-balances"] as const,
     rag: ["settings", "rag"] as const,

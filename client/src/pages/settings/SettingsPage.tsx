@@ -1,6 +1,7 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import type { AIOutputLanguage, AppLocale, AppPreferences } from "@ai-novel/shared/types/appPreferences";
 import type { LLMProvider } from "@ai-novel/shared/types/llm";
 import {
   createCustomProvider,
@@ -10,6 +11,7 @@ import {
   getRagSettings,
   refreshProviderBalance,
   refreshProviderModelList,
+  saveAppPreferences,
   saveAPIKeySetting,
   testLLMConnection,
 } from "@/api/settings";
@@ -20,7 +22,14 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
+import { toast } from "@/components/ui/toast";
+import {
+  AI_OUTPUT_LANGUAGE_OPTIONS,
+  APP_LOCALE_OPTIONS,
+  useI18n,
+} from "@/i18n";
 
 const MODEL_BADGE_COLLAPSE_COUNT = 8;
 
@@ -61,9 +70,11 @@ function formatBalanceTime(value: string | null | undefined): string {
 
 export default function SettingsPage() {
   const queryClient = useQueryClient();
+  const { preferences, setPreferences, t } = useI18n();
   const [editingProvider, setEditingProvider] = useState("");
   const [isCreatingCustomProvider, setIsCreatingCustomProvider] = useState(false);
   const [expandedProviders, setExpandedProviders] = useState<Record<string, boolean>>({});
+  const [languageForm, setLanguageForm] = useState<AppPreferences>(preferences);
   const [form, setForm] = useState({
     displayName: "",
     key: "",
@@ -95,6 +106,10 @@ export default function SettingsPage() {
   );
   const isDialogOpen = isCreatingCustomProvider || Boolean(editingProvider);
   const isCustomDialog = isCreatingCustomProvider || editingConfig?.kind === "custom";
+
+  useEffect(() => {
+    setLanguageForm(preferences);
+  }, [preferences]);
 
   const resetDialogState = () => {
     setEditingProvider("");
@@ -242,6 +257,19 @@ export default function SettingsPage() {
     },
   });
 
+  const languagePreferencesMutation = useMutation({
+    mutationFn: saveAppPreferences,
+    onSuccess: (response) => {
+      const next = response.data ?? languageForm;
+      setPreferences(next);
+      queryClient.setQueryData(queryKeys.settings.appPreferences, response);
+      toast.success(t("language.saved"));
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : t("language.saveFailed"));
+    },
+  });
+
   const providerBalanceMap = useMemo(
     () => new Map((providerBalancesQuery.data?.data ?? []).map((item) => [item.provider, item])),
     [providerBalancesQuery.data?.data],
@@ -298,8 +326,104 @@ export default function SettingsPage() {
     return Boolean(balance?.canRefresh ?? (provider === "deepseek" || provider === "siliconflow" || provider === "kimi"));
   };
 
+  const getLocaleLabel = (locale: AppLocale) => {
+    if (locale === "vi-VN") {
+      return t("language.option.vi");
+    }
+    if (locale === "en-US") {
+      return t("language.option.en");
+    }
+    return t("language.option.zh");
+  };
+
+  const getAiOutputLanguageLabel = (language: AIOutputLanguage) => {
+    if (language === "vi") {
+      return t("language.option.vi");
+    }
+    if (language === "en") {
+      return t("language.option.en");
+    }
+    return t("language.option.zh");
+  };
+
   return (
     <div className="space-y-4">
+      <Card>
+        <CardHeader>
+          <CardTitle>{t("settings.language.title")}</CardTitle>
+          <CardDescription>{t("settings.language.description")}</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-2">
+              <div className="text-sm font-medium">{t("settings.language.uiLabel")}</div>
+              <Select
+                value={languageForm.uiLocale}
+                onValueChange={(value) => {
+                  const nextLocale = APP_LOCALE_OPTIONS.find((item) => item === value);
+                  if (!nextLocale) {
+                    return;
+                  }
+                  setLanguageForm((current) => ({
+                    ...current,
+                    uiLocale: nextLocale,
+                  }));
+                }}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {APP_LOCALE_OPTIONS.map((locale) => (
+                    <SelectItem key={locale} value={locale}>
+                      {getLocaleLabel(locale)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <div className="text-sm font-medium">{t("settings.language.outputLabel")}</div>
+              <Select
+                value={languageForm.aiOutputLanguage}
+                onValueChange={(value) => {
+                  const nextLanguage = AI_OUTPUT_LANGUAGE_OPTIONS.find((item) => item === value);
+                  if (!nextLanguage) {
+                    return;
+                  }
+                  setLanguageForm((current) => ({
+                    ...current,
+                    aiOutputLanguage: nextLanguage,
+                  }));
+                }}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {AI_OUTPUT_LANGUAGE_OPTIONS.map((language) => (
+                    <SelectItem key={language} value={language}>
+                      {getAiOutputLanguageLabel(language)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div className="text-sm text-muted-foreground">{t("settings.language.helper")}</div>
+
+          <Button
+            type="button"
+            onClick={() => languagePreferencesMutation.mutate(languageForm)}
+            disabled={languagePreferencesMutation.isPending}
+          >
+            {t("settings.language.save")}
+          </Button>
+        </CardContent>
+      </Card>
+
       <Card>
         <CardHeader>
           <CardTitle>Embedding Settings Moved</CardTitle>

@@ -4,7 +4,7 @@ import type { ZodType } from "zod";
 import type { TaskType } from "../../llm/modelRouter";
 
 export type PromptMode = "structured" | "text";
-export type PromptLanguage = "zh" | "en";
+export type PromptLanguage = "zh" | "en" | "vi";
 
 export interface PromptContextBlock {
   id: string;

@@ -24,6 +24,7 @@ import { queryKeys } from "@/api/queryKeys";
 import { listTasks } from "@/api/tasks";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useI18n } from "@/i18n";
 import { cn } from "@/lib/utils";
 
 interface NavItem {
@@ -37,44 +38,13 @@ interface NavGroup {
   items: NavItem[];
 }
 
-const navGroups: NavGroup[] = [
-  {
-    title: "创作",
-    items: [
-      { to: "/", label: "首页", icon: House },
-      { to: "/novels", label: "小说列表", icon: BookOpenText },
-      { to: "/creative-hub", label: "创作中枢", icon: LayoutDashboard },
-      { to: "/book-analysis", label: "拆书", icon: ScanSearch },
-      { to: "/tasks", label: "任务中心", icon: ListTodo },
-    ],
-  },
-  {
-    title: "资产",
-    items: [
-      { to: "/genres", label: "题材基底库", icon: Tags },
-      { to: "/story-modes", label: "推进模式库", icon: Workflow },
-      { to: "/titles", label: "标题工坊", icon: SquarePen },
-      { to: "/knowledge", label: "知识库", icon: Database },
-      { to: "/worlds", label: "世界观", icon: Globe2 },
-      { to: "/style-engine", label: "写法引擎", icon: WandSparkles },
-      { to: "/base-characters", label: "基础角色库", icon: UsersRound },
-    ],
-  },
-  {
-    title: "系统",
-    items: [
-      { to: "/settings/model-routes", label: "模型路由", icon: Route },
-      { to: "/settings", label: "系统设置", icon: Settings2 },
-    ],
-  },
-];
-
 interface SidebarProps {
   collapsed: boolean;
   onToggle: () => void;
 }
 
 export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
+  const { t } = useI18n();
   const taskQuery = useQuery({
     queryKey: queryKeys.tasks.list("sidebar"),
     queryFn: () => listTasks({ limit: 80 }),
@@ -95,6 +65,37 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
   const failedTaskCount = tasks.filter((item) => item.status === "failed").length;
   const knowledgeDocuments = knowledgeQuery.data?.data ?? [];
   const failedIndexCount = knowledgeDocuments.filter((item) => item.latestIndexStatus === "failed").length;
+  const navGroups: NavGroup[] = [
+    {
+      title: t("sidebar.group.create"),
+      items: [
+        { to: "/", label: t("nav.home"), icon: House },
+        { to: "/novels", label: t("nav.novels"), icon: BookOpenText },
+        { to: "/creative-hub", label: t("nav.creativeHub"), icon: LayoutDashboard },
+        { to: "/book-analysis", label: t("nav.bookAnalysis"), icon: ScanSearch },
+        { to: "/tasks", label: t("nav.tasks"), icon: ListTodo },
+      ],
+    },
+    {
+      title: t("sidebar.group.assets"),
+      items: [
+        { to: "/genres", label: t("nav.genres"), icon: Tags },
+        { to: "/story-modes", label: t("nav.storyModes"), icon: Workflow },
+        { to: "/titles", label: t("nav.titles"), icon: SquarePen },
+        { to: "/knowledge", label: t("nav.knowledge"), icon: Database },
+        { to: "/worlds", label: t("nav.worlds"), icon: Globe2 },
+        { to: "/style-engine", label: t("nav.styleEngine"), icon: WandSparkles },
+        { to: "/base-characters", label: t("nav.baseCharacters"), icon: UsersRound },
+      ],
+    },
+    {
+      title: t("sidebar.group.system"),
+      items: [
+        { to: "/settings/model-routes", label: t("nav.modelRoutes"), icon: Route },
+        { to: "/settings", label: t("nav.settings"), icon: Settings2 },
+      ],
+    },
+  ];
 
   const renderBadge = (to: string) => {
     if (to === "/tasks") {
@@ -154,8 +155,8 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
           size="icon"
           className="h-8 w-8 text-muted-foreground"
           onClick={onToggle}
-          aria-label={collapsed ? "展开导航栏" : "收起导航栏"}
-          title={collapsed ? "展开导航栏" : "收起导航栏"}
+          aria-label={collapsed ? t("sidebar.expand") : t("sidebar.collapse")}
+          title={collapsed ? t("sidebar.expand") : t("sidebar.collapse")}
         >
           {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
         </Button>

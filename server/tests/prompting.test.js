@@ -9,6 +9,7 @@ const {
 } = require("../dist/prompting/prompts/novel/promptBudgetProfiles.js");
 const {
   runStructuredPrompt,
+  runTextPrompt,
   setPromptRunnerLLMFactoryForTests,
   setPromptRunnerStructuredInvokerForTests,
   streamStructuredPrompt,
@@ -29,6 +30,9 @@ const {
 const {
   genreTreePrompt,
 } = require("../dist/prompting/prompts/genre/genre.prompts.js");
+const {
+  runtimeSetupGuidancePrompt,
+} = require("../dist/prompting/prompts/agent/runtime.prompts.js");
 const {
   titleGenerationPrompt,
 } = require("../dist/prompting/prompts/helper/titleGeneration.prompt.js");
@@ -56,6 +60,9 @@ const {
 const {
   directorPlanBlueprintSchema,
 } = require("../dist/services/novel/director/novelDirectorSchemas.js");
+const {
+  setAppPreferencesForTests,
+} = require("../dist/services/settings/AppPreferencesService.js");
 
 test("prompt registry exposes versioned planning assets", () => {
   const keys = [
@@ -946,6 +953,87 @@ test("runStructuredPrompt retries semantically after postValidate failure", asyn
   } finally {
     plannerChapterPlanPrompt.semanticRetryPolicy = originalSemanticRetryPolicy;
     setPromptRunnerStructuredInvokerForTests();
+  }
+});
+
+test("prompt runner appends Vietnamese output instructions for text prompts", async () => {
+  let capturedMessages = null;
+
+  setAppPreferencesForTests({
+    uiLocale: "vi-VN",
+    aiOutputLanguage: "vi",
+  });
+  setPromptRunnerLLMFactoryForTests(async () => ({
+    invoke: async (messages) => {
+      capturedMessages = messages;
+      return { content: "xin chao" };
+    },
+  }));
+
+  try {
+    const result = await runTextPrompt({
+      asset: runtimeSetupGuidancePrompt,
+      promptInput: {
+        sceneInstruction: "用户刚开始准备一本新书。",
+        goal: "帮我开始写一本都市奇幻小说",
+        intentFacts: "用户提到了都市奇幻题材。",
+        knownFacts: "当前还没有正式标题。",
+      },
+    });
+
+    assert.equal(result.output, "xin chao");
+    assert.ok(Array.isArray(capturedMessages));
+    assert.match(String(capturedMessages.at(-1).content), /Vietnamese|Tiếng Việt/);
+  } finally {
+    setPromptRunnerLLMFactoryForTests();
+    setAppPreferencesForTests();
+  }
+});
+
+test("prompt runner appends Vietnamese output instructions for structured prompts", async () => {
+  let capturedMessages = null;
+
+  setAppPreferencesForTests({
+    uiLocale: "vi-VN",
+    aiOutputLanguage: "vi",
+  });
+  setPromptRunnerStructuredInvokerForTests(async ({ messages }) => {
+    capturedMessages = messages;
+    return {
+      data: {
+        name: "Kỳ ảo đô thị",
+        description: "Nhánh chính dành cho fantasy bối cảnh hiện đại.",
+        children: [],
+      },
+      repairUsed: false,
+      repairAttempts: 0,
+      diagnostics: {
+        strategy: "prompt_only",
+        profile: "openai_json",
+        reasoningForcedOff: false,
+        fallbackAvailable: false,
+        fallbackUsed: false,
+        errorCategory: null,
+      },
+    };
+  });
+
+  try {
+    const result = await runStructuredPrompt({
+      asset: genreTreePrompt,
+      promptInput: {
+        prompt: "都市奇幻，主角是调查员。",
+        retry: false,
+        forceJson: false,
+      },
+    });
+
+    assert.equal(result.output.name, "Kỳ ảo đô thị");
+    assert.ok(Array.isArray(capturedMessages));
+    assert.match(String(capturedMessages.at(-1).content), /Vietnamese|Tiếng Việt/);
+  } finally {
+    setPromptRunnerStructuredInvokerForTests();
+    setAppPreferencesForTests();
   }
 });
 

@@ -18,6 +18,7 @@ import { authMiddleware } from "../middleware/auth";
 import { validate } from "../middleware/validate";
 import { ragServices } from "../services/rag";
 import type { RagOwnerType } from "../services/rag/types";
+import { buildAiOutputLanguageInstruction, getAppPreferences } from "../services/settings/AppPreferencesService";
 
 const router = Router();
 
@@ -217,9 +218,15 @@ router.post("/", validate({ body: chatSchema }), async (req, res, next) => {
     const ragHint = ragContext
       ? `\n以下是检索到的项目知识片段（可能不完整），请优先依据这些内容回答，并在冲突时说明不确定性：\n${ragContext}\n`
       : "";
+    const appPreferences = await getAppPreferences();
 
     const messages = [
-      new SystemMessage(finalSystemPrompt + searchHint + ragHint),
+      new SystemMessage(
+        finalSystemPrompt
+        + searchHint
+        + ragHint
+        + `\n${buildAiOutputLanguageInstruction(appPreferences.aiOutputLanguage)}`,
+      ),
       ...recentMessages.map((item) => {
         if (item.role === "assistant") {
           return new AIMessage(item.content);

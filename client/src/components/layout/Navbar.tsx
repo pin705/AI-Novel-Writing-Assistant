@@ -1,7 +1,9 @@
 import { PenSquare } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import LLMSelector from "@/components/common/LLMSelector";
+import LanguageSwitcher from "@/components/layout/LanguageSwitcher";
 import { Button } from "@/components/ui/button";
+import { useI18n } from "@/i18n";
 
 interface NavbarProps {
   workspaceNavMode?: "workspace" | "project";
@@ -11,6 +13,7 @@ interface NavbarProps {
 export default function Navbar(props: NavbarProps) {
   const { workspaceNavMode, onWorkspaceNavModeChange } = props;
   const location = useLocation();
+  const { t } = useI18n();
   const isHome = location.pathname === "/";
   const showWorkspaceToggle = Boolean(workspaceNavMode && onWorkspaceNavModeChange);
 
@@ -19,8 +22,8 @@ export default function Navbar(props: NavbarProps) {
       <div className="flex items-center gap-2">
         <PenSquare className="h-5 w-5" />
         <div className="flex flex-col leading-tight">
-          <span className="text-sm font-semibold">AI 小说创作工作台</span>
-          <span className="text-[11px] text-muted-foreground">AI Novel Production Engine</span>
+          <span className="text-sm font-semibold">{t("brand.title")}</span>
+          <span className="text-[11px] text-muted-foreground">{t("brand.subtitle")}</span>
         </div>
       </div>
       <div className="flex items-center gap-3">
@@ -31,9 +34,10 @@ export default function Navbar(props: NavbarProps) {
             variant="outline"
             onClick={() => onWorkspaceNavModeChange?.(workspaceNavMode === "workspace" ? "project" : "workspace")}
           >
-            {workspaceNavMode === "workspace" ? "项目导航" : "创作导航"}
+            {workspaceNavMode === "workspace" ? t("navbar.projectNavigation") : t("navbar.workspaceNavigation")}
           </Button>
         ) : null}
+        <LanguageSwitcher />
         <LLMSelector compact showBadge={false} showHelperText={false} />
       </div>
     </header>

@@ -20,6 +20,10 @@ import { AppError } from "../middleware/errorHandler";
 import { validate } from "../middleware/validate";
 import { ragServices } from "../services/rag";
 import { providerBalanceService } from "../services/settings/ProviderBalanceService";
+import {
+  getAppPreferences,
+  saveAppPreferences,
+} from "../services/settings/AppPreferencesService";
 import { getRagEmbeddingModelOptions } from "../services/settings/RagEmbeddingModelService";
 import {
   getRagEmbeddingProviders,
@@ -66,6 +70,11 @@ const ragSettingsSchema = z.object({
 
 const ragEmbeddingProviderSchema = z.object({
   provider: z.enum(["openai", "siliconflow"]),
+});
+
+const appPreferencesSchema = z.object({
+  uiLocale: z.enum(["zh-CN", "en-US", "vi-VN"]),
+  aiOutputLanguage: z.enum(["zh", "en", "vi"]),
 });
 
 function normalizeOptionalText(value: string | null | undefined): string | undefined {
@@ -192,6 +201,37 @@ async function buildCustomProviderStatus(item: {
 }
 
 router.use(authMiddleware);
+
+router.get("/app-preferences", async (_req, res, next) => {
+  try {
+    const data = await getAppPreferences();
+    res.status(200).json({
+      success: true,
+      data,
+      message: "获取应用语言设置成功。",
+    } satisfies ApiResponse<typeof data>);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.put(
+  "/app-preferences",
+  validate({ body: appPreferencesSchema }),
+  async (req, res, next) => {
+    try {
+      const body = req.body as z.infer<typeof appPreferencesSchema>;
+      const data = await saveAppPreferences(body);
+      res.status(200).json({
+        success: true,
+        data,
+        message: "应用语言设置保存成功。",
+      } satisfies ApiResponse<typeof data>);
+    } catch (error) {
+      next(error);
+    }
+  },
+);
 
 router.get("/rag", async (_req, res, next) => {
   try {
