@@ -37,7 +37,7 @@ export default function GenreManagementPage() {
     mutationFn: (genreId: string) => deleteGenre(genreId),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: queryKeys.genres.all });
-      toast.success("题材基底已删除。");
+      toast.success("Đã xóa nền tảng thể loại.");
     },
   });
 
@@ -54,8 +54,8 @@ export default function GenreManagementPage() {
   const handleDelete = (genre: GenreTreeNode) => {
     const descendantCount = collectDescendantIds(genre).length;
     const message = descendantCount > 0
-      ? `确认删除题材基底「${genre.name}」？这会同时删除其下 ${descendantCount} 个子分类，此操作不可恢复。`
-      : `确认删除题材基底「${genre.name}」？此操作不可恢复。`;
+      ? `Xác nhận xóa nền tảng thể loại「${genre.name}」? Thao tác này sẽ đồng thời xóa ${descendantCount} phân loại con bên dưới và không thể hoàn tác.`
+      : `Xác nhận xóa nền tảng thể loại「${genre.name}」? Thao tác này không thể hoàn tác.`;
     const confirmed = window.confirm(message);
     if (!confirmed) {
       return;
@@ -87,32 +87,32 @@ export default function GenreManagementPage() {
       <Card>
         <CardHeader className="flex flex-row items-start justify-between gap-4">
           <div className="space-y-1">
-            <CardTitle>题材基底库</CardTitle>
+            <CardTitle>Thư viện nền tảng thể loại</CardTitle>
             <CardDescription>
-              按树结构维护作品的题材基底，例如修仙、玄幻、都市、历史架空。它回答的是“这是什么书”，会作为小说项目的正式题材资产，而不是临时输入字段。
+              Duy trì nền tảng thể loại cho tác phẩm theo cấu trúc cây, ví dụ: tu tiên, huyền huyễn, đô thị, lịch sử giả tưởng. Nó trả lời câu hỏi "Đây là loại sách gì" và sẽ được dùng làm tài sản thể loại chính thức cho dự án tiểu thuyết, chứ không phải là trường nhập liệu tạm thời.
             </CardDescription>
           </div>
           <div className="flex flex-col items-end gap-2">
-            <div className="text-sm text-muted-foreground">当前题材基底数：{totalGenres}</div>
+            <div className="text-sm text-muted-foreground">Số nền tảng thể loại hiện tại: {totalGenres}</div>
             <Button type="button" onClick={handleCreateRoot}>
-              新建题材基底树
+              Tạo cây nền tảng thể loại mới
             </Button>
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
           {genreTreeQuery.isLoading ? (
-            <div className="text-sm text-muted-foreground">正在加载题材基底树...</div>
+            <div className="text-sm text-muted-foreground">Đang tải cây nền tảng thể loại...</div>
           ) : null}
 
           {!genreTreeQuery.isLoading && genreTree.length === 0 ? (
             <div className="rounded-xl border border-dashed p-6 text-center">
-              <div className="text-sm font-medium text-foreground">还没有任何题材基底</div>
+              <div className="text-sm font-medium text-foreground">Chưa có nền tảng thể loại nào</div>
               <div className="mt-1 text-sm text-muted-foreground">
-                可以先手动建一个根题材基底，也可以直接用 AI 生成一个完整层级。
+                Bạn có thể tự tạo một nền tảng gốc, hoặc dùng AI để tạo toàn bộ hệ thống phân cấp.
               </div>
               <div className="mt-4">
                 <Button type="button" onClick={handleCreateRoot}>
-                  开始创建
+                  Bắt đầu tạo
                 </Button>
               </div>
             </div>

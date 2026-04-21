@@ -4,10 +4,10 @@ export default function AstrologyPage() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>占星灵感</CardTitle>
-        <CardDescription>占星模块占位页。</CardDescription>
+        <CardTitle>Cảm hứng chiêm tinh</CardTitle>
+        <CardDescription>Trang giữ chỗ cho mô-đun chiêm tinh.</CardDescription>
       </CardHeader>
-      <CardContent>后续将在此接入题材化灵感生成与设定扩展能力。</CardContent>
+      <CardContent>Tính năng gợi ý cảm hứng theo thể loại và mở rộng thiết lập sẽ được tích hợp tại đây trong tương lai.</CardContent>
     </Card>
   );
 }

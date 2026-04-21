@@ -47,26 +47,26 @@ export default function WorldLibraryQuickPick({
   return (
     <div className="rounded-md border p-3 text-sm space-y-3">
       <div className="space-y-1">
-        <div className="font-medium">素材库前置引入</div>
+        <div className="font-medium">Chèn thư viện vào từ sớm</div>
         <div className="text-xs text-muted-foreground">
-          旧版 V2 会在正式生成前就允许从属性库选素材。这里保留这个思路，但接到当前蓝图结构里。
+          Bản V2 cũ cho phép chọn vật liệu từ thư viện ngay trước khi sinh chính thức. Ở đây mình giữ cách làm đó nhưng gắn vào cấu trúc bản thiết kế hiện tại.
         </div>
       </div>
 
       <input
         className="w-full rounded-md border p-2 text-sm"
-        placeholder="搜索素材库条目，可按名称或关键词过滤"
+        placeholder="Tìm mục trong thư viện, có thể lọc theo tên hoặc từ khóa"
         value={keyword}
         onChange={(event) => setKeyword(event.target.value)}
       />
 
       <div className="space-y-2">
         {libraryQuery.isLoading ? (
-          <div className="text-xs text-muted-foreground">正在加载素材库…</div>
+          <div className="text-xs text-muted-foreground">Đang tải thư viện...</div>
         ) : null}
         {!libraryQuery.isLoading && libraryItems.length === 0 ? (
           <div className="text-xs text-muted-foreground">
-            当前没有匹配的素材库条目。
+            Hiện chưa có mục thư viện nào khớp.
           </div>
         ) : null}
 
@@ -87,10 +87,10 @@ export default function WorldLibraryQuickPick({
                   ) : null}
                 </div>
                 <div className="text-xs text-muted-foreground whitespace-pre-wrap">
-                  {item.description?.trim() || "暂无描述"}
+                  {item.description?.trim() || "Chưa có mô tả"}
                 </div>
                 <div className="text-xs text-muted-foreground">
-                  使用次数：{item.usageCount}
+                  Số lần sử dụng: {item.usageCount}
                 </div>
               </div>
               <Button
@@ -99,7 +99,7 @@ export default function WorldLibraryQuickPick({
                 disabled={added}
                 onClick={() => onAdd(item)}
               >
-                {added ? "已加入蓝图" : "加入蓝图"}
+                {added ? "Đã thêm vào bản thiết kế" : "Thêm vào bản thiết kế"}
               </Button>
             </div>
           );

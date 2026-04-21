@@ -33,11 +33,11 @@ type HomeNovelItem = NovelListResponse["items"][number];
 
 function formatDate(value: string | undefined): string {
   if (!value) {
-    return "暂无";
+    return "Không có";
   }
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) {
-    return "暂无";
+    return "Không có";
   }
   return date.toLocaleString();
 }
@@ -74,9 +74,9 @@ function getNovelLeadSummary(novel: HomeNovelItem): string {
     return novel.description.trim();
   }
   if (novel.world?.name) {
-    return `当前项目已绑定世界观「${novel.world.name}」，可以直接继续创作。`;
+    return `Dự án hiện đã liên kết với thế giới quan “${novel.world.name}”, bạn có thể tiếp tục sáng tác ngay.`;
   }
-  return "当前项目暂无简介，可以直接进入编辑页继续推进。";
+  return "Dự án hiện chưa có phần giới thiệu, bạn có thể vào trang chỉnh sửa để tiếp tục.";
 }
 
 function MetricCard(props: {
@@ -125,15 +125,15 @@ export default function Home() {
         queryClient.invalidateQueries({ queryKey: queryKeys.novels.all }),
         queryClient.invalidateQueries({ queryKey: ["tasks"] }),
       ]);
-      toast.success(input.mode === "auto_execute_front10" ? "已继续自动执行前 10 章。" : "自动导演已继续推进。");
+      toast.success(input.mode === "auto_execute_front10" ? "Đã tiếp tục tự động triển khai 10 chương đầu." : "Tự động đạo diễn đã tiếp tục triển khai.");
     },
     onError: (error, input) => {
       toast.error(
         error instanceof Error
           ? error.message
           : input.mode === "auto_execute_front10"
-            ? "继续自动执行前 10 章失败。"
-            : "继续自动导演失败。",
+            ? "Tiếp tục tự động triển khai 10 chương đầu thất bại."
+            : "Tiếp tục tự động đạo diễn thất bại.",
       );
     },
   });
@@ -218,7 +218,7 @@ export default function Home() {
           }}
           disabled={isWorkflowPending}
         >
-          {isWorkflowPending ? "继续执行中..." : (task?.resumeAction ?? "继续自动执行前 10 章")}
+          {isWorkflowPending ? "Đang tiếp tục..." : (task?.resumeAction ?? "Tiếp tục tự động triển khai 10 chương đầu")}
         </Button>
       );
     }
@@ -238,7 +238,7 @@ export default function Home() {
           }}
           disabled={isWorkflowPending}
         >
-          {isWorkflowPending ? "继续中..." : (task?.resumeAction ?? "继续导演")}
+          {isWorkflowPending ? "Đang tiếp tục..." : (task?.resumeAction ?? "Tiếp tục đạo diễn")}
         </Button>
       );
     }
@@ -250,7 +250,7 @@ export default function Home() {
             to={getCandidateSelectionLink(task!.id)}
             onClick={stopPropagation ? stopCardClick : undefined}
           >
-            {task!.resumeAction ?? "继续确认书级方向"}
+            {task!.resumeAction ?? "Tiếp tục xác nhận hướng đi của cả cuốn"}
           </Link>
         </Button>
       );
@@ -263,7 +263,7 @@ export default function Home() {
             to={`/novels/${novel.id}/edit`}
             onClick={stopPropagation ? stopCardClick : undefined}
           >
-            进入章节执行
+          Vào phần triển khai chương
           </Link>
         </Button>
       );
@@ -276,7 +276,7 @@ export default function Home() {
             to={getTaskCenterLink(task.id)}
             onClick={stopPropagation ? stopCardClick : undefined}
           >
-            查看任务
+            Xem tác vụ
           </Link>
         </Button>
       );
@@ -288,7 +288,7 @@ export default function Home() {
           to={`/novels/${novel.id}/edit`}
           onClick={stopPropagation ? stopCardClick : undefined}
         >
-          编辑小说
+          Chỉnh sửa tiểu thuyết
         </Link>
       </Button>
     );
@@ -298,27 +298,27 @@ export default function Home() {
     <div className="space-y-4">
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <MetricCard
-          title="自动推进中"
+          title="Đang tự động triển khai"
           value={liveWorkflowCount}
-          hint="当前仍在后台推进中的自动导演或自动执行项目。"
+          hint="Các dự án tự động đạo diễn hoặc tự động triển khai vẫn đang chạy nền."
           pending={novelQuery.isPending}
         />
         <MetricCard
-          title="待你处理"
+          title="Đang chờ bạn xử lý"
           value={actionRequiredCount}
-          hint="等待审核、失败或已取消后需要你决定下一步的项目。"
+          hint="Những dự án cần bạn quyết định bước tiếp theo sau khi chờ duyệt, thất bại hoặc bị hủy."
           pending={novelQuery.isPending}
         />
         <MetricCard
-          title="可进入章节执行"
+          title="Có thể vào triển khai chương"
           value={readyForExecutionCount}
-          hint="已经准备到可开写阶段，可以直接进入章节写作。"
+          hint="Đã sẵn sàng tới giai đoạn có thể bắt đầu viết chương."
           pending={novelQuery.isPending}
         />
         <MetricCard
-          title="后台失败任务"
+          title="Tác vụ nền thất bại"
           value={failedTaskCount}
-          hint="来自任务中心的失败任务总数，可后续集中处理。"
+          hint="Tổng số tác vụ thất bại từ trung tâm tác vụ, có thể xử lý tập trung sau."
           pending={taskQuery.isPending}
         />
       </div>
@@ -326,27 +326,27 @@ export default function Home() {
       <Card className="border-primary/30 bg-gradient-to-br from-primary/10 via-background to-primary/5 shadow-sm">
         <CardHeader>
           <div className="flex flex-wrap items-center gap-2">
-            <Badge>新手推荐</Badge>
-            <Badge variant="outline">低门槛开书</Badge>
+            <Badge>Gợi ý cho người mới</Badge>
+            <Badge variant="outline">Khởi đầu dễ dàng</Badge>
           </div>
           <CardTitle>
-            {hasNovels ? "想快速开启下一本书？先交给 AI 自动导演。" : "第一次使用？先让 AI 自动导演带你开一本书。"}
+            {hasNovels ? "Muốn mở nhanh cuốn tiếp theo? Hãy để AI tự động đạo diễn." : "Lần đầu sử dụng? Hãy để AI tự động đạo diễn dẫn bạn mở một cuốn sách."}
           </CardTitle>
           <CardDescription>
-            你只需要提供一个模糊想法，AI 会先帮你生成方向方案、标题包和开书准备，并在关键阶段停下来等你确认，不需要你一开始就把结构全部想清楚。
+            Bạn chỉ cần đưa ra một ý tưởng sơ bộ, AI sẽ giúp tạo hướng đi, bộ tiêu đề và phần chuẩn bị mở sách, rồi dừng lại ở các mốc quan trọng để bạn xác nhận, không cần nghĩ rõ toàn bộ cấu trúc ngay từ đầu.
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
-            <span>适合还没想清楚题材、卖点和前 30 章承诺时使用</span>
-            <span>也适合先快速搭起一本可继续推进的新项目</span>
+            <span>Phù hợp khi bạn chưa chốt thể loại, điểm bán và cam kết 30 chương đầu</span>
+            <span>Cũng phù hợp để dựng nhanh một dự án mới có thể tiếp tục triển khai</span>
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <Button asChild size="lg">
-              <Link to={DIRECTOR_CREATE_LINK}>AI 自动导演开书</Link>
+              <Link to={DIRECTOR_CREATE_LINK}>Mở sách bằng AI tự động đạo diễn</Link>
             </Button>
             <Button asChild size="lg" variant="outline">
-              <Link to={MANUAL_CREATE_LINK}>手动创建小说</Link>
+              <Link to={MANUAL_CREATE_LINK}>Tạo tiểu thuyết thủ công</Link>
             </Button>
           </div>
         </CardContent>
@@ -354,8 +354,8 @@ export default function Home() {
 
       <Card>
         <CardHeader>
-          <CardTitle>继续最近项目</CardTitle>
-          <CardDescription>首页应该直接把你送回当前最值得继续的一本书。</CardDescription>
+          <CardTitle>Tiếp tục dự án gần đây</CardTitle>
+          <CardDescription>Trang chủ nên đưa bạn quay lại ngay cuốn đáng tiếp tục nhất hiện tại.</CardDescription>
         </CardHeader>
         <CardContent>
           {novelQuery.isPending ? (
@@ -371,9 +371,9 @@ export default function Home() {
           ) : novelQuery.isError ? (
             <div className="space-y-3">
               <div className="text-sm text-muted-foreground">
-                当前无法读取项目列表，首页没法为你推荐下一步入口。
+                Hiện không đọc được danh sách dự án, nên trang chủ chưa thể gợi ý bước tiếp theo cho bạn.
               </div>
-              <Button onClick={() => void novelQuery.refetch()}>重新加载项目</Button>
+              <Button onClick={() => void novelQuery.refetch()}>Tải lại dự án</Button>
             </div>
           ) : primaryNovel ? (
             <div className="space-y-4">
@@ -393,15 +393,15 @@ export default function Home() {
                             ) : null;
                           })()}
                           <Badge variant="outline">
-                            进度 {Math.round((primaryNovel.latestAutoDirectorTask.progress ?? 0) * 100)}%
+                            Tiến độ {Math.round((primaryNovel.latestAutoDirectorTask.progress ?? 0) * 100)}%
                           </Badge>
                         </>
                       ) : null}
                       <Badge variant={primaryNovel.status === "published" ? "default" : "secondary"}>
-                        {primaryNovel.status === "published" ? "已发布" : "草稿"}
+                        {primaryNovel.status === "published" ? "Đã phát hành" : "Bản nháp"}
                       </Badge>
                       <Badge variant="outline">
-                        {primaryNovel.writingMode === "continuation" ? "续写" : "原创"}
+                        {primaryNovel.writingMode === "continuation" ? "Viết tiếp" : "Nguyên tác"}
                       </Badge>
                     </div>
                   </div>
@@ -409,14 +409,14 @@ export default function Home() {
                     {getNovelLeadSummary(primaryNovel)}
                   </div>
                   <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
-                    <span>更新时间：{formatDate(primaryNovel.updatedAt)}</span>
-                    <span>章节数：{primaryNovel._count.chapters}</span>
-                    <span>角色数：{primaryNovel._count.characters}</span>
+                    <span>Cập nhật: {formatDate(primaryNovel.updatedAt)}</span>
+                    <span>Số chương: {primaryNovel._count.chapters}</span>
+                    <span>Số nhân vật: {primaryNovel._count.characters}</span>
                     {primaryNovel.latestAutoDirectorTask?.currentStage ? (
-                      <span>当前阶段：{primaryNovel.latestAutoDirectorTask.currentStage}</span>
+                      <span>Giai đoạn hiện tại: {primaryNovel.latestAutoDirectorTask.currentStage}</span>
                     ) : null}
                     {primaryNovel.latestAutoDirectorTask?.lastHealthyStage ? (
-                      <span>最近健康阶段：{primaryNovel.latestAutoDirectorTask.lastHealthyStage}</span>
+                      <span>Giai đoạn ổn định gần nhất: {primaryNovel.latestAutoDirectorTask.lastHealthyStage}</span>
                     ) : null}
                   </div>
                 </div>
@@ -424,11 +424,11 @@ export default function Home() {
                   {renderNovelPrimaryAction(primaryNovel, { size: "lg" })}
                   {primaryNovel.latestAutoDirectorTask ? (
                     <Button asChild size="lg" variant="outline">
-                      <Link to={getTaskCenterLink(primaryNovel.latestAutoDirectorTask.id)}>任务中心</Link>
+                      <Link to={getTaskCenterLink(primaryNovel.latestAutoDirectorTask.id)}>Trung tâm tác vụ</Link>
                     </Button>
                   ) : (
                     <Button asChild size="lg" variant="outline">
-                      <Link to={`/novels/${primaryNovel.id}/edit`}>打开项目</Link>
+                      <Link to={`/novels/${primaryNovel.id}/edit`}>Mở dự án</Link>
                     </Button>
                   )}
                 </div>
@@ -437,14 +437,14 @@ export default function Home() {
           ) : (
             <div className="space-y-3">
               <div className="text-sm text-muted-foreground">
-                你还没有开始小说项目。第一次使用时，推荐直接走 AI 自动导演，它会先帮你搭好方向和开写准备。
+                Bạn vẫn chưa bắt đầu dự án tiểu thuyết nào. Lần đầu sử dụng, mình khuyên đi thẳng bằng AI tự động đạo diễn, hệ thống sẽ giúp bạn dựng hướng đi và chuẩn bị mở viết.
               </div>
               <div className="flex flex-wrap gap-2">
                 <Button asChild>
-                  <Link to={DIRECTOR_CREATE_LINK}>AI 自动导演开书</Link>
+                  <Link to={DIRECTOR_CREATE_LINK}>Mở sách bằng AI tự động đạo diễn</Link>
                 </Button>
                 <Button asChild variant="outline">
-                  <Link to={MANUAL_CREATE_LINK}>手动创建小说</Link>
+                  <Link to={MANUAL_CREATE_LINK}>Tạo tiểu thuyết thủ công</Link>
                 </Button>
               </div>
             </div>
@@ -454,29 +454,29 @@ export default function Home() {
 
       <Card>
         <CardHeader>
-          <CardTitle>快捷操作</CardTitle>
-          <CardDescription>把常用入口和新手最容易上手的开书方式放在一起。</CardDescription>
+          <CardTitle>Thao tác nhanh</CardTitle>
+          <CardDescription>Đặt chung các lối vào hay dùng và cách mở sách dễ nhất cho người mới.</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-wrap gap-2">
           <Button asChild>
-            <Link to={DIRECTOR_CREATE_LINK}>AI 自动导演开书</Link>
+            <Link to={DIRECTOR_CREATE_LINK}>Mở sách bằng AI tự động đạo diễn</Link>
           </Button>
           <Button asChild variant="outline">
-            <Link to={MANUAL_CREATE_LINK}>手动创建小说</Link>
+            <Link to={MANUAL_CREATE_LINK}>Tạo tiểu thuyết thủ công</Link>
           </Button>
           <Button asChild variant="outline">
-            <Link to="/book-analysis">新建拆书</Link>
+            <Link to="/book-analysis">Tạo phân tích sách mới</Link>
           </Button>
           <Button asChild variant="outline">
-            <Link to="/tasks">打开任务中心</Link>
+            <Link to="/tasks">Mở trung tâm tác vụ</Link>
           </Button>
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader>
-          <CardTitle>最近项目</CardTitle>
-          <CardDescription>这里不只显示标题，也直接显示当前所处阶段和恢复入口。</CardDescription>
+          <CardTitle>Dự án gần đây</CardTitle>
+          <CardDescription>Ở đây không chỉ hiện tiêu đề, mà còn hiện luôn giai đoạn hiện tại và lối quay lại.</CardDescription>
         </CardHeader>
         <CardContent>
           {novelQuery.isPending ? (
@@ -492,13 +492,13 @@ export default function Home() {
           ) : novelQuery.isError ? (
             <div className="space-y-3">
               <div className="text-sm text-muted-foreground">
-                当前无法加载最近项目，稍后可以重试。
+                Hiện không tải được dự án gần đây, bạn có thể thử lại sau.
               </div>
-              <Button variant="outline" onClick={() => void novelQuery.refetch()}>重新加载</Button>
+              <Button variant="outline" onClick={() => void novelQuery.refetch()}>Tải lại</Button>
             </div>
           ) : recentNovels.length === 0 ? (
             <div className="rounded-md border border-dashed p-4 text-sm text-muted-foreground">
-              暂无小说项目，先从“新建小说”开始。
+              Chưa có dự án tiểu thuyết nào, hãy bắt đầu bằng “Tạo tiểu thuyết mới”.
             </div>
           ) : (
             <div className="grid gap-3 md:grid-cols-2">
@@ -528,19 +528,19 @@ export default function Home() {
                             {workflowBadge ? (
                               <Badge variant={workflowBadge.variant}>{workflowBadge.label}</Badge>
                             ) : (
-                              <Badge variant="outline">无自动导演任务</Badge>
+                              <Badge variant="outline">Không có tác vụ tự động đạo diễn</Badge>
                             )}
                             {workflowTask ? (
-                              <Badge variant="outline">进度 {Math.round(workflowTask.progress * 100)}%</Badge>
+                              <Badge variant="outline">Tiến độ {Math.round(workflowTask.progress * 100)}%</Badge>
                             ) : null}
                           </div>
                         </div>
                         <div className="flex flex-wrap items-center justify-end gap-2">
                           <Badge variant={novel.status === "published" ? "default" : "secondary"}>
-                            {novel.status === "published" ? "已发布" : "草稿"}
+                            {novel.status === "published" ? "Đã phát hành" : "Bản nháp"}
                           </Badge>
                           <Badge variant="outline">
-                            {novel.writingMode === "continuation" ? "续写" : "原创"}
+                            {novel.writingMode === "continuation" ? "Viết tiếp" : "Nguyên tác"}
                           </Badge>
                         </div>
                       </div>
@@ -550,14 +550,14 @@ export default function Home() {
                     </CardHeader>
                     <CardContent className="space-y-3">
                       <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
-                        <span>更新时间：{formatDate(novel.updatedAt)}</span>
-                        <span>章节数：{novel._count.chapters}</span>
-                        <span>角色数：{novel._count.characters}</span>
+                        <span>Cập nhật: {formatDate(novel.updatedAt)}</span>
+                        <span>Số chương: {novel._count.chapters}</span>
+                        <span>Số nhân vật: {novel._count.characters}</span>
                         {workflowTask?.currentStage ? (
-                          <span>阶段：{workflowTask.currentStage}</span>
+                          <span>Giai đoạn: {workflowTask.currentStage}</span>
                         ) : null}
                         {workflowTask?.lastHealthyStage ? (
-                          <span>最近健康阶段：{workflowTask.lastHealthyStage}</span>
+                          <span>Giai đoạn ổn định gần nhất: {workflowTask.lastHealthyStage}</span>
                         ) : null}
                       </div>
 
@@ -565,11 +565,11 @@ export default function Home() {
                         {renderNovelPrimaryAction(novel, { stopPropagation: true })}
                         {workflowTask ? (
                           <Button asChild size="sm" variant="outline">
-                            <Link to={getTaskCenterLink(workflowTask.id)} onClick={stopCardClick}>任务中心</Link>
+                            <Link to={getTaskCenterLink(workflowTask.id)} onClick={stopCardClick}>Trung tâm tác vụ</Link>
                           </Button>
                         ) : (
                           <Button asChild size="sm" variant="outline">
-                            <Link to={`/novels/${novel.id}/edit`} onClick={stopCardClick}>打开项目</Link>
+                            <Link to={`/novels/${novel.id}/edit`} onClick={stopCardClick}>Mở dự án</Link>
                           </Button>
                         )}
                       </div>

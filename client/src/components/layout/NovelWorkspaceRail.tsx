@@ -63,12 +63,12 @@ function hasChapterPlanContent(chapter: VolumePlan["chapters"][number]): boolean
 }
 
 function formatTaskStatus(status: string | null | undefined): string {
-  if (status === "running") return "进行中";
-  if (status === "queued") return "排队中";
-  if (status === "waiting_approval") return "待审核";
-  if (status === "failed") return "异常";
-  if (status === "succeeded") return "已完成";
-  return "空闲";
+  if (status === "running") return "Đang chạy";
+  if (status === "queued") return "Đang xếp hàng";
+  if (status === "waiting_approval") return "Chờ duyệt";
+  if (status === "failed") return "Có lỗi";
+  if (status === "succeeded") return "Đã hoàn tất";
+  return "Nhàn rỗi";
 }
 
 export default function NovelWorkspaceRail(props: NovelWorkspaceRailProps) {
@@ -174,12 +174,12 @@ export default function NovelWorkspaceRail(props: NovelWorkspaceRailProps) {
       const isWorkflowCurrent = workflowCurrentTab === step.key;
       const isDone = stepReadiness[step.key] || (workflowIndex >= 0 && index < workflowIndex);
       const statusLabel = isWorkflowCurrent
-        ? isSelected ? "当前步骤" : "流程中"
-        : isSelected
-          ? "查看中"
+            ? isSelected ? "Bước hiện tại" : "Đang trong quy trình"
+            : isSelected
+          ? "Đang xem"
           : isDone
-            ? "已完成"
-            : "待推进";
+            ? "Đã hoàn thành"
+            : "Chưa triển khai";
 
       return {
         ...step,
@@ -192,14 +192,14 @@ export default function NovelWorkspaceRail(props: NovelWorkspaceRailProps) {
   ), [activeTab, stepReadiness, workflowCurrentTab, workflowIndex]);
 
   const completedStepCount = stepStates.filter((item) => item.isDone).length;
-  const novelTitle = novelDetail?.title?.trim() || "小说创作工作台";
+  const novelTitle = novelDetail?.title?.trim() || "Không gian sáng tác tiểu thuyết";
   const cockpitSummary = activeTask
     ? activeTask.status === "failed"
-      ? activeTask.lastError || "后台任务已中断，建议先查看任务中心。"
+      ? activeTask.lastError || "Tác vụ nền đã bị gián đoạn, bạn nên xem trung tâm tác vụ trước."
       : activeTask.status === "waiting_approval"
-        ? `等待处理：${getNovelWorkspaceTabLabel(workflowCurrentTab ?? activeTab)}`
-        : activeTask.currentItemLabel || `AI 正在推进 ${getNovelWorkspaceTabLabel(workflowCurrentTab ?? activeTab)}`
-    : "当前没有后台导演任务，可以直接继续手动创作。";
+        ? `Đang chờ xử lý: ${getNovelWorkspaceTabLabel(workflowCurrentTab ?? activeTab)}`
+        : activeTask.currentItemLabel || `AI đang triển khai ${getNovelWorkspaceTabLabel(workflowCurrentTab ?? activeTab)}`
+    : "Hiện chưa có tác vụ đạo diễn nền, bạn có thể tiếp tục sáng tác thủ công.";
   const cockpitVariant = activeTask?.status === "failed"
     ? "destructive"
     : activeTask?.status === "running" || activeTask?.status === "queued"
@@ -242,7 +242,7 @@ export default function NovelWorkspaceRail(props: NovelWorkspaceRailProps) {
               </div>
               <div className="min-w-0">
                 <div className="text-[11px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
-                  创作工作台
+                  Không gian sáng tác
                 </div>
                 <div className="truncate text-sm font-semibold text-foreground">{novelTitle}</div>
               </div>
@@ -254,8 +254,8 @@ export default function NovelWorkspaceRail(props: NovelWorkspaceRailProps) {
             size="icon"
             className="h-8 w-8 shrink-0 text-muted-foreground"
             onClick={onToggle}
-            aria-label={collapsed ? "展开创作导航" : "收起创作导航"}
-            title={collapsed ? "展开创作导航" : "收起创作导航"}
+            aria-label={collapsed ? "Mở rộng điều hướng sáng tác" : "Thu gọn điều hướng sáng tác"}
+            title={collapsed ? "Mở rộng điều hướng sáng tác" : "Thu gọn điều hướng sáng tác"}
           >
             {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
           </Button>
@@ -268,7 +268,7 @@ export default function NovelWorkspaceRail(props: NovelWorkspaceRailProps) {
             className="justify-start"
             onClick={() => navigate("/novels")}
           >
-            返回小说列表
+            Quay lại danh sách tiểu thuyết
           </Button>
         ) : (
           <Button
@@ -277,8 +277,8 @@ export default function NovelWorkspaceRail(props: NovelWorkspaceRailProps) {
             size="icon"
             className="mx-auto h-9 w-9"
             onClick={() => navigate("/novels")}
-            title="返回小说列表"
-            aria-label="返回小说列表"
+            title="Quay lại danh sách tiểu thuyết"
+            aria-label="Quay lại danh sách tiểu thuyết"
           >
             <BookOpenText className="h-4 w-4" />
           </Button>
@@ -287,7 +287,7 @@ export default function NovelWorkspaceRail(props: NovelWorkspaceRailProps) {
         {!collapsed ? (
           <div className="rounded-2xl border border-border/70 bg-muted/20 px-3 py-2 text-xs text-muted-foreground">
             <div className="flex items-center justify-between gap-2">
-              <span>流程：{getNovelWorkspaceTabLabel(workflowCurrentTab ?? activeTab)}</span>
+              <span>Quy trình: {getNovelWorkspaceTabLabel(workflowCurrentTab ?? activeTab)}</span>
               <span>{completedStepCount}/{NOVEL_WORKSPACE_FLOW_STEPS.length}</span>
             </div>
           </div>
@@ -359,7 +359,7 @@ export default function NovelWorkspaceRail(props: NovelWorkspaceRailProps) {
           <button
             type="button"
             onClick={() => goToTab("history")}
-            title="版本历史"
+            title="Lịch sử phiên bản"
             className={cn(
               "flex w-full items-center rounded-2xl border border-border/70 transition-colors hover:bg-muted/40",
               collapsed ? "justify-center px-2 py-3" : "gap-3 px-3 py-3 text-left",
@@ -367,13 +367,13 @@ export default function NovelWorkspaceRail(props: NovelWorkspaceRailProps) {
             )}
           >
             <History className="h-4 w-4 shrink-0" />
-            {!collapsed ? <span className="text-sm font-medium">版本历史</span> : null}
+            {!collapsed ? <span className="text-sm font-medium">Lịch sử phiên bản</span> : null}
           </button>
 
           {!collapsed ? (
             <div className="rounded-2xl border border-border/70 bg-muted/20 p-3">
               <div className="flex items-center justify-between gap-2">
-                <div className="text-sm font-semibold text-foreground">AI 驾驶舱</div>
+                <div className="text-sm font-semibold text-foreground">Buồng lái AI</div>
                 <Badge variant={cockpitVariant}>{formatTaskStatus(activeTask?.status)}</Badge>
               </div>
               <div className="mt-2 text-xs leading-5 text-muted-foreground">
@@ -381,11 +381,11 @@ export default function NovelWorkspaceRail(props: NovelWorkspaceRailProps) {
               </div>
               <div className="mt-3 flex gap-2">
                 <Button type="button" size="sm" className="flex-1" onClick={openTaskCenter}>
-                  任务中心
+                  Trung tâm tác vụ
                 </Button>
                 {onSwitchToProjectNav ? (
                   <Button type="button" size="sm" variant="outline" onClick={onSwitchToProjectNav}>
-                    项目导航
+                    Điều hướng dự án
                   </Button>
                 ) : null}
               </div>
@@ -398,8 +398,8 @@ export default function NovelWorkspaceRail(props: NovelWorkspaceRailProps) {
                 variant="outline"
                 className="h-9 w-9"
                 onClick={openTaskCenter}
-                title={`AI 驾驶舱：${formatTaskStatus(activeTask?.status)}`}
-                aria-label="打开任务中心"
+                title={`Buồng lái AI: ${formatTaskStatus(activeTask?.status)}`}
+                aria-label="Mở trung tâm tác vụ"
               >
                 <ListTodo className="h-4 w-4" />
               </Button>
@@ -410,8 +410,8 @@ export default function NovelWorkspaceRail(props: NovelWorkspaceRailProps) {
                   variant="outline"
                   className="h-9 w-9"
                   onClick={onSwitchToProjectNav}
-                  title="切换到项目导航"
-                  aria-label="切换到项目导航"
+                  title="Chuyển sang điều hướng dự án"
+                  aria-label="Chuyển sang điều hướng dự án"
                 >
                   <LayoutDashboard className="h-4 w-4" />
                 </Button>

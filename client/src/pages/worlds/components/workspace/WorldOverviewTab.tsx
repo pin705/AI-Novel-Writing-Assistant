@@ -15,12 +15,12 @@ export default function WorldOverviewTab(props: WorldOverviewTabProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{featureFlags.worldVisEnabled ? "总览与可视化" : "世界总览"}</CardTitle>
+        <CardTitle>{featureFlags.worldVisEnabled ? "Tổng quan và trực quan hóa" : "Tổng quan thế giới"}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">
         <div className="rounded-md border p-3 text-sm">
-          <div className="font-medium mb-1">一句话概括</div>
-          <div>{summary ?? "暂无"}</div>
+          <div className="font-medium mb-1">Tóm tắt một câu</div>
+          <div>{summary ?? "Chưa có"}</div>
         </div>
         {sections.map((section) => (
           <div key={section.key} className="rounded-md border p-3 text-sm">
@@ -32,7 +32,7 @@ export default function WorldOverviewTab(props: WorldOverviewTabProps) {
           <WorldVisualizationBoard payload={visualization} />
         ) : (
           <div className="rounded-md border p-3 text-sm text-muted-foreground">
-            可视化功能已关闭（`VITE_WORLD_VIS_ENABLED=false`）。
+            Tính năng trực quan hóa đang tắt (`VITE_WORLD_VIS_ENABLED=false`).
           </div>
         )}
       </CardContent>

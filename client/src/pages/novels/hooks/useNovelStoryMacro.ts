@@ -134,7 +134,7 @@ export function useNovelStoryMacro(input: UseNovelStoryMacroInput): {
       temperature: llm.temperature,
     }),
     onSuccess: async (response) => {
-      setMessage(response.message ?? "故事引擎原型已生成。");
+      setMessage(response.message ?? "Đã sinh nguyên mẫu bộ máy câu chuyện.");
       setExpansion(normalizeExpansion(response.data?.expansion));
       setDecomposition(response.data?.decomposition ?? EMPTY_DECOMPOSITION);
       setConstraints(response.data?.constraints ?? []);
@@ -143,7 +143,7 @@ export function useNovelStoryMacro(input: UseNovelStoryMacroInput): {
       await syncNovelWorkflowStageSilently({
         novelId,
         stage: "story_macro",
-        itemLabel: "故事引擎原型已生成",
+        itemLabel: "Nguyên mẫu bộ máy câu chuyện đã được sinh",
         status: "waiting_approval",
       });
       await invalidatePlan();
@@ -157,13 +157,13 @@ export function useNovelStoryMacro(input: UseNovelStoryMacroInput): {
       temperature: llm.temperature,
     }),
     onSuccess: async (response) => {
-      setMessage(response.message ?? "约束引擎已构建。");
+      setMessage(response.message ?? "Đã dựng xong bộ máy ràng buộc.");
       await syncNovelWorkflowStageSilently({
         novelId,
         stage: "story_macro",
-        itemLabel: "约束引擎已构建",
+        itemLabel: "Bộ máy ràng buộc đã được dựng",
         checkpointType: "book_contract_ready",
-        checkpointSummary: "故事宏观规划与约束引擎已具备进入下一步的条件。",
+        checkpointSummary: "Quy hoạch tổng thể câu chuyện và bộ máy ràng buộc đã sẵn sàng để đi tiếp bước sau.",
         status: "waiting_approval",
       });
       await invalidatePlan();
@@ -179,11 +179,11 @@ export function useNovelStoryMacro(input: UseNovelStoryMacroInput): {
       lockedFields,
     }),
     onSuccess: async (response) => {
-      setMessage(response.message ?? "故事宏观规划已保存。");
+      setMessage(response.message ?? "Đã lưu quy hoạch tổng thể câu chuyện.");
       await syncNovelWorkflowStageSilently({
         novelId,
         stage: "story_macro",
-        itemLabel: "故事宏观规划已保存",
+        itemLabel: "Quy hoạch tổng thể câu chuyện đã được lưu",
         status: "waiting_approval",
       });
       await invalidatePlan();
@@ -193,7 +193,7 @@ export function useNovelStoryMacro(input: UseNovelStoryMacroInput): {
   const saveStateMutation = useMutation({
     mutationFn: () => updateNovelStoryMacroState(novelId, storyState),
     onSuccess: async () => {
-      setMessage("故事宏观状态已保存。");
+      setMessage("Đã lưu trạng thái quy hoạch tổng thể câu chuyện.");
       await invalidatePlan();
     },
   });
@@ -208,7 +208,7 @@ export function useNovelStoryMacro(input: UseNovelStoryMacroInput): {
       });
     },
     onSuccess: async (response) => {
-      setMessage(response.message ?? "字段已重生成。");
+      setMessage(response.message ?? "Đã sinh lại trường thông tin.");
       await invalidatePlan();
     },
     onSettled: () => {

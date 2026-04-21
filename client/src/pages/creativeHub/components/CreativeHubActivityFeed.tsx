@@ -2,12 +2,12 @@ import type { CreativeHubStreamFrame } from "@ai-novel/shared/types/api";
 import { Badge } from "@/components/ui/badge";
 
 function toStatusLabel(status: string): string {
-  if (status === "running") return "运行中";
-  if (status === "queued") return "排队中";
-  if (status === "waiting_approval") return "等待审批";
-  if (status === "succeeded") return "已完成";
-  if (status === "failed") return "失败";
-  if (status === "cancelled") return "已取消";
+  if (status === "running") return "Đang chạy";
+  if (status === "queued") return "Đang xếp hàng";
+  if (status === "waiting_approval") return "Chờ duyệt";
+  if (status === "succeeded") return "Đã hoàn tất";
+  if (status === "failed") return "Thất bại";
+  if (status === "cancelled") return "Đã hủy";
   return status;
 }
 
@@ -48,49 +48,49 @@ export function getActivityRunId(frame: CreativeHubStreamFrame): string | null {
 function renderBody(frame: CreativeHubStreamFrame): { title: string; summary: string; meta: string[] } {
   if (frame.event === "creative_hub/run_status") {
     return {
-      title: "运行状态",
-      summary: frame.data.message || `当前状态：${toStatusLabel(frame.data.status)}`,
+      title: "Trạng thái chạy",
+      summary: frame.data.message || `Trạng thái hiện tại: ${toStatusLabel(frame.data.status)}`,
       meta: [toStatusLabel(frame.data.status), frame.data.runId ? `Run ${frame.data.runId.slice(0, 8)}` : ""].filter(Boolean),
     };
   }
   if (frame.event === "creative_hub/tool_call") {
     return {
-      title: `调用工具 · ${frame.data.toolName}`,
-      summary: frame.data.inputSummary || "正在准备工具输入。",
+      title: `Gọi công cụ · ${frame.data.toolName}`,
+      summary: frame.data.inputSummary || "Đang chuẩn bị đầu vào cho công cụ.",
       meta: [frame.data.runId ? `Run ${frame.data.runId.slice(0, 8)}` : "", frame.data.stepId ? `Step ${frame.data.stepId.slice(0, 8)}` : ""].filter(Boolean),
     };
   }
   if (frame.event === "creative_hub/tool_result") {
     return {
-      title: `${frame.data.toolName} ${frame.data.success ? "执行成功" : "执行失败"}`,
-      summary: frame.data.outputSummary || "工具返回了空结果。",
-      meta: [frame.data.success ? "成功" : "失败", frame.data.runId ? `Run ${frame.data.runId.slice(0, 8)}` : ""].filter(Boolean),
+      title: `${frame.data.toolName} ${frame.data.success ? "thực thi thành công" : "thực thi thất bại"}`,
+      summary: frame.data.outputSummary || "Công cụ trả về kết quả rỗng.",
+      meta: [frame.data.success ? "Thành công" : "Thất bại", frame.data.runId ? `Run ${frame.data.runId.slice(0, 8)}` : ""].filter(Boolean),
     };
   }
   if (frame.event === "creative_hub/interrupt") {
     return {
-      title: frame.data.title || "等待审批",
+      title: frame.data.title || "Chờ duyệt",
       summary: frame.data.summary,
       meta: [frame.data.targetType ? `${frame.data.targetType}:${frame.data.targetId ?? "-"}` : "", frame.data.runId ? `Run ${frame.data.runId.slice(0, 8)}` : ""].filter(Boolean),
     };
   }
   if (frame.event === "creative_hub/approval_resolved") {
     return {
-      title: frame.data.action === "approved" ? "审批已通过" : "审批已拒绝",
-      summary: frame.data.note?.trim() || "当前审批动作已记录。",
+      title: frame.data.action === "approved" ? "Đã duyệt" : "Đã từ chối duyệt",
+      summary: frame.data.note?.trim() || "Hành động duyệt hiện đã được ghi lại.",
       meta: [frame.data.approvalId ? `Approval ${frame.data.approvalId.slice(0, 8)}` : ""].filter(Boolean),
     };
   }
   if (frame.event === "creative_hub/error" || frame.event === "error") {
     return {
-      title: "运行异常",
+      title: "Lỗi chạy",
       summary: frame.data.message,
       meta: [],
     };
   }
   if (frame.event === "metadata" && typeof frame.data.reasoning === "string") {
     return {
-      title: "推理更新",
+      title: "Cập nhật suy luận",
       summary: frame.data.reasoning,
       meta: [],
     };
@@ -98,22 +98,22 @@ function renderBody(frame: CreativeHubStreamFrame): { title: string; summary: st
   if (frame.event === "metadata" && typeof frame.data.planner === "object" && frame.data.planner) {
     const planner = frame.data.planner as Record<string, unknown>;
     return {
-      title: "意图识别",
-      summary: `本次请求被识别为 ${String(planner.intent ?? "unknown")}，来源 ${String(planner.source ?? "unknown")}`,
+      title: "Nhận diện ý định",
+      summary: `Yêu cầu này được nhận diện là ${String(planner.intent ?? "unknown")}, nguồn ${String(planner.source ?? "unknown")}`,
       meta: [
-        "confidence" in planner ? `置信度 ${String(planner.confidence ?? "-")}` : "",
+        "confidence" in planner ? `Độ tin cậy ${String(planner.confidence ?? "-")}` : "",
       ].filter(Boolean),
     };
   }
   if (frame.event === "metadata" && typeof frame.data.checkpointId === "string") {
     return {
-      title: "检查点已保存",
-      summary: `Checkpoint ${frame.data.checkpointId.slice(0, 8)} 已写回线程历史。`,
+      title: "Đã lưu checkpoint",
+      summary: `Checkpoint ${frame.data.checkpointId.slice(0, 8)} đã được ghi lại vào lịch sử luồng.`,
       meta: [typeof frame.data.runId === "string" ? `Run ${frame.data.runId.slice(0, 8)}` : ""].filter(Boolean),
     };
   }
   return {
-    title: "系统事件",
+    title: "Sự kiện hệ thống",
     summary: "",
     meta: [],
   };
@@ -189,11 +189,11 @@ export default function CreativeHubActivityFeed({
             && activity.data.planner
             && typeof activity.data.planner === "object" ? (
               <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3 text-xs text-slate-700">
-                <div className="mb-1 text-[11px] font-medium text-slate-500">意图识别</div>
-                <div>来源: {String((activity.data.planner as Record<string, unknown>).source ?? "unknown")}</div>
-                <div>意图: {String((activity.data.planner as Record<string, unknown>).intent ?? "unknown")}</div>
+                <div className="mb-1 text-[11px] font-medium text-slate-500">Nhận diện ý định</div>
+                <div>Nguồn: {String((activity.data.planner as Record<string, unknown>).source ?? "unknown")}</div>
+                <div>Ý định: {String((activity.data.planner as Record<string, unknown>).intent ?? "unknown")}</div>
                 {"confidence" in (activity.data.planner as Record<string, unknown>) ? (
-                  <div>置信度: {String((activity.data.planner as Record<string, unknown>).confidence ?? "-")}</div>
+                  <div>Độ tin cậy: {String((activity.data.planner as Record<string, unknown>).confidence ?? "-")}</div>
                 ) : null}
               </div>
             ) : null}

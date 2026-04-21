@@ -111,7 +111,7 @@ export function useNovelCharacterMutations(input: UseNovelCharacterMutationsInpu
         endOrder: pipelineForm.endOrder,
       }),
     onSuccess: async (response) => {
-      setCharacterMessage(response.message ?? `角色时间线同步完成，本次新增 ${response.data?.syncedCount ?? 0} 条。`);
+      setCharacterMessage(response.message ?? `Đồng bộ mạch thời gian nhân vật xong, lần này thêm ${response.data?.syncedCount ?? 0} mục.`);
       await invalidateCharacterViews(queryClient, id, selectedCharacterId || "none");
     },
   });
@@ -123,7 +123,7 @@ export function useNovelCharacterMutations(input: UseNovelCharacterMutationsInpu
         endOrder: pipelineForm.endOrder,
       }),
     onSuccess: async (response) => {
-      setCharacterMessage(response.message ?? `全角色时间线同步完成，共新增 ${response.data?.syncedCount ?? 0} 条事件。`);
+      setCharacterMessage(response.message ?? `Đã đồng bộ mạch thời gian của toàn bộ nhân vật, tổng cộng thêm ${response.data?.syncedCount ?? 0} sự kiện.`);
       await invalidateCharacterViews(queryClient, id, selectedCharacterId || "none");
     },
   });
@@ -136,7 +136,7 @@ export function useNovelCharacterMutations(input: UseNovelCharacterMutationsInpu
         temperature: 0.4,
       }),
     onSuccess: async () => {
-      setCharacterMessage("角色信息已按时间线完成演进更新。");
+      setCharacterMessage("Thông tin nhân vật đã được cập nhật theo tiến trình thời gian.");
       await invalidateCharacterViews(queryClient, id, selectedCharacterId || "none");
     },
   });
@@ -154,10 +154,10 @@ export function useNovelCharacterMutations(input: UseNovelCharacterMutationsInpu
       const issueText = (response.data?.issues ?? [])
         .map((item) => `${item.severity.toUpperCase()}: ${item.message}`)
         .join(" | ");
-      setCharacterMessage(`世界规则检查(${status}) ${warningText} ${issueText}`.trim());
+      setCharacterMessage(`Kiểm tra quy tắc thế giới (${status}) ${warningText} ${issueText}`.trim());
     },
     onError: (error) => {
-      setCharacterMessage(error instanceof Error ? error.message : "世界规则检查失败。");
+      setCharacterMessage(error instanceof Error ? error.message : "Kiểm tra quy tắc thế giới thất bại.");
     },
   });
 
@@ -174,7 +174,7 @@ export function useNovelCharacterMutations(input: UseNovelCharacterMutationsInpu
         currentGoal: characterForm.currentGoal,
       }),
     onSuccess: async () => {
-      setCharacterMessage("角色信息已保存。");
+      setCharacterMessage("Thông tin nhân vật đã được lưu.");
       await invalidateCharacterViews(queryClient, id, selectedCharacterId || "none");
     },
   });
@@ -182,7 +182,7 @@ export function useNovelCharacterMutations(input: UseNovelCharacterMutationsInpu
   const importBaseCharacterMutation = useMutation({
     mutationFn: async () => {
       if (!selectedBaseCharacter) {
-        throw new Error("请先选择要导入的基础角色。");
+        throw new Error("Hãy chọn nhân vật cơ sở cần nhập trước.");
       }
       return createNovelCharacter(id, {
         name: selectedBaseCharacter.name,
@@ -194,21 +194,21 @@ export function useNovelCharacterMutations(input: UseNovelCharacterMutationsInpu
       });
     },
     onSuccess: async (response) => {
-      setCharacterMessage(response.message ?? "基础角色已导入到当前小说。");
+      setCharacterMessage(response.message ?? "Đã nhập nhân vật cơ sở vào truyện hiện tại.");
       if (response.data?.id) {
         setSelectedCharacterId(response.data.id);
       }
       await invalidateCharacterViews(queryClient, id, response.data?.id ?? selectedCharacterId ?? "none");
     },
     onError: (error) => {
-      setCharacterMessage(error instanceof Error ? error.message : "导入基础角色失败。");
+      setCharacterMessage(error instanceof Error ? error.message : "Nhập nhân vật cơ sở thất bại.");
     },
   });
 
   const quickCreateCharacterMutation = useMutation({
     mutationFn: async (payload?: QuickCharacterCreatePayload) => {
       const nextName = payload?.name?.trim() || quickCharacterForm.name.trim();
-      const nextRole = payload?.role?.trim() || quickCharacterForm.role.trim() || "主角";
+      const nextRole = payload?.role?.trim() || quickCharacterForm.role.trim() || "Nhân vật chính";
       const generatedProfile = payload ? buildCharacterProfileFromWizard(payload) : {};
       return createNovelCharacter(id, {
         name: nextName,
@@ -219,7 +219,7 @@ export function useNovelCharacterMutations(input: UseNovelCharacterMutationsInpu
       });
     },
     onSuccess: async (response) => {
-      setCharacterMessage(response.message ?? "角色创建成功。");
+      setCharacterMessage(response.message ?? "Tạo nhân vật thành công.");
       setQuickCharacterForm((prev) => ({ ...prev, name: "" }));
       if (response.data?.id) {
         setSelectedCharacterId(response.data.id);
@@ -227,14 +227,14 @@ export function useNovelCharacterMutations(input: UseNovelCharacterMutationsInpu
       await invalidateCharacterViews(queryClient, id, response.data?.id ?? selectedCharacterId ?? "none");
     },
     onError: (error) => {
-      setCharacterMessage(error instanceof Error ? error.message : "角色创建失败。");
+      setCharacterMessage(error instanceof Error ? error.message : "Tạo nhân vật thất bại.");
     },
   });
 
   const deleteCharacterMutation = useMutation({
     mutationFn: (characterId: string) => deleteNovelCharacter(id, characterId),
     onSuccess: async (_response, deletedCharacterId) => {
-      setCharacterMessage("角色已删除。");
+      setCharacterMessage("Nhân vật đã được xóa.");
       if (selectedCharacterId === deletedCharacterId) {
         const fallback = characters.find((item) => item.id !== deletedCharacterId);
         setSelectedCharacterId(fallback?.id ?? "");
@@ -242,7 +242,7 @@ export function useNovelCharacterMutations(input: UseNovelCharacterMutationsInpu
       await invalidateCharacterViews(queryClient, id, deletedCharacterId);
     },
     onError: (error) => {
-      setCharacterMessage(error instanceof Error ? error.message : "删除角色失败。");
+      setCharacterMessage(error instanceof Error ? error.message : "Xóa nhân vật thất bại.");
     },
   });
 
@@ -255,7 +255,7 @@ export function useNovelCharacterMutations(input: UseNovelCharacterMutationsInpu
         temperature: payload.temperature ?? 0.55,
       }),
     onError: (error) => {
-      setCharacterMessage(error instanceof Error ? error.message : "补充角色生成失败。");
+      setCharacterMessage(error instanceof Error ? error.message : "Tạo nhân vật bổ sung thất bại.");
     },
   });
 
@@ -266,7 +266,7 @@ export function useNovelCharacterMutations(input: UseNovelCharacterMutationsInpu
       const relationCount = response.data?.relationCount ?? 0;
       setCharacterMessage(
         response.message
-        ?? `补充角色已创建${relationCount > 0 ? `，并同步 ${relationCount} 条结构化关系` : ""}。`,
+        ?? `Đã tạo nhân vật bổ sung${relationCount > 0 ? `, đồng thời đồng bộ ${relationCount} quan hệ có cấu trúc` : ""}.`,
       );
       if (createdCharacterId) {
         setSelectedCharacterId(createdCharacterId);
@@ -274,7 +274,7 @@ export function useNovelCharacterMutations(input: UseNovelCharacterMutationsInpu
       await invalidateCharacterViews(queryClient, id, createdCharacterId || selectedCharacterId || "none");
     },
     onError: (error) => {
-      setCharacterMessage(error instanceof Error ? error.message : "应用补充角色失败。");
+      setCharacterMessage(error instanceof Error ? error.message : "Áp dụng nhân vật bổ sung thất bại.");
     },
   });
 

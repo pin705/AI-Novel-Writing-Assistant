@@ -42,25 +42,25 @@ function createDownload(blob: Blob, fileName: string): void {
 
 function formatProgressStatus(status?: ProjectProgressStatus | null): string {
   if (status === "completed") {
-    return "已完成";
+    return "Hoàn thành";
   }
   if (status === "in_progress") {
-    return "进行中";
+    return "Đang làm";
   }
   if (status === "rework") {
-    return "待返工";
+    return "Cần làm lại";
   }
   if (status === "blocked") {
-    return "受阻";
+    return "Bị chặn";
   }
-  return "未开始";
+  return "Chưa bắt đầu";
 }
 
 function formatTokenCount(value?: number | null): string {
   const normalized = typeof value === "number" && Number.isFinite(value)
     ? Math.max(0, Math.round(value))
     : 0;
-  return new Intl.NumberFormat("zh-CN").format(normalized);
+  return new Intl.NumberFormat("vi-VN").format(normalized);
 }
 
 export default function NovelList() {
@@ -78,10 +78,10 @@ export default function NovelList() {
     mutationFn: (id: string) => deleteNovel(id),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: queryKeys.novels.all });
-      toast.success("小说已删除。");
+      toast.success("Đã xóa tiểu thuyết.");
     },
     onError: (error) => {
-      toast.error(error instanceof Error ? error.message : "删除小说失败。");
+      toast.error(error instanceof Error ? error.message : "Xóa tiểu thuyết thất bại.");
     },
   });
 
@@ -93,10 +93,10 @@ export default function NovelList() {
     ),
     onSuccess: ({ blob, fileName }) => {
       createDownload(blob, fileName);
-      toast.success("导出已开始。");
+      toast.success("Đã bắt đầu xuất file.");
     },
     onError: (error) => {
-      toast.error(error instanceof Error ? error.message : "导出小说失败。");
+      toast.error(error instanceof Error ? error.message : "Xuất tiểu thuyết thất bại.");
     },
   });
 
@@ -110,15 +110,15 @@ export default function NovelList() {
         queryClient.invalidateQueries({ queryKey: queryKeys.novels.all }),
         queryClient.invalidateQueries({ queryKey: ["tasks"] }),
       ]);
-      toast.success(input.mode === "auto_execute_front10" ? "已继续自动执行前 10 章。" : "自动导演已继续推进。");
+      toast.success(input.mode === "auto_execute_front10" ? "Đã tiếp tục tự động triển khai 10 chương đầu." : "Tự động đạo diễn đã tiếp tục triển khai.");
     },
     onError: (error, input) => {
       toast.error(
         error instanceof Error
           ? error.message
           : input.mode === "auto_execute_front10"
-            ? "继续自动执行前 10 章失败。"
-            : "继续自动导演失败。",
+            ? "Tiếp tục tự động triển khai 10 chương đầu thất bại."
+            : "Tiếp tục tự động đạo diễn thất bại.",
       );
     },
   });
@@ -138,7 +138,7 @@ export default function NovelList() {
   }, [allNovels, status, writingMode]);
 
   const handleDelete = (novelId: string, title: string) => {
-    const confirmed = window.confirm(`确认删除《${title}》吗？该操作会直接删除当前小说。`);
+    const confirmed = window.confirm(`Bạn có chắc muốn xóa “${title}” không? Thao tác này sẽ xóa trực tiếp tiểu thuyết hiện tại.`);
     if (!confirmed) {
       return;
     }
@@ -162,19 +162,19 @@ export default function NovelList() {
               variant={status === "all" ? "default" : "secondary"}
               onClick={() => setStatus("all")}
             >
-              全部
+              Tất cả
             </Button>
             <Button
               variant={status === "draft" ? "default" : "secondary"}
               onClick={() => setStatus("draft")}
             >
-              草稿
+              Bản nháp
             </Button>
             <Button
               variant={status === "published" ? "default" : "secondary"}
               onClick={() => setStatus("published")}
             >
-              已发布
+              Đã phát hành
             </Button>
           </div>
           <div className="flex items-center gap-2">
@@ -183,31 +183,31 @@ export default function NovelList() {
               variant={writingMode === "all" ? "default" : "secondary"}
               onClick={() => setWritingMode("all")}
             >
-              创作类型: 全部
+              Loại sáng tác: Tất cả
             </Button>
             <Button
               size="sm"
               variant={writingMode === "original" ? "default" : "secondary"}
               onClick={() => setWritingMode("original")}
             >
-              原创
+              Nguyên tác
             </Button>
             <Button
               size="sm"
               variant={writingMode === "continuation" ? "default" : "secondary"}
               onClick={() => setWritingMode("continuation")}
             >
-              续写
+              Viết tiếp
             </Button>
           </div>
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
           <Button asChild>
-            <Link to={DIRECTOR_CREATE_LINK}>AI 自动导演开书</Link>
+            <Link to={DIRECTOR_CREATE_LINK}>Khởi tạo sách bằng AI đạo diễn</Link>
           </Button>
           <Button asChild variant="outline">
-            <Link to={MANUAL_CREATE_LINK}>手动创建小说</Link>
+            <Link to={MANUAL_CREATE_LINK}>Tạo tiểu thuyết thủ công</Link>
           </Button>
         </div>
       </div>
@@ -235,30 +235,30 @@ export default function NovelList() {
       ) : novelListQuery.isError ? (
         <Card>
           <CardHeader>
-            <CardTitle>加载小说列表失败</CardTitle>
-            <CardDescription>当前无法读取项目列表，可以重试一次。</CardDescription>
+            <CardTitle>Tải danh sách tiểu thuyết thất bại</CardTitle>
+            <CardDescription>Hiện không đọc được danh sách dự án, bạn có thể thử lại một lần nữa.</CardDescription>
           </CardHeader>
           <CardContent>
-            <Button onClick={() => void novelListQuery.refetch()}>重新加载</Button>
+            <Button onClick={() => void novelListQuery.refetch()}>Tải lại</Button>
           </CardContent>
         </Card>
       ) : novels.length === 0 ? (
         <Card>
           <CardHeader>
-            <CardTitle>{allNovels.length === 0 ? "暂无小说" : "暂无符合筛选条件的小说"}</CardTitle>
+            <CardTitle>{allNovels.length === 0 ? "Chưa có tiểu thuyết nào" : "Không có tiểu thuyết nào khớp bộ lọc"}</CardTitle>
             <CardDescription>
               {allNovels.length === 0
-                ? "第一次使用时，推荐直接点右上角“AI 自动导演开书”，让系统先帮你搭好方向与开写准备。"
-                : "可以调整上方筛选条件，或直接创建新的小说项目。"}
+                ? "Nếu đây là lần đầu dùng, mình khuyên bấm thẳng “Khởi tạo sách bằng AI đạo diễn” ở góc trên bên phải để hệ thống giúp bạn dựng hướng đi và chuẩn bị mở viết."
+                : "Bạn có thể chỉnh bộ lọc phía trên, hoặc tạo một dự án tiểu thuyết mới."}
             </CardDescription>
           </CardHeader>
           {allNovels.length === 0 ? (
             <CardContent className="flex flex-wrap gap-2">
               <Button asChild>
-                <Link to={DIRECTOR_CREATE_LINK}>AI 自动导演开书</Link>
+                <Link to={DIRECTOR_CREATE_LINK}>Khởi tạo sách bằng AI đạo diễn</Link>
               </Button>
               <Button asChild variant="outline">
-                <Link to={MANUAL_CREATE_LINK}>手动创建小说</Link>
+                <Link to={MANUAL_CREATE_LINK}>Tạo tiểu thuyết thủ công</Link>
               </Button>
             </CardContent>
           ) : null}
@@ -298,22 +298,22 @@ export default function NovelList() {
                     </CardTitle>
                     <div className="flex flex-wrap items-center justify-end gap-2">
                       <Badge variant={novel.status === "published" ? "default" : "secondary"}>
-                        {novel.status === "published" ? "已发布" : "草稿"}
+                        {novel.status === "published" ? "Đã phát hành" : "Bản nháp"}
                       </Badge>
                       {novel.writingMode === "continuation" ? (
-                        <Badge variant="outline">续写</Badge>
+                        <Badge variant="outline">Viết tiếp</Badge>
                       ) : (
-                        <Badge variant="outline">原创</Badge>
+                        <Badge variant="outline">Nguyên tác</Badge>
                       )}
                     </div>
                   </div>
                   <CardDescription className="line-clamp-2">
-                    {novel.description || "暂无简介"}
+                    {novel.description || "Chưa có phần giới thiệu"}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div className="text-xs text-muted-foreground">
-                    章节数：{novel._count.chapters}，角色数：{novel._count.characters}，累计 Token：{formatTokenCount(
+                    Số chương: {novel._count.chapters}, Số nhân vật: {novel._count.characters}, Tổng token: {formatTokenCount(
                       novel.tokenUsage?.totalTokens,
                     )}
                   </div>
@@ -331,9 +331,9 @@ export default function NovelList() {
                         {workflowBadge ? (
                           <Badge variant={workflowBadge.variant}>{workflowBadge.label}</Badge>
                         ) : null}
-                        <Badge variant="outline">进度 {Math.round(workflowTask.progress * 100)}%</Badge>
+                        <Badge variant="outline">Tiến độ {Math.round(workflowTask.progress * 100)}%</Badge>
                         {isWorkflowRunning ? (
-                          <Badge variant="outline">后台运行中</Badge>
+                          <Badge variant="outline">Đang chạy nền</Badge>
                         ) : null}
                       </div>
                       {workflowDescription ? (
@@ -343,39 +343,39 @@ export default function NovelList() {
                         <NovelWorkflowRunningIndicator
                           className="mt-3"
                           progress={workflowTask.progress}
-                          label={workflowTask.currentItemLabel?.trim() || "AI 正在后台持续推进"}
+                          label={workflowTask.currentItemLabel?.trim() || "AI đang tiếp tục triển khai ở nền"}
                         />
                       ) : null}
                       <div className="mt-2 text-xs text-muted-foreground">
-                        当前阶段：{workflowTask.currentStage ?? "自动导演"}{workflowTask.currentItemLabel ? ` · ${workflowTask.currentItemLabel}` : ""}
+                        Giai đoạn hiện tại: {workflowTask.currentStage ?? "Tự động đạo diễn"}{workflowTask.currentItemLabel ? ` · ${workflowTask.currentItemLabel}` : ""}
                       </div>
                       {workflowTask.lastHealthyStage ? (
                         <div className="mt-1 text-xs text-muted-foreground">
-                          最近健康阶段：{workflowTask.lastHealthyStage}
+                          Giai đoạn ổn định gần nhất: {workflowTask.lastHealthyStage}
                         </div>
                       ) : null}
                       {workflowTask.resumeAction ? (
                         <div className="mt-1 text-xs text-muted-foreground">
-                          建议继续：{workflowTask.resumeAction}
+                          Đề xuất tiếp tục: {workflowTask.resumeAction}
                         </div>
                       ) : null}
                     </div>
                   ) : (
                     <div className="rounded-xl border border-dashed bg-muted/10 p-3 text-xs text-muted-foreground">
-                      当前未检测到自动导演任务，列表按小说基础资产展示。
+                      Hiện chưa phát hiện tác vụ tự động đạo diễn, danh sách đang hiển thị theo tài sản cơ bản của tiểu thuyết.
                     </div>
                   )}
 
                   <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
-                    <span>项目：{formatProgressStatus(novel.projectStatus)}</span>
-                    <span>主线：{formatProgressStatus(novel.storylineStatus)}</span>
-                    <span>大纲：{formatProgressStatus(novel.outlineStatus)}</span>
-                    <span>资源：{novel.resourceReadyScore ?? 0}/100</span>
+                    <span>Dự án: {formatProgressStatus(novel.projectStatus)}</span>
+                    <span>Trục chính: {formatProgressStatus(novel.storylineStatus)}</span>
+                    <span>Dàn ý: {formatProgressStatus(novel.outlineStatus)}</span>
+                    <span>Tài nguyên: {novel.resourceReadyScore ?? 0}/100</span>
                   </div>
 
                   {novel.world ? (
                     <div className="text-xs text-muted-foreground">
-                      世界观：{novel.world.name}
+                      Thế giới quan: {novel.world.name}
                     </div>
                   ) : null}
 
@@ -395,7 +395,7 @@ export default function NovelList() {
                         }}
                         disabled={isWorkflowPending}
                       >
-                        {isWorkflowPending ? "继续执行中..." : (workflowTask?.resumeAction ?? "继续自动执行前 10 章")}
+                        {isWorkflowPending ? "Đang tiếp tục..." : (workflowTask?.resumeAction ?? "Tiếp tục tự động triển khai 10 chương đầu")}
                       </Button>
                     ) : canContinueDirector(workflowTask) ? (
                       <Button
@@ -411,27 +411,27 @@ export default function NovelList() {
                         }}
                         disabled={isWorkflowPending}
                       >
-                        {isWorkflowPending ? "继续中..." : (workflowTask?.resumeAction ?? "继续导演")}
+                        {isWorkflowPending ? "Đang tiếp tục..." : (workflowTask?.resumeAction ?? "Tiếp tục đạo diễn")}
                       </Button>
                     ) : requiresCandidateSelection(workflowTask) ? (
                       <Button asChild size="sm">
                         <Link to={getCandidateSelectionLink(workflowTask!.id)} onClick={stopCardClick}>
-                          {workflowTask!.resumeAction ?? "继续确认书级方向"}
+                          {workflowTask!.resumeAction ?? "Tiếp tục xác nhận hướng đi của cả cuốn"}
                         </Link>
                       </Button>
                     ) : canEnterChapterExecution(workflowTask) ? (
                       <Button asChild size="sm">
-                        <Link to={`/novels/${novel.id}/edit`} onClick={stopCardClick}>进入章节执行</Link>
+                        <Link to={`/novels/${novel.id}/edit`} onClick={stopCardClick}>Vào triển khai chương</Link>
                       </Button>
                     ) : workflowTask ? (
                       <Button asChild size="sm">
-                        <Link to={getTaskCenterLink(workflowTask.id)} onClick={stopCardClick}>查看任务</Link>
+                        <Link to={getTaskCenterLink(workflowTask.id)} onClick={stopCardClick}>Xem tác vụ</Link>
                       </Button>
                     ) : null}
 
                     {workflowTask ? (
                       <Button asChild size="sm" variant="outline">
-                        <Link to={getTaskCenterLink(workflowTask.id)} onClick={stopCardClick}>任务中心</Link>
+                        <Link to={getTaskCenterLink(workflowTask.id)} onClick={stopCardClick}>Trung tâm tác vụ</Link>
                       </Button>
                     ) : null}
 
@@ -447,7 +447,7 @@ export default function NovelList() {
                       }}
                       disabled={isDownloadPending}
                     >
-                      {isDownloadPending ? "导出中..." : "导出"}
+                      {isDownloadPending ? "Đang xuất..." : "Xuất"}
                     </Button>
                     <Button
                       size="sm"
@@ -458,7 +458,7 @@ export default function NovelList() {
                       }}
                       disabled={isDeletePending}
                     >
-                      {isDeletePending ? "删除中..." : "删除"}
+                      {isDeletePending ? "Đang xóa..." : "Xóa"}
                     </Button>
                   </div>
                 </CardContent>

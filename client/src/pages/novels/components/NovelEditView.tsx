@@ -31,25 +31,25 @@ function getStepGuidanceDescription(input: {
 }) {
   switch (input.tab) {
     case "basic":
-      return "先把这本书的标题、题材和一句话想法定清楚，后面的规划才不会跑偏。";
+      return "Hãy chốt rõ tiêu đề, thể loại và ý tưởng một câu của cuốn sách trước, để các bước sau không bị lệch hướng.";
     case "story_macro":
-      return "这里先确认主卖点、前 30 章承诺和整体方向，再继续往下拆。";
+      return "Trước hết hãy xác nhận điểm bán chính, cam kết 30 chương đầu và hướng tổng thể rồi mới tiếp tục tách nhỏ.";
     case "character":
-      return "先凑齐能支撑前期剧情的核心角色，不必一口气把所有配角都补完。";
+      return "Ưu tiên lấp đủ các nhân vật cốt lõi nâng đỡ giai đoạn đầu, chưa cần điền hết toàn bộ vai phụ ngay.";
     case "outline":
-      return "先把每一卷要解决什么、冲突怎么升级和卷末钩子想明白。";
+      return "Hãy nghĩ rõ mỗi tập sẽ giải quyết điều gì, xung đột tăng cấp ra sao và móc câu cuối tập sẽ là gì.";
     case "structured":
-      return "把章节目标和节奏拆清楚，后面进入正文写作会更顺。";
+      return "Tách rõ mục tiêu chương và nhịp truyện ngay từ đầu thì lúc vào viết nội dung sẽ trơn hơn nhiều.";
     case "chapter":
       return input.totalChapters > 0
-        ? "选中当前要推进的一章，正文留在中间，其他能力都放到次级区域。"
-        : "先创建至少一章，再开始正文写作。";
+        ? "Chọn chương đang cần đẩy tiếp, để phần nội dung nằm ở giữa còn các chức năng khác lùi về khu phụ."
+        : "Hãy tạo ít nhất một chương trước rồi mới bắt đầu viết nội dung.";
     case "pipeline":
       return input.pendingRepairs > 0
-        ? `当前还有 ${input.pendingRepairs} 章待修，先把高风险章节处理掉。`
-        : "这里主要处理审校和修复，问题不多时不需要长时间停留。";
+        ? `Hiện còn ${input.pendingRepairs} chương cần sửa, hãy ưu tiên xử lý các chương rủi ro cao trước.`
+        : "Khu này chủ yếu để rà soát và sửa lỗi, nếu vấn đề không nhiều thì không cần ở lại lâu.";
     default:
-      return "按步骤推进，当前页面只保留最需要看的内容。";
+      return "Đi theo từng bước, trang này chỉ giữ lại những gì cần nhìn nhất.";
   }
 }
 
@@ -87,17 +87,17 @@ export default function NovelEditView(props: NovelEditViewProps) {
 
   const taskAttentionLabel = taskDrawer?.task
     ? taskDrawer.task.status === "failed"
-      ? "异常"
+      ? "Bất thường"
       : taskDrawer.task.status === "waiting_approval"
-        ? "待审核"
+        ? "Chờ duyệt"
         : taskDrawer.task.status === "running" || taskDrawer.task.status === "queued"
-          ? "进行中"
-          : "最近任务"
+          ? "Đang chạy"
+          : "Nhiệm vụ gần đây"
     : null;
 
   const normalizedActiveTab = normalizeNovelWorkspaceTab(activeTab);
   const normalizedWorkflowTab = normalizeNovelWorkspaceTab(workflowCurrentTab ?? activeTab);
-  const novelTitle = basicTab.basicForm.title.trim() || "未命名小说";
+  const novelTitle = basicTab.basicForm.title.trim() || "Tiểu thuyết chưa đặt tên";
   const currentStepLabel = getNovelWorkspaceTabLabel(normalizedActiveTab);
   const workflowStepLabel = getNovelWorkspaceTabLabel(normalizedWorkflowTab);
   const guidedFlowTab = normalizedActiveTab === "history"
@@ -109,10 +109,10 @@ export default function NovelEditView(props: NovelEditViewProps) {
   const previousStep = getPreviousNovelWorkspaceFlowTab(guidedFlowTab);
   const nextStep = getNextNovelWorkspaceFlowTab(guidedFlowTab);
   const progressLabel = stepIndex >= 0
-    ? `第 ${stepIndex + 1} 步 / 共 ${NOVEL_WORKSPACE_FLOW_STEPS.length} 步`
+    ? `Bước ${stepIndex + 1} / ${NOVEL_WORKSPACE_FLOW_STEPS.length}`
     : null;
   const guidanceDescription = normalizedActiveTab === "history"
-    ? "这里保留最近可恢复的创作版本。恢复前系统会先自动备份一次当前状态。"
+    ? "Nơi này lưu các bản sáng tác gần nhất có thể khôi phục. Trước khi phục hồi, hệ thống sẽ tự sao lưu trạng thái hiện tại một lần."
     : getStepGuidanceDescription({
       tab: guidedFlowTab,
       totalChapters,
@@ -120,14 +120,14 @@ export default function NovelEditView(props: NovelEditViewProps) {
     });
   const currentChapterLabel = normalizedActiveTab === "chapter"
     ? chapterTab.selectedChapter
-      ? `当前章节：第 ${chapterTab.selectedChapter.order} 章 · ${chapterTab.selectedChapter.title?.trim() || "未命名章节"}`
-      : "当前章节：请选择要继续创作的章节"
+      ? `Chương hiện tại: Chương ${chapterTab.selectedChapter.order} · ${chapterTab.selectedChapter.title?.trim() || "Chưa đặt tên"}`
+      : "Chương hiện tại: Hãy chọn chương muốn tiếp tục sáng tác"
     : null;
   const primaryActionLabel = normalizedActiveTab === "history"
-    ? `返回当前步骤：${getNovelWorkspaceTabLabel(guidedFlowTab)}`
+    ? `Quay lại bước hiện tại: ${getNovelWorkspaceTabLabel(guidedFlowTab)}`
     : nextStep
-      ? `下一步：${getNovelWorkspaceTabLabel(nextStep)}`
-      : "查看版本历史";
+      ? `Bước tiếp theo: ${getNovelWorkspaceTabLabel(nextStep)}`
+      : "Xem lịch sử phiên bản";
   const handlePreviousStep = () => {
     if (!previousStep) {
       return;
@@ -183,7 +183,7 @@ export default function NovelEditView(props: NovelEditViewProps) {
           <div className="flex min-w-0 flex-wrap items-center gap-3 text-sm">
             <span className="truncate font-semibold text-foreground">{novelTitle}</span>
             <span className="h-1 w-1 shrink-0 rounded-full bg-border" />
-            <span className="shrink-0 text-muted-foreground">当前步骤：{currentStepLabel}</span>
+            <span className="shrink-0 text-muted-foreground">Bước hiện tại: {currentStepLabel}</span>
             {progressLabel ? (
               <>
                 <span className="h-1 w-1 shrink-0 rounded-full bg-border" />
@@ -193,7 +193,7 @@ export default function NovelEditView(props: NovelEditViewProps) {
             {normalizedWorkflowTab !== normalizedActiveTab ? (
               <>
                 <span className="h-1 w-1 shrink-0 rounded-full bg-border" />
-                <span className="shrink-0 text-sky-700">流程推荐：{workflowStepLabel}</span>
+                <span className="shrink-0 text-sky-700">Gợi ý quy trình: {workflowStepLabel}</span>
               </>
             ) : null}
           </div>
@@ -202,9 +202,9 @@ export default function NovelEditView(props: NovelEditViewProps) {
             <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
               <div className="min-w-0 flex-1 space-y-2">
                 <div className="flex flex-wrap items-center gap-2">
-                  <Badge variant="outline">{progressLabel ?? "恢复入口"}</Badge>
+                  <Badge variant="outline">{progressLabel ?? "Lối vào khôi phục"}</Badge>
                   <Badge variant={normalizedActiveTab === "history" ? "secondary" : "default"}>
-                    {normalizedActiveTab === "history" ? "版本恢复区" : `正在处理：${getNovelWorkspaceTabLabel(guidedFlowTab)}`}
+                    {normalizedActiveTab === "history" ? "Khu khôi phục phiên bản" : `Đang xử lý: ${getNovelWorkspaceTabLabel(guidedFlowTab)}`}
                   </Badge>
                   {currentChapterLabel ? <Badge variant="secondary">{currentChapterLabel}</Badge> : null}
                 </div>
@@ -215,10 +215,10 @@ export default function NovelEditView(props: NovelEditViewProps) {
 
               <div className="flex flex-wrap items-center gap-2">
                 <Button variant="outline" onClick={handlePreviousStep} disabled={!previousStep}>
-                  上一步
+                  Bước trước
                 </Button>
                 <Button variant="secondary" onClick={handleHistoryAction}>
-                  {normalizedActiveTab === "history" ? "返回当前步骤" : "版本历史"}
+                  {normalizedActiveTab === "history" ? "Quay lại bước hiện tại" : "Lịch sử phiên bản"}
                 </Button>
                 <Button onClick={handlePrimaryAction}>
                   {primaryActionLabel}
@@ -230,27 +230,27 @@ export default function NovelEditView(props: NovelEditViewProps) {
           <div className="flex flex-wrap items-center justify-end gap-2">
             <Dialog open={isProjectToolsOpen} onOpenChange={setIsProjectToolsOpen}>
               <DialogTrigger asChild>
-                <Button variant="outline">项目工具</Button>
+                <Button variant="outline">Công cụ dự án</Button>
               </DialogTrigger>
               <DialogContent className="max-h-[90vh] w-[calc(100vw-2rem)] max-w-4xl overflow-auto">
                 <DialogHeader>
-                  <DialogTitle>项目工具</DialogTitle>
+                  <DialogTitle>Công cụ dự án</DialogTitle>
                   <DialogDescription>
-                    这里收纳次级信息。首屏只保留当前步骤、继续按钮和恢复入口，避免主工作区被项目信息挤满。
+                    Ở đây gom các thông tin phụ. Màn hình đầu chỉ giữ bước hiện tại, nút tiếp tục và lối vào khôi phục để khu làm việc chính không bị thông tin dự án lấp đầy.
                   </DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-3 md:grid-cols-2">
                   <Card>
                     <CardHeader>
-                      <CardTitle>章节进度</CardTitle>
+                      <CardTitle>Tiến độ chương</CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <p>{generatedChapters} / {Math.max(totalChapters, 1)} 已生成</p>
+                      <p>{generatedChapters} / {Math.max(totalChapters, 1)} đã tạo</p>
                     </CardContent>
                   </Card>
                   <Card>
                     <CardHeader>
-                      <CardTitle>待修复章节</CardTitle>
+                      <CardTitle>Chương cần sửa</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <p>{pendingRepairs}</p>
@@ -258,7 +258,7 @@ export default function NovelEditView(props: NovelEditViewProps) {
                   </Card>
                   <Card>
                     <CardHeader>
-                      <CardTitle>当前模型</CardTitle>
+                      <CardTitle>Mô hình hiện tại</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <p>{currentModel}</p>
@@ -266,14 +266,14 @@ export default function NovelEditView(props: NovelEditViewProps) {
                   </Card>
                   <Card>
                     <CardHeader>
-                      <CardTitle>最近任务</CardTitle>
+                      <CardTitle>Nhiệm vụ gần đây</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <p>{pipelineTab.pipelineJob?.status ?? "idle"}</p>
                     </CardContent>
                   </Card>
                 </div>
-                <KnowledgeBindingPanel targetType="novel" targetId={id} title="参考知识" />
+                <KnowledgeBindingPanel targetType="novel" targetId={id} title="Tri thức tham chiếu" />
               </DialogContent>
             </Dialog>
 
@@ -281,7 +281,7 @@ export default function NovelEditView(props: NovelEditViewProps) {
               variant={taskDrawer?.task?.status === "failed" ? "destructive" : "outline"}
               onClick={() => taskDrawer?.onOpenChange(true)}
             >
-              任务面板
+              Bảng nhiệm vụ
               {taskAttentionLabel ? <Badge variant="secondary">{taskAttentionLabel}</Badge> : null}
             </Button>
           </div>

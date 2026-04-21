@@ -264,7 +264,7 @@ export default function KnowledgePage() {
       ? ragHealthQuery.data.message
       : undefined);
   const recallErrorMessage = recallTestMutation.isError
-    ? (recallTestMutation.error instanceof Error ? recallTestMutation.error.message : "召回测试失败。")
+    ? (recallTestMutation.error instanceof Error ? recallTestMutation.error.message : "Kiểm tra truy hồi thất bại.")
     : null;
 
   useEffect(() => {
@@ -279,11 +279,11 @@ export default function KnowledgePage() {
 
   const handleUpload = async (file: File) => {
     if (!isTxtFile(file)) {
-      throw new Error("仅支持 .txt 文档。");
+      throw new Error("Chỉ hỗ trợ tài liệu .txt.");
     }
     const content = await readTextFile(file);
     if (!content) {
-      throw new Error("文档内容为空或编码不受支持。");
+      throw new Error("Nội dung tài liệu trống hoặc mã hóa không được hỗ trợ.");
     }
     await createKnowledgeDocument({
       title: uploadTitle.trim() || undefined,
@@ -297,11 +297,11 @@ export default function KnowledgePage() {
       return;
     }
     if (!isTxtFile(file)) {
-      throw new Error("仅支持 .txt 文档。");
+      throw new Error("Chỉ hỗ trợ tài liệu .txt.");
     }
     const content = await readTextFile(file);
     if (!content) {
-      throw new Error("文档内容为空或编码不受支持。");
+      throw new Error("Nội dung tài liệu trống hoặc mã hóa không được hỗ trợ.");
     }
     await createKnowledgeDocumentVersion(selectedDocumentId, {
       fileName: file.name,
@@ -364,7 +364,7 @@ export default function KnowledgePage() {
       <div className="flex justify-end">
         <OpenInCreativeHubButton
           bindings={{ knowledgeDocumentIds: selectedDocumentId ? [selectedDocumentId] : [] }}
-          label="知识库发送到创作中枢"
+          label="Đẩy kho tri thức sang Trung tâm Sáng tạo"
         />
       </div>
 
@@ -374,9 +374,9 @@ export default function KnowledgePage() {
         className="space-y-4"
       >
         <TabsList>
-          <TabsTrigger value="documents">文档库</TabsTrigger>
-          <TabsTrigger value="ops">任务与健康</TabsTrigger>
-          <TabsTrigger value="settings">向量设置</TabsTrigger>
+          <TabsTrigger value="documents">Kho tài liệu</TabsTrigger>
+          <TabsTrigger value="ops">Tác vụ và sức khỏe</TabsTrigger>
+          <TabsTrigger value="settings">Thiết lập vector</TabsTrigger>
         </TabsList>
 
         <TabsContent value="documents">

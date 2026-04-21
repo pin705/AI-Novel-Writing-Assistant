@@ -59,17 +59,17 @@ export default function BookAnalysisSidebar(props: BookAnalysisSidebarProps) {
     <div className="space-y-4">
       <Card>
         <CardHeader>
-          <CardTitle>创建拆书分析</CardTitle>
+          <CardTitle>Tạo phân tích sách</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <div className="text-sm font-medium">知识文档</div>
+            <div className="text-sm font-medium">Tài liệu tri thức</div>
             <select
               className="h-10 w-full rounded-md border bg-background px-3 text-sm"
               value={selectedDocumentId}
               onChange={(event) => onSelectDocument(event.target.value)}
             >
-              <option value="">选择文档</option>
+              <option value="">Chọn tài liệu</option>
               {documentOptions.map((document) => (
                 <option key={document.id} value={document.id}>
                   {document.title}
@@ -79,24 +79,24 @@ export default function BookAnalysisSidebar(props: BookAnalysisSidebarProps) {
           </div>
 
           <div className="space-y-2">
-            <div className="text-sm font-medium">文档版本</div>
+            <div className="text-sm font-medium">Phiên bản tài liệu</div>
             <select
               className="h-10 w-full rounded-md border bg-background px-3 text-sm"
               value={selectedVersionId}
               onChange={(event) => onSelectVersion(event.target.value)}
               disabled={!selectedDocumentId}
             >
-              <option value="">使用当前激活版本</option>
+              <option value="">Dùng phiên bản đang kích hoạt</option>
               {versionOptions.map((version) => (
                 <option key={version.id} value={version.id}>
-                  v{version.versionNumber} {version.isActive ? "（当前）" : ""}
+                  v{version.versionNumber} {version.isActive ? " (hiện tại)" : ""}
                 </option>
               ))}
             </select>
           </div>
 
           <div className="space-y-2">
-            <div className="text-sm font-medium">模型</div>
+            <div className="text-sm font-medium">Mô hình</div>
             <LLMSelector
               value={llmConfig}
               onChange={(next) =>
@@ -117,16 +117,16 @@ export default function BookAnalysisSidebar(props: BookAnalysisSidebarProps) {
               checked={includeTimeline}
               onChange={(event) => onIncludeTimelineChange(event.target.checked)}
             />
-            生成故事时间线（默认关闭）
+            Tạo dòng thời gian câu chuyện (mặc định tắt)
           </label>
 
           <Button className="w-full" onClick={onCreate} disabled={!selectedDocumentId || createPending}>
-            创建
+            Tạo
           </Button>
 
           {sourceDocument ? (
             <div className="rounded-md border bg-muted/20 p-3 text-sm text-muted-foreground">
-              版本数：{sourceDocument.versions.length} | 拆书分析：{sourceDocument.bookAnalysisCount}
+              Số phiên bản: {sourceDocument.versions.length} | Phân tích sách: {sourceDocument.bookAnalysisCount}
             </div>
           ) : null}
         </CardContent>
@@ -134,22 +134,22 @@ export default function BookAnalysisSidebar(props: BookAnalysisSidebarProps) {
 
       <Card>
         <CardHeader>
-          <CardTitle>分析列表</CardTitle>
+          <CardTitle>Danh sách phân tích</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
-          <Input value={keyword} onChange={(event) => onKeywordChange(event.target.value)} placeholder="搜索标题或关键词" />
+          <Input value={keyword} onChange={(event) => onKeywordChange(event.target.value)} placeholder="Tìm theo tiêu đề hoặc từ khóa" />
           <select
             className="h-10 w-full rounded-md border bg-background px-3 text-sm"
             value={status}
             onChange={(event) => onStatusChange(event.target.value as BookAnalysisStatus | "")}
           >
-            <option value="">全部状态</option>
-            <option value="draft">草稿</option>
-            <option value="queued">排队中</option>
-            <option value="running">运行中</option>
-            <option value="succeeded">成功</option>
-            <option value="failed">失败</option>
-            <option value="archived">已归档</option>
+            <option value="">Tất cả trạng thái</option>
+            <option value="draft">Bản nháp</option>
+            <option value="queued">Đang xếp hàng</option>
+            <option value="running">Đang chạy</option>
+            <option value="succeeded">Thành công</option>
+            <option value="failed">Thất bại</option>
+            <option value="archived">Đã lưu trữ</option>
           </select>
 
           <div className="space-y-2">
@@ -171,13 +171,13 @@ export default function BookAnalysisSidebar(props: BookAnalysisSidebarProps) {
                   </div>
                   <div className="flex shrink-0 gap-1">
                     {item.publishedDocumentId && (
-                      <Badge variant="secondary" className="text-xs">已发布</Badge>
+                      <Badge variant="secondary" className="text-xs">Đã phát hành</Badge>
                     )}
                     <Badge variant="outline">{formatStatus(item.status)}</Badge>
                   </div>
                 </div>
                 <div className="mt-2 text-xs text-muted-foreground">
-                  进度 {Math.round(item.progress * 100)}% | 更新于 {formatDate(item.updatedAt)}
+                  Tiến độ {Math.round(item.progress * 100)}% | Cập nhật lúc {formatDate(item.updatedAt)}
                 </div>
                 {item.lastError ? (
                   <div className="mt-2 line-clamp-2 text-xs text-destructive">{item.lastError}</div>
@@ -187,7 +187,7 @@ export default function BookAnalysisSidebar(props: BookAnalysisSidebarProps) {
 
             {analyses.length === 0 ? (
               <div className="rounded-md border border-dashed p-4 text-sm text-muted-foreground">
-                暂无拆书分析，请先选择知识文档并创建。
+                Chưa có phân tích sách nào, hãy chọn tài liệu tri thức rồi tạo mới.
               </div>
             ) : null}
           </div>

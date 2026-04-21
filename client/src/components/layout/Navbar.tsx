@@ -19,8 +19,8 @@ export default function Navbar(props: NavbarProps) {
       <div className="flex items-center gap-2">
         <PenSquare className="h-5 w-5" />
         <div className="flex flex-col leading-tight">
-          <span className="text-sm font-semibold">AI 小说创作工作台</span>
-          <span className="text-[11px] text-muted-foreground">AI Novel Production Engine</span>
+          <span className="text-sm font-semibold">Không gian sáng tác tiểu thuyết AI</span>
+          <span className="text-[11px] text-muted-foreground">Hệ thống sản xuất tiểu thuyết bằng AI</span>
         </div>
       </div>
       <div className="flex items-center gap-3">
@@ -31,7 +31,7 @@ export default function Navbar(props: NavbarProps) {
             variant="outline"
             onClick={() => onWorkspaceNavModeChange?.(workspaceNavMode === "workspace" ? "project" : "workspace")}
           >
-            {workspaceNavMode === "workspace" ? "项目导航" : "创作导航"}
+            {workspaceNavMode === "workspace" ? "Điều hướng dự án" : "Điều hướng sáng tác"}
           </Button>
         ) : null}
         <LLMSelector compact showBadge={false} showHelperText={false} />

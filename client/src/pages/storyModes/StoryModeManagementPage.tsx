@@ -194,7 +194,7 @@ export default function StoryModeManagementPage() {
     }),
     onSuccess: async () => {
       await invalidate();
-      toast.success("推进模式已创建。");
+      toast.success("Đã tạo chế độ triển khai.");
       setCreateDialogOpen(false);
     },
   });
@@ -202,7 +202,7 @@ export default function StoryModeManagementPage() {
   const createSelectedChildrenMutation = useMutation({
     mutationFn: async () => {
       if (!defaultParentId) {
-        throw new Error("父级推进模式不存在。");
+        throw new Error("Chế độ triển khai cha không tồn tại.");
       }
 
       const drafts = selectedGeneratedChildIndexes
@@ -215,7 +215,7 @@ export default function StoryModeManagementPage() {
         }));
 
       if (drafts.length === 0) {
-        throw new Error("请至少选择一个子类候选。");
+        throw new Error("Vui lòng chọn ít nhất một ứng viên cấp con.");
       }
 
       return createStoryModeChildren({
@@ -226,7 +226,7 @@ export default function StoryModeManagementPage() {
     onSuccess: async (response) => {
       await invalidate();
       const savedCount = response.data?.length ?? selectedGeneratedChildIndexes.length;
-      toast.success(`已批量创建 ${savedCount} 个推进模式子类。`);
+      toast.success(`Đã tạo hàng loạt ${savedCount} chế độ triển khai con.`);
       setCreateDialogOpen(false);
     },
   });
@@ -234,7 +234,7 @@ export default function StoryModeManagementPage() {
   const updateMutation = useMutation({
     mutationFn: () => {
       if (!editingStoryMode) {
-        throw new Error("推进模式不存在。");
+        throw new Error("Chế độ triển khai không tồn tại.");
       }
       return updateStoryMode(editingStoryMode.id, {
         name: editState.name.trim(),
@@ -245,7 +245,7 @@ export default function StoryModeManagementPage() {
     },
     onSuccess: async () => {
       await invalidate();
-      toast.success("推进模式已更新。");
+      toast.success("Chế độ triển khai đã được cập nhật.");
       setEditingStoryModeId("");
     },
   });
@@ -254,7 +254,7 @@ export default function StoryModeManagementPage() {
     mutationFn: (id: string) => deleteStoryMode(id),
     onSuccess: async () => {
       await invalidate();
-      toast.success("推进模式已删除。");
+      toast.success("Chế độ triển khai đã được xóa.");
     },
   });
 
@@ -301,7 +301,7 @@ export default function StoryModeManagementPage() {
         setSelectedGeneratedChildIndexes(candidates.map((_item, index) => index));
         setActiveGeneratedChildIndex(0);
         setCreateDraft(cloneDraft(candidates[0]));
-        toast.success(`AI 已生成 ${candidates.length} 个推进模式子类草稿。`);
+        toast.success(`AI đã tạo ${candidates.length} bản nháp chế độ triển khai con.`);
         return;
       }
       setSelectedGeneratedChildIndexes([]);
@@ -311,7 +311,7 @@ export default function StoryModeManagementPage() {
       }
       setGeneratedChildCandidates([]);
       setCreateDraft(cloneDraft(result.draft));
-      toast.success("AI 推进模式树草稿已生成。");
+      toast.success("AI đã tạo bản nháp cây chế độ triển khai.");
     },
   });
 
@@ -353,8 +353,8 @@ export default function StoryModeManagementPage() {
   const handleDelete = (node: StoryModeTreeNode) => {
     const descendantCount = collectDescendantIds(node).length;
     const message = descendantCount > 0
-      ? `确认删除推进模式「${node.name}」吗？这会同时删除其下 ${descendantCount} 个子类，此操作不可恢复。`
-      : `确认删除推进模式「${node.name}」吗？此操作不可恢复。`;
+      ? `Bạn có chắc muốn xóa chế độ triển khai “${node.name}” không? Việc này sẽ xóa luôn ${descendantCount} mục con bên dưới và không thể khôi phục.`
+      : `Bạn có chắc muốn xóa chế độ triển khai “${node.name}” không? Thao tác này không thể khôi phục.`;
     const confirmed = window.confirm(message);
     if (!confirmed) {
       return;
@@ -364,9 +364,9 @@ export default function StoryModeManagementPage() {
 
   const selectedParentLabel = useMemo(() => {
     if (!defaultParentId) {
-      return "作为根推进模式创建";
+      return "Tạo như chế độ triển khai gốc";
     }
-    return parentOptions.find((item) => item.id === defaultParentId)?.path ?? "作为根推进模式创建";
+    return parentOptions.find((item) => item.id === defaultParentId)?.path ?? "Tạo như chế độ triển khai gốc";
   }, [defaultParentId, parentOptions]);
 
   const editParentOptions = useMemo(
@@ -379,43 +379,43 @@ export default function StoryModeManagementPage() {
       <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
         <DialogContent className="max-h-[90vh] max-w-5xl overflow-auto">
           <DialogHeader>
-            <DialogTitle>{isCreatingChild ? "新增推进模式子类" : "新建推进模式"}</DialogTitle>
+            <DialogTitle>{isCreatingChild ? "Thêm chế độ triển khai con" : "Tạo chế độ triển khai mới"}</DialogTitle>
             <DialogDescription>
               {isCreatingChild
-                ? "当前会在指定父类下新增子类。你可以手动填写，也可以先让 AI 基于父类和现有兄弟节点生成多个子类候选，再多选批量保存。"
-                : "先确定挂载位置，再手动填写 profile，或者先让 AI 生成一份两级树草稿。"}
+                ? "Hệ thống sẽ thêm con dưới nút cha đã chọn. Bạn có thể nhập thủ công, hoặc để AI tạo nhiều phương án con dựa trên nút cha và các nút anh em hiện có rồi chọn nhiều mục để lưu hàng loạt."
+                : "Hãy xác định vị trí gắn trước, rồi nhập profile thủ công hoặc để AI tạo bản nháp cây hai tầng."}
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4">
             <div className="rounded-xl border border-primary/20 bg-primary/5 p-4">
-              <div className="text-sm font-semibold text-foreground">当前挂载位置</div>
+              <div className="text-sm font-semibold text-foreground">Vị trí gắn hiện tại</div>
               <div className="mt-1 text-sm text-muted-foreground">{selectedParentLabel}</div>
             </div>
 
             <div className="space-y-3 rounded-xl border border-primary/20 bg-primary/5 p-4">
               <div className="space-y-1">
-                <div className="text-sm font-semibold text-foreground">{isCreatingChild ? "AI 生成子类草稿" : "AI 生成草稿"}</div>
+                <div className="text-sm font-semibold text-foreground">{isCreatingChild ? "AI tạo bản nháp con" : "AI tạo bản nháp"}</div>
                 <div className="text-xs leading-5 text-muted-foreground">
                   {isCreatingChild
-                    ? "AI 会基于当前父类和现有兄弟节点输出一个或多个子类节点草稿，不会再生成整棵树。补充方向可以留空。保存前仍然会校验 profile 结构。"
-                    : "AI 会输出一个可直接编辑的推进模式树草稿，保存前仍然会校验 profile 结构。"}
+                    ? "AI sẽ dựa trên nút cha hiện tại và các nút anh em để xuất ra một hoặc nhiều bản nháp nút con, không tạo lại cả cây. Phần hướng bổ sung có thể để trống. Trước khi lưu vẫn sẽ kiểm tra cấu trúc profile."
+                    : "AI sẽ tạo ra một bản nháp cây chế độ triển khai có thể chỉnh trực tiếp, và vẫn kiểm tra cấu trúc profile trước khi lưu."}
                 </div>
               </div>
               <LLMSelector />
               {isCreatingChild ? (
                 <label className="space-y-2 text-sm">
-                  <span className="font-medium text-foreground">衍生数量</span>
+                  <span className="font-medium text-foreground">Số lượng nhánh tạo ra</span>
                   <select
                     className="w-full rounded-md border bg-background p-2 text-sm"
                     value={childDerivationCount}
                     onChange={(event) => setChildDerivationCount(Number(event.target.value))}
                   >
-                    <option value={1}>1 个</option>
-                    <option value={2}>2 个</option>
-                    <option value={3}>3 个</option>
-                    <option value={4}>4 个</option>
-                    <option value={5}>5 个</option>
+                    <option value={1}>1 mục</option>
+                    <option value={2}>2 mục</option>
+                    <option value={3}>3 mục</option>
+                    <option value={4}>4 mục</option>
+                    <option value={5}>5 mục</option>
                   </select>
                 </label>
               ) : null}
@@ -424,9 +424,9 @@ export default function StoryModeManagementPage() {
                 className="w-full rounded-md border bg-background px-3 py-2 text-sm outline-none transition focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
                 value={generationPrompt}
                 onChange={(event) => setGenerationPrompt(event.target.value)}
-                placeholder={isCreatingChild
-                  ? "可选：补充你想偏向的子类方向。不填则 AI 会直接基于父类和现有兄弟节点衍生。"
-                  : "请输入你希望生成的推进模式树方向。"}
+                  placeholder={isCreatingChild
+                  ? "Tùy chọn: bổ sung hướng bạn muốn nghiêng về cho nhánh con. Để trống thì AI sẽ dựa trực tiếp trên nút cha và các nút anh em hiện có để sinh ra."
+                  : "Hãy nhập hướng bạn muốn AI tạo cho cây chế độ triển khai."}
               />
               <div className="flex gap-2">
                 <Button
@@ -435,8 +435,8 @@ export default function StoryModeManagementPage() {
                   disabled={(!generationPrompt.trim() && !isCreatingChild) || generateMutation.isPending}
                 >
                   {generateMutation.isPending
-                    ? "生成中..."
-                    : isCreatingChild ? "生成子类草稿" : "生成推进模式草稿"}
+                    ? "Đang tạo..."
+                    : isCreatingChild ? "Tạo bản nháp con" : "Tạo bản nháp chế độ triển khai"}
                 </Button>
                 <Button
                   type="button"
@@ -446,19 +446,19 @@ export default function StoryModeManagementPage() {
                     setCreateDraft(createEmptyDraft());
                   }}
                 >
-                  重置草稿
+                  Đặt lại bản nháp
                 </Button>
               </div>
               {isCreatingChild && generatedChildCandidates.length > 0 ? (
                 <div className="space-y-2 rounded-lg border border-border/70 bg-background/60 p-3">
                   <div className="flex items-center justify-between gap-3">
-                    <div className="text-sm font-medium text-foreground">已生成的子类候选</div>
+                    <div className="text-sm font-medium text-foreground">Ứng viên con đã tạo</div>
                     <div className="text-xs text-muted-foreground">
-                      已选 {selectedGeneratedChildIndexes.length} / {generatedChildCandidates.length}
+                      Đã chọn {selectedGeneratedChildIndexes.length} / {generatedChildCandidates.length}
                     </div>
                   </div>
                   <div className="text-xs leading-5 text-muted-foreground">
-                    勾选后可批量保存；点击候选卡片会切换到下方表单进行单独编辑。
+                    Có thể tick để lưu hàng loạt; bấm vào thẻ ứng viên sẽ chuyển xuống form bên dưới để chỉnh riêng.
                   </div>
                   <div className="grid gap-2">
                     {generatedChildCandidates.map((candidate, index) => (
@@ -485,7 +485,7 @@ export default function StoryModeManagementPage() {
                             <div className="flex items-center justify-between gap-3">
                               <div className="text-sm font-medium text-foreground">{candidate.name}</div>
                               <span className="text-xs text-muted-foreground">
-                                {activeGeneratedChildIndex === index ? "当前编辑" : `候选 ${index + 1}`}
+                                {activeGeneratedChildIndex === index ? "Đang chỉnh" : `Ứng viên ${index + 1}`}
                               </span>
                             </div>
                             <div className="mt-1 text-sm text-muted-foreground">
@@ -501,11 +501,11 @@ export default function StoryModeManagementPage() {
             </div>
 
             <label className="space-y-2 text-sm">
-              <span className="font-medium text-foreground">名称</span>
+              <span className="font-medium text-foreground">Tên</span>
               <Input value={createDraft.name} onChange={(event) => updateCreateDraft((prev) => ({ ...prev, name: event.target.value }))} />
             </label>
             <label className="space-y-2 text-sm">
-              <span className="font-medium text-foreground">描述</span>
+              <span className="font-medium text-foreground">Mô tả</span>
               <textarea
                 rows={3}
                 className="w-full rounded-md border bg-background px-3 py-2 text-sm outline-none transition focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
@@ -514,7 +514,7 @@ export default function StoryModeManagementPage() {
               />
             </label>
             <label className="space-y-2 text-sm">
-              <span className="font-medium text-foreground">人工模板补充</span>
+              <span className="font-medium text-foreground">Bổ sung mẫu thủ công</span>
               <textarea
                 rows={3}
                 className="w-full rounded-md border bg-background px-3 py-2 text-sm outline-none transition focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
@@ -531,7 +531,7 @@ export default function StoryModeManagementPage() {
 
           <DialogFooter className="gap-2">
             <Button type="button" variant="outline" onClick={() => setCreateDialogOpen(false)}>
-              取消
+              Hủy
             </Button>
             {isCreatingChild && generatedChildCandidates.length > 0 ? (
               <Button
@@ -541,8 +541,8 @@ export default function StoryModeManagementPage() {
                 disabled={createSelectedChildrenMutation.isPending || selectedGeneratedChildIndexes.length === 0}
               >
                 {createSelectedChildrenMutation.isPending
-                  ? "批量保存中..."
-                  : `批量保存选中子类 (${selectedGeneratedChildIndexes.length})`}
+                  ? "Đang lưu hàng loạt..."
+                  : `Lưu hàng loạt các mục con đã chọn (${selectedGeneratedChildIndexes.length})`}
               </Button>
             ) : null}
             <Button
@@ -550,7 +550,7 @@ export default function StoryModeManagementPage() {
               onClick={() => createMutation.mutate()}
               disabled={createMutation.isPending || createSelectedChildrenMutation.isPending || !createDraft.name.trim()}
             >
-              {createMutation.isPending ? "保存中..." : isCreatingChild ? "保存当前子类" : "保存推进模式"}
+              {createMutation.isPending ? "Đang lưu..." : isCreatingChild ? "Lưu mục con hiện tại" : "Lưu chế độ triển khai"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -559,23 +559,23 @@ export default function StoryModeManagementPage() {
       <Dialog open={Boolean(editingStoryMode)} onOpenChange={(open) => { if (!open) setEditingStoryModeId(""); }}>
         <DialogContent className="max-h-[90vh] max-w-4xl overflow-auto">
           <DialogHeader>
-            <DialogTitle>编辑推进模式</DialogTitle>
+            <DialogTitle>Chỉnh sửa chế độ triển khai</DialogTitle>
             <DialogDescription>
-              可以修改名称、描述、模板和 profile。两级树限制仍会保留。
+              Có thể sửa tên, mô tả, mẫu và profile. Giới hạn cây hai tầng vẫn được giữ nguyên.
             </DialogDescription>
           </DialogHeader>
 
           {editingStoryMode ? (
             <div className="space-y-4">
               <div className="rounded-lg border bg-muted/20 p-3 text-sm text-muted-foreground">
-                当前父级：{editingStoryMode.parentId ? (editParentOptions.find((item) => item.id === editingStoryMode.parentId)?.path ?? "未找到") : "根节点"}
+                Cha hiện tại: {editingStoryMode.parentId ? (editParentOptions.find((item) => item.id === editingStoryMode.parentId)?.path ?? "Không tìm thấy") : "Nút gốc"}
               </div>
               <label className="space-y-2 text-sm">
-                <span className="font-medium text-foreground">名称</span>
+                <span className="font-medium text-foreground">Tên</span>
                 <Input value={editState.name} onChange={(event) => setEditState((prev) => ({ ...prev, name: event.target.value }))} />
               </label>
               <label className="space-y-2 text-sm">
-                <span className="font-medium text-foreground">描述</span>
+                <span className="font-medium text-foreground">Mô tả</span>
                 <textarea
                   rows={3}
                   className="w-full rounded-md border bg-background px-3 py-2 text-sm outline-none transition focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
@@ -584,7 +584,7 @@ export default function StoryModeManagementPage() {
                 />
               </label>
               <label className="space-y-2 text-sm">
-                <span className="font-medium text-foreground">人工模板补充</span>
+                <span className="font-medium text-foreground">Bổ sung mẫu thủ công</span>
                 <textarea
                   rows={3}
                   className="w-full rounded-md border bg-background px-3 py-2 text-sm outline-none transition focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
@@ -601,10 +601,10 @@ export default function StoryModeManagementPage() {
 
           <DialogFooter className="gap-2">
             <Button type="button" variant="outline" onClick={() => setEditingStoryModeId("")}>
-              取消
+              Hủy
             </Button>
             <Button type="button" onClick={() => updateMutation.mutate()} disabled={updateMutation.isPending || !editState.name.trim()}>
-              {updateMutation.isPending ? "保存中..." : "保存修改"}
+              {updateMutation.isPending ? "Đang lưu..." : "Lưu thay đổi"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -613,32 +613,32 @@ export default function StoryModeManagementPage() {
       <Card>
         <CardHeader className="flex flex-row items-start justify-between gap-4">
           <div className="space-y-1">
-            <CardTitle>推进模式库</CardTitle>
+            <CardTitle>Kho chế độ triển khai</CardTitle>
             <CardDescription>
-              这里维护作品的推进模式，例如系统流、无敌流、种田流、治愈日常。它回答的是“这本书靠什么持续推进和兑现”，会作为后续规划和生成的硬约束输入。
+              Đây là nơi quản lý các chế độ triển khai của tác phẩm, ví dụ hệ thống lưu, vô địch lưu, nông trại lưu, chữa lành đời thường. Nó trả lời câu hỏi “cuốn sách này dựa vào đâu để tiếp tục đẩy nội dung và thực hiện lời hứa”, và sẽ được dùng làm ràng buộc cứng cho các bước lập kế hoạch và tạo nội dung phía sau.
             </CardDescription>
           </div>
           <div className="flex flex-col items-end gap-2">
-            <div className="text-sm text-muted-foreground">当前推进模式数：{totalStoryModes}</div>
+            <div className="text-sm text-muted-foreground">Số chế độ triển khai hiện có: {totalStoryModes}</div>
             <Button type="button" onClick={handleCreateRoot}>
-              新建推进模式树
+              Tạo cây chế độ triển khai mới
             </Button>
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
           {storyModeTreeQuery.isLoading ? (
-            <div className="text-sm text-muted-foreground">正在加载推进模式树...</div>
+            <div className="text-sm text-muted-foreground">Đang tải cây chế độ triển khai...</div>
           ) : null}
 
           {!storyModeTreeQuery.isLoading && storyModeTree.length === 0 ? (
             <div className="rounded-xl border border-dashed p-6 text-center">
-              <div className="text-sm font-medium text-foreground">还没有任何推进模式</div>
+              <div className="text-sm font-medium text-foreground">Chưa có chế độ triển khai nào</div>
               <div className="mt-1 text-sm text-muted-foreground">
-                可以先手动建一个根推进模式，也可以直接让 AI 生成一份结构化草稿。
+                Bạn có thể tự tạo một nút gốc trước, hoặc để AI tạo thẳng một bản nháp có cấu trúc.
               </div>
               <div className="mt-4">
                 <Button type="button" onClick={handleCreateRoot}>
-                  开始创建
+                  Bắt đầu tạo
                 </Button>
               </div>
             </div>

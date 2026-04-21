@@ -8,10 +8,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 
 function toCategoryLabel(category: string): string {
-  if (category === "read") return "读取";
-  if (category === "inspect") return "诊断";
-  if (category === "mutate") return "修改";
-  if (category === "run") return "执行";
+  if (category === "read") return "Đọc";
+  if (category === "inspect") return "Chẩn đoán";
+  if (category === "mutate") return "Chỉnh sửa";
+  if (category === "run") return "Thực thi";
   return category;
 }
 
@@ -39,16 +39,16 @@ export default function CreativeHubPage() {
       <Card className="border-slate-200 bg-gradient-to-r from-slate-50 to-white">
         <CardHeader className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
           <div className="space-y-1">
-            <CardTitle>创作中枢</CardTitle>
+            <CardTitle>Trung tâm Sáng tạo</CardTitle>
             <CardDescription>
-              这里不是单纯聊天页，而是当前小说工作区的命令、状态、诊断和审批入口。
+              Đây không chỉ là trang chat đơn thuần, mà là nơi điều khiển, xem trạng thái, chẩn đoán và phê duyệt cho workspace của tiểu thuyết hiện tại.
             </CardDescription>
           </div>
           <div className="flex flex-wrap gap-2">
             <Badge variant="secondary">Agent {catalog?.agents.length ?? 0}</Badge>
-            <Badge variant="secondary">Tools {catalog?.tools.length ?? 0}</Badge>
-            {boundNovelId ? <Badge variant="outline">小说 {boundNovelId}</Badge> : null}
-            {boundRunId ? <Badge variant="outline">运行 {boundRunId.slice(0, 8)}</Badge> : null}
+            <Badge variant="secondary">Công cụ {catalog?.tools.length ?? 0}</Badge>
+            {boundNovelId ? <Badge variant="outline">Tiểu thuyết {boundNovelId}</Badge> : null}
+            {boundRunId ? <Badge variant="outline">Run {boundRunId.slice(0, 8)}</Badge> : null}
           </div>
         </CardHeader>
         <CardContent className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
@@ -57,7 +57,7 @@ export default function CreativeHubPage() {
               {toCategoryLabel(category)} {count}
             </Badge>
           ))}
-          {catalogQuery.isLoading ? <span>正在加载能力目录...</span> : null}
+          {catalogQuery.isLoading ? <span>Đang tải danh mục năng lực...</span> : null}
         </CardContent>
       </Card>
 

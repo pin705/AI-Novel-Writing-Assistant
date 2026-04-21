@@ -29,11 +29,11 @@ export default function WorldDeepeningTab(props: WorldDeepeningTabProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>问答深化</CardTitle>
+        <CardTitle>Đào sâu hỏi đáp</CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">
         <Button onClick={onGenerate} disabled={generatePending}>
-          {generatePending ? "生成中..." : "生成深化问题"}
+          {generatePending ? "Đang tạo..." : "Tạo câu hỏi đào sâu"}
         </Button>
         {questions.map((question) => {
           const quickOptions = (question.quickOptions ?? llmQuickOptions[question.id] ?? [])
@@ -49,7 +49,7 @@ export default function WorldDeepeningTab(props: WorldDeepeningTabProps) {
               {quickOptions.length > 0 ? (
                 <div className="space-y-1">
                   <div className="text-xs text-muted-foreground">
-                    快捷选项（由模型返回，可一键填入）
+                    Tùy chọn nhanh (do mô hình trả về, có thể bấm để điền ngay)
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {quickOptions.map((option) => (
@@ -69,7 +69,7 @@ export default function WorldDeepeningTab(props: WorldDeepeningTabProps) {
                 </div>
               ) : (
                 <div className="text-xs text-muted-foreground">
-                  当前问题未返回快捷选项，请直接填写回答。
+                  Câu hỏi hiện tại chưa trả về tùy chọn nhanh, hãy nhập câu trả lời trực tiếp.
                 </div>
               )}
               <textarea
@@ -78,7 +78,7 @@ export default function WorldDeepeningTab(props: WorldDeepeningTabProps) {
                 onChange={(event) =>
                   setAnswerDrafts((prev) => ({ ...prev, [question.id]: event.target.value }))
                 }
-                placeholder="填写你的回答"
+                placeholder="Nhập câu trả lời của bạn"
               />
               <div className="text-xs text-muted-foreground">
                 target: {question.targetLayer ?? "-"} / {question.targetField ?? "-"} / status:{" "}
@@ -91,7 +91,7 @@ export default function WorldDeepeningTab(props: WorldDeepeningTabProps) {
           onClick={onSubmit}
           disabled={submitPending || Object.keys(answerDrafts).length === 0 || questions.length === 0}
         >
-          {submitPending ? "整合中..." : "提交并整合回答"}
+          {submitPending ? "Đang tổng hợp..." : "Gửi và tổng hợp câu trả lời"}
         </Button>
       </CardContent>
     </Card>

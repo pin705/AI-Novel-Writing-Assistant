@@ -14,7 +14,7 @@ export function resolveAutoExecutionScopeLabel(task: UnifiedTaskDetail | null): 
     return scopeLabel;
   }
   const fallbackCount = Math.max(1, Math.round(seedPayload?.autoExecution?.totalChapterCount ?? 10));
-  return `前 ${fallbackCount} 章`;
+  return `${fallbackCount} chương đầu`;
 }
 
 export function formatTakeoverCheckpoint(
@@ -22,27 +22,27 @@ export function formatTakeoverCheckpoint(
   task: UnifiedTaskDetail | null,
 ): string {
   if (checkpoint === "candidate_selection_required") {
-    return "等待确认书级方向";
+    return "Chờ xác nhận hướng cấp sách";
   }
   if (checkpoint === "book_contract_ready") {
-    return "Book Contract 已就绪";
+    return "Book Contract đã sẵn sàng";
   }
   if (checkpoint === "character_setup_required") {
-    return "角色准备待审核";
+    return "Chuẩn bị nhân vật chờ duyệt";
   }
   if (checkpoint === "volume_strategy_ready") {
-    return "卷战略 / 卷骨架待审核";
+    return "Chiến lược tập / khung tập chờ duyệt";
   }
   if (checkpoint === "front10_ready") {
-    return `${resolveAutoExecutionScopeLabel(task)}可开写`;
+    return `${resolveAutoExecutionScopeLabel(task)} đã sẵn sàng để viết`;
   }
   if (checkpoint === "chapter_batch_ready") {
-    return `${resolveAutoExecutionScopeLabel(task)}自动执行已暂停`;
+    return `${resolveAutoExecutionScopeLabel(task)} đã tạm dừng tự động triển khai`;
   }
   if (checkpoint === "workflow_completed") {
-    return "主流程完成";
+    return "Luồng chính đã hoàn thành";
   }
-  return "导演流程进行中";
+  return "Đang chạy luồng đạo diễn";
 }
 
 export function buildTakeoverTitle(input: {
@@ -55,32 +55,32 @@ export function buildTakeoverTitle(input: {
     input.mode === "running"
     && (input.checkpointType === "front10_ready" || input.checkpointType === "chapter_batch_ready")
   ) {
-    return `《${input.novelTitle}》正在自动执行${input.scopeLabel}`;
+    return `“${input.novelTitle}” đang tự động triển khai ${input.scopeLabel}`;
   }
   if (input.mode === "waiting") {
     if (input.checkpointType === "candidate_selection_required") {
-      return `《${input.novelTitle}》等待确认书级方向`;
+      return `“${input.novelTitle}” đang chờ xác nhận hướng cấp sách`;
     }
     if (input.checkpointType === "character_setup_required") {
-      return `《${input.novelTitle}》等待审核角色准备`;
+      return `“${input.novelTitle}” đang chờ duyệt phần chuẩn bị nhân vật`;
     }
     if (input.checkpointType === "volume_strategy_ready") {
-      return `《${input.novelTitle}》等待审核卷战略 / 卷骨架`;
+      return `“${input.novelTitle}” đang chờ duyệt chiến lược tập / khung tập`;
     }
     if (input.checkpointType === "front10_ready") {
-      return `《${input.novelTitle}》已完成自动导演交接`;
+      return `“${input.novelTitle}” đã hoàn tất bàn giao cho đạo diễn tự động`;
     }
   }
   if (input.mode === "failed") {
     if (input.checkpointType === "chapter_batch_ready") {
-      return `《${input.novelTitle}》${input.scopeLabel}自动执行已暂停`;
+      return `“${input.novelTitle}” ${input.scopeLabel} đã tạm dừng tự động triển khai`;
     }
-    return `《${input.novelTitle}》自动导演已中断`;
+    return `“${input.novelTitle}” đã bị gián đoạn ở chế độ đạo diễn tự động`;
   }
   if (input.mode === "loading") {
-    return `《${input.novelTitle}》自动导演状态同步中`;
+    return `Đang đồng bộ trạng thái đạo diễn tự động của “${input.novelTitle}”`;
   }
-  return `《${input.novelTitle}》正在自动导演`;
+  return `Đang đạo diễn tự động “${input.novelTitle}”`;
 }
 
 export function buildTakeoverDescription(input: {
@@ -93,41 +93,41 @@ export function buildTakeoverDescription(input: {
     input.mode === "running"
     && (input.checkpointType === "front10_ready" || input.checkpointType === "chapter_batch_ready")
   ) {
-    return `AI 正在后台自动执行${input.scopeLabel}，并会继续完成审校与修复。你仍可继续手动查看和编辑；如果同时修改当前章节，后续自动结果可能覆盖这部分内容。`;
+    return `AI đang âm thầm tự động triển khai ${input.scopeLabel} và sẽ tiếp tục chạy phần rà soát, sửa lỗi. Bạn vẫn có thể xem và chỉnh tay; nếu cùng lúc sửa chương hiện tại, kết quả tự động sau đó có thể ghi đè một phần nội dung.`;
   }
   if (input.mode === "waiting") {
     if (input.checkpointType === "candidate_selection_required") {
-      return "书级方向候选已经生成。请先回到书级方向确认页选定或修正方案，自动导演才能继续推进后续主链。";
+      return "Đã sinh xong các phương án hướng cấp sách. Hãy quay lại trang xác nhận để chọn hoặc chỉnh phương án, rồi đạo diễn tự động mới có thể đi tiếp.";
     }
     if (input.checkpointType === "character_setup_required") {
-      return "角色准备已经生成。你可以先检查核心角色、关系和当前目标，确认后再继续自动导演。";
+      return "Phần chuẩn bị nhân vật đã xong. Hãy kiểm tra nhân vật cốt lõi, quan hệ và mục tiêu hiện tại rồi hãy tiếp tục đạo diễn tự động.";
     }
     if (input.checkpointType === "volume_strategy_ready") {
-      return "当前可以审核并微调卷战略 / 卷骨架。确认后再继续自动生成节奏板、拆章和已选章节批次的细化资源。";
+      return "Hiện đã có thể duyệt và tinh chỉnh chiến lược tập / khung tập. Xác nhận xong rồi hãy tiếp tục sinh nhịp độ, tách chương và tài nguyên chi tiết cho các chương đã chọn.";
     }
     if (input.checkpointType === "front10_ready") {
-      return `自动导演已经完成${input.scopeLabel}的开写准备。你可以直接进入章节执行，也可以继续让 AI 自动执行这批章节。`;
+      return `Đạo diễn tự động đã hoàn tất khâu chuẩn bị viết cho ${input.scopeLabel}. Bạn có thể vào triển khai chương ngay, hoặc để AI tiếp tục chạy tự động lo phần này.`;
     }
     if (input.reviewScope) {
-      return "自动导演已到达审核点。请先检查当前阶段产物，再决定是否继续推进。";
+      return "Đạo diễn tự động đã tới mốc duyệt. Hãy kiểm tra sản phẩm của giai đoạn hiện tại trước khi quyết định đi tiếp.";
     }
   }
   if (input.mode === "failed") {
     if (input.checkpointType === "chapter_batch_ready") {
-      return `${input.scopeLabel}自动执行已暂停。建议先查看任务中心或质量修复区，再决定是否继续自动执行。`;
+      return `Đã tạm dừng tự động triển khai ${input.scopeLabel}. Bạn nên xem trung tâm tác vụ hoặc khu sửa chất lượng trước khi quyết định chạy tiếp.`;
     }
-    return "后台导演流程已中断。建议先去任务中心查看失败原因，再决定是否从最近检查点恢复。";
+    return "Luồng đạo diễn nền đã bị gián đoạn. Nên xem lý do lỗi trong trung tâm tác vụ rồi hãy quyết định có khôi phục từ điểm gần nhất hay không.";
   }
   if (input.mode === "loading") {
-    return "正在同步当前自动导演状态。";
+    return "Đang đồng bộ trạng thái đạo diễn tự động hiện tại.";
   }
-  return "AI 正在后台接管这本书的开书流程。你可以继续手动操作当前项目；如果与自动导演同时改同一块内容，以最新写入结果为准。";
+  return "AI đang âm thầm tiếp quản quy trình mở sách của dự án này. Bạn vẫn có thể thao tác thủ công; nếu cùng lúc sửa cùng một phần với đạo diễn tự động, kết quả ghi sau cùng sẽ được ưu tiên.";
 }
 
 export function buildContinueAutoExecutionActionLabel(scopeLabel: string, isPending: boolean): string {
-  return isPending ? "继续执行中..." : `继续自动执行${scopeLabel}`;
+  return isPending ? "Đang tiếp tục triển khai..." : `Tiếp tục tự động triển khai ${scopeLabel}`;
 }
 
 export function buildContinueAutoExecutionToast(scopeLabel: string): string {
-  return `自动导演已继续执行${scopeLabel}，并会在后台自动审校与修复。`;
+  return `Đạo diễn tự động đã tiếp tục triển khai ${scopeLabel} và sẽ tự động rà soát, sửa lỗi ở nền.`;
 }

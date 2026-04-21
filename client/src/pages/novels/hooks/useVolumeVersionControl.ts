@@ -81,60 +81,60 @@ export function useVolumeVersionControl({
       if (nextVersionId) {
         setSelectedVersionId(nextVersionId);
       }
-      setMessage(response.message ?? "卷级草稿版本已创建。");
+      setMessage(response.message ?? "Đã tạo phiên bản bản nháp cấp tập.");
       await invalidateVersionList();
     },
     onError: (error) => {
-      setMessage(error instanceof Error ? error.message : "创建卷级草稿版本失败。");
+      setMessage(error instanceof Error ? error.message : "Tạo phiên bản bản nháp cấp tập thất bại.");
     },
   });
 
   const activateVersionMutation = useMutation({
     mutationFn: () => {
       if (!selectedVersionId) {
-        throw new Error("请先选择一个卷级版本。");
+        throw new Error("Hãy chọn một phiên bản cấp tập trước.");
       }
       return activateVolumeVersion(novelId, selectedVersionId);
     },
     onSuccess: async (response) => {
-      setMessage(response.message ?? "已设为生效卷级版本。");
+      setMessage(response.message ?? "Đã đặt làm phiên bản cấp tập đang dùng.");
       await invalidateVersionList();
       await invalidateNovelDetail();
     },
     onError: (error) => {
-      setMessage(error instanceof Error ? error.message : "设置生效版失败。");
+      setMessage(error instanceof Error ? error.message : "Đặt phiên bản đang dùng thất bại.");
     },
   });
 
   const freezeVersionMutation = useMutation({
     mutationFn: () => {
       if (!selectedVersionId) {
-        throw new Error("请先选择一个卷级版本。");
+        throw new Error("Hãy chọn một phiên bản cấp tập trước.");
       }
       return freezeVolumeVersion(novelId, selectedVersionId);
     },
     onSuccess: async (response) => {
-      setMessage(response.message ?? "卷级版本已冻结。");
+      setMessage(response.message ?? "Phiên bản cấp tập đã được khóa.");
       await invalidateVersionList();
     },
     onError: (error) => {
-      setMessage(error instanceof Error ? error.message : "冻结卷级版本失败。");
+      setMessage(error instanceof Error ? error.message : "Khóa phiên bản cấp tập thất bại.");
     },
   });
 
   const diffMutation = useMutation({
     mutationFn: () => {
       if (!selectedVersionId) {
-        throw new Error("请先选择一个卷级版本。");
+        throw new Error("Hãy chọn một phiên bản cấp tập trước.");
       }
       return getVolumeDiff(novelId, selectedVersionId);
     },
     onSuccess: (response) => {
       setDiffResult(response.data ?? null);
-      setMessage(response.message ?? "卷级版本差异已更新。");
+      setMessage(response.message ?? "Đã cập nhật phần khác biệt của phiên bản cấp tập.");
     },
     onError: (error) => {
-      setMessage(error instanceof Error ? error.message : "加载卷级版本差异失败。");
+      setMessage(error instanceof Error ? error.message : "Tải phần khác biệt của phiên bản cấp tập thất bại.");
     },
   });
 
@@ -142,26 +142,26 @@ export function useVolumeVersionControl({
     mutationFn: () => analyzeVolumeImpact(novelId, { volumes: draftDocument.volumes }),
     onSuccess: (response) => {
       setImpactResult(response.data ?? null);
-      setMessage(response.message ?? "卷级草稿影响分析完成。");
+      setMessage(response.message ?? "Đã phân tích ảnh hưởng của bản nháp cấp tập.");
     },
     onError: (error) => {
-      setMessage(error instanceof Error ? error.message : "卷级草稿影响分析失败。");
+      setMessage(error instanceof Error ? error.message : "Phân tích ảnh hưởng bản nháp cấp tập thất bại.");
     },
   });
 
   const analyzeVersionImpactMutation = useMutation({
     mutationFn: () => {
       if (!selectedVersionId) {
-        throw new Error("请先选择一个卷级版本。");
+        throw new Error("Hãy chọn một phiên bản cấp tập trước.");
       }
       return analyzeVolumeImpact(novelId, { versionId: selectedVersionId });
     },
     onSuccess: (response) => {
       setImpactResult(response.data ?? null);
-      setMessage(response.message ?? "卷级版本影响分析完成。");
+      setMessage(response.message ?? "Đã phân tích ảnh hưởng của phiên bản cấp tập.");
     },
     onError: (error) => {
-      setMessage(error instanceof Error ? error.message : "卷级版本影响分析失败。");
+      setMessage(error instanceof Error ? error.message : "Phân tích ảnh hưởng phiên bản cấp tập thất bại.");
     },
   });
 
@@ -176,9 +176,9 @@ export function useVolumeVersionControl({
       setCritiqueReport(parsed.critiqueReport ?? null);
       setBeatSheets(parsed.beatSheets ?? []);
       setRebalanceDecisions(parsed.rebalanceDecisions ?? []);
-      setMessage(`已加载 V${selectedVersion.version} 到当前卷级草稿。`);
+      setMessage(`Đã nạp V${selectedVersion.version} vào bản nháp cấp tập hiện tại.`);
     } catch {
-      setMessage("读取卷级版本内容失败。");
+      setMessage("Đọc nội dung phiên bản cấp tập thất bại.");
     }
   };
 

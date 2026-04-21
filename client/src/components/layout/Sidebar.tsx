@@ -39,32 +39,32 @@ interface NavGroup {
 
 const navGroups: NavGroup[] = [
   {
-    title: "创作",
+    title: "Sáng tác",
     items: [
-      { to: "/", label: "首页", icon: House },
-      { to: "/novels", label: "小说列表", icon: BookOpenText },
-      { to: "/creative-hub", label: "创作中枢", icon: LayoutDashboard },
-      { to: "/book-analysis", label: "拆书", icon: ScanSearch },
-      { to: "/tasks", label: "任务中心", icon: ListTodo },
+      { to: "/", label: "Trang chủ", icon: House },
+      { to: "/novels", label: "Danh sách tiểu thuyết", icon: BookOpenText },
+      { to: "/creative-hub", label: "Trung tâm sáng tác", icon: LayoutDashboard },
+      { to: "/book-analysis", label: "Phân tích sách", icon: ScanSearch },
+      { to: "/tasks", label: "Trung tâm tác vụ", icon: ListTodo },
     ],
   },
   {
-    title: "资产",
+    title: "Tài sản",
     items: [
-      { to: "/genres", label: "题材基底库", icon: Tags },
-      { to: "/story-modes", label: "推进模式库", icon: Workflow },
-      { to: "/titles", label: "标题工坊", icon: SquarePen },
-      { to: "/knowledge", label: "知识库", icon: Database },
-      { to: "/worlds", label: "世界观", icon: Globe2 },
-      { to: "/style-engine", label: "写法引擎", icon: WandSparkles },
-      { to: "/base-characters", label: "基础角色库", icon: UsersRound },
+      { to: "/genres", label: "Kho thể loại", icon: Tags },
+      { to: "/story-modes", label: "Kho nhịp triển khai", icon: Workflow },
+      { to: "/titles", label: "Xưởng tiêu đề", icon: SquarePen },
+      { to: "/knowledge", label: "Tri thức", icon: Database },
+      { to: "/worlds", label: "Thế giới quan", icon: Globe2 },
+      { to: "/style-engine", label: "Bộ máy phong cách viết", icon: WandSparkles },
+      { to: "/base-characters", label: "Kho nhân vật nền", icon: UsersRound },
     ],
   },
   {
-    title: "系统",
+    title: "Hệ thống",
     items: [
-      { to: "/settings/model-routes", label: "模型路由", icon: Route },
-      { to: "/settings", label: "系统设置", icon: Settings2 },
+      { to: "/settings/model-routes", label: "Điều phối mô hình", icon: Route },
+      { to: "/settings", label: "Cài đặt hệ thống", icon: Settings2 },
     ],
   },
 ];
@@ -154,8 +154,8 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
           size="icon"
           className="h-8 w-8 text-muted-foreground"
           onClick={onToggle}
-          aria-label={collapsed ? "展开导航栏" : "收起导航栏"}
-          title={collapsed ? "展开导航栏" : "收起导航栏"}
+          aria-label={collapsed ? "Mở rộng thanh điều hướng" : "Thu gọn thanh điều hướng"}
+          title={collapsed ? "Mở rộng thanh điều hướng" : "Thu gọn thanh điều hướng"}
         >
           {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
         </Button>

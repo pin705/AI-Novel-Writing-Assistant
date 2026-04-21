@@ -28,17 +28,17 @@ export default function WritingFormulaRulesPanel(props: WritingFormulaRulesPanel
     <>
       <Card>
         <CardHeader>
-          <CardTitle>反 AI 特征库</CardTitle>
+          <CardTitle>Kho đặc trưng chống AI</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="rounded-md border bg-muted/20 p-3 text-sm">
-            已启用 {enabledCount} / {antiAiRules.length} 条规则
+            Đã bật {enabledCount} / {antiAiRules.length} quy tắc
           </div>
           <div className="text-sm text-muted-foreground">
-            把规则库收进弹窗后，主页面会更聚焦在写法编辑和应用。
+            Đưa kho quy tắc vào cửa sổ riêng để trang chính tập trung hơn vào chỉnh sửa và ứng dụng phong cách viết.
           </div>
           <Button className="w-full" variant="secondary" onClick={() => setOpen(true)}>
-            打开规则库
+            Mở kho quy tắc
           </Button>
         </CardContent>
       </Card>
@@ -46,9 +46,9 @@ export default function WritingFormulaRulesPanel(props: WritingFormulaRulesPanel
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="max-w-5xl">
           <DialogHeader>
-            <DialogTitle>反 AI 特征库</DialogTitle>
+            <DialogTitle>Kho đặc trưng chống AI</DialogTitle>
             <DialogDescription>
-              这里更适合做规则浏览、筛选、启停和后续扩展编辑。
+              Đây là nơi phù hợp hơn để duyệt quy tắc, lọc, bật/tắt và mở rộng chỉnh sửa sau này.
             </DialogDescription>
           </DialogHeader>
           <div className="grid max-h-[70vh] gap-3 overflow-y-auto pr-1 md:grid-cols-2">
@@ -67,7 +67,7 @@ export default function WritingFormulaRulesPanel(props: WritingFormulaRulesPanel
                       checked={rule.enabled}
                       onChange={(event) => onToggleRule(rule, event.target.checked)}
                     />
-                    启用
+                    Bật
                   </label>
                 </div>
                 <div className="mt-3 text-sm text-muted-foreground">{rule.description}</div>
@@ -78,7 +78,7 @@ export default function WritingFormulaRulesPanel(props: WritingFormulaRulesPanel
                 ) : null}
                 {rule.rewriteSuggestion ? (
                   <div className="mt-2 text-xs text-muted-foreground">
-                    修正建议：{rule.rewriteSuggestion}
+                    Gợi ý sửa: {rule.rewriteSuggestion}
                   </div>
                 ) : null}
               </div>

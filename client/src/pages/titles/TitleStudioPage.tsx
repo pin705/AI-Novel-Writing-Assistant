@@ -28,16 +28,16 @@ export default function TitleStudioPage() {
     <div className="mx-auto max-w-6xl space-y-4">
       <Card>
         <CardHeader className="space-y-2">
-          <CardTitle>标题工坊</CardTitle>
+          <CardTitle>Xưởng tiêu đề</CardTitle>
           <CardDescription>
-            把“标题生成”和“标题沉淀”统一成正式资产模块。工坊负责产出候选，标题库负责复用和统计。
+            Gộp “tạo tiêu đề” và “lưu trữ tiêu đề” thành một mô-đun tài sản chính thức. Xưởng lo phần sinh ý tưởng, còn kho tiêu đề lo tái sử dụng và thống kê.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Tabs value={tab} onValueChange={setTab} className="space-y-4">
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="factory">标题工坊</TabsTrigger>
-              <TabsTrigger value="library">标题库</TabsTrigger>
+              <TabsTrigger value="factory">Xưởng tiêu đề</TabsTrigger>
+              <TabsTrigger value="library">Kho tiêu đề</TabsTrigger>
             </TabsList>
 
             <TabsContent value="factory">

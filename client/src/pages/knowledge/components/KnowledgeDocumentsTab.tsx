@@ -56,9 +56,9 @@ export default function KnowledgeDocumentsTab({
           <div className="min-w-0 space-y-1">
             <div className="font-medium">{document.title}</div>
             <div className="text-xs text-muted-foreground">
-              {document.fileName} | 版本数 {document.versionCount} | 当前 v{document.activeVersionNumber}
+              {document.fileName} | Số phiên bản {document.versionCount} | Đang dùng v{document.activeVersionNumber}
             </div>
-            <div className="text-xs text-muted-foreground">拆书项目 {document.bookAnalysisCount}</div>
+            <div className="text-xs text-muted-foreground">Phân tích sách {document.bookAnalysisCount}</div>
             {documentJob?.progress && (documentJob.status === "queued" || documentJob.status === "running") ? (
               <div className="mt-2 rounded-md border border-dashed p-2">
                 <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
@@ -78,7 +78,7 @@ export default function KnowledgeDocumentsTab({
               </div>
             ) : null}
             {document.latestIndexStatus === "failed" && document.latestIndexError ? (
-              <div className="text-xs text-destructive">失败原因：{document.latestIndexError}</div>
+              <div className="text-xs text-destructive">Lý do thất bại: {document.latestIndexError}</div>
             ) : null}
           </div>
           <div className="flex flex-wrap gap-2">
@@ -88,17 +88,17 @@ export default function KnowledgeDocumentsTab({
         </div>
         <div className="mt-3 flex flex-wrap gap-2">
           <Button size="sm" variant="secondary" onClick={() => onSelectDocument(document.id)}>
-            查看版本
+            Xem phiên bản
           </Button>
           <OpenInCreativeHubButton
             bindings={{ knowledgeDocumentIds: [document.id] }}
-            label="在创作中枢中继续"
+            label="Tiếp tục trong Trung tâm Sáng tạo"
           />
           <Button asChild size="sm" variant="outline">
-            <Link to={`/book-analysis?documentId=${document.id}`}>新建拆书</Link>
+            <Link to={`/book-analysis?documentId=${document.id}`}>Tạo phân tích sách mới</Link>
           </Button>
           <Button size="sm" variant="outline" onClick={() => onReindexDocument(document.id)}>
-            重建索引
+            Tạo lại chỉ mục
           </Button>
           {document.status === "enabled" ? (
             <Button
@@ -106,7 +106,7 @@ export default function KnowledgeDocumentsTab({
               variant="outline"
               onClick={() => onUpdateStatus(document.id, "disabled")}
             >
-              停用
+              Tắt
             </Button>
           ) : document.status === "disabled" ? (
             <Button
@@ -114,7 +114,7 @@ export default function KnowledgeDocumentsTab({
               variant="outline"
               onClick={() => onUpdateStatus(document.id, "enabled")}
             >
-              启用
+              Bật
             </Button>
           ) : null}
           {document.status !== "archived" ? (
@@ -123,7 +123,7 @@ export default function KnowledgeDocumentsTab({
               variant="outline"
               onClick={() => onUpdateStatus(document.id, "archived")}
             >
-              归档
+              Lưu trữ
             </Button>
           ) : null}
         </div>
@@ -135,13 +135,13 @@ export default function KnowledgeDocumentsTab({
     <div className="grid gap-4 lg:grid-cols-[360px_1fr]">
       <Card>
         <CardHeader>
-          <CardTitle>上传文档</CardTitle>
+          <CardTitle>Tải tài liệu lên</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           <Input
             value={uploadTitle}
             onChange={(event) => onUploadTitleChange(event.target.value)}
-            placeholder="可选标题，留空则使用文件名"
+            placeholder="Tiêu đề tùy chọn, để trống sẽ dùng tên file"
           />
           <input
             type="file"
@@ -158,38 +158,38 @@ export default function KnowledgeDocumentsTab({
             disabled={uploadBusy}
           />
           <div className="text-xs text-muted-foreground">
-            仅支持 `.txt`，前端会读取文本后提交 JSON。上传同名标题时会自动追加新版本并切换激活版本。
+            Chỉ hỗ trợ `.txt`, phía client sẽ đọc văn bản rồi gửi JSON. Nếu tải lên trùng tiêu đề, hệ thống sẽ tự thêm phiên bản mới và chuyển sang phiên bản kích hoạt.
           </div>
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader>
-          <CardTitle>文档列表</CardTitle>
+          <CardTitle>Danh sách tài liệu</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="grid gap-2 md:grid-cols-[1fr_180px]">
             <Input
               value={keyword}
               onChange={(event) => onKeywordChange(event.target.value)}
-              placeholder="按标题或文件名搜索"
+              placeholder="Tìm theo tiêu đề hoặc tên file"
             />
             <select
               className="w-full rounded-md border bg-background p-2 text-sm"
               value={status}
               onChange={(event) => onStatusChange(event.target.value as KnowledgeDocumentStatus | "")}
             >
-              <option value="">全部未归档</option>
-              <option value="enabled">仅启用</option>
-              <option value="disabled">仅停用</option>
-              <option value="archived">仅归档</option>
+              <option value="">Tất cả chưa lưu trữ</option>
+              <option value="enabled">Chỉ bật</option>
+              <option value="disabled">Chỉ tắt</option>
+              <option value="archived">Chỉ lưu trữ</option>
             </select>
           </div>
           <div className="space-y-3">
             {documents.map(renderDocumentRow)}
             {documents.length === 0 ? (
               <div className="rounded-md border border-dashed p-6 text-sm text-muted-foreground">
-                当前没有符合条件的知识文档。
+                Hiện chưa có tài liệu tri thức nào khớp điều kiện.
               </div>
             ) : null}
           </div>

@@ -10,13 +10,13 @@ export const RUN_MODE_OPTIONS: Array<{
 }> = [
   {
     value: "auto_to_ready",
-    label: "自动推进到可开写",
-    description: "AI 会持续推进到章节执行资源准备好后再交给你。",
+    label: "Tự chạy đến khi có thể mở viết",
+    description: "AI sẽ tiếp tục đẩy tiến độ cho tới khi tài nguyên triển khai chương sẵn sàng rồi mới bàn giao cho bạn.",
   },
   {
     value: "auto_to_execution",
-    label: "继续自动执行章节批次",
-    description: "默认执行前 10 章，也可以改成指定章节范围或按卷执行。",
+    label: "Tiếp tục tự động triển khai theo lô chương",
+    description: "Mặc định sẽ chạy 10 chương đầu, nhưng bạn cũng có thể đổi sang phạm vi chương chỉ định hoặc chạy theo tập.",
   },
 ];
 
@@ -31,8 +31,8 @@ export interface AutoDirectorRequestLlmOptions {
 export function buildInitialIdea(basicForm: NovelBasicFormState): string {
   const lines = [
     basicForm.description.trim(),
-    basicForm.title.trim() ? `我想写一本暂名为《${basicForm.title.trim()}》的小说。` : "",
-    basicForm.styleTone.trim() ? `文风希望偏 ${basicForm.styleTone.trim()}。` : "",
+    basicForm.title.trim() ? `Tôi muốn viết một cuốn tạm đặt tên là “${basicForm.title.trim()}”.` : "",
+    basicForm.styleTone.trim() ? `Tôi muốn văn phong nghiêng về ${basicForm.styleTone.trim()}.` : "",
   ].filter(Boolean);
   return lines.join("\n");
 }

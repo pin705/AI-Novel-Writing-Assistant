@@ -114,7 +114,7 @@ export default function CharacterLibrary() {
   };
 
   const handleDeleteCharacter = (character: BaseCharacter) => {
-    const confirmed = window.confirm(`确认删除角色「${character.name}」？此操作不可恢复。`);
+    const confirmed = window.confirm(`Bạn có chắc muốn xóa nhân vật “${character.name}” không? Thao tác này không thể hoàn tác.`);
     if (!confirmed) {
       return;
     }
@@ -124,9 +124,9 @@ export default function CharacterLibrary() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-2">
-        <div className="text-sm text-muted-foreground">已创建角色：{characters.length}</div>
+        <div className="text-sm text-muted-foreground">Số nhân vật đã tạo: {characters.length}</div>
         <div className="flex flex-wrap gap-2">
-          <OpenInCreativeHubButton bindings={{}} label="角色库发往创作中枢" />
+          <OpenInCreativeHubButton bindings={{}} label="Đẩy thư viện nhân vật sang Trung tâm Sáng tạo" />
           <CharacterCreateDialog />
         </div>
       </div>
@@ -166,7 +166,7 @@ export default function CharacterLibrary() {
 
       <Card>
         <CardHeader>
-          <CardTitle>角色列表</CardTitle>
+          <CardTitle>Danh sách nhân vật</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           {characters.map((character, index) => (
@@ -184,12 +184,12 @@ export default function CharacterLibrary() {
               extraActions={(
                 <OpenInCreativeHubButton
                   bindings={{ baseCharacterId: character.id }}
-                  label="带着角色继续"
+                  label="Tiếp tục với nhân vật này"
                 />
               )}
             />
           ))}
-          {characters.length === 0 ? <div className="text-sm text-muted-foreground">暂无角色。</div> : null}
+          {characters.length === 0 ? <div className="text-sm text-muted-foreground">Chưa có nhân vật nào.</div> : null}
         </CardContent>
       </Card>
     </div>

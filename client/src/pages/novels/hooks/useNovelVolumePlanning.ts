@@ -280,7 +280,7 @@ export function useNovelVolumePlanning({
       });
       const nextDocument = generatedResponse.data;
       if (!nextDocument) {
-        throw new Error("AI 没有返回卷工作区结果。");
+        throw new Error("AI không trả về kết quả cho không gian làm việc tập.");
       }
 
       try {
@@ -291,7 +291,7 @@ export function useNovelVolumePlanning({
           nextDocument: persistedResponse.data ?? nextDocument,
         };
       } catch (error) {
-        const message = error instanceof Error ? error.message : "AI 生成已完成，但自动保存失败。";
+        const message = error instanceof Error ? error.message : "AI đã sinh xong nhưng lưu tự động thất bại.";
         throw new VolumeGenerationAutoSaveError(message, nextDocument);
       }
     },
@@ -307,27 +307,27 @@ export function useNovelVolumePlanning({
           ? "volume_strategy"
           : "structured_outline",
         itemLabel: payload.scope === "strategy"
-          ? "卷战略建议已更新"
+          ? "Đã cập nhật gợi ý chiến lược tập"
           : payload.scope === "strategy_critique"
-            ? "卷战略审稿已更新"
+            ? "Đã cập nhật bản duyệt chiến lược tập"
             : payload.scope === "skeleton" || payload.scope === "book"
-              ? "卷骨架已更新"
+              ? "Đã cập nhật khung tập"
               : payload.scope === "beat_sheet"
-                ? "当前卷节奏板已更新"
+                ? "Đã cập nhật bảng nhịp của tập hiện tại"
                 : payload.scope === "chapter_list" || payload.scope === "volume"
-                  ? "当前卷章节列表已生成"
+                  ? "Đã sinh danh sách chương của tập hiện tại"
                   : payload.scope === "rebalance"
-                    ? "相邻卷再平衡建议已更新"
-                    : "章节细化已更新",
+                    ? "Đã cập nhật gợi ý cân bằng giữa các tập"
+                    : "Đã cập nhật phần tinh chỉnh chương",
         checkpointType: payload.scope === "skeleton" || payload.scope === "book"
           ? "volume_strategy_ready"
           : payload.scope === "chapter_list" || payload.scope === "volume"
             ? "chapter_batch_ready"
             : null,
         checkpointSummary: payload.scope === "skeleton" || payload.scope === "book"
-          ? "卷战略与卷骨架已刷新，可以继续进入节奏拆章。"
+          ? "Chiến lược tập và khung tập đã được làm mới, có thể tiếp tục sang bước tách nhịp và chương."
           : payload.scope === "chapter_list" || payload.scope === "volume"
-            ? "当前卷章节列表已准备完成，可继续细化并同步到章节执行。"
+            ? "Danh sách chương của tập hiện tại đã sẵn sàng, có thể tiếp tục tinh chỉnh và đồng bộ sang triển khai chương."
             : undefined,
         volumeId: payload.targetVolumeId,
         chapterId: payload.targetChapterId,
@@ -339,24 +339,24 @@ export function useNovelVolumePlanning({
       }
 
       if (payload.scope === "strategy") {
-        const message = "卷战略建议已生成并自动保存。下一步请先审查，再确认卷骨架。";
+        const message = "Đã sinh và tự động lưu gợi ý chiến lược tập. Bước tiếp theo hãy duyệt trước rồi mới xác nhận khung tập.";
         setVolumeGenerationMessage(message);
         setStructuredMessage(message);
         return;
       }
       if (payload.scope === "strategy_critique") {
-        const message = "卷战略审稿已完成，问题和建议已写入右侧审稿区。";
+        const message = "Đã hoàn tất duyệt chiến lược tập, vấn đề và đề xuất đã được ghi vào khu duyệt bên phải.";
         setVolumeGenerationMessage(message);
         return;
       }
       if (payload.scope === "skeleton" || payload.scope === "book") {
-        const message = "卷骨架已生成并自动保存。系统已清空旧节奏板，下一步请为当前卷生成节奏板。";
+        const message = "Đã sinh và tự động lưu khung tập. Hệ thống đã xóa bảng nhịp cũ, bước tiếp theo hãy sinh bảng nhịp cho tập hiện tại.";
         setVolumeGenerationMessage(message);
         setStructuredMessage(message);
         return;
       }
       if (payload.scope === "beat_sheet") {
-        setStructuredMessage("当前卷节奏板已更新并自动保存。现在可以继续拆当前卷章节列表。");
+        setStructuredMessage("Bảng nhịp của tập hiện tại đã được cập nhật và tự động lưu. Bây giờ có thể tiếp tục tách danh sách chương.");
         return;
       }
       if (payload.scope === "chapter_list" || payload.scope === "volume") {
@@ -366,28 +366,28 @@ export function useNovelVolumePlanning({
         const updatedChapterCount = updatedVolume?.chapters.length ?? 0;
         setStructuredMessage(
           updatedChapterCount > 0
-            ? `当前卷章节列表已生成并自动保存，现已更新为 ${updatedChapterCount} 章，相邻卷再平衡建议也已同步更新。`
-            : "当前卷章节列表已生成并自动保存，相邻卷再平衡建议也已同步更新。",
+            ? `Danh sách chương của tập hiện tại đã được sinh và tự động lưu, hiện đã cập nhật thành ${updatedChapterCount} chương, gợi ý cân bằng giữa các tập cũng đã được đồng bộ.`
+            : "Danh sách chương của tập hiện tại đã được sinh và tự động lưu, gợi ý cân bằng giữa các tập cũng đã được đồng bộ.",
         );
         return;
       }
       if (payload.scope === "rebalance") {
-        setStructuredMessage("相邻卷再平衡建议已更新。");
+        setStructuredMessage("Đã cập nhật gợi ý cân bằng giữa các tập liền kề.");
         return;
       }
 
       const label = detailModeLabel(payload.detailMode ?? "purpose");
-      setStructuredMessage(`${label}已完成 AI 修正并自动保存。`);
+      setStructuredMessage(`${label} đã được AI hiệu chỉnh và tự động lưu.`);
     },
     onError: (error, payload) => {
       if (error instanceof VolumeGenerationAutoSaveError) {
         applyWorkspaceDocument(error.nextDocument);
       }
       const message = error instanceof VolumeGenerationAutoSaveError
-        ? `AI 生成已完成，但自动保存失败：${error.message}`
+        ? `AI đã sinh xong nhưng lưu tự động thất bại: ${error.message}`
         : error instanceof Error
           ? error.message
-          : "卷级方案生成失败。";
+          : "Sinh phương án cấp tập thất bại.";
       if (payload.scope === "strategy" || payload.scope === "strategy_critique" || payload.scope === "skeleton" || payload.scope === "book") {
         setVolumeGenerationMessage(message);
       }
@@ -399,7 +399,7 @@ export function useNovelVolumePlanning({
     if (hasCharacters) {
       return true;
     }
-    return window.confirm("当前小说还没有角色。继续生成会降低后续一致性，是否继续？");
+    return window.confirm("Tiểu thuyết hiện chưa có nhân vật. Tiếp tục sinh sẽ làm giảm độ nhất quán về sau, bạn có muốn tiếp tục không?");
   };
 
   const startStrategyGeneration = () => {
@@ -407,16 +407,16 @@ export function useNovelVolumePlanning({
       return;
     }
     const confirmed = window.confirm([
-      "将生成卷战略建议，帮助决定推荐卷数、硬规划卷数和各卷角色定位。",
-      "这一步不会直接生成卷骨架，也不会拆章节。",
+      "Sẽ sinh gợi ý chiến lược tập để giúp quyết định số tập khuyến nghị, số tập quy hoạch cứng và vai trò của từng tập.",
+      "Bước này sẽ không sinh thẳng khung tập và cũng chưa tách chương.",
       userPreferredVolumeCount != null
-        ? `本次将固定为 ${userPreferredVolumeCount} 卷生成分卷策略。`
+        ? `Lần này sẽ cố định sinh chiến lược chia tập với ${userPreferredVolumeCount} tập.`
         : forceSystemRecommendedVolumeCount
-          ? `本次将按系统建议卷数生成（当前建议 ${volumeCountGuidance.systemRecommendedVolumeCount} 卷），不沿用现有草稿卷数。`
+          ? `Lần này sẽ sinh theo số tập hệ thống khuyến nghị (hiện khuyến nghị ${volumeCountGuidance.systemRecommendedVolumeCount} tập), không dùng số tập của bản nháp hiện có.`
           : volumeCountGuidance.respectedExistingVolumeCount != null
-            ? `本次会优先沿用当前草稿的 ${volumeCountGuidance.respectedExistingVolumeCount} 卷结构，同时保持在允许区间 ${volumeCountGuidance.allowedVolumeCountRange.min}-${volumeCountGuidance.allowedVolumeCountRange.max} 内。`
-            : `当前系统建议 ${volumeCountGuidance.systemRecommendedVolumeCount} 卷，允许区间 ${volumeCountGuidance.allowedVolumeCountRange.min}-${volumeCountGuidance.allowedVolumeCountRange.max} 卷。`,
-      hasUnsavedVolumeDraft ? "本次会直接使用当前页面未保存草稿作为参考。" : "本次会基于当前工作区状态生成建议。",
+            ? `Lần này sẽ ưu tiên dùng cấu trúc ${volumeCountGuidance.respectedExistingVolumeCount} tập của bản nháp hiện tại, đồng thời vẫn giữ trong khoảng cho phép ${volumeCountGuidance.allowedVolumeCountRange.min}-${volumeCountGuidance.allowedVolumeCountRange.max}.`
+            : `Hiện hệ thống khuyến nghị ${volumeCountGuidance.systemRecommendedVolumeCount} tập, khoảng cho phép là ${volumeCountGuidance.allowedVolumeCountRange.min}-${volumeCountGuidance.allowedVolumeCountRange.max} tập.`,
+      hasUnsavedVolumeDraft ? "Lần này sẽ dùng trực tiếp bản nháp chưa lưu của trang hiện tại làm tham chiếu." : "Lần này sẽ sinh gợi ý dựa trên trạng thái không gian làm việc hiện tại.",
     ].join("\n\n"));
     if (!confirmed) {
       return;
@@ -426,7 +426,7 @@ export function useNovelVolumePlanning({
 
   const startStrategyCritique = () => {
     if (!strategyPlan) {
-      setVolumeGenerationMessage("请先生成卷战略建议。");
+      setVolumeGenerationMessage("Hãy sinh gợi ý chiến lược tập trước.");
       return;
     }
     generateMutation.mutate({ scope: "strategy_critique" });
@@ -437,9 +437,9 @@ export function useNovelVolumePlanning({
       return;
     }
     const confirmed = window.confirm([
-      "将根据当前卷战略建议生成或重生成全书卷骨架。",
-      "这一步会清空已有节奏板和相邻卷再平衡建议，但不会直接删除章节正文。",
-      hasUnsavedVolumeDraft ? "本次会直接使用当前页面草稿作为卷骨架上下文。" : "本次会基于当前卷工作区继续推进。",
+      "Sẽ dựa trên gợi ý chiến lược tập hiện tại để sinh hoặc sinh lại khung tập của toàn bộ sách.",
+      "Bước này sẽ xóa bảng nhịp hiện có và gợi ý cân bằng giữa các tập, nhưng không xóa trực tiếp nội dung chương.",
+      hasUnsavedVolumeDraft ? "Lần này sẽ dùng trực tiếp bản nháp hiện tại của trang làm ngữ cảnh khung tập." : "Lần này sẽ tiếp tục dựa trên không gian làm việc của tập hiện tại để đi tiếp.",
     ].join("\n\n"));
     if (!confirmed) {
       return;
@@ -450,11 +450,11 @@ export function useNovelVolumePlanning({
   const startBeatSheetGeneration = (volumeId: string) => {
     const targetVolume = normalizedVolumeDraft.find((volume) => volume.id === volumeId);
     if (!targetVolume) {
-      setStructuredMessage("当前卷不存在，无法生成节奏板。");
+      setStructuredMessage("Không có tập hiện tại nên không thể sinh bảng nhịp.");
       return;
     }
     if (!strategyPlan) {
-      setStructuredMessage("请先生成卷战略建议，再生成当前卷节奏板。");
+      setStructuredMessage("Hãy sinh gợi ý chiến lược tập trước rồi mới sinh bảng nhịp của tập hiện tại.");
       return;
     }
     if (!ensureCharacterGuard()) {
@@ -463,9 +463,9 @@ export function useNovelVolumePlanning({
     const existingBeatSheet = findBeatSheet(beatSheets, volumeId);
     if (existingBeatSheet) {
       const confirmed = window.confirm([
-        `将重新生成「${targetVolume.title?.trim() || `第${targetVolume.sortOrder}卷`}」的节奏板。`,
-        "这一步会覆盖当前卷现有节奏段与交付项。",
-        "已有章节列表和章节细化资产不会被直接删除，但如果新节奏区间发生变化，建议随后检查章节列表是否仍然匹配。",
+        `Sẽ sinh lại bảng nhịp cho “${targetVolume.title?.trim() || `Tập ${targetVolume.sortOrder}`}”.`,
+        "Bước này sẽ ghi đè các đoạn nhịp và hạng mục giao nộp hiện có của tập.",
+        "Danh sách chương và tài nguyên tinh chỉnh chương sẽ không bị xóa trực tiếp, nhưng nếu nhịp mới thay đổi thì nên kiểm tra lại xem danh sách chương còn khớp không.",
       ].join("\n\n"));
       if (!confirmed) {
         return;
@@ -480,11 +480,11 @@ export function useNovelVolumePlanning({
   const startChapterListGeneration = (volumeId: string) => {
     const targetVolume = normalizedVolumeDraft.find((volume) => volume.id === volumeId);
     if (!targetVolume) {
-      setStructuredMessage("当前卷不存在，无法生成章节列表。");
+      setStructuredMessage("Không có tập hiện tại nên không thể sinh danh sách chương.");
       return;
     }
     if (!findBeatSheet(beatSheets, volumeId)) {
-      setStructuredMessage("当前卷还没有节奏板，默认不能直接拆章节列表。");
+      setStructuredMessage("Tập hiện tại chưa có bảng nhịp, nên mặc định chưa thể tách danh sách chương.");
       return;
     }
     if (!ensureCharacterGuard()) {
@@ -504,22 +504,22 @@ export function useNovelVolumePlanning({
     const targetVolume = normalizedVolumeDraft.find((volume) => volume.id === volumeId);
     const targetChapter = targetVolume?.chapters.find((chapter) => chapter.id === chapterId);
     if (!targetVolume || !targetChapter) {
-      setStructuredMessage("当前章节不存在，无法生成细化信息。");
+      setStructuredMessage("Không có chương hiện tại nên không thể sinh thông tin tinh chỉnh.");
       return;
     }
     if (!findBeatSheet(beatSheets, volumeId)) {
-      setStructuredMessage("请先生成当前卷节奏板，再细化章节。");
+      setStructuredMessage("Hãy sinh bảng nhịp của tập hiện tại trước rồi mới tinh chỉnh chương.");
       return;
     }
     if (!ensureCharacterGuard()) {
       return;
     }
     const confirmed = window.confirm([
-      `将基于当前内容为第${targetChapter.chapterOrder}章《${targetChapter.title}》AI 修正${detailModeLabel(detailMode)}。`,
+      `Sẽ dựa trên nội dung hiện tại để AI chỉnh sửa ${detailModeLabel(detailMode)} cho Chương ${targetChapter.chapterOrder} “${targetChapter.title}”.`,
       hasChapterDetailDraft(targetChapter, detailMode)
-        ? "会优先沿用当前已填写结果，只修正空缺、模糊和不够可执行的部分。"
-        : "当前这块还是空白，AI 会先补出首版，再按现有标题和摘要收束。",
-      "不会改动本章标题和摘要，也不会影响其他章节。",
+        ? "Sẽ ưu tiên dùng lại kết quả đã nhập hiện tại, chỉ sửa phần thiếu, mơ hồ và chưa đủ khả thi."
+        : "Phần này hiện vẫn trống, AI sẽ sinh bản đầu tiên rồi thu lại theo tiêu đề và tóm tắt sẵn có.",
+      "Sẽ không thay đổi tiêu đề và tóm tắt chương này, cũng không ảnh hưởng đến các chương khác.",
     ].join("\n\n"));
     if (!confirmed) {
       return;
@@ -539,15 +539,15 @@ export function useNovelVolumePlanning({
     const targetVolume = normalizedVolumeDraft.find((volume) => volume.id === volumeId);
     const batch = resolveChapterDetailBatch(targetVolume, request);
     if (!targetVolume) {
-      setStructuredMessage("当前卷不存在，无法生成章节细化。");
+      setStructuredMessage("Không có tập hiện tại nên không thể sinh tinh chỉnh chương.");
       return;
     }
     if (batch.targets.length === 0) {
-      setStructuredMessage(typeof request === "string" ? "当前章节不存在，无法整套生成章节细化。" : "当前范围内没有可细化章节。");
+      setStructuredMessage(typeof request === "string" ? "Không có chương hiện tại nên không thể sinh trọn bộ tinh chỉnh chương." : "Trong phạm vi hiện tại không có chương nào có thể tinh chỉnh.");
       return;
     }
     if (!findBeatSheet(beatSheets, volumeId)) {
-      setStructuredMessage(batch.targets.length > 1 ? "请先生成当前卷节奏板，再做批量章节细化。" : "请先生成当前卷节奏板，再做单章整套细化。");
+      setStructuredMessage(batch.targets.length > 1 ? "Hãy sinh bảng nhịp của tập hiện tại trước rồi mới tinh chỉnh hàng loạt chương." : "Hãy sinh bảng nhịp của tập hiện tại trước rồi mới tinh chỉnh trọn bộ một chương.");
       return;
     }
     if (!ensureCharacterGuard()) {
@@ -740,7 +740,7 @@ export function useNovelVolumePlanning({
   const applyCustomVolumeCount = () => {
     const parsed = Number.parseInt(customVolumeCountInput.trim(), 10);
     if (!Number.isFinite(parsed)) {
-      setVolumeGenerationMessage("请先输入有效的固定卷数。");
+      setVolumeGenerationMessage("Hãy nhập một số tập cố định hợp lệ.");
       return;
     }
     if (
@@ -748,13 +748,13 @@ export function useNovelVolumePlanning({
       || parsed > volumeCountGuidance.allowedVolumeCountRange.max
     ) {
       setVolumeGenerationMessage(
-        `固定卷数必须落在 ${volumeCountGuidance.allowedVolumeCountRange.min}-${volumeCountGuidance.allowedVolumeCountRange.max} 卷之间。`,
+        `Số tập cố định phải nằm trong khoảng ${volumeCountGuidance.allowedVolumeCountRange.min}-${volumeCountGuidance.allowedVolumeCountRange.max} tập.`,
       );
       return;
     }
     setUserPreferredVolumeCount(parsed);
     setForceSystemRecommendedVolumeCount(false);
-    setVolumeGenerationMessage(`当前已固定为 ${parsed} 卷。下次生成卷战略时会严格采用这个卷数。`);
+    setVolumeGenerationMessage(`Hiện đã cố định là ${parsed} tập. Lần sau sinh chiến lược tập sẽ dùng đúng số này.`);
   };
 
   const restoreSystemRecommendedVolumeCount = () => {
@@ -763,13 +763,13 @@ export function useNovelVolumePlanning({
     setCustomVolumeCountInput(String(volumeCountGuidance.systemRecommendedVolumeCount));
     setForceSystemRecommendedVolumeCount(true);
     setVolumeGenerationMessage(
-      `已恢复系统建议卷数。下次生成卷战略时会优先采用系统建议 ${volumeCountGuidance.systemRecommendedVolumeCount} 卷。`,
+      `Đã khôi phục số tập hệ thống khuyến nghị. Lần sau sinh chiến lược tập sẽ ưu tiên dùng ${volumeCountGuidance.systemRecommendedVolumeCount} tập.`,
     );
   };
 
   const generationNotice = strategyPlan
-    ? "当前工作区已进入二期链路：先审卷战略，再确认卷骨架，之后按卷生成节奏板和章节列表。"
-    : "先生成卷战略建议，让系统帮你决定卷数和硬/软规划，再进入卷骨架。";
+    ? "Không gian làm việc hiện đã vào luồng giai đoạn 2: duyệt chiến lược tập trước, xác nhận khung tập, rồi sinh bảng nhịp và danh sách chương theo tập."
+    : "Hãy sinh gợi ý chiến lược tập trước để hệ thống giúp quyết định số tập và quy hoạch cứng/mềm, rồi mới vào khung tập.";
   const generatingChapterDetailMode: ChapterDetailMode | "" = isGeneratingChapterDetailBundle
     ? bundleGeneratingMode
     : generateMutation.variables?.scope === "chapter_detail"

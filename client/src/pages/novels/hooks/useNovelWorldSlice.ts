@@ -36,7 +36,7 @@ export function useNovelWorldSlice({ novelId, llm, queryClient }: UseNovelWorldS
       temperature: llm.temperature,
     }),
     onSuccess: async () => {
-      setWorldSliceMessage("已重新整理这本书会用到的世界设定。");
+      setWorldSliceMessage("Đã sắp xếp lại phần thiết lập thế giới mà cuốn sách này sẽ dùng.");
       await queryClient.invalidateQueries({ queryKey: queryKeys.novels.worldSlice(novelId) });
       await queryClient.invalidateQueries({ queryKey: queryKeys.novels.detail(novelId) });
     },
@@ -45,7 +45,7 @@ export function useNovelWorldSlice({ novelId, llm, queryClient }: UseNovelWorldS
   const saveWorldSliceOverridesMutation = useMutation({
     mutationFn: (payload: StoryWorldSliceOverrides) => updateNovelWorldSliceOverrides(novelId, payload),
     onSuccess: async () => {
-      setWorldSliceMessage("已保存这本书的世界设定保留项。");
+      setWorldSliceMessage("Đã lưu các mục thế giới cần giữ lại cho cuốn sách này.");
       await queryClient.invalidateQueries({ queryKey: queryKeys.novels.worldSlice(novelId) });
     },
   });

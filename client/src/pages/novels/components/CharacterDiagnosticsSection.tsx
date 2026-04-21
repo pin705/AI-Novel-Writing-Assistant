@@ -42,8 +42,8 @@ export default function CharacterDiagnosticsSection(props: CharacterDiagnosticsS
     >
       <summary className="cursor-pointer list-none">
         <CollapsibleSummary
-          title="角色阵容与关系诊断"
-          description="这些内容更适合在需要补位、查缺口或梳理关系时再展开。日常编辑先看下方角色资产工作台。"
+          title="Chẩn đoán đội hình nhân vật và quan hệ"
+          description="Phần này hợp hơn khi cần bù vị trí, kiểm tra khoảng trống hoặc gỡ rối quan hệ. Khi chỉnh sửa hằng ngày, hãy xem khu làm việc tài sản nhân vật bên dưới trước."
         />
       </summary>
 

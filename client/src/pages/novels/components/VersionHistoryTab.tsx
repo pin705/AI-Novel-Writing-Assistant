@@ -10,15 +10,15 @@ interface VersionHistoryTabProps {
 
 function formatSnapshotTrigger(triggerType: string): string {
   if (triggerType === "manual") {
-    return "手动保存";
+    return "Lưu thủ công";
   }
   if (triggerType === "auto_milestone") {
-    return "自动里程碑";
+    return "Mốc tự động";
   }
   if (triggerType === "before_pipeline") {
-    return "批量处理前";
+    return "Trước khi xử lý hàng loạt";
   }
-  return "版本快照";
+  return "Bản chụp phiên bản";
 }
 
 function summarizeSnapshot(snapshotData: string): {
@@ -47,8 +47,8 @@ function summarizeSnapshot(snapshotData: string): {
       writtenChapterCount: writtenChapters.length,
       totalWordCount,
       latestChapterLabel: latestChapter
-        ? `第 ${latestChapter.order ?? "?"} 章 · ${latestChapter.title?.trim() || "未命名章节"}`
-        : "暂无章节",
+        ? `Chương ${latestChapter.order ?? "?"} · ${latestChapter.title?.trim() || "Chưa đặt tên"}`
+        : "Chưa có chương nào",
       hasOutline: Boolean(parsed.outline?.trim()),
       hasStructuredOutline: Boolean(parsed.structuredOutline?.trim()),
       recentChapterTitles: chapters
@@ -93,13 +93,13 @@ export default function VersionHistoryTab({ novelId }: VersionHistoryTabProps) {
     <div className="space-y-4">
       <div className="flex flex-col gap-3 rounded-2xl border border-border/70 bg-muted/15 p-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <div className="font-medium">版本历史</div>
+          <div className="font-medium">Lịch sử phiên bản</div>
           <div className="text-sm text-muted-foreground">
-            这里优先帮你找回最近的稳定版本。恢复前系统会自动再备份一次当前状态，不再默认展示原始快照数据。
+            Ở đây hệ thống ưu tiên tìm lại bản ổn định gần nhất cho bạn. Trước khi khôi phục, hệ thống sẽ tự sao lưu lại trạng thái hiện tại một lần nữa, và mặc định không còn hiển thị dữ liệu chụp thô.
           </div>
         </div>
         <Button onClick={() => createMutation.mutate()} disabled={createMutation.isPending}>
-          {createMutation.isPending ? "保存中..." : "保存当前版本"}
+          {createMutation.isPending ? "Đang lưu..." : "Lưu phiên bản hiện tại"}
         </Button>
       </div>
 
@@ -113,29 +113,29 @@ export default function VersionHistoryTab({ novelId }: VersionHistoryTabProps) {
               <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                 <div className="space-y-3">
                   <div className="space-y-1">
-                    <div className="font-medium">{snapshot.label || "未命名版本"}</div>
+                    <div className="font-medium">{snapshot.label || "Phiên bản chưa đặt tên"}</div>
                     <div className="text-xs text-muted-foreground">
                       {formatSnapshotTrigger(snapshot.triggerType)} · {new Date(snapshot.createdAt).toLocaleString()}
                     </div>
                   </div>
 
                   <div className="flex flex-wrap gap-2">
-                    <Badge variant="outline">{summary?.chapterCount ?? 0} 章</Badge>
-                    <Badge variant="outline">{summary?.writtenChapterCount ?? 0} 章有正文</Badge>
-                    <Badge variant="outline">{summary?.totalWordCount ?? 0} 字</Badge>
-                    {summary?.hasOutline ? <Badge variant="secondary">含大纲</Badge> : null}
-                    {summary?.hasStructuredOutline ? <Badge variant="secondary">含拆章</Badge> : null}
+                    <Badge variant="outline">{summary?.chapterCount ?? 0} chương</Badge>
+                    <Badge variant="outline">{summary?.writtenChapterCount ?? 0} chương có nội dung</Badge>
+                    <Badge variant="outline">{summary?.totalWordCount ?? 0} chữ</Badge>
+                    {summary?.hasOutline ? <Badge variant="secondary">Có dàn ý</Badge> : null}
+                    {summary?.hasStructuredOutline ? <Badge variant="secondary">Có tách chương</Badge> : null}
                   </div>
 
                   <div className="text-sm leading-6 text-muted-foreground">
                     {summary
-                      ? `这个版本最近保存到了 ${summary.latestChapterLabel}，适合在你想退回到更稳定的章节推进状态时使用。`
-                      : "这个版本的数据摘要暂时无法解析，但仍然可以恢复。"}
+                      ? `Phiên bản này gần nhất được lưu đến ${summary.latestChapterLabel}, rất hợp khi bạn muốn quay về trạng thái triển khai chương ổn định hơn.`
+                      : "Tóm tắt dữ liệu của phiên bản này tạm thời chưa giải mã được, nhưng vẫn có thể khôi phục."}
                   </div>
 
                   {summary?.recentChapterTitles.length ? (
                     <div className="text-xs text-muted-foreground">
-                      包含章节：{summary.recentChapterTitles.join(" / ")}
+                      Bao gồm chương: {summary.recentChapterTitles.join(" / ")}
                     </div>
                   ) : null}
                 </div>
@@ -144,14 +144,14 @@ export default function VersionHistoryTab({ novelId }: VersionHistoryTabProps) {
                   variant="secondary"
                   size="sm"
                   onClick={() => {
-                    const confirmed = window.confirm("恢复前会自动备份当前状态。确认恢复这个版本吗？");
+                    const confirmed = window.confirm("Trước khi khôi phục, hệ thống sẽ tự sao lưu trạng thái hiện tại. Bạn có chắc muốn khôi phục phiên bản này không?");
                     if (confirmed) {
                       restoreMutation.mutate(snapshot.id);
                     }
                   }}
                   disabled={restoreMutation.isPending}
                 >
-                  {isRestoringCurrent ? "恢复中..." : "恢复到这个版本"}
+                  {isRestoringCurrent ? "Đang khôi phục..." : "Khôi phục phiên bản này"}
                 </Button>
               </div>
             </div>
@@ -159,7 +159,7 @@ export default function VersionHistoryTab({ novelId }: VersionHistoryTabProps) {
         })}
         {snapshots.length === 0 ? (
           <div className="rounded-2xl border border-dashed p-6 text-sm text-muted-foreground">
-            当前还没有版本记录。建议在大改方向、批量生成或大段重写前，先手动保存一个版本。
+            Hiện chưa có bản ghi phiên bản nào. Nên lưu thủ công một phiên bản trước khi đổi hướng lớn, tạo hàng loạt hoặc viết lại một đoạn dài.
           </div>
         ) : null}
       </div>

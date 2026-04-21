@@ -26,14 +26,14 @@ apiClient.interceptors.response.use(
     const backendError = error.response?.data?.error;
     const backendMessage = error.response?.data?.message;
     const silentErrorStatuses = error.config?.silentErrorStatuses ?? [];
-    let title = backendError ?? error.message ?? "请求失败。";
+    let title = backendError ?? error.message ?? "Yêu cầu thất bại.";
     let description = backendMessage && backendMessage !== backendError ? backendMessage : undefined;
 
     if (!status) {
-      title = "网络连接失败，请检查网络后重试。";
+      title = "Không thể kết nối mạng, vui lòng kiểm tra kết nối và thử lại.";
       description = undefined;
     } else if (status >= 500) {
-      title = backendError ?? "服务器错误，请稍后重试。";
+      title = backendError ?? "Lỗi máy chủ, vui lòng thử lại sau.";
       description = backendMessage && backendMessage !== title ? backendMessage : undefined;
     }
 

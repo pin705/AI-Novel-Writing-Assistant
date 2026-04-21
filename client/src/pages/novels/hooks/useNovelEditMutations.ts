@@ -99,7 +99,7 @@ export function useNovelEditMutations({
       await syncNovelWorkflowStageSilently({
         novelId: id,
         stage: "project_setup",
-        itemLabel: "项目设定已保存",
+        itemLabel: "Đã lưu thiết lập dự án",
         status: "waiting_approval",
       });
       await invalidateNovelDetail();
@@ -115,9 +115,9 @@ export function useNovelEditMutations({
       await syncNovelWorkflowStageSilently({
         novelId: id,
         stage: "volume_strategy",
-        itemLabel: "卷战略 / 卷骨架已保存",
+        itemLabel: "Đã lưu chiến lược tập / khung tập",
         checkpointType: "volume_strategy_ready",
-        checkpointSummary: "当前卷战略与卷骨架已保存到工作区。",
+        checkpointSummary: "Chiến lược tập và khung tập hiện tại đã được lưu vào không gian làm việc.",
         status: "waiting_approval",
       });
       await invalidateNovelDetail();
@@ -130,7 +130,7 @@ export function useNovelEditMutations({
       await syncNovelWorkflowStageSilently({
         novelId: id,
         stage: "structured_outline",
-        itemLabel: "节奏 / 拆章已保存",
+        itemLabel: "Đã lưu nhịp truyện / tách chương",
         status: "waiting_approval",
       });
       await invalidateNovelDetail();
@@ -182,20 +182,20 @@ export function useNovelEditMutations({
     onSuccess: async (response) => {
       const preview = response.data;
       setStructuredMessage(
-        `同步完成：新增 ${preview?.createCount ?? 0}，更新 ${preview?.updateCount ?? 0}，删除 ${preview?.deleteCount ?? 0}。`,
+        `Đồng bộ xong: thêm ${preview?.createCount ?? 0}, cập nhật ${preview?.updateCount ?? 0}, xóa ${preview?.deleteCount ?? 0}.`,
       );
       await syncNovelWorkflowStageSilently({
         novelId: id,
         stage: "structured_outline",
-        itemLabel: "卷级拆章已同步到章节执行",
+        itemLabel: "Đã đồng bộ tách chương theo tập sang khu vực thực thi chương",
         checkpointType: "chapter_batch_ready",
-        checkpointSummary: "章节列表、任务单和执行入口已同步，可继续进入章节执行。",
+        checkpointSummary: "Danh sách chương, bảng việc và lối vào thực thi đã được đồng bộ, có thể tiếp tục sang phần thực thi chương.",
         status: "waiting_approval",
       });
       await invalidateNovelDetail();
     },
     onError: (error) => {
-      const message = error instanceof Error ? error.message : "章节同步失败。";
+      const message = error instanceof Error ? error.message : "Đồng bộ chương thất bại.";
       setStructuredMessage(message);
     },
   });
@@ -203,7 +203,7 @@ export function useNovelEditMutations({
   const createChapterMutation = useMutation({
     mutationFn: () =>
       createNovelChapter(id, {
-        title: `New Chapter ${chapterCount + 1}`,
+        title: `Chương mới ${chapterCount + 1}`,
         order: chapterCount + 1,
         content: "",
       }),
@@ -214,7 +214,7 @@ export function useNovelEditMutations({
       await syncNovelWorkflowStageSilently({
         novelId: id,
         stage: "chapter_execution",
-        itemLabel: "已创建新的章节执行项",
+        itemLabel: "Đã tạo mục thực thi chương mới",
         chapterId: response.data?.id,
         status: "waiting_approval",
       });
@@ -242,11 +242,11 @@ export function useNovelEditMutations({
       if (response.data?.id) {
         setCurrentJobId(response.data.id);
       }
-      setPipelineMessage(response.message ?? "Pipeline started.");
+      setPipelineMessage(response.message ?? "Đã khởi chạy dây chuyền xử lý.");
       await syncNovelWorkflowStageSilently({
         novelId: id,
         stage: "quality_repair",
-        itemLabel: "章节流水线运行中",
+        itemLabel: "Đang chạy dây chuyền xử lý chương",
         status: "running",
       });
       await queryClient.invalidateQueries({ queryKey: queryKeys.novels.pipelineJob(id, response.data?.id ?? "none") });
@@ -262,11 +262,11 @@ export function useNovelEditMutations({
       }),
     onSuccess: async (response) => {
       setReviewResult(response.data ?? null);
-      setPipelineMessage("Chapter reviewed.");
+      setPipelineMessage("Đã rà soát chương.");
       await syncNovelWorkflowStageSilently({
         novelId: id,
         stage: "quality_repair",
-        itemLabel: "章节审校已完成",
+        itemLabel: "Đã hoàn tất rà soát chương",
         status: "waiting_approval",
       });
       await queryClient.invalidateQueries({ queryKey: queryKeys.novels.qualityReport(id) });
@@ -282,11 +282,11 @@ export function useNovelEditMutations({
         temperature: llm.temperature,
       }),
     onSuccess: async () => {
-      setPipelineMessage("Chapter hook generated.");
+      setPipelineMessage("Đã tạo móc nối chương.");
       await syncNovelWorkflowStageSilently({
         novelId: id,
         stage: "chapter_execution",
-        itemLabel: "章节钩子已生成",
+        itemLabel: "Đã tạo móc nối chương",
         chapterId: selectedChapterId || undefined,
         status: "waiting_approval",
       });

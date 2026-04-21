@@ -63,7 +63,7 @@ export function useChapterExecutionActions({
       await invalidateNovelDetail();
     },
     onError: (error) => {
-      const message = error instanceof Error ? error.message : "章节更新失败。";
+      const message = error instanceof Error ? error.message : "Cập nhật chương thất bại.";
       onMessage(message);
     },
   });
@@ -75,14 +75,14 @@ export function useChapterExecutionActions({
       await syncNovelWorkflowStageSilently({
         novelId,
         stage: "chapter_execution",
-        itemLabel: "章节摘要已生成",
+        itemLabel: "Đã sinh tóm tắt chương",
         chapterId: selectedChapterId || undefined,
         status: "waiting_approval",
       });
-      onMessage("已通过 AI 生成本章摘要。");
+      onMessage("AI đã sinh tóm tắt cho chương này.");
     },
     onError: (error) => {
-      const message = error instanceof Error ? error.message : "章节摘要生成失败。";
+      const message = error instanceof Error ? error.message : "Sinh tóm tắt chương thất bại.";
       onMessage(message);
     },
   });
@@ -93,7 +93,7 @@ export function useChapterExecutionActions({
       await invalidateNovelDetail();
     },
     onError: (error) => {
-      const message = error instanceof Error ? error.message : "章节执行合同生成失败。";
+      const message = error instanceof Error ? error.message : "Sinh hợp đồng triển khai chương thất bại.";
       onMessage(message);
     },
     onSettled: () => {
@@ -115,7 +115,7 @@ export function useChapterExecutionActions({
 
   const ensureChapter = (): Chapter | null => {
     if (!selectedChapterId || !selectedChapter) {
-      onMessage("请先选择章节。");
+      onMessage("Hãy chọn chương trước.");
       return null;
     }
     return selectedChapter;
@@ -137,11 +137,11 @@ export function useChapterExecutionActions({
     void syncNovelWorkflowStageSilently({
       novelId,
       stage: "chapter_execution",
-      itemLabel: "章节执行策略已应用",
+      itemLabel: "Đã áp dụng chiến lược triển khai chương",
       chapterId: chapter.id,
       status: "waiting_approval",
     });
-    onMessage("生成策略已应用到当前章节。");
+    onMessage("Chiến lược sinh đã được áp dụng vào chương hiện tại.");
   };
 
   const rewriteChapter = () => {
@@ -158,12 +158,12 @@ export function useChapterExecutionActions({
     void syncNovelWorkflowStageSilently({
       novelId,
       stage: "chapter_execution",
-      itemLabel: "本章已重置并准备重写",
+      itemLabel: "Chương này đã được đặt lại và sẵn sàng viết lại",
       chapterId: chapter.id,
       status: "waiting_approval",
     });
     onGenerateChapter();
-    onMessage("已触发重写流程。");
+    onMessage("Đã kích hoạt luồng viết lại.");
   };
 
   const expandChapter = () => {
@@ -172,9 +172,9 @@ export function useChapterExecutionActions({
     }
     setRepairActionKind("expand");
     onStartRepair([
-      buildRepairIssue("engagement", "在不改动主线事件的前提下扩写场景细节和情绪反应，适度拉长文本。", "用户要求扩写章节"),
+      buildRepairIssue("engagement", "Mở rộng chi tiết cảnh và phản ứng cảm xúc mà không đổi sự kiện chính, kéo dài văn bản ở mức vừa phải.", "Người dùng yêu cầu mở rộng chương"),
     ]);
-    onMessage("已提交扩写任务。");
+    onMessage("Đã gửi yêu cầu mở rộng.");
   };
 
   const compressChapter = () => {
@@ -183,9 +183,9 @@ export function useChapterExecutionActions({
     }
     setRepairActionKind("compress");
     onStartRepair([
-      buildRepairIssue("repetition", "压缩重复表达，保留关键事件与冲突节点，控制篇幅更紧凑。", "用户要求压缩章节"),
+      buildRepairIssue("repetition", "Rút gọn chỗ lặp, giữ sự kiện quan trọng và điểm xung đột, làm chương gọn hơn.", "Người dùng yêu cầu rút ngắn chương"),
     ]);
-    onMessage("已提交压缩任务。");
+    onMessage("Đã gửi yêu cầu rút gọn.");
   };
 
   const summarizeChapter = () => {
@@ -207,11 +207,11 @@ export function useChapterExecutionActions({
         void syncNovelWorkflowStageSilently({
           novelId,
           stage: "chapter_execution",
-          itemLabel: "章节任务单已刷新",
+          itemLabel: "Bảng nhiệm vụ chương đã được làm mới",
           chapterId,
           status: "waiting_approval",
         });
-        onMessage("已通过后端 AI 刷新本章任务单。");
+        onMessage("Backend AI đã làm mới bảng nhiệm vụ của chương này.");
       },
     });
   };
@@ -228,11 +228,11 @@ export function useChapterExecutionActions({
         void syncNovelWorkflowStageSilently({
           novelId,
           stage: "chapter_execution",
-          itemLabel: "场景拆解已生成",
+          itemLabel: "Đã sinh phân rã cảnh",
           chapterId,
           status: "waiting_approval",
         });
-        onMessage("已通过后端 AI 生成场景拆解。");
+        onMessage("Backend AI đã sinh phần phân rã cảnh.");
       },
     });
   };
@@ -242,7 +242,7 @@ export function useChapterExecutionActions({
       return;
     }
     onReviewChapter("continuity");
-    onMessage("已执行连续性检查。");
+    onMessage("Đã chạy kiểm tra tính liên tục.");
   };
 
   const checkCharacterConsistency = () => {
@@ -250,7 +250,7 @@ export function useChapterExecutionActions({
       return;
     }
     onReviewChapter("character_consistency");
-    onMessage("已执行人设一致性检查。");
+    onMessage("Đã chạy kiểm tra nhất quán nhân vật.");
   };
 
   const checkPacing = () => {
@@ -258,7 +258,7 @@ export function useChapterExecutionActions({
       return;
     }
     onReviewChapter("pacing");
-    onMessage("已执行节奏检查。");
+    onMessage("Đã chạy kiểm tra nhịp độ.");
   };
 
   const autoRepair = () => {
@@ -268,9 +268,9 @@ export function useChapterExecutionActions({
     setRepairActionKind("autoRepair");
     const issues = reviewIssues.length > 0
       ? reviewIssues
-      : [buildRepairIssue("coherence", "修复章节逻辑与叙事衔接问题，补足关键动机和因果。", "自动修复默认规则")];
+      : [buildRepairIssue("coherence", "Sửa lỗi logic chương và liên kết tường thuật, bổ sung động cơ cùng quan hệ nhân quả quan trọng.", "Quy tắc sửa tự động mặc định")];
     onStartRepair(issues);
-    onMessage("已触发自动修复。");
+    onMessage("Đã kích hoạt tự động sửa.");
   };
 
   const strengthenConflict = () => {
@@ -279,9 +279,9 @@ export function useChapterExecutionActions({
     }
     setRepairActionKind("strengthenConflict");
     onStartRepair([
-      buildRepairIssue("pacing", "提升对抗密度，让冲突更早出现并持续施压。", "用户要求强化冲突"),
+      buildRepairIssue("pacing", "Tăng mật độ đối kháng để xung đột xuất hiện sớm hơn và đè áp lực liên tục.", "Người dùng yêu cầu tăng cường xung đột"),
     ]);
-    onMessage("已触发冲突强化。");
+    onMessage("Đã kích hoạt tăng cường xung đột.");
   };
 
   const enhanceEmotion = () => {
@@ -290,9 +290,9 @@ export function useChapterExecutionActions({
     }
     setRepairActionKind("enhanceEmotion");
     onStartRepair([
-      buildRepairIssue("engagement", "增强角色情绪层次与张力，突出内外部情感变化。", "用户要求增强情绪"),
+      buildRepairIssue("engagement", "Tăng tầng cảm xúc và độ căng của nhân vật, làm nổi bật biến chuyển cảm xúc bên trong lẫn bên ngoài.", "Người dùng yêu cầu tăng cường cảm xúc"),
     ]);
-    onMessage("已触发情绪增强。");
+    onMessage("Đã kích hoạt tăng cường cảm xúc.");
   };
 
   const unifyStyle = () => {
@@ -301,9 +301,9 @@ export function useChapterExecutionActions({
     }
     setRepairActionKind("unifyStyle");
     onStartRepair([
-      buildRepairIssue("voice", "统一叙事语气与措辞，保持文风稳定。", "用户要求提升文风一致性"),
+      buildRepairIssue("voice", "Đồng bộ giọng kể và cách dùng từ để giữ văn phong ổn định.", "Người dùng yêu cầu tăng tính nhất quán văn phong"),
     ]);
-    onMessage("已触发文风统一。");
+    onMessage("Đã kích hoạt đồng bộ văn phong.");
   };
 
   const addDialogue = () => {
@@ -312,9 +312,9 @@ export function useChapterExecutionActions({
     }
     setRepairActionKind("addDialogue");
     onStartRepair([
-      buildRepairIssue("voice", "增加推动情节的有效对话，减少空泛叙述。", "用户要求增加对话推进"),
+      buildRepairIssue("voice", "Thêm đối thoại có tác dụng đẩy tình tiết, giảm lối kể lan man.", "Người dùng yêu cầu tăng đối thoại đẩy truyện"),
     ]);
-    onMessage("已触发对话增强。");
+    onMessage("Đã kích hoạt tăng cường đối thoại.");
   };
 
   const addDescription = () => {
@@ -323,9 +323,9 @@ export function useChapterExecutionActions({
     }
     setRepairActionKind("addDescription");
     onStartRepair([
-      buildRepairIssue("engagement", "补充环境与动作描写，提升画面感与临场感。", "用户要求增加描写"),
+      buildRepairIssue("engagement", "Bổ sung miêu tả môi trường và hành động để tăng cảm giác hình ảnh và độ nhập cảnh.", "Người dùng yêu cầu tăng miêu tả"),
     ]);
-    onMessage("已触发描写增强。");
+    onMessage("Đã kích hoạt tăng cường miêu tả.");
   };
 
   return {

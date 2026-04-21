@@ -1,51 +1,51 @@
 import type { WorldConsistencyIssue, WorldConsistencyReport } from "@ai-novel/shared/types/world";
 
 const ISSUE_CODE_LABELS: Record<string, string> = {
-  THEMATIC_INCOHERENCE: "主题框架不一致",
-  REDUNDANT_AXIOM_APPLICATION: "世界公理重复套用",
-  AXIOM_VIOLATION: "世界公理冲突",
-  GENRE_MISMATCH: "题材信号冲突",
-  AXIOM_MAGIC_CONFLICT: "公理与力量体系冲突",
-  TECH_ERA_MISMATCH: "技术时代混杂",
-  CONFLICT_WEAK: "核心冲突偏弱",
-  BASELINE_PASS: "规则检查通过",
+  THEMATIC_INCOHERENCE: "Khung chủ đề không nhất quán",
+  REDUNDANT_AXIOM_APPLICATION: "Áp dụng công lý thế giới lặp lại",
+  AXIOM_VIOLATION: "Xung đột công lý thế giới",
+  GENRE_MISMATCH: "Lệch tín hiệu thể loại",
+  AXIOM_MAGIC_CONFLICT: "Công lý và hệ thống sức mạnh xung đột",
+  TECH_ERA_MISMATCH: "Trộn lẫn giai đoạn công nghệ",
+  CONFLICT_WEAK: "Xung đột cốt lõi còn yếu",
+  BASELINE_PASS: "Kiểm tra quy tắc đạt",
 };
 
 const ISSUE_MESSAGE_LABELS: Record<string, string> = {
-  THEMATIC_INCOHERENCE: "检索补充内容引入了与核心设定不一致的主题框架。",
-  REDUNDANT_AXIOM_APPLICATION: "补充内容重复复述了既有公理，没有增加新的有效约束。",
-  AXIOM_VIOLATION: "世界名或核心概念与既有公理、背景存在冲突。",
-  GENRE_MISMATCH: "题材信号与当前世界观约束不一致。",
-  AXIOM_MAGIC_CONFLICT: "世界公理与力量体系设定发生冲突。",
-  TECH_ERA_MISMATCH: "技术时代感混杂，缺少足够解释。",
-  CONFLICT_WEAK: "核心冲突信息过薄，支撑力不足。",
-  BASELINE_PASS: "规则层面未发现明显硬冲突。",
+  THEMATIC_INCOHERENCE: "Nội dung bổ sung từ truy xuất đã đưa vào một khung chủ đề không khớp với thiết lập cốt lõi.",
+  REDUNDANT_AXIOM_APPLICATION: "Nội dung bổ sung chỉ lặp lại các công lý có sẵn mà không thêm ràng buộc mới nào hữu ích.",
+  AXIOM_VIOLATION: "Tên thế giới hoặc khái niệm cốt lõi đang xung đột với công lý và bối cảnh có sẵn.",
+  GENRE_MISMATCH: "Tín hiệu thể loại không khớp với ràng buộc của thế giới hiện tại.",
+  AXIOM_MAGIC_CONFLICT: "Công lý thế giới đang xung đột với thiết lập hệ thống sức mạnh.",
+  TECH_ERA_MISMATCH: "Cảm giác thời đại công nghệ đang bị trộn lẫn, thiếu giải thích đủ rõ.",
+  CONFLICT_WEAK: "Thông tin xung đột cốt lõi còn mỏng, chưa đủ lực nâng.",
+  BASELINE_PASS: "Mức quy tắc chưa phát hiện xung đột cứng rõ ràng.",
 };
 
 const ISSUE_DETAIL_LABELS: Record<string, string> = {
-  THEMATIC_INCOHERENCE: "辅助上下文引入了原始设定里没有明确建立的主题表达，容易让世界观主轴发生漂移。",
-  REDUNDANT_AXIOM_APPLICATION: "当前补充内容主要在重复已有规则，建议删去冗余复述，只保留真正新增的约束。",
-  AXIOM_VIOLATION: "当前命名、题材承诺或核心概念与既有世界底层规则不一致，需要统一主设定。",
-  GENRE_MISMATCH: "当前命名或关键词传递出了另一种题材预期，和世界观强调的风格与规则不匹配。",
-  AXIOM_MAGIC_CONFLICT: "你在世界公理里限制了超自然/魔法内容，但力量体系或相关文本又重新引入了它。",
-  TECH_ERA_MISMATCH: "当前技术描述同时出现了不同时代层级的元素，但没有交代来源、限制或过渡逻辑。",
-  CONFLICT_WEAK: "建议补充冲突双方、触发事件、升级路径和失败代价，让世界主矛盾更清晰。",
+  THEMATIC_INCOHERENCE: "Ngữ cảnh bổ sung đã đưa vào một cách diễn đạt chủ đề chưa được thiết lập rõ trong nguyên tác, dễ làm trục thế giới quan bị lệch.",
+  REDUNDANT_AXIOM_APPLICATION: "Phần bổ sung hiện tại chủ yếu lặp lại quy tắc cũ, nên bỏ bớt phần nhắc lại thừa và chỉ giữ ràng buộc thật sự mới.",
+  AXIOM_VIOLATION: "Tên gọi, cam kết thể loại hoặc khái niệm cốt lõi hiện không khớp với quy tắc nền của thế giới, cần thống nhất lại thiết lập chính.",
+  GENRE_MISMATCH: "Tên gọi hoặc từ khóa hiện đang gợi ra một kỳ vọng thể loại khác, không khớp với phong cách và quy tắc mà thế giới đang nhấn mạnh.",
+  AXIOM_MAGIC_CONFLICT: "Bạn đã giới hạn nội dung siêu nhiên/phép thuật trong công lý thế giới, nhưng hệ sức mạnh hoặc văn bản liên quan lại đưa nó trở lại.",
+  TECH_ERA_MISMATCH: "Phần mô tả công nghệ hiện đang trộn các tầng thời đại khác nhau mà chưa giải thích nguồn gốc, giới hạn hay logic chuyển tiếp.",
+  CONFLICT_WEAK: "Nên bổ sung hai phía xung đột, sự kiện kích hoạt, lộ trình leo thang và cái giá thất bại để mâu thuẫn chính của thế giới rõ hơn.",
 };
 
 const FIELD_LABELS: Record<string, string> = {
-  description: "世界概述",
-  background: "背景设定",
-  geography: "地理环境",
-  cultures: "文化习俗",
-  magicSystem: "力量体系",
-  politics: "政治结构",
-  races: "种族设定",
-  religions: "宗教信仰",
-  technology: "技术体系",
-  conflicts: "核心冲突",
-  history: "历史脉络",
-  economy: "经济系统",
-  factions: "势力关系",
+  description: "Tổng quan thế giới",
+  background: "Thiết lập nền",
+  geography: "Môi trường địa lý",
+  cultures: "Tập tục văn hóa",
+  magicSystem: "Hệ thống sức mạnh",
+  politics: "Cấu trúc chính trị",
+  races: "Thiết lập chủng tộc",
+  religions: "Tín ngưỡng tôn giáo",
+  technology: "Hệ thống công nghệ",
+  conflicts: "Xung đột cốt lõi",
+  history: "Mạch lịch sử",
+  economy: "Hệ thống kinh tế",
+  factions: "Quan hệ thế lực",
 };
 
 function hasChinese(text: string): boolean {
@@ -57,17 +57,17 @@ function localizeSummary(summary: string, status: WorldConsistencyReport["status
     return summary;
   }
   if (/Consistency check passed/i.test(summary)) {
-    return "一致性检查通过，未发现明显硬冲突。";
+    return "Kiểm tra nhất quán đã đạt, không phát hiện xung đột cứng rõ ràng.";
   }
   const errorCount = issues.filter((item) => item.severity === "error").length;
   const warnCount = issues.filter((item) => item.severity === "warn").length;
   if (status === "error") {
-    return `检测到 ${errorCount} 个严重冲突，${warnCount} 个警告项。`;
+    return `Phát hiện ${errorCount} xung đột nghiêm trọng và ${warnCount} mục cảnh báo.`;
   }
   if (status === "warn") {
-    return `检测到 ${warnCount} 个警告项，建议继续修正。`;
+    return `Phát hiện ${warnCount} mục cảnh báo, nên tiếp tục chỉnh sửa.`;
   }
-  return "一致性检查已完成。";
+  return "Kiểm tra nhất quán đã hoàn tất.";
 }
 
 export function parseConsistencyReport(raw: string | null | undefined, issues: WorldConsistencyIssue[]): WorldConsistencyReport | null {
@@ -98,11 +98,11 @@ export function parseConsistencyReport(raw: string | null | undefined, issues: W
 export function localizeConsistencySeverity(severity: WorldConsistencyIssue["severity"]): string {
   switch (severity) {
     case "error":
-      return "严重冲突";
+      return "Xung đột nghiêm trọng";
     case "warn":
-      return "警告";
+      return "Cảnh báo";
     case "pass":
-      return "通过";
+      return "Đạt";
     default:
       return severity;
   }
@@ -111,29 +111,29 @@ export function localizeConsistencySeverity(severity: WorldConsistencyIssue["sev
 export function localizeConsistencyStatus(status: WorldConsistencyIssue["status"] | WorldConsistencyReport["status"]): string {
   switch (status) {
     case "open":
-      return "待处理";
+      return "Chờ xử lý";
     case "resolved":
-      return "已解决";
+      return "Đã giải quyết";
     case "ignored":
-      return "已忽略";
+      return "Đã bỏ qua";
     case "error":
-      return "存在严重冲突";
+      return "Đang có xung đột nghiêm trọng";
     case "warn":
-      return "存在警告";
+      return "Đang có cảnh báo";
     case "pass":
-      return "检查通过";
+      return "Kiểm tra đạt";
     default:
       return status;
   }
 }
 
 export function localizeConsistencySource(source: WorldConsistencyIssue["source"]): string {
-  return source === "llm" ? "模型审校" : "规则检查";
+  return source === "llm" ? "Biên tập bằng mô hình" : "Kiểm tra theo quy tắc";
 }
 
 export function localizeConsistencyField(targetField?: string | null): string {
   if (!targetField) {
-    return "未指定";
+    return "Chưa chỉ định";
   }
   return FIELD_LABELS[targetField] ?? targetField;
 }
@@ -147,7 +147,7 @@ export function localizeConsistencyIssueMessage(issue: WorldConsistencyIssue): s
     return issue.message;
   }
   return ISSUE_MESSAGE_LABELS[issue.code]
-    ?? `${localizeConsistencyField(issue.targetField)}存在一致性风险。`;
+    ?? `${localizeConsistencyField(issue.targetField)} đang có rủi ro nhất quán.`;
 }
 
 export function localizeConsistencyIssueDetail(issue: WorldConsistencyIssue): string | null {
@@ -158,7 +158,7 @@ export function localizeConsistencyIssueDetail(issue: WorldConsistencyIssue): st
     return ISSUE_DETAIL_LABELS[issue.code];
   }
   if (issue.detail) {
-    return `系统检测到一条${localizeConsistencyField(issue.targetField)}相关问题，请结合当前世界观设定复核这项风险。`;
+    return `Hệ thống phát hiện một vấn đề liên quan đến ${localizeConsistencyField(issue.targetField)}, hãy đối chiếu lại với thiết lập thế giới hiện tại để kiểm tra rủi ro này.`;
   }
   return null;
 }

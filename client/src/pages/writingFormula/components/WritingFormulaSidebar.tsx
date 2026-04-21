@@ -51,21 +51,21 @@ function isStarterProfile(profile: StyleProfile): boolean {
 
 function getProfileOriginLabel(profile: StyleProfile): string {
   if (isStarterProfile(profile)) {
-    return "预置";
+    return "Có sẵn";
   }
   if (profile.sourceRefId?.startsWith(AI_STYLE_BRIEF_SOURCE_PREFIX)) {
-    return "AI生成";
+    return "Do AI tạo";
   }
   if (profile.sourceType === "from_text") {
-    return "文本提取";
+    return "Trích từ văn bản";
   }
   if (profile.sourceType === "from_book_analysis") {
-    return "拆书生成";
+    return "Sinh từ phân tích sách";
   }
   if (profile.sourceType === "from_current_work") {
-    return "当前作品";
+    return "Từ tác phẩm hiện tại";
   }
-  return "手动创建";
+  return "Tự tạo";
 }
 
 export default function WritingFormulaSidebar(props: WritingFormulaSidebarProps) {
@@ -103,42 +103,42 @@ export default function WritingFormulaSidebar(props: WritingFormulaSidebarProps)
     <div className="space-y-4 xl:min-h-0 xl:overflow-y-auto xl:pr-1">
       <Card>
         <CardHeader>
-          <CardTitle>先选一套写法再微调</CardTitle>
+          <CardTitle>Chọn một kiểu viết trước rồi chỉnh sau</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="text-sm leading-6 text-muted-foreground">
-            第一次使用时，不用先理解所有规则字段。先从预置写法里挑一套最像你想写的感觉，再进去改名字、标签和规则，会顺很多。
+            Nếu đây là lần đầu bạn dùng, chưa cần hiểu hết các trường quy tắc. Cứ chọn một kiểu viết có sẵn giống nhất với cảm giác bạn muốn, rồi vào chỉnh tên, thẻ và quy tắc sau sẽ nhẹ hơn nhiều.
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="rounded-lg border bg-muted/20 p-3">
-              <div className="text-xs font-medium text-muted-foreground">可直接编辑的我的写法</div>
+              <div className="text-xs font-medium text-muted-foreground">Kiểu viết của tôi có thể sửa ngay</div>
               <div className="mt-1 text-2xl font-semibold text-foreground">{profiles.length}</div>
               <div className="mt-1 text-xs text-muted-foreground">
-                其中预置 {starterProfiles.length} 套，适合直接复制思路后再改。
+                Trong đó có {starterProfiles.length} kiểu có sẵn, rất hợp để lấy ý tưởng rồi tinh chỉnh lại.
               </div>
             </div>
             <div className="rounded-lg border bg-muted/20 p-3">
-              <div className="text-xs font-medium text-muted-foreground">内置模板</div>
+              <div className="text-xs font-medium text-muted-foreground">Mẫu dựng sẵn</div>
               <div className="mt-1 text-2xl font-semibold text-foreground">{templates.length}</div>
               <div className="mt-1 text-xs text-muted-foreground">
-                适合快速新建一套新写法，不必从空白开始。
+                Phù hợp để tạo nhanh một kiểu viết mới, không cần bắt đầu từ trang trắng.
               </div>
             </div>
           </div>
           <Button className="w-full" onClick={() => setCreateDialogOpen(true)}>
-            新建或导入写法
+            Tạo mới hoặc nhập kiểu viết
           </Button>
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader>
-          <CardTitle>我的写法</CardTitle>
+          <CardTitle>Kiểu viết của tôi</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {starterProfiles.length > 0 ? (
             <div className="space-y-2">
-              <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">推荐起步</div>
+              <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Gợi ý để bắt đầu</div>
               {starterProfiles.map((profile) => (
                 <button
                   key={profile.id}
@@ -150,9 +150,9 @@ export default function WritingFormulaSidebar(props: WritingFormulaSidebarProps)
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div className="font-medium text-foreground">{profile.name}</div>
-                    <Badge variant="outline">预置</Badge>
+                    <Badge variant="outline">Có sẵn</Badge>
                   </div>
-                  <div className="mt-1 text-sm text-muted-foreground">{profile.description || "可直接编辑的默认写法。"}</div>
+                  <div className="mt-1 text-sm text-muted-foreground">{profile.description || "Kiểu viết mặc định có thể chỉnh ngay."}</div>
                 </button>
               ))}
             </div>
@@ -160,7 +160,7 @@ export default function WritingFormulaSidebar(props: WritingFormulaSidebarProps)
 
           {customProfiles.length > 0 ? (
             <div className="space-y-2">
-              <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">你自己创建的写法</div>
+              <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Kiểu viết do bạn tự tạo</div>
               {customProfiles.map((profile) => (
                 <button
                   key={profile.id}
@@ -174,7 +174,7 @@ export default function WritingFormulaSidebar(props: WritingFormulaSidebarProps)
                     <div className="font-medium text-foreground">{profile.name}</div>
                     <Badge variant="secondary">{getProfileOriginLabel(profile)}</Badge>
                   </div>
-                  <div className="mt-1 text-sm text-muted-foreground">{profile.description || "暂无简介"}</div>
+                  <div className="mt-1 text-sm text-muted-foreground">{profile.description || "Chưa có mô tả"}</div>
                 </button>
               ))}
             </div>
@@ -182,7 +182,7 @@ export default function WritingFormulaSidebar(props: WritingFormulaSidebarProps)
 
           {profiles.length === 0 ? (
             <div className="rounded-md border border-dashed p-4 text-sm text-muted-foreground">
-              当前还没有写法资产。点上方“新建或导入写法”，先从模板快速起一套最省心。
+              Hiện chưa có kiểu viết nào. Hãy bấm “Tạo mới hoặc nhập kiểu viết” ở trên để dựng nhanh một bộ mẫu cho đỡ mất công.
             </div>
           ) : null}
         </CardContent>
@@ -193,22 +193,22 @@ export default function WritingFormulaSidebar(props: WritingFormulaSidebarProps)
       <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
         <DialogContent className="max-w-5xl">
           <DialogHeader>
-            <DialogTitle>新建或导入写法</DialogTitle>
+            <DialogTitle>Tạo mới hoặc nhập kiểu viết</DialogTitle>
             <DialogDescription>
-              推荐先走“快速开始”或“空白 / AI”里的句子生成。只有你已经准备好样本文本，才建议使用“从文本提取”。
+              Mình khuyên nên bắt đầu bằng “Bắt đầu nhanh” hoặc “Trang trắng / AI”. Chỉ khi bạn đã có sẵn văn bản mẫu thì mới nên dùng “Trích từ văn bản”.
             </DialogDescription>
           </DialogHeader>
 
           <Tabs value={activeCreateTab} onValueChange={setActiveCreateTab} className="space-y-4">
             <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="quick_start">快速开始</TabsTrigger>
-              <TabsTrigger value="blank">空白 / AI</TabsTrigger>
-              <TabsTrigger value="extract">从文本提取</TabsTrigger>
+              <TabsTrigger value="quick_start">Bắt đầu nhanh</TabsTrigger>
+              <TabsTrigger value="blank">Trang trắng / AI</TabsTrigger>
+              <TabsTrigger value="extract">Trích từ văn bản</TabsTrigger>
             </TabsList>
 
             <TabsContent value="quick_start" className="space-y-4">
               <div className="rounded-lg border bg-muted/20 p-4 text-sm leading-6 text-muted-foreground">
-                左侧已经预置了几套可直接修改的“我的写法”。如果你想再新开一套，最省心的方式还是从模板快速生成，再按自己的项目做微调。
+                Bên trái đã có sẵn vài kiểu viết bạn có thể chỉnh ngay. Nếu muốn mở thêm một bộ mới, cách nhẹ đầu nhất vẫn là tạo nhanh từ mẫu rồi tinh chỉnh theo dự án của bạn.
               </div>
               <div className="grid max-h-[58vh] gap-3 overflow-y-auto pr-1 md:grid-cols-2">
                 {templates.map((template) => (
@@ -218,7 +218,7 @@ export default function WritingFormulaSidebar(props: WritingFormulaSidebarProps)
                         <div className="text-base font-semibold text-foreground">{template.name}</div>
                         <div className="mt-1 text-xs text-muted-foreground">{template.category}</div>
                       </div>
-                      <Badge variant="outline">模板</Badge>
+                      <Badge variant="outline">Mẫu</Badge>
                     </div>
                     <div className="mt-3 text-sm leading-6 text-muted-foreground">{template.description}</div>
                     {template.tags.length > 0 ? (
@@ -230,16 +230,16 @@ export default function WritingFormulaSidebar(props: WritingFormulaSidebarProps)
                     ) : null}
                     {template.applicableGenres.length > 0 ? (
                       <div className="mt-3 text-xs text-muted-foreground">
-                        适合：{template.applicableGenres.join(" / ")}
+                        Phù hợp: {template.applicableGenres.join(" / ")}
                       </div>
                     ) : null}
                     <Button
                       size="sm"
                       className="mt-4 w-full"
-                      onClick={() => onCreateFromTemplate(template.id)}
-                      disabled={createFromTemplatePending}
-                    >
-                      {createFromTemplatePending ? "创建中..." : "基于这套快速新建"}
+                    onClick={() => onCreateFromTemplate(template.id)}
+                    disabled={createFromTemplatePending}
+                  >
+                      {createFromTemplatePending ? "Đang tạo..." : "Tạo nhanh dựa trên mẫu này"}
                     </Button>
                   </div>
                 ))}
@@ -248,20 +248,20 @@ export default function WritingFormulaSidebar(props: WritingFormulaSidebarProps)
 
             <TabsContent value="blank" className="space-y-4">
               <div className="rounded-lg border bg-muted/20 p-4 text-sm leading-6 text-muted-foreground">
-                这里有两种轻量起步方式：如果你已经知道自己要维护一套规则，就手动建空白；如果你只知道“想写成什么感觉”，直接写一句话交给 AI 先搭骨架。
+                Có hai cách khởi đầu nhẹ tay ở đây: nếu bạn đã biết mình muốn tự quản một bộ quy tắc thì tạo trang trắng thủ công; còn nếu bạn chỉ biết “muốn ra cảm giác gì” thì cứ viết một câu ngắn để AI dựng khung trước.
               </div>
               <div className="grid gap-4 lg:grid-cols-2">
                 <div className="rounded-lg border p-4">
                   <div className="mb-3">
-                    <div className="text-sm font-medium text-foreground">手动空白创建</div>
+                    <div className="text-sm font-medium text-foreground">Tạo trang trắng thủ công</div>
                     <div className="mt-1 text-xs leading-5 text-muted-foreground">
-                      适合你已经知道自己要维护一套什么风格规则，只想先建一个空壳再慢慢补。
+                      Hợp khi bạn đã biết mình muốn duy trì kiểu quy tắc nào, chỉ cần dựng một khung rỗng trước rồi bổ sung dần.
                     </div>
                   </div>
                   <div className="space-y-3">
                     <input
                       className="w-full rounded-md border p-2 text-sm"
-                      placeholder="例如：我的女频都市关系写法"
+                      placeholder="Ví dụ: Kiểu viết quan hệ đô thị cho nữ của tôi"
                       value={createForm.manualName}
                       onChange={(event) => onCreateFormChange({ manualName: event.target.value })}
                     />
@@ -270,34 +270,34 @@ export default function WritingFormulaSidebar(props: WritingFormulaSidebarProps)
                       onClick={onCreateManual}
                       disabled={!createForm.manualName.trim() || createManualPending}
                     >
-                      {createManualPending ? "创建中..." : "创建空白写法"}
+                      {createManualPending ? "Đang tạo..." : "Tạo kiểu viết mới"}
                     </Button>
                   </div>
                 </div>
 
                 <div className="rounded-lg border p-4">
                   <div className="mb-3">
-                    <div className="text-sm font-medium text-foreground">AI 帮我先搭一套</div>
+                    <div className="text-sm font-medium text-foreground">Để AI dựng trước một bộ</div>
                     <div className="mt-1 text-xs leading-5 text-muted-foreground">
-                      不想先研究规则字段时，直接描述你想要的读感、气质或参考方向，AI 会先生成一套可编辑写法。
+                      Nếu chưa muốn tìm hiểu các trường quy tắc, cứ mô tả cảm giác đọc, khí chất hoặc hướng tham chiếu bạn muốn. AI sẽ dựng sẵn một bộ có thể chỉnh tiếp.
                     </div>
                   </div>
                   <div className="space-y-3">
                     <input
                       className="w-full rounded-md border p-2 text-sm"
-                      placeholder="写法名称（可选，不填就让 AI 来取）"
+                      placeholder="Tên kiểu viết (không bắt buộc, để trống thì AI tự đặt)"
                       value={createForm.briefName}
                       onChange={(event) => onCreateFormChange({ briefName: event.target.value })}
                     />
                     <input
                       className="w-full rounded-md border p-2 text-sm"
-                      placeholder="分类（可选）"
+                      placeholder="Danh mục (không bắt buộc)"
                       value={createForm.briefCategory}
                       onChange={(event) => onCreateFormChange({ briefCategory: event.target.value })}
                     />
                     <textarea
                       className="min-h-[180px] w-full rounded-md border p-2 text-sm"
-                      placeholder="例如：类似于《遥远的救世主》的写法，整体克制、思辨感强，对话带锋芒，少鸡汤，多现实摩擦。"
+                      placeholder="Ví dụ: kiểu viết tiết chế, thiên về suy ngẫm, hội thoại sắc, ít sáo rỗng, nhiều va chạm đời thường."
                       value={createForm.briefPrompt}
                       onChange={(event) => onCreateFormChange({ briefPrompt: event.target.value })}
                     />
@@ -306,7 +306,7 @@ export default function WritingFormulaSidebar(props: WritingFormulaSidebarProps)
                       onClick={onCreateFromBrief}
                       disabled={!createForm.briefPrompt.trim() || createFromBriefPending}
                     >
-                      {createFromBriefPending ? "AI 生成中..." : "AI 生成一套写法"}
+                      {createFromBriefPending ? "AI đang tạo..." : "Cho AI tạo một kiểu viết"}
                     </Button>
                   </div>
                 </div>
@@ -315,25 +315,25 @@ export default function WritingFormulaSidebar(props: WritingFormulaSidebarProps)
 
             <TabsContent value="extract" className="space-y-4">
               <div className="rounded-lg border bg-muted/20 p-4 text-sm leading-6 text-muted-foreground">
-                适合你手里已经有一段很确定的参考文本，想让系统先帮你提取特征再进入编辑。没有现成样本时，不建议把它当第一步。
+                Phù hợp khi bạn đã có sẵn một đoạn văn bản tham chiếu khá rõ, muốn hệ thống trích đặc trưng trước rồi mới vào chỉnh sửa. Nếu chưa có mẫu, không nên chọn cách này làm bước đầu.
               </div>
               <div className="rounded-lg border p-4">
                 <div className="space-y-3">
                   <input
                     className="w-full rounded-md border p-2 text-sm"
-                    placeholder="写法名称"
+                    placeholder="Tên kiểu viết"
                     value={createForm.extractName}
                     onChange={(event) => onCreateFormChange({ extractName: event.target.value })}
                   />
                   <input
                     className="w-full rounded-md border p-2 text-sm"
-                    placeholder="分类（可选）"
+                    placeholder="Danh mục (không bắt buộc)"
                     value={createForm.extractCategory}
                     onChange={(event) => onCreateFormChange({ extractCategory: event.target.value })}
                   />
                   <textarea
                     className="min-h-[220px] w-full rounded-md border p-2 text-sm"
-                    placeholder="粘贴参考文本"
+                    placeholder="Dán văn bản tham chiếu vào đây"
                     value={createForm.extractSourceText}
                     onChange={(event) => onCreateFormChange({ extractSourceText: event.target.value })}
                   />
@@ -342,7 +342,7 @@ export default function WritingFormulaSidebar(props: WritingFormulaSidebarProps)
                     onClick={onExtractFromText}
                     disabled={!createForm.extractName.trim() || !createForm.extractSourceText.trim() || extractFromTextPending}
                   >
-                    {extractFromTextPending ? "提取中..." : "AI 提取特征并创建"}
+                    {extractFromTextPending ? "Đang trích xuất..." : "Cho AI trích đặc trưng rồi tạo"}
                   </Button>
                 </div>
               </div>

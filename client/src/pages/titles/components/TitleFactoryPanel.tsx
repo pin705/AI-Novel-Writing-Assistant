@@ -47,7 +47,7 @@ export default function TitleFactoryPanel({ genreTree, novels }: TitleFactoryPan
     mutationFn: async () => {
       if (mode === "novel") {
         if (!selectedNovelId) {
-          throw new Error("请先选择一个小说项目。");
+          throw new Error("Vui lòng chọn một dự án tiểu thuyết trước.");
         }
         const response = await generateNovelTitles(selectedNovelId, {
           provider: llm.provider,
@@ -76,7 +76,7 @@ export default function TitleFactoryPanel({ genreTree, novels }: TitleFactoryPan
       const next = sortSuggestions(rows);
       setSuggestions(next);
       setSelectedTitle(next[0]?.title ?? "");
-      toast.success(`已生成 ${next.length} 个标题候选。`);
+      toast.success(`Đã tạo ${next.length} phương án tiêu đề.`);
     },
   });
 
@@ -84,14 +84,14 @@ export default function TitleFactoryPanel({ genreTree, novels }: TitleFactoryPan
     mutationFn: (suggestion: TitleFactorySuggestion) => {
       const resolvedGenreId = mode === "novel" ? selectedNovel?.genre?.id ?? null : genreId || null;
       const description = mode === "novel"
-        ? `来源项目：${selectedNovel?.title ?? "未命名项目"}`
+        ? `Nguồn từ dự án: ${selectedNovel?.title ?? "Dự án chưa đặt tên"}`
         : mode === "adapt"
-          ? `参考标题：${referenceTitle.trim()}`
+          ? `Tiêu đề tham chiếu: ${referenceTitle.trim()}`
           : brief.trim().slice(0, 400);
       const keywords = mode === "novel"
         ? selectedNovel?.title ?? null
         : mode === "adapt"
-          ? `改编灵感 / ${referenceTitle.trim()}`
+          ? `Cảm hứng biến tấu / ${referenceTitle.trim()}`
           : brief.trim().slice(0, 160);
       return createTitleLibraryEntry({
         title: suggestion.title,
@@ -103,14 +103,14 @@ export default function TitleFactoryPanel({ genreTree, novels }: TitleFactoryPan
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: queryKeys.titles.all });
-      toast.success("标题已加入标题库。");
+      toast.success("Đã đưa tiêu đề vào kho.");
     },
   });
 
   const handleCopy = async (suggestion: TitleFactorySuggestion) => {
     await navigator.clipboard.writeText(suggestion.title);
     setSelectedTitle(suggestion.title);
-    toast.success("标题已复制到剪贴板。");
+    toast.success("Đã sao chép tiêu đề vào clipboard.");
   };
 
   const handlePrimaryAction = async (suggestion: TitleFactorySuggestion) => {
@@ -120,7 +120,7 @@ export default function TitleFactoryPanel({ genreTree, novels }: TitleFactoryPan
   return (
     <div className="space-y-4">
       <div className="rounded-xl border bg-muted/20 p-4">
-        <div className="text-sm font-medium text-foreground">模型设置</div>
+        <div className="text-sm font-medium text-foreground">Thiết lập mô hình</div>
         <div className="mt-3">
           <LLMSelector showParameters />
         </div>
@@ -128,15 +128,15 @@ export default function TitleFactoryPanel({ genreTree, novels }: TitleFactoryPan
 
       <Tabs value={mode} onValueChange={(value) => setMode(value as FactoryMode)} className="space-y-4">
         <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="novel">按小说生成</TabsTrigger>
-          <TabsTrigger value="brief">自由工坊</TabsTrigger>
-          <TabsTrigger value="adapt">参考改编</TabsTrigger>
+          <TabsTrigger value="novel">Theo tiểu thuyết</TabsTrigger>
+          <TabsTrigger value="brief">Tự do</TabsTrigger>
+          <TabsTrigger value="adapt">Biến tấu theo tham chiếu</TabsTrigger>
         </TabsList>
 
         <TabsContent value="novel" className="space-y-4">
           <div className="space-y-2">
             <label htmlFor="title-factory-novel" className="text-sm font-medium text-foreground">
-              选择小说项目
+              Chọn dự án tiểu thuyết
             </label>
             <select
               id="title-factory-novel"
@@ -144,7 +144,7 @@ export default function TitleFactoryPanel({ genreTree, novels }: TitleFactoryPan
               value={selectedNovelId}
               onChange={(event) => setSelectedNovelId(event.target.value)}
             >
-              <option value="">请选择项目</option>
+              <option value="">Chọn dự án</option>
               {novels.map((novel) => (
                 <option key={novel.id} value={novel.id}>
                   {novel.title}
@@ -152,7 +152,7 @@ export default function TitleFactoryPanel({ genreTree, novels }: TitleFactoryPan
               ))}
             </select>
             <div className="text-xs text-muted-foreground">
-              直接复用当前系统已有的“项目上下文标题生成”能力，适合已经沉淀了简介和类型的作品。
+              Dùng trực tiếp khả năng tạo tiêu đề theo ngữ cảnh dự án có sẵn trong hệ thống, rất hợp với tác phẩm đã có phần giới thiệu và thể loại rõ.
             </div>
           </div>
         </TabsContent>
@@ -160,19 +160,19 @@ export default function TitleFactoryPanel({ genreTree, novels }: TitleFactoryPan
         <TabsContent value="brief" className="space-y-4">
           <div className="space-y-2">
             <label htmlFor="title-factory-brief" className="text-sm font-medium text-foreground">
-              创作简报
+              Bản tóm tắt sáng tác
             </label>
             <textarea
               id="title-factory-brief"
               className="min-h-[140px] w-full rounded-md border bg-background px-3 py-2 text-sm outline-none transition focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
               value={brief}
               onChange={(event) => setBrief(event.target.value)}
-              placeholder="描述题材、主角卖点、冲突、文风和读者期待。越具体，标题越有区分度。"
+              placeholder="Mô tả thể loại, điểm hút của nhân vật chính, xung đột, văn phong và kỳ vọng độc giả. Càng cụ thể, tiêu đề càng dễ tạo khác biệt."
             />
           </div>
           <div className="space-y-2">
             <label htmlFor="title-factory-genre" className="text-sm font-medium text-foreground">
-              类型过滤
+              Lọc theo thể loại
             </label>
             <select
               id="title-factory-genre"
@@ -180,7 +180,7 @@ export default function TitleFactoryPanel({ genreTree, novels }: TitleFactoryPan
               value={genreId}
               onChange={(event) => setGenreId(event.target.value)}
             >
-              <option value="">不指定类型</option>
+              <option value="">Không giới hạn thể loại</option>
               {genreOptions.map((option) => (
                 <option key={option.id} value={option.id}>
                   {option.path}
@@ -193,30 +193,30 @@ export default function TitleFactoryPanel({ genreTree, novels }: TitleFactoryPan
         <TabsContent value="adapt" className="space-y-4">
           <div className="space-y-2">
             <label htmlFor="title-factory-reference" className="text-sm font-medium text-foreground">
-              参考标题
+              Tiêu đề tham chiếu
             </label>
             <Input
               id="title-factory-reference"
               value={referenceTitle}
               onChange={(event) => setReferenceTitle(event.target.value)}
-              placeholder="例如：我在废土捡属性"
+              placeholder="Ví dụ: Tôi nhặt thuộc tính ở vùng hoang tàn"
             />
           </div>
           <div className="space-y-2">
             <label htmlFor="title-factory-adapt-brief" className="text-sm font-medium text-foreground">
-              当前作品简报
+              Tóm tắt tác phẩm hiện tại
             </label>
             <textarea
               id="title-factory-adapt-brief"
               className="min-h-[120px] w-full rounded-md border bg-background px-3 py-2 text-sm outline-none transition focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
               value={brief}
               onChange={(event) => setBrief(event.target.value)}
-              placeholder="说明你的作品题材、人物与卖点。系统会参考标题节奏，但不会直接照抄。"
+              placeholder="Mô tả thể loại, nhân vật và điểm hút của tác phẩm. Hệ thống sẽ tham khảo nhịp tiêu đề, nhưng không chép nguyên xi."
             />
           </div>
           <div className="space-y-2">
             <label htmlFor="title-factory-adapt-genre" className="text-sm font-medium text-foreground">
-              类型过滤
+              Lọc theo thể loại
             </label>
             <select
               id="title-factory-adapt-genre"
@@ -224,7 +224,7 @@ export default function TitleFactoryPanel({ genreTree, novels }: TitleFactoryPan
               value={genreId}
               onChange={(event) => setGenreId(event.target.value)}
             >
-              <option value="">不指定类型</option>
+              <option value="">Không giới hạn thể loại</option>
               {genreOptions.map((option) => (
                 <option key={option.id} value={option.id}>
                   {option.path}
@@ -237,7 +237,7 @@ export default function TitleFactoryPanel({ genreTree, novels }: TitleFactoryPan
 
       <div className="flex flex-col gap-3 rounded-xl border bg-background p-4 md:flex-row md:items-end md:justify-between">
         <label className="space-y-2 text-sm">
-          <span className="font-medium text-foreground">生成数量</span>
+          <span className="font-medium text-foreground">Số lượng tạo</span>
           <Input
             type="number"
             min={3}
@@ -249,19 +249,19 @@ export default function TitleFactoryPanel({ genreTree, novels }: TitleFactoryPan
           />
         </label>
         <Button type="button" onClick={() => generateMutation.mutate()} disabled={generateMutation.isPending}>
-          {generateMutation.isPending ? "生成中..." : "生成标题候选"}
+          {generateMutation.isPending ? "Đang tạo..." : "Tạo phương án tiêu đề"}
         </Button>
       </div>
 
       <TitleSuggestionList
         suggestions={suggestions}
         selectedTitle={selectedTitle}
-        primaryActionLabel="复制标题"
+        primaryActionLabel="Sao chép tiêu đề"
         onPrimaryAction={handlePrimaryAction}
         onCopy={handleCopy}
         onSave={(suggestion) => saveMutation.mutate(suggestion)}
         savingTitle={saveMutation.isPending ? saveMutation.variables?.title ?? "" : ""}
-        emptyMessage="选择一种工坊模式后开始生成，结果会在这里出现。"
+        emptyMessage="Chọn một chế độ trong xưởng rồi bấm tạo, kết quả sẽ hiện ở đây."
       />
     </div>
   );

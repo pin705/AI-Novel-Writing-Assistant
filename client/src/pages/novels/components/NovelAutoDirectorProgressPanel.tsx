@@ -30,12 +30,12 @@ type DirectorStepDefinition = {
 };
 
 const DIRECTOR_EXECUTION_STEPS: DirectorStepDefinition[] = [
-  { key: "novel_create", label: "创建项目" },
-  { key: "book_contract", label: "Book Contract + 故事宏观规划" },
-  { key: "character_setup", label: "角色准备" },
-  { key: "volume_strategy", label: "卷战略 + 卷骨架" },
-  { key: "beat_sheet", label: "第 1 卷节奏板 + 章节列表" },
-  { key: "chapter_detail_bundle", label: "章节批量细化" },
+  { key: "novel_create", label: "Tạo dự án" },
+  { key: "book_contract", label: "Book Contract + quy hoạch vĩ mô câu chuyện" },
+  { key: "character_setup", label: "Chuẩn bị nhân vật" },
+  { key: "volume_strategy", label: "Chiến lược tập + khung tập" },
+  { key: "beat_sheet", label: "Bảng nhịp tập 1 + danh sách chương" },
+  { key: "chapter_detail_bundle", label: "Tinh chỉnh chương hàng loạt" },
 ];
 
 const DIRECTOR_CANDIDATE_SETUP_STEP_KEYS = new Set<string>(
@@ -43,17 +43,17 @@ const DIRECTOR_CANDIDATE_SETUP_STEP_KEYS = new Set<string>(
 );
 
 const AUTO_DIRECTOR_PLACEHOLDER_TITLES = new Set([
-  "AI 自动导演小说",
-  "小说流程任务",
+  "Đạo diễn tự động cho tiểu thuyết",
+  "Nhiệm vụ quy trình tiểu thuyết",
 ]);
 
 function formatDate(value: string | null | undefined): string {
   if (!value) {
-    return "暂无";
+    return "Chưa có";
   }
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) {
-    return "暂无";
+    return "Chưa có";
   }
   return date.toLocaleString();
 }
@@ -74,7 +74,7 @@ function resolveAutoExecutionScopeLabel(task: UnifiedTaskDetail | null): string 
     return scopeLabel;
   }
   const fallbackCount = Math.max(1, Math.round(seedPayload?.autoExecution?.totalChapterCount ?? 10));
-  return `前 ${fallbackCount} 章`;
+  return `${fallbackCount} chương đầu`;
 }
 
 function formatCheckpoint(
@@ -82,30 +82,30 @@ function formatCheckpoint(
   task: UnifiedTaskDetail | null,
 ): string {
   if (checkpoint === "candidate_selection_required") {
-    return "等待确认书级方向";
+    return "Chờ xác nhận hướng cấp sách";
   }
   if (checkpoint === "book_contract_ready") {
-    return "Book Contract 已就绪";
+    return "Book Contract đã sẵn sàng";
   }
   if (checkpoint === "character_setup_required") {
-    return "角色准备待审核";
+    return "Chuẩn bị nhân vật chờ duyệt";
   }
   if (checkpoint === "volume_strategy_ready") {
-    return "卷战略已就绪";
+    return "Chiến lược tập đã sẵn sàng";
   }
   if (checkpoint === "front10_ready") {
-    return `${resolveAutoExecutionScopeLabel(task)}可开写`;
+    return `${resolveAutoExecutionScopeLabel(task)} có thể bắt đầu viết`;
   }
   if (checkpoint === "chapter_batch_ready") {
-    return `${resolveAutoExecutionScopeLabel(task)}自动执行已暂停`;
+    return `${resolveAutoExecutionScopeLabel(task)} đã tạm dừng tự động thực thi`;
   }
   if (checkpoint === "replan_required") {
-    return "需要重规划";
+    return "Cần lập lại kế hoạch";
   }
   if (checkpoint === "workflow_completed") {
-    return "主流程完成";
+    return "Quy trình chính đã hoàn tất";
   }
-  return "暂无";
+    return "Chưa có";
 }
 
 function isCandidateSetupFlow(task: UnifiedTaskDetail | null): boolean {
@@ -207,15 +207,15 @@ function stepBadgeClasses(status: DirectorStepVisualStatus): string {
 
 function stepStatusLabel(status: DirectorStepVisualStatus): string {
   if (status === "completed") {
-    return "已完成";
+    return "Hoàn tất";
   }
   if (status === "running") {
-    return "进行中";
+    return "Đang chạy";
   }
   if (status === "failed") {
-    return "失败";
+    return "Thất bại";
   }
-  return "待推进";
+    return "Chờ tiếp tục";
 }
 
 export default function NovelAutoDirectorProgressPanel({
@@ -233,7 +233,7 @@ export default function NovelAutoDirectorProgressPanel({
     ? {
       summary: fallbackError?.trim() ?? "",
       route: null,
-      label: "快速修复章节标题",
+      label: "Sửa nhanh tiêu đề chương",
     }
     : null;
   const chapterTitleWarning = taskChapterTitleWarning ?? fallbackChapterTitleWarning;
@@ -243,21 +243,21 @@ export default function NovelAutoDirectorProgressPanel({
   const currentAction = (
     task?.status === "running"
     && task?.checkpointType === "chapter_batch_ready"
-    && task.currentItemLabel?.includes("已暂停")
+    && task.currentItemLabel?.includes("đã tạm dừng")
   )
-    ? `正在继续自动执行${resolveAutoExecutionScopeLabel(task)}`
+    ? `Đang tiếp tục tự động thực thi ${resolveAutoExecutionScopeLabel(task)}`
     : (
       task?.currentItemLabel?.trim()
       || (visualMode === "execution_failed"
-        ? "导演任务执行中断"
-        : (chapterTitleWarning ? "章节列表已生成，等待修复标题结构" : "正在准备导演任务"))
+        ? "Nhiệm vụ đạo diễn bị gián đoạn"
+        : (chapterTitleWarning ? "Danh sách chương đã được tạo, đang chờ sửa cấu trúc tiêu đề" : "Đang chuẩn bị nhiệm vụ đạo diễn"))
     );
   const workflowTitle = task?.title?.trim() || "";
   const hintedTitle = titleHint?.trim() || "";
   const taskTitle = (
     hintedTitle && (!workflowTitle || AUTO_DIRECTOR_PLACEHOLDER_TITLES.has(workflowTitle))
       ? hintedTitle
-      : workflowTitle || hintedTitle || "新小说项目"
+      : workflowTitle || hintedTitle || "Dự án tiểu thuyết mới"
   );
   const milestones = Array.isArray(task?.meta.milestones)
     ? task.meta.milestones as Array<{ checkpointType: NovelWorkflowCheckpoint; summary: string; createdAt: string }>
@@ -267,7 +267,7 @@ export default function NovelAutoDirectorProgressPanel({
     ? DIRECTOR_CANDIDATE_SETUP_STEPS
     : DIRECTOR_EXECUTION_STEPS;
   const steps = resolveDirectorStepStatuses(task, visualMode, stepDefinitions);
-  const failureMessage = task?.lastError?.trim() || fallbackError?.trim() || "导演任务执行失败，但没有记录明确错误。";
+  const failureMessage = task?.lastError?.trim() || fallbackError?.trim() || "Nhiệm vụ đạo diễn thất bại nhưng không có lỗi cụ thể được ghi lại.";
   const tokenUsage = task?.tokenUsage ?? null;
   const containerMode: AITakeoverMode = visualMode === "execution_failed"
     ? "failed"
@@ -279,28 +279,28 @@ export default function NovelAutoDirectorProgressPanel({
   const description = candidateSetupFlow
     ? (
       visualMode === "execution_failed"
-        ? "候选方向生成链已中断，你可以先去任务中心查看详情，再决定是否重试。"
-        : "系统会先整理项目设定、对齐书级 framing，再生成两套书级方案和对应标题组。"
+        ? "Chuỗi tạo hướng ứng viên đã bị gián đoạn, bạn có thể vào trung tâm nhiệm vụ xem chi tiết rồi quyết định có thử lại hay không."
+        : "Hệ thống sẽ trước tiên sắp xếp thiết lập dự án, đồng bộ framing cấp sách, rồi tạo hai bộ phương án cấp sách cùng nhóm tiêu đề tương ứng."
     )
     : (
       visualMode === "execution_failed"
-        ? "任务已经停在最近一步，你可以先去任务中心查看详情，再决定是否恢复。"
+        ? "Nhiệm vụ đã dừng ở bước gần nhất, bạn có thể vào trung tâm nhiệm vụ xem chi tiết rồi quyết định có khôi phục hay không."
         : chapterTitleWarning
-          ? "章节列表已经保留，这是一条可直接处理的结构提醒。你可以快速修复标题，再决定是否继续后续导演流程。"
+          ? "Danh sách chương đã được giữ lại, đây là một cảnh báo cấu trúc có thể xử lý ngay. Bạn có thể sửa nhanh tiêu đề rồi mới quyết định có tiếp tục quy trình đạo diễn hay không."
           : task?.status === "waiting_approval"
-            ? "当前导演流程已经停在审核点，你可以先检查产物，再决定是否继续自动推进。"
-            : "可离开当前页面，任务会继续运行，并且可以在任务中心恢复查看。"
+            ? "Quy trình đạo diễn hiện đã dừng ở điểm duyệt, bạn có thể kiểm tra sản phẩm rồi quyết định có tiếp tục tự động đẩy hay không."
+            : "Có thể rời trang hiện tại, nhiệm vụ vẫn sẽ chạy và bạn có thể khôi phục xem lại trong trung tâm nhiệm vụ."
     );
   const actions = [
     ...(visualMode === "execution_progress" && task?.status !== "waiting_approval" && !chapterTitleWarning
       ? [{
-        label: "后台继续",
+        label: "Tiếp tục nền",
         onClick: onBackgroundContinue,
         variant: "outline" as const,
       }]
       : []),
     {
-      label: "去任务中心查看",
+      label: "Đi xem ở trung tâm nhiệm vụ",
       onClick: onOpenTaskCenter,
       variant: "default" as const,
     },
@@ -311,10 +311,10 @@ export default function NovelAutoDirectorProgressPanel({
       <AITakeoverContainer
         mode={containerMode}
         title={visualMode === "execution_failed"
-          ? (candidateSetupFlow ? "候选方案生成失败" : "导演执行失败")
+          ? (candidateSetupFlow ? "Tạo phương án ứng viên thất bại" : "Thực thi đạo diễn thất bại")
           : candidateSetupFlow
-            ? "正在生成导演候选方案"
-            : `正在导演《${taskTitle}》`}
+            ? "Đang tạo phương án ứng viên cho đạo diễn"
+            : `Đang đạo diễn “${taskTitle}”`}
         description={description}
         progress={task ? task.progress : null}
         currentAction={currentAction}
@@ -339,28 +339,28 @@ export default function NovelAutoDirectorProgressPanel({
         {tokenUsage ? (
           <div className="mt-4 grid gap-3 md:grid-cols-4">
             <div className="rounded-xl border bg-background/80 p-3">
-              <div className="text-xs text-muted-foreground">累计调用</div>
+              <div className="text-xs text-muted-foreground">Lượt gọi tích lũy</div>
               <div className="mt-1 text-sm font-medium text-foreground">{formatTokenCount(tokenUsage.llmCallCount)}</div>
             </div>
             <div className="rounded-xl border bg-background/80 p-3">
-              <div className="text-xs text-muted-foreground">输入 Tokens</div>
+              <div className="text-xs text-muted-foreground">Tokens đầu vào</div>
               <div className="mt-1 text-sm font-medium text-foreground">{formatTokenCount(tokenUsage.promptTokens)}</div>
             </div>
             <div className="rounded-xl border bg-background/80 p-3">
-              <div className="text-xs text-muted-foreground">输出 Tokens</div>
+              <div className="text-xs text-muted-foreground">Tokens đầu ra</div>
               <div className="mt-1 text-sm font-medium text-foreground">{formatTokenCount(tokenUsage.completionTokens)}</div>
             </div>
             <div className="rounded-xl border bg-background/80 p-3">
-              <div className="text-xs text-muted-foreground">累计总 Tokens</div>
+              <div className="text-xs text-muted-foreground">Tổng Tokens tích lũy</div>
               <div className="mt-1 text-sm font-medium text-foreground">{formatTokenCount(tokenUsage.totalTokens)}</div>
-              <div className="mt-1 text-[11px] text-muted-foreground">最近记录：{formatDate(tokenUsage.lastRecordedAt)}</div>
+              <div className="mt-1 text-[11px] text-muted-foreground">Ghi nhận gần nhất: {formatDate(tokenUsage.lastRecordedAt)}</div>
             </div>
           </div>
         ) : null}
 
         {chapterTitleWarning ? (
           <div className="mt-4 rounded-xl border border-amber-300/60 bg-amber-50/80 p-4 text-sm text-amber-950">
-            <div className="font-medium">当前提醒</div>
+            <div className="font-medium">Cảnh báo hiện tại</div>
             <div className="mt-1">{chapterTitleWarning.summary}</div>
             <div className="mt-3 flex flex-wrap gap-2">
               {task && chapterTitleWarning ? (
@@ -373,7 +373,7 @@ export default function NovelAutoDirectorProgressPanel({
                   disabled={chapterTitleRepairMutation.isPending}
                 >
                   {chapterTitleRepairMutation.isPending && chapterTitleRepairMutation.pendingTaskId === task.id
-                    ? "AI 修复中..."
+                    ? "AI đang sửa..."
                     : chapterTitleWarning.label}
                 </Button>
               ) : null}
@@ -382,23 +382,23 @@ export default function NovelAutoDirectorProgressPanel({
                 variant="outline"
                 onClick={onOpenTaskCenter}
               >
-                去任务中心查看
+                Đi xem ở trung tâm nhiệm vụ
               </Button>
             </div>
           </div>
         ) : visualMode === "execution_failed" ? (
           <div className="mt-4 rounded-xl border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive">
-            <div className="font-medium">失败摘要</div>
+            <div className="font-medium">Tóm tắt lỗi</div>
             <div className="mt-1">{failureMessage}</div>
             {task?.recoveryHint ? (
-              <div className="mt-2 text-xs text-destructive/80">恢复建议：{task.recoveryHint}</div>
+              <div className="mt-2 text-xs text-destructive/80">Gợi ý khôi phục: {task.recoveryHint}</div>
             ) : null}
           </div>
         ) : null}
       </AITakeoverContainer>
 
       <div className="rounded-xl border bg-background/70 p-4">
-        <div className="text-sm font-medium text-foreground">里程碑历史</div>
+        <div className="text-sm font-medium text-foreground">Lịch sử mốc tiến trình</div>
         {milestones.length > 0 ? (
           <div className="mt-3 space-y-3">
             {milestones
@@ -408,13 +408,13 @@ export default function NovelAutoDirectorProgressPanel({
                 <div key={`${item.checkpointType}:${item.createdAt}`} className="rounded-lg border bg-muted/15 p-3">
                   <div className="font-medium text-foreground">{formatCheckpoint(item.checkpointType, task)}</div>
                   <div className="mt-1 text-sm text-muted-foreground">{item.summary}</div>
-                  <div className="mt-1 text-xs text-muted-foreground">记录时间：{formatDate(item.createdAt)}</div>
+                  <div className="mt-1 text-xs text-muted-foreground">Thời điểm ghi nhận: {formatDate(item.createdAt)}</div>
                 </div>
               ))}
           </div>
         ) : (
           <div className="mt-3 text-sm text-muted-foreground">
-            任务已创建，正在等待第一个稳定里程碑写入。
+            Nhiệm vụ đã được tạo, đang chờ mốc ổn định đầu tiên được ghi vào.
           </div>
         )}
       </div>

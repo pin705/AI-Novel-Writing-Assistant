@@ -44,7 +44,7 @@ function extractStructuredPreview(raw: string): string | null {
       if (parts.length > 0) {
         return parts.join("；");
       }
-      return "包含结构化设定，进入工作台查看详情。";
+      return "Có cấu trúc thiết lập, vào workspace để xem chi tiết.";
     }
     if (parsed && typeof parsed === "object") {
       const record = parsed as Record<string, unknown>;
@@ -52,7 +52,7 @@ function extractStructuredPreview(raw: string): string | null {
       if (typeof summary === "string" && summary.trim()) {
         return summary.trim();
       }
-      return "包含结构化设定，进入工作台查看详情。";
+      return "Có cấu trúc thiết lập, vào workspace để xem chi tiết.";
     }
   } catch {
     return null;
@@ -114,17 +114,17 @@ export default function WorldList() {
     mutationFn: (id: string) => deleteWorld(id),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: queryKeys.worlds.all });
-      toast.success("世界观已删除。");
+      toast.success("Đã xóa thế giới quan.");
     },
     onError: (error) => {
-      toast.error(error instanceof Error ? error.message : "删除世界观失败。");
+      toast.error(error instanceof Error ? error.message : "Xóa thế giới quan thất bại.");
     },
   });
 
   const worlds = worldListQuery.data?.data ?? [];
 
   const handleDelete = (worldId: string, worldName: string) => {
-    const confirmed = window.confirm(`确认删除世界观「${worldName}」？此操作不可恢复。`);
+    const confirmed = window.confirm(`Bạn có chắc muốn xóa thế giới quan “${worldName}” không? Thao tác này không thể hoàn tác.`);
     if (!confirmed) {
       return;
     }
@@ -134,10 +134,10 @@ export default function WorldList() {
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap justify-end gap-2">
-        <OpenInCreativeHubButton bindings={{}} label="创作中枢总览" />
+        <OpenInCreativeHubButton bindings={{}} label="Tổng quan Trung tâm Sáng tạo" />
         {featureFlags.worldWizardEnabled ? (
           <Button asChild>
-            <Link to="/worlds/generator">生成新世界观</Link>
+            <Link to="/worlds/generator">Tạo thế giới quan mới</Link>
           </Button>
         ) : null}
       </div>
@@ -145,18 +145,18 @@ export default function WorldList() {
       {worlds.length === 0 ? (
         <Card>
           <CardHeader>
-            <CardTitle>暂无世界观</CardTitle>
-            <CardDescription>点击“生成新世界观”开始创建。</CardDescription>
+            <CardTitle>Chưa có thế giới quan nào</CardTitle>
+            <CardDescription>Bấm “Tạo thế giới quan mới” để bắt đầu.</CardDescription>
           </CardHeader>
         </Card>
       ) : (
         <div className="grid gap-3 md:grid-cols-2">
           {worlds.map((world) => {
             const structuredPreview = buildStructuredWorldPreview(world.structureJson);
-            const summary = buildPreview(structuredPreview.summary ?? world.description, "暂无描述", 120);
+            const summary = buildPreview(structuredPreview.summary ?? world.description, "Chưa có mô tả", 120);
             const detail = buildPreview(
               structuredPreview.detail ?? world.overviewSummary ?? world.conflicts ?? world.geography ?? world.background,
-              "暂无详细信息",
+              "Chưa có thông tin chi tiết",
               180,
             );
 
@@ -165,7 +165,7 @@ export default function WorldList() {
                 <CardHeader>
                   <CardTitle>{world.name}</CardTitle>
                   <CardDescription>
-                    {summary} | 状态：{world.status} | v{world.version}
+                    {summary} | Trạng thái: {world.status} | v{world.version}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="text-sm text-muted-foreground">
@@ -173,11 +173,11 @@ export default function WorldList() {
                   <div className="flex flex-wrap gap-2">
                     <OpenInCreativeHubButton
                       bindings={{ worldId: world.id }}
-                      label="在创作中枢中继续"
+                      label="Tiếp tục trong Trung tâm Sáng tạo"
                     />
                     {featureFlags.worldWizardEnabled ? (
                       <Button asChild size="sm">
-                        <Link to={`/worlds/${world.id}/workspace`}>进入工作台</Link>
+                        <Link to={`/worlds/${world.id}/workspace`}>Vào workspace</Link>
                       </Button>
                     ) : null}
                     <Button
@@ -186,7 +186,7 @@ export default function WorldList() {
                       onClick={() => handleDelete(world.id, world.name)}
                       disabled={deleteWorldMutation.isPending && deleteWorldMutation.variables === world.id}
                     >
-                      {deleteWorldMutation.isPending && deleteWorldMutation.variables === world.id ? "删除中..." : "删除"}
+                      {deleteWorldMutation.isPending && deleteWorldMutation.variables === world.id ? "Đang xóa..." : "Xóa"}
                     </Button>
                   </div>
                 </CardContent>

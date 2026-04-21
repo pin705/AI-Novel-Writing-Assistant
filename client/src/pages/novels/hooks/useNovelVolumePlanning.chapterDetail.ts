@@ -46,7 +46,7 @@ interface RunChapterDetailBatchGenerationArgs {
 }
 
 function describeChapterTarget(target: ChapterDetailTarget): string {
-  return `第${target.chapterOrder}章《${target.title || "未命名章节"}》`;
+  return `Chương ${target.chapterOrder} “${target.title || "Chưa đặt tên"}”`;
 }
 
 function buildFallbackLabel(targets: ChapterDetailTarget[]): string {
@@ -56,9 +56,9 @@ function buildFallbackLabel(targets: ChapterDetailTarget[]): string {
   const first = targets[0];
   const last = targets[targets.length - 1];
   if (!first || !last) {
-    return "当前章节范围";
+    return "Phạm vi chương hiện tại";
   }
-  return `第${first.chapterOrder}-${last.chapterOrder}章（共 ${targets.length} 章）`;
+  return `Chương ${first.chapterOrder}-${last.chapterOrder} (tổng ${targets.length} chương)`;
 }
 
 export function resolveChapterDetailBatch(
@@ -99,13 +99,13 @@ export function buildChapterDetailBatchConfirmationMessage(
 ): string {
   return [
     batch.targets.length === 1
-      ? `将基于当前内容为${batch.label} AI 补齐章节目标、执行边界和任务单。`
-      : `将基于当前内容为${batch.label}连续补齐章节目标、执行边界和任务单。`,
+      ? `Dựa trên nội dung hiện có, AI sẽ bổ sung mục tiêu chương, ranh giới thực hiện và danh sách việc cho ${batch.label}.`
+      : `Dựa trên nội dung hiện có, AI sẽ bổ sung liên tiếp mục tiêu chương, ranh giới thực hiện và danh sách việc cho ${batch.label}.`,
     batch.hasExistingDrafts
-      ? "会优先沿用各章已填写结果，只修正空缺、模糊和不够可执行的部分。"
-      : "当前这些章节还是空白，AI 会先补出首版，再按现有标题和摘要逐章收束。",
-    "不会改动章节标题和摘要。",
-    batch.missingCount > 0 ? `有 ${batch.missingCount} 章已不在当前卷草稿中，会自动跳过。` : "",
+      ? "Hệ thống sẽ ưu tiên giữ lại phần đã điền của từng chương, chỉ chỉnh các chỗ thiếu, mơ hồ hoặc chưa đủ khả thi."
+      : "Các chương này hiện vẫn đang trống, nên AI sẽ tạo bản đầu tiên trước rồi thu gọn dần theo tiêu đề và tóm tắt sẵn có.",
+    "Sẽ không thay đổi tiêu đề và tóm tắt chương.",
+    batch.missingCount > 0 ? `Có ${batch.missingCount} chương không còn nằm trong bản nháp hiện tại, hệ thống sẽ tự bỏ qua.` : "",
   ].filter(Boolean).join("\n\n");
 }
 
@@ -124,7 +124,7 @@ export async function runChapterDetailBatchGeneration({
   setIsGenerating(true);
   setCurrentMode("");
   setCurrentChapterId(targets[0]?.chapterId ?? "");
-  setStructuredMessage(`正在为${label}连续生成章节目标、执行边界和任务单...`);
+  setStructuredMessage(`Đang liên tiếp tạo mục tiêu chương, ranh giới thực hiện và danh sách việc cho ${label}...`);
 
   try {
     for (const target of targets) {
@@ -141,7 +141,7 @@ export async function runChapterDetailBatchGeneration({
         workingDraft = result.nextDocument.volumes;
       }
     }
-    setStructuredMessage(`${label}的章节目标、执行边界和任务单已补齐并自动保存。`);
+    setStructuredMessage(`Mục tiêu chương, ranh giới thực hiện và danh sách việc của ${label} đã được bổ sung và tự động lưu.`);
   } catch {
     // error message is handled by mutation onError
   } finally {

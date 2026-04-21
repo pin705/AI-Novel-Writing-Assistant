@@ -25,18 +25,18 @@ const AUTO_EXECUTION_SCOPE_OPTIONS: Array<{
 }> = [
   {
     value: "front10",
-    label: "默认前 10 章",
-    description: "适合新书起盘，AI 会直接把前 10 章写作、审校和修复跑完。",
+    label: "Mặc định 10 chương đầu",
+    description: "Hợp với sách mới bắt đầu, AI sẽ tự chạy luôn 10 chương đầu qua viết, rà soát và sửa lỗi.",
   },
   {
     value: "chapter_range",
-    label: "指定章节范围",
-    description: "适合你只想让 AI 接手某一段，比如第 11-20 章。",
+    label: "Phạm vi chương chỉ định",
+    description: "Hợp khi bạn chỉ muốn AI tiếp quản một đoạn nhất định, ví dụ từ chương 11 đến 20.",
   },
   {
     value: "volume",
-    label: "按卷执行",
-    description: "适合你想让 AI 一口气接管某一卷的章节批次。",
+    label: "Chạy theo tập",
+    description: "Hợp khi bạn muốn AI ôm trọn một loạt chương trong cùng một tập.",
   },
 ];
 
@@ -106,14 +106,14 @@ export function buildDirectorAutoExecutionPlanLabel(
     const startOrder = normalizePositiveInteger(plan.startOrder, 1);
     const endOrder = Math.max(startOrder, normalizePositiveInteger(plan.endOrder, startOrder));
     if (startOrder === endOrder) {
-      return `第 ${startOrder} 章`;
+      return `Chương ${startOrder}`;
     }
-    return `第 ${startOrder}-${endOrder} 章`;
+    return `Chương ${startOrder}-${endOrder}`;
   }
   if (plan?.mode === "volume") {
-    return `第 ${normalizePositiveInteger(plan.volumeOrder, 1)} 卷`;
+    return `Tập ${normalizePositiveInteger(plan.volumeOrder, 1)}`;
   }
-  return "前 10 章";
+  return "10 chương đầu";
 }
 
 interface DirectorAutoExecutionPlanFieldsProps {
@@ -131,8 +131,8 @@ export function DirectorAutoExecutionPlanFields({
   return (
     <div className="mt-3 rounded-md border border-primary/15 bg-primary/5 p-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <div className="text-xs font-medium text-foreground">自动执行范围</div>
-        <div className="text-xs text-muted-foreground">当前将执行：{scopeLabel}</div>
+        <div className="text-xs font-medium text-foreground">Phạm vi tự động triển khai</div>
+        <div className="text-xs text-muted-foreground">Sẽ chạy hiện tại: {scopeLabel}</div>
       </div>
 
       <div className="mt-3 grid gap-3 md:grid-cols-3">
@@ -159,46 +159,46 @@ export function DirectorAutoExecutionPlanFields({
       {draft.mode === "chapter_range" ? (
         <div className="mt-4 grid gap-3 md:grid-cols-2">
           <div>
-            <div className="text-xs font-medium text-foreground">起始章节</div>
-            <Input
-              className="mt-2"
-              type="number"
-              min={1}
-              value={draft.startOrder}
-              onChange={(event) => onChange({ startOrder: event.target.value })}
-              placeholder="例如 11"
-            />
+            <div className="text-xs font-medium text-foreground">Chương bắt đầu</div>
+              <Input
+                className="mt-2"
+                type="number"
+                min={1}
+                value={draft.startOrder}
+                onChange={(event) => onChange({ startOrder: event.target.value })}
+                placeholder="Ví dụ 11"
+              />
           </div>
           <div>
-            <div className="text-xs font-medium text-foreground">结束章节</div>
-            <Input
-              className="mt-2"
-              type="number"
-              min={1}
-              value={draft.endOrder}
-              onChange={(event) => onChange({ endOrder: event.target.value })}
-              placeholder="例如 20"
-            />
+            <div className="text-xs font-medium text-foreground">Chương kết thúc</div>
+              <Input
+                className="mt-2"
+                type="number"
+                min={1}
+                value={draft.endOrder}
+                onChange={(event) => onChange({ endOrder: event.target.value })}
+                placeholder="Ví dụ 20"
+              />
           </div>
         </div>
       ) : null}
 
       {draft.mode === "volume" ? (
         <div className="mt-4 max-w-xs">
-          <div className="text-xs font-medium text-foreground">卷序号</div>
+          <div className="text-xs font-medium text-foreground">Số tập</div>
           <Input
             className="mt-2"
             type="number"
             min={1}
             value={draft.volumeOrder}
             onChange={(event) => onChange({ volumeOrder: event.target.value })}
-            placeholder="例如 2"
+            placeholder="Ví dụ 2"
           />
         </div>
       ) : null}
 
       <div className="mt-3 text-xs leading-5 text-muted-foreground">
-        系统会按你选定的章节范围或卷，自动准备节奏板、拆章和章节执行资源，再继续写作、审校与修复。
+        Hệ thống sẽ tự chuẩn bị bảng nhịp, tách chương và tài nguyên triển khai chương theo phạm vi hoặc tập bạn chọn, rồi mới tiếp tục viết, rà soát và sửa lỗi.
       </div>
     </div>
   );

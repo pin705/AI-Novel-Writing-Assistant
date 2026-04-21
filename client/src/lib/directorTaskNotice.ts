@@ -26,7 +26,7 @@ export function parseDirectorTaskNotice(meta: Record<string, unknown> | null | u
         type: notice.action.type === "open_structured_outline" ? "open_structured_outline" : "open_structured_outline",
         label: typeof notice.action.label === "string" && notice.action.label.trim()
           ? notice.action.label.trim()
-          : "快速修复章节标题",
+          : "Sửa nhanh tiêu đề chương",
         volumeId: typeof notice.action.volumeId === "string" && notice.action.volumeId.trim()
           ? notice.action.volumeId.trim()
           : null,
@@ -40,9 +40,9 @@ export function isChapterTitleDiversitySummary(value: string | null | undefined)
   if (!normalized) {
     return false;
   }
-  return normalized.includes("章节标题结构过于集中")
-    || normalized.includes("相邻章节标题结构过于重复")
-    || normalized.includes("章节标题出现重复");
+  return normalized.includes("cấu trúc tiêu đề chương quá tập trung")
+    || normalized.includes("tiêu đề các chương liền kề quá giống nhau")
+    || normalized.includes("tiêu đề chương bị trùng lặp");
 }
 
 export function buildStructuredOutlineRoute(
@@ -91,7 +91,7 @@ export function resolveChapterTitleWarning(task: StructuredOutlineTaskLike | nul
     return {
       summary: taskNotice.summary,
       route: buildTaskNoticeRoute(task, taskNotice),
-      label: taskNotice.action?.label ?? "快速修复章节标题",
+      label: taskNotice.action?.label ?? "Sửa nhanh tiêu đề chương",
       volumeId: taskNotice.action?.volumeId ?? task.resumeTarget?.volumeId ?? null,
     };
   }
@@ -101,7 +101,7 @@ export function resolveChapterTitleWarning(task: StructuredOutlineTaskLike | nul
   return {
     summary: task.failureSummary?.trim() ?? "",
     route: buildStructuredOutlineRoute(task, task.resumeTarget?.volumeId ?? null),
-    label: "快速修复章节标题",
+    label: "Sửa nhanh tiêu đề chương",
     volumeId: task.resumeTarget?.volumeId ?? null,
   };
 }

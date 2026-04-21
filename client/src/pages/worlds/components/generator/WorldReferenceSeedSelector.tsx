@@ -15,23 +15,23 @@ const GROUP_META: Record<
   }
 > = {
   rules: {
-    title: "原作规则",
-    description: "这个世界默认怎么运转，后面自动生成会参考这些底层规则。",
+    title: "Quy tắc gốc",
+    description: "Thế giới này mặc định vận hành thế nào; các bước sinh tự động phía sau sẽ dựa vào những quy tắc nền này.",
     selectionKey: "ruleIds",
   },
   factions: {
-    title: "阵营立场",
-    description: "谁站哪边、信什么、想推动什么。适合保留原作里的大方向。",
+    title: "Lập trường phe phái",
+    description: "Ai đứng về phía nào, tin điều gì, muốn đẩy điều gì. Phù hợp để giữ lại trục lớn của bản gốc.",
     selectionKey: "factionIds",
   },
   forces: {
-    title: "组织与势力",
-    description: "具体公司、部门、帮派、人脉圈这类可直接上场的组织。",
+    title: "Tổ chức và thế lực",
+    description: "Những công ty, phòng ban, băng nhóm hay mạng lưới quan hệ có thể đưa thẳng vào truyện.",
     selectionKey: "forceIds",
   },
   locations: {
-    title: "地点与场景",
-    description: "城市、街区、公司、住处等可以直接拿来用的场景。",
+    title: "Địa điểm và bối cảnh",
+    description: "Thành phố, khu phố, công ty, nơi ở... là những bối cảnh có thể dùng ngay.",
     selectionKey: "locationIds",
   },
 };
@@ -61,7 +61,7 @@ export default function WorldReferenceSeedSelector(props: {
   if (visibleGroups.length === 0) {
     return (
       <div className="rounded-md border border-dashed p-4 text-sm text-muted-foreground">
-        这次没有从参考作品里稳定提取出可直接沿用的组织、地点或规则，后面会继续按你的改造方向生成。
+        Lần này hệ thống chưa trích ổn định được tổ chức, địa điểm hoặc quy tắc nào có thể dùng lại ngay từ tác phẩm tham chiếu. Phần sau sẽ tiếp tục sinh theo hướng bạn muốn chỉnh sửa.
       </div>
     );
   }
@@ -69,9 +69,9 @@ export default function WorldReferenceSeedSelector(props: {
   return (
     <div className="rounded-md border p-3 text-sm space-y-4">
       <div className="space-y-1">
-        <div className="font-medium">直接沿用原作设定</div>
+        <div className="font-medium">Giữ nguyên thiết lập gốc</div>
         <div className="text-xs text-muted-foreground">
-          系统已经从参考作品里提取出一批现成设定，默认勾选。保留它们可以明显减少你后面手动填写。
+          Hệ thống đã trích ra một số thiết lập có sẵn từ tác phẩm tham chiếu và đang mặc định chọn. Giữ lại sẽ giúp bạn đỡ phải nhập tay về sau.
         </div>
       </div>
 
@@ -93,7 +93,7 @@ export default function WorldReferenceSeedSelector(props: {
                 variant="outline"
                 onClick={() => onToggleAll(group, !allSelected)}
               >
-                {allSelected ? "全部取消" : "全部保留"}
+                {allSelected ? "Bỏ chọn hết" : "Giữ hết"}
               </Button>
             </div>
 
@@ -114,7 +114,7 @@ export default function WorldReferenceSeedSelector(props: {
                       {summary ? (
                         <div className="text-xs text-muted-foreground">{summary}</div>
                       ) : (
-                        <div className="text-xs text-muted-foreground">已识别为可直接沿用的原作设定。</div>
+                        <div className="text-xs text-muted-foreground">Đã nhận diện là thiết lập gốc có thể dùng lại ngay.</div>
                       )}
                     </div>
                   </label>

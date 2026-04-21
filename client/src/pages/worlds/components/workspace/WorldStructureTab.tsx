@@ -16,11 +16,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 
 const SECTION_OPTIONS: Array<{ value: WorldStructureSectionKey; label: string }> = [
-  { value: "profile", label: "世界概要" },
-  { value: "rules", label: "规则中心" },
-  { value: "factions", label: "阵营与势力" },
-  { value: "locations", label: "地点与地形" },
-  { value: "relations", label: "关系网络" },
+  { value: "profile", label: "Tổng quan thế giới" },
+  { value: "rules", label: "Trung tâm quy tắc" },
+  { value: "factions", label: "Phe phái và thế lực" },
+  { value: "locations", label: "Địa điểm và địa hình" },
+  { value: "relations", label: "Mạng lưới quan hệ" },
 ];
 
 function updateArrayItem<T>(items: T[], index: number, nextItem: T): T[] {
@@ -80,17 +80,17 @@ export default function WorldStructureTab(props: {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>结构化设定</CardTitle>
+          <CardTitle>Thiết lập có cấu trúc</CardTitle>
         </CardHeader>
-        <CardContent className="text-sm text-muted-foreground">正在加载结构化世界数据...</CardContent>
+        <CardContent className="text-sm text-muted-foreground">Đang tải dữ liệu thế giới có cấu trúc...</CardContent>
       </Card>
-    );
+  );
   }
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>结构化设定</CardTitle>
+        <CardTitle>Thiết lập có cấu trúc</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="rounded-md border p-3 space-y-3">
@@ -118,7 +118,7 @@ export default function WorldStructureTab(props: {
               }}
               disabled={backfillPending}
             >
-              {backfillPending ? "提取中..." : hasStructuredData ? "重新从现有设定提取" : "从现有设定提取结构"}
+              {backfillPending ? "Đang trích xuất..." : hasStructuredData ? "Trích lại từ thiết lập hiện có" : "Trích cấu trúc từ thiết lập hiện có"}
             </Button>
             <Button
               variant="outline"
@@ -131,16 +131,16 @@ export default function WorldStructureTab(props: {
               }}
               disabled={generatePending}
             >
-              {generatePending ? "补全中..." : "AI 补全当前区块"}
+              {generatePending ? "Đang bổ sung..." : "AI bổ sung khối hiện tại"}
             </Button>
             <Button onClick={() => void onSave(draftStructure, draftBindingSupport)} disabled={savePending}>
-              {savePending ? "保存中..." : "保存结构"}
+              {savePending ? "Đang lưu..." : "Lưu cấu trúc"}
             </Button>
           </div>
         </div>
 
         <div className="rounded-md border p-3 space-y-3">
-          <div className="font-medium">世界概要</div>
+          <div className="font-medium">Tổng quan thế giới</div>
           <Input
             value={draftStructure.profile.identity}
             onChange={(event) =>
@@ -150,7 +150,7 @@ export default function WorldStructureTab(props: {
                   : prev,
               )
             }
-            placeholder="世界身份 / 类型气质"
+            placeholder="Bản sắc thế giới / khí chất thể loại"
           />
           <Input
             value={draftStructure.profile.tone}
@@ -161,7 +161,7 @@ export default function WorldStructureTab(props: {
                   : prev,
               )
             }
-            placeholder="整体调性"
+            placeholder="Tông tổng thể"
           />
           <textarea
             className="min-h-[100px] w-full rounded-md border bg-background p-2 text-sm"
@@ -173,7 +173,7 @@ export default function WorldStructureTab(props: {
                   : prev,
               )
             }
-            placeholder="世界摘要"
+            placeholder="Tóm tắt thế giới"
           />
           <textarea
             className="min-h-[80px] w-full rounded-md border bg-background p-2 text-sm"
@@ -185,7 +185,7 @@ export default function WorldStructureTab(props: {
                   : prev,
               )
             }
-            placeholder="核心冲突"
+            placeholder="Xung đột cốt lõi"
           />
           <Input
             value={draftStructure.profile.themes.join("、")}
@@ -202,13 +202,13 @@ export default function WorldStructureTab(props: {
                   : prev,
               )
             }
-            placeholder="主题关键词，使用顿号或逗号分隔"
+            placeholder="Từ khóa chủ đề, ngăn cách bằng dấu phẩy hoặc dấu chấm giữa"
           />
         </div>
 
         <div className="rounded-md border p-3 space-y-3">
           <div className="flex items-center justify-between">
-            <div className="font-medium">规则中心</div>
+            <div className="font-medium">Trung tâm quy tắc</div>
             <Button
               size="sm"
               variant="outline"
@@ -236,7 +236,7 @@ export default function WorldStructureTab(props: {
                 )
               }
             >
-              新增规则
+            Thêm quy tắc
             </Button>
           </div>
           <textarea
@@ -249,7 +249,7 @@ export default function WorldStructureTab(props: {
                   : prev,
               )
             }
-            placeholder="世界级规则总结"
+            placeholder="Tổng kết quy tắc cấp thế giới"
           />
           {draftStructure.rules.axioms.map((rule, index) => (
             <div key={rule.id || index} className="rounded-md border p-3 space-y-2">
@@ -272,7 +272,7 @@ export default function WorldStructureTab(props: {
                         : prev,
                     )
                   }
-                  placeholder="规则名称"
+                  placeholder="Tên quy tắc"
                 />
                 <Input
                   value={rule.cost}
@@ -292,7 +292,7 @@ export default function WorldStructureTab(props: {
                         : prev,
                     )
                   }
-                  placeholder="代价"
+                  placeholder="Cái giá"
                 />
               </div>
               <textarea
@@ -314,7 +314,7 @@ export default function WorldStructureTab(props: {
                       : prev,
                   )
                 }
-                placeholder="规则说明"
+                placeholder="Mô tả quy tắc"
               />
               <div className="grid gap-2 md:grid-cols-2">
                 <Input
@@ -335,7 +335,7 @@ export default function WorldStructureTab(props: {
                         : prev,
                     )
                   }
-                  placeholder="边界条件"
+                  placeholder="Điều kiện biên"
                 />
                 <Input
                   value={rule.enforcement}
@@ -355,7 +355,7 @@ export default function WorldStructureTab(props: {
                         : prev,
                     )
                   }
-                  placeholder="约束/执行后果"
+                  placeholder="Ràng buộc / hậu quả khi thực thi"
                 />
               </div>
             </div>
@@ -364,7 +364,7 @@ export default function WorldStructureTab(props: {
 
         <div className="rounded-md border p-3 space-y-3">
           <div className="flex items-center justify-between">
-            <div className="font-medium">阵营与势力</div>
+            <div className="font-medium">Phe phái và thế lực</div>
             <div className="flex gap-2">
               <Button
                 size="sm"
@@ -391,7 +391,7 @@ export default function WorldStructureTab(props: {
                   )
                 }
               >
-                新增阵营
+                Thêm phe phái
               </Button>
               <Button
                 size="sm"
@@ -421,33 +421,33 @@ export default function WorldStructureTab(props: {
                   )
                 }
               >
-                新增势力
+                Thêm thế lực
               </Button>
             </div>
           </div>
           <div className="rounded-md border border-dashed p-3 text-xs text-muted-foreground space-y-1">
-            <div>阵营 = 抽象立场、路线或世界站队；势力 = 具体组织、圈层、网络或机构。</div>
-            <div>像“社会压力机制”“行业运作规则”“人际网络法则”这类世界级默认规则，应优先写到“规则中心”，不要塞进阵营卡。</div>
-            <div>
-              当前阵营 ID：{
-                draftStructure.factions.length > 0
-                  ? draftStructure.factions.map((item) => `${item.id}（${item.name || "未命名"}）`).join("、")
-                  : "暂无"
-              }
-            </div>
-            <div>
-              当前势力 ID：{
-                draftStructure.forces.length > 0
-                  ? draftStructure.forces.map((item) => `${item.id}（${item.name || "未命名"}）`).join("、")
-                  : "暂无"
-              }
-            </div>
+            <div>Phe phái = lập trường trừu tượng, tuyến đi hoặc phe đứng trong thế giới; thế lực = tổ chức, vòng tròn, mạng lưới hoặc cơ quan cụ thể.</div>
+            <div>Các quy tắc mặc định cấp thế giới như “cơ chế áp lực xã hội”, “quy tắc vận hành ngành nghề”, “quy tắc mạng lưới quan hệ” nên ưu tiên viết vào “Trung tâm quy tắc”, đừng nhét vào thẻ phe phái.</div>
+              <div>
+                ID phe phái hiện tại：{
+                  draftStructure.factions.length > 0
+                    ? draftStructure.factions.map((item) => `${item.id} (${item.name || "Chưa đặt tên"})`).join(", ")
+                    : "Chưa có"
+                }
+              </div>
+              <div>
+                ID thế lực hiện tại：{
+                  draftStructure.forces.length > 0
+                    ? draftStructure.forces.map((item) => `${item.id} (${item.name || "Chưa đặt tên"})`).join(", ")
+                    : "Chưa có"
+                }
+              </div>
           </div>
           <div className="space-y-3">
             {draftStructure.factions.map((faction, index) => (
               <div key={faction.id || index} className="rounded-md border p-3 space-y-2">
                 <div className="text-xs text-muted-foreground">
-                  阵营卡描述的是抽象站队，不是具体公司、部门或人脉网络。
+                  Thẻ phe phái mô tả lập trường trừu tượng, không phải công ty, phòng ban hay mạng lưới quan hệ cụ thể.
                 </div>
                 <Input
                   value={faction.name}
@@ -464,7 +464,7 @@ export default function WorldStructureTab(props: {
                         : prev,
                     )
                   }
-                  placeholder="阵营名称，例如：体制内求稳派 / 市场逐利派 / 关系网络实用派"
+                  placeholder="Tên phe phái, ví dụ: phe giữ ổn định trong hệ thống / phe theo đuổi lợi nhuận / phe thực dụng dựa quan hệ"
                 />
                 <Input
                   value={faction.position}
@@ -481,7 +481,7 @@ export default function WorldStructureTab(props: {
                         : prev,
                     )
                   }
-                  placeholder="立场 / 世界站队"
+                  placeholder="Lập trường / phe đứng trong thế giới"
                 />
                 <textarea
                   className="min-h-[80px] w-full rounded-md border bg-background p-2 text-sm"
@@ -499,7 +499,7 @@ export default function WorldStructureTab(props: {
                         : prev,
                     )
                   }
-                  placeholder="阵营理念 / 信条 / 主张"
+                  placeholder="Tư tưởng / tín điều / chủ trương của phe"
                 />
                 <div className="grid gap-2 md:grid-cols-2">
                   <Input
@@ -517,7 +517,7 @@ export default function WorldStructureTab(props: {
                           : prev,
                       )
                     }
-                    placeholder="长期目标，使用顿号或逗号分隔"
+                    placeholder="Mục tiêu dài hạn, ngăn cách bằng dấu phẩy hoặc dấu chấm giữa"
                   />
                   <Input
                     value={faction.methods.join("、")}
@@ -534,7 +534,7 @@ export default function WorldStructureTab(props: {
                           : prev,
                       )
                     }
-                    placeholder="常用手段，使用顿号或逗号分隔"
+                    placeholder="Cách làm thường dùng, ngăn cách bằng dấu phẩy hoặc dấu chấm giữa"
                   />
                 </div>
                 <Input
@@ -552,11 +552,11 @@ export default function WorldStructureTab(props: {
                         : prev,
                     )
                   }
-                  placeholder="代表势力 ID，使用顿号或逗号分隔"
+                  placeholder="ID thế lực đại diện, ngăn cách bằng dấu phẩy hoặc dấu chấm giữa"
                 />
                 {faction.representativeForceIds.length > 0 ? (
                   <div className="text-xs text-muted-foreground">
-                    代表势力：{faction.representativeForceIds.map((id) => forceNameById.get(id) || id).join("、")}
+                    Thế lực đại diện: {faction.representativeForceIds.map((id) => forceNameById.get(id) || id).join("、")}
                   </div>
                 ) : null}
               </div>
@@ -564,7 +564,7 @@ export default function WorldStructureTab(props: {
             {draftStructure.forces.map((force, index) => (
               <div key={force.id || index} className="rounded-md border p-3 space-y-2">
                 <div className="text-xs text-muted-foreground">
-                  势力卡描述的是能施压、能占据地点、能参与关系网络的具体组织或圈层。
+                  Thẻ thế lực mô tả tổ chức hoặc vòng tròn cụ thể có thể gây áp lực, chiếm giữ địa điểm và tham gia mạng lưới quan hệ.
                 </div>
                 <div className="grid gap-2 md:grid-cols-3">
                   <Input
@@ -582,7 +582,7 @@ export default function WorldStructureTab(props: {
                           : prev,
                       )
                     }
-                    placeholder="势力名称，例如：广告公司管理层 / 房屋中介链 / 地方商业圈人脉网"
+                    placeholder="Tên thế lực, ví dụ: ban quản lý công ty quảng cáo / chuỗi môi giới nhà đất / mạng quan hệ giới kinh doanh địa phương"
                   />
                   <Input
                     value={force.type}
@@ -599,7 +599,7 @@ export default function WorldStructureTab(props: {
                           : prev,
                       )
                     }
-                    placeholder="势力类型，例如：公司 / 部门 / 中介网络 / 商业圈层"
+                    placeholder="Loại thế lực, ví dụ: công ty / phòng ban / mạng môi giới / vòng tròn kinh doanh"
                   />
                   <Input
                     value={force.factionId ?? ""}
@@ -616,12 +616,12 @@ export default function WorldStructureTab(props: {
                           : prev,
                       )
                     }
-                    placeholder="所属阵营 ID（可空）"
+                    placeholder="ID phe phái trực thuộc (có thể để trống)"
                   />
                 </div>
                 {force.factionId ? (
                   <div className="text-xs text-muted-foreground">
-                    所属阵营：{factionNameById.get(force.factionId) || force.factionId}
+                    Phe phái trực thuộc: {factionNameById.get(force.factionId) || force.factionId}
                   </div>
                 ) : null}
                 <textarea
@@ -640,7 +640,7 @@ export default function WorldStructureTab(props: {
                         : prev,
                     )
                   }
-                  placeholder="势力概述 / 对外身份 / 在世界中的作用"
+                  placeholder="Tổng quan thế lực / danh nghĩa bên ngoài / vai trò trong thế giới"
                 />
                 <div className="grid gap-2 md:grid-cols-2">
                   <Input
@@ -658,7 +658,7 @@ export default function WorldStructureTab(props: {
                           : prev,
                       )
                     }
-                    placeholder="权力基础 / 资源来源 / 控制抓手"
+                    placeholder="Nền tảng quyền lực / nguồn tài nguyên / điểm kiểm soát"
                   />
                   <Input
                     value={force.currentObjective}
@@ -675,7 +675,7 @@ export default function WorldStructureTab(props: {
                           : prev,
                       )
                     }
-                    placeholder="当前目标 / 眼下想推进什么"
+                    placeholder="Mục tiêu hiện tại / đang muốn đẩy điều gì"
                   />
                 </div>
                 <div className="grid gap-2 md:grid-cols-2">
@@ -694,7 +694,7 @@ export default function WorldStructureTab(props: {
                           : prev,
                       )
                     }
-                    placeholder="领导者 / 关键人物（可空）"
+                    placeholder="Người lãnh đạo / nhân vật then chốt (có thể để trống)"
                   />
                   <Input
                     value={force.pressure}
@@ -711,7 +711,7 @@ export default function WorldStructureTab(props: {
                           : prev,
                       )
                     }
-                    placeholder="施压方式 / 高压来源 / 它如何逼迫角色"
+                    placeholder="Cách gây áp lực / nguồn sức ép / nó ép nhân vật như thế nào"
                   />
                 </div>
                 <div className="grid gap-2 md:grid-cols-1">
@@ -730,7 +730,7 @@ export default function WorldStructureTab(props: {
                           : prev,
                       )
                     }
-                    placeholder="叙事角色，例如：压迫源 / 诱导者 / 守门人 / 缓冲带"
+                    placeholder="Vai trò trong truyện, ví dụ: nguồn áp bức / kẻ dẫn dụ / người gác cổng / vùng đệm"
                   />
                 </div>
               </div>
@@ -740,7 +740,7 @@ export default function WorldStructureTab(props: {
 
         <div className="rounded-md border p-3 space-y-3">
           <div className="flex items-center justify-between">
-            <div className="font-medium">地点与地形</div>
+            <div className="font-medium">Địa điểm và địa hình</div>
             <Button
               size="sm"
               variant="outline"
@@ -768,7 +768,7 @@ export default function WorldStructureTab(props: {
                 )
               }
             >
-              新增地点
+                Thêm địa điểm
             </Button>
           </div>
           {draftStructure.locations.map((location, index) => (
@@ -789,7 +789,7 @@ export default function WorldStructureTab(props: {
                         : prev,
                     )
                   }
-                  placeholder="地点名称"
+                  placeholder="Tên địa điểm"
                 />
                 <Input
                   value={location.terrain}
@@ -806,7 +806,7 @@ export default function WorldStructureTab(props: {
                         : prev,
                     )
                   }
-                  placeholder="地形 / 地貌"
+                  placeholder="Địa hình / địa mạo"
                 />
               </div>
               <textarea
@@ -825,7 +825,7 @@ export default function WorldStructureTab(props: {
                       : prev,
                   )
                 }
-                placeholder="地点概述"
+                placeholder="Tổng quan địa điểm"
               />
               <div className="grid gap-2 md:grid-cols-2">
                 <Input
@@ -843,7 +843,7 @@ export default function WorldStructureTab(props: {
                         : prev,
                     )
                   }
-                  placeholder="叙事功能"
+                  placeholder="Chức năng trong truyện"
                 />
                 <Input
                   value={location.risk}
@@ -860,7 +860,7 @@ export default function WorldStructureTab(props: {
                         : prev,
                     )
                   }
-                  placeholder="风险"
+                  placeholder="Rủi ro"
                 />
               </div>
               <div className="grid gap-2 md:grid-cols-2">
@@ -879,7 +879,7 @@ export default function WorldStructureTab(props: {
                         : prev,
                     )
                   }
-                  placeholder="进入限制"
+                  placeholder="Giới hạn vào"
                 />
                 <Input
                   value={location.exitCost}
@@ -896,7 +896,7 @@ export default function WorldStructureTab(props: {
                         : prev,
                     )
                   }
-                  placeholder="离开代价"
+                  placeholder="Cái giá khi rời đi"
                 />
               </div>
             </div>
@@ -905,7 +905,7 @@ export default function WorldStructureTab(props: {
 
         <div className="rounded-md border p-3 space-y-3">
           <div className="flex items-center justify-between">
-            <div className="font-medium">关系网络</div>
+            <div className="font-medium">Mạng lưới quan hệ</div>
             <div className="flex gap-2">
               <Button
                 size="sm"
@@ -934,7 +934,7 @@ export default function WorldStructureTab(props: {
                   )
                 }
               >
-                新增势力关系
+                Thêm quan hệ thế lực
               </Button>
               <Button
                 size="sm"
@@ -962,15 +962,15 @@ export default function WorldStructureTab(props: {
                   )
                 }
               >
-                新增地点控制
+                Thêm kiểm soát địa điểm
               </Button>
             </div>
           </div>
           {draftStructure.relations.forceRelations.map((relation, index) => (
             <div key={relation.id || index} className="rounded-md border p-3 space-y-2">
               <div className="text-xs text-muted-foreground">
-                {forceNameById.get(relation.sourceForceId) || relation.sourceForceId || "源势力"} {"->"}{" "}
-                {forceNameById.get(relation.targetForceId) || relation.targetForceId || "目标势力"}
+                {forceNameById.get(relation.sourceForceId) || relation.sourceForceId || "Thế lực nguồn"} {"->"}{" "}
+                {forceNameById.get(relation.targetForceId) || relation.targetForceId || "Thế lực đích"}
               </div>
               <div className="grid gap-2 md:grid-cols-2">
                 <Input
@@ -991,7 +991,7 @@ export default function WorldStructureTab(props: {
                         : prev,
                     )
                   }
-                  placeholder="源势力 ID"
+                  placeholder="ID thế lực nguồn"
                 />
                 <Input
                   value={relation.targetForceId}
@@ -1011,7 +1011,7 @@ export default function WorldStructureTab(props: {
                         : prev,
                     )
                   }
-                  placeholder="目标势力 ID"
+                  placeholder="ID thế lực đích"
                 />
               </div>
               <div className="grid gap-2 md:grid-cols-2">
@@ -1033,7 +1033,7 @@ export default function WorldStructureTab(props: {
                         : prev,
                     )
                   }
-                  placeholder="关系类型"
+                  placeholder="Loại quan hệ"
                 />
                 <Input
                   value={relation.tension}
@@ -1053,7 +1053,7 @@ export default function WorldStructureTab(props: {
                         : prev,
                     )
                   }
-                  placeholder="张力 / 压力"
+                  placeholder="Độ căng / áp lực"
                 />
               </div>
               <textarea
@@ -1075,15 +1075,15 @@ export default function WorldStructureTab(props: {
                       : prev,
                   )
                 }
-                placeholder="关系说明"
+                placeholder="Mô tả quan hệ"
               />
             </div>
           ))}
           {draftStructure.relations.locationControls.map((relation, index) => (
             <div key={relation.id || index} className="rounded-md border p-3 space-y-2">
               <div className="text-xs text-muted-foreground">
-                {(forceNameById.get(relation.forceId) || relation.forceId || "势力")} 控制{" "}
-                {(locationNameById.get(relation.locationId) || relation.locationId || "地点")}
+                {(forceNameById.get(relation.forceId) || relation.forceId || "Thế lực")} kiểm soát{" "}
+                {(locationNameById.get(relation.locationId) || relation.locationId || "Địa điểm")}
               </div>
               <div className="grid gap-2 md:grid-cols-2">
                 <Input
@@ -1105,7 +1105,7 @@ export default function WorldStructureTab(props: {
                         : prev,
                     )
                   }
-                  placeholder="势力 ID"
+                  placeholder="ID thế lực"
                 />
                 <Input
                   value={relation.locationId}
@@ -1126,7 +1126,7 @@ export default function WorldStructureTab(props: {
                         : prev,
                     )
                   }
-                  placeholder="地点 ID"
+                  placeholder="ID địa điểm"
                 />
               </div>
               <Input
@@ -1148,7 +1148,7 @@ export default function WorldStructureTab(props: {
                       : prev,
                   )
                 }
-                placeholder="控制关系"
+                placeholder="Quan hệ kiểm soát"
               />
               <textarea
                 className="min-h-[70px] w-full rounded-md border bg-background p-2 text-sm"
@@ -1170,38 +1170,38 @@ export default function WorldStructureTab(props: {
                       : prev,
                   )
                 }
-                placeholder="说明"
+                placeholder="Mô tả"
               />
             </div>
           ))}
         </div>
 
         <div className="rounded-md border p-3 space-y-2">
-          <div className="font-medium">绑定建议</div>
-          <div className="text-xs text-muted-foreground">当前阶段只读展示，不接入小说绑定。</div>
+          <div className="font-medium">Gợi ý liên kết</div>
+          <div className="text-xs text-muted-foreground">Giai đoạn này chỉ hiển thị để tham khảo, chưa nối với binding truyện.</div>
           <div className="grid gap-3 md:grid-cols-2">
             <div className="rounded-md border p-3 text-sm">
-              <div className="font-medium">推荐进入点</div>
+              <div className="font-medium">Điểm vào khuyến nghị</div>
               <div className="mt-2 whitespace-pre-wrap">
-                {draftBindingSupport.recommendedEntryPoints.join("\n") || "暂无"}
+                {draftBindingSupport.recommendedEntryPoints.join("\n") || "Chưa có"}
               </div>
             </div>
             <div className="rounded-md border p-3 text-sm">
-              <div className="font-medium">高压势力</div>
+              <div className="font-medium">Thế lực áp lực cao</div>
               <div className="mt-2 whitespace-pre-wrap">
-                {draftBindingSupport.highPressureForces.join("\n") || "暂无"}
+                {draftBindingSupport.highPressureForces.join("\n") || "Chưa có"}
               </div>
             </div>
             <div className="rounded-md border p-3 text-sm">
-              <div className="font-medium">可兼容冲突</div>
+              <div className="font-medium">Xung đột có thể tương thích</div>
               <div className="mt-2 whitespace-pre-wrap">
-                {draftBindingSupport.compatibleConflicts.join("\n") || "暂无"}
+                {draftBindingSupport.compatibleConflicts.join("\n") || "Chưa có"}
               </div>
             </div>
             <div className="rounded-md border p-3 text-sm">
-              <div className="font-medium">禁止组合</div>
+              <div className="font-medium">Tổ hợp cấm</div>
               <div className="mt-2 whitespace-pre-wrap">
-                {draftBindingSupport.forbiddenCombinations.join("\n") || "暂无"}
+                {draftBindingSupport.forbiddenCombinations.join("\n") || "Chưa có"}
               </div>
             </div>
           </div>

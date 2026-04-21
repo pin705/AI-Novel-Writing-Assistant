@@ -96,45 +96,45 @@ export function CharacterCreateDialog({ onCreated }: CharacterCreateDialogProps)
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button>创建角色</Button>
+        <Button>Tạo nhân vật</Button>
       </DialogTrigger>
       <DialogContent className="w-[96vw] max-h-[90vh] max-w-[1400px] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>创建角色</DialogTitle>
+          <DialogTitle>Tạo nhân vật</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>手动创建角色</CardTitle>
+              <CardTitle>Tạo nhân vật thủ công</CardTitle>
             </CardHeader>
             <CardContent className="grid gap-2 md:grid-cols-2">
               <input
                 className="rounded-md border p-2 text-sm"
-                placeholder="角色名称"
+                placeholder="Tên nhân vật"
                 value={form.name}
                 onChange={(event) => setForm((prev) => ({ ...prev, name: event.target.value }))}
               />
               <input
                 className="rounded-md border p-2 text-sm"
-                placeholder="角色定位（主角/反派/配角）"
+                placeholder="Vai trò nhân vật (chính diện / phản diện / phụ)"
                 value={form.role}
                 onChange={(event) => setForm((prev) => ({ ...prev, role: event.target.value }))}
               />
               <input
                 className="rounded-md border p-2 text-sm"
-                placeholder="性格特征"
+                placeholder="Đặc điểm tính cách"
                 value={form.personality}
                 onChange={(event) => setForm((prev) => ({ ...prev, personality: event.target.value }))}
               />
               <input
                 className="rounded-md border p-2 text-sm"
-                placeholder="背景故事"
+                placeholder="Bối cảnh quá khứ"
                 value={form.background}
                 onChange={(event) => setForm((prev) => ({ ...prev, background: event.target.value }))}
               />
               <input
                 className="rounded-md border p-2 text-sm md:col-span-2"
-                placeholder="成长轨迹"
+                placeholder="Hành trình phát triển"
                 value={form.development}
                 onChange={(event) => setForm((prev) => ({ ...prev, development: event.target.value }))}
               />
@@ -143,33 +143,33 @@ export function CharacterCreateDialog({ onCreated }: CharacterCreateDialogProps)
                 onClick={() => createMutation.mutate()}
                 disabled={createMutation.isPending || !form.name.trim()}
               >
-                {createMutation.isPending ? "创建中..." : "创建角色"}
+                {createMutation.isPending ? "Đang tạo..." : "Tạo nhân vật"}
               </Button>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader>
-              <CardTitle>AI 生成角色</CardTitle>
+              <CardTitle>AI tạo nhân vật</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               <textarea
                 className="min-h-[120px] w-full rounded-md border p-2 text-sm"
-                placeholder="输入角色描述，例如：冷静理智但背负家仇的年轻剑士"
+                placeholder="Nhập mô tả nhân vật, ví dụ: một kiếm sĩ trẻ điềm tĩnh, lý trí nhưng mang mối thù gia tộc"
                 value={aiDescription}
                 onChange={(event) => setAIDescription(event.target.value)}
               />
 
               <div className="space-y-2 rounded-md border p-3">
                 <div className="flex items-center justify-between gap-2">
-                  <div className="text-sm font-medium">高级设定（可选）</div>
+                  <div className="text-sm font-medium">Thiết lập nâng cao (không bắt buộc)</div>
                   <Button size="sm" variant="outline" onClick={() => setConstraints(createDefaultConstraints())}>
-                    一键清空高级设定
+                    Xóa sạch thiết lập nâng cao
                   </Button>
                 </div>
                 <div className="grid gap-2 md:grid-cols-2">
                   <label className="space-y-1 text-sm">
-                    <div className="text-xs text-muted-foreground">角色功能位</div>
+                    <div className="text-xs text-muted-foreground">Vai trò trong truyện</div>
                     <select
                       className="h-10 w-full rounded-md border bg-background px-2 text-sm"
                       value={constraints.storyFunction ?? ""}
@@ -179,17 +179,17 @@ export function CharacterCreateDialog({ onCreated }: CharacterCreateDialogProps)
                           storyFunction: (event.target.value || undefined) as CharacterGenerateConstraints["storyFunction"],
                         }))}
                     >
-                      <option value="">不指定</option>
-                      <option value="主角">主角</option>
-                      <option value="反派">反派</option>
-                      <option value="导师">导师</option>
-                      <option value="对照组">对照组</option>
-                      <option value="配角">配角</option>
+                      <option value="">Không chỉ định</option>
+                      <option value="主角">Nhân vật chính</option>
+                      <option value="反派">Phản diện</option>
+                      <option value="导师">Người dẫn dắt</option>
+                      <option value="对照组">Đối chiếu</option>
+                      <option value="配角">Nhân vật phụ</option>
                     </select>
                   </label>
 
                   <label className="space-y-1 text-sm">
-                    <div className="text-xs text-muted-foreground">成长阶段</div>
+                    <div className="text-xs text-muted-foreground">Giai đoạn phát triển</div>
                     <select
                       className="h-10 w-full rounded-md border bg-background px-2 text-sm"
                       value={constraints.growthStage ?? ""}
@@ -199,60 +199,60 @@ export function CharacterCreateDialog({ onCreated }: CharacterCreateDialogProps)
                           growthStage: (event.target.value || undefined) as CharacterGenerateConstraints["growthStage"],
                         }))}
                     >
-                      <option value="">不指定</option>
-                      <option value="起点">起点</option>
-                      <option value="受挫">受挫</option>
-                      <option value="转折">转折</option>
-                      <option value="觉醒">觉醒</option>
-                      <option value="收束">收束</option>
+                      <option value="">Không chỉ định</option>
+                      <option value="起点">Khởi điểm</option>
+                      <option value="受挫">Thất bại</option>
+                      <option value="转折">Bước ngoặt</option>
+                      <option value="觉醒">Tỉnh ngộ</option>
+                      <option value="收束">Khép lại</option>
                     </select>
                   </label>
 
                   <input
                     className="rounded-md border p-2 text-sm"
-                    placeholder="外显目标（想达成什么）"
+                    placeholder="Mục tiêu bên ngoài (muốn đạt điều gì)"
                     value={constraints.externalGoal ?? ""}
                     onChange={(event) => setConstraints((prev) => ({ ...prev, externalGoal: event.target.value }))}
                   />
                   <input
                     className="rounded-md border p-2 text-sm"
-                    placeholder="内在需求（真正渴望）"
+                    placeholder="Nhu cầu bên trong (thứ thật sự khao khát)"
                     value={constraints.internalNeed ?? ""}
                     onChange={(event) => setConstraints((prev) => ({ ...prev, internalNeed: event.target.value }))}
                   />
                   <input
                     className="rounded-md border p-2 text-sm"
-                    placeholder="核心恐惧"
+                    placeholder="Nỗi sợ cốt lõi"
                     value={constraints.coreFear ?? ""}
                     onChange={(event) => setConstraints((prev) => ({ ...prev, coreFear: event.target.value }))}
                   />
                   <input
                     className="rounded-md border p-2 text-sm"
-                    placeholder="道德底线"
+                    placeholder="Ranh giới đạo đức"
                     value={constraints.moralBottomLine ?? ""}
                     onChange={(event) => setConstraints((prev) => ({ ...prev, moralBottomLine: event.target.value }))}
                   />
                   <input
                     className="rounded-md border p-2 text-sm"
-                    placeholder="不能说的秘密"
+                    placeholder="Bí mật không thể nói ra"
                     value={constraints.secret ?? ""}
                     onChange={(event) => setConstraints((prev) => ({ ...prev, secret: event.target.value }))}
                   />
                   <input
                     className="rounded-md border p-2 text-sm"
-                    placeholder="核心缺陷"
+                    placeholder="Khuyết điểm cốt lõi"
                     value={constraints.coreFlaw ?? ""}
                     onChange={(event) => setConstraints((prev) => ({ ...prev, coreFlaw: event.target.value }))}
                   />
                   <input
                     className="rounded-md border p-2 text-sm md:col-span-2"
-                    placeholder="关系钩子（与他人的冲突/纠葛）"
+                    placeholder="Móc quan hệ (xung đột / ràng buộc với người khác)"
                     value={constraints.relationshipHooks ?? ""}
                     onChange={(event) => setConstraints((prev) => ({ ...prev, relationshipHooks: event.target.value }))}
                   />
                   <input
                     className="rounded-md border p-2 text-sm md:col-span-2"
-                    placeholder="语气风格（如冷系克制、幽默辛辣）"
+                    placeholder="Phong cách giọng điệu (ví dụ: tiết chế, hài hước, cay mà duyên)"
                     value={constraints.toneStyle ?? ""}
                     onChange={(event) => setConstraints((prev) => ({ ...prev, toneStyle: event.target.value }))}
                   />
@@ -261,13 +261,13 @@ export function CharacterCreateDialog({ onCreated }: CharacterCreateDialogProps)
 
               <div className="grid gap-3 md:grid-cols-2">
                 <div className="space-y-1">
-                  <div className="text-sm font-medium">参考知识库（可多选）</div>
+                  <div className="text-sm font-medium">Kho tri thức tham chiếu (có thể chọn nhiều)</div>
                   <div className="max-h-48 space-y-2 overflow-auto rounded-md border p-2">
                     {knowledgeDocumentsQuery.isLoading ? (
-                      <div className="text-sm text-muted-foreground">加载中...</div>
+                      <div className="text-sm text-muted-foreground">Đang tải...</div>
                     ) : null}
                     {!knowledgeDocumentsQuery.isLoading && knowledgeDocuments.length === 0 ? (
-                      <div className="text-sm text-muted-foreground">暂无可选知识文档。</div>
+                      <div className="text-sm text-muted-foreground">Chưa có tài liệu tri thức nào để chọn.</div>
                     ) : null}
                     {knowledgeDocuments.map((document) => (
                       <label key={document.id} className="flex items-start gap-2 rounded-md border p-2 text-sm">
@@ -287,17 +287,17 @@ export function CharacterCreateDialog({ onCreated }: CharacterCreateDialogProps)
                       </label>
                     ))}
                   </div>
-                  <div className="text-xs text-muted-foreground">未选择则不引用知识库内容。</div>
+                  <div className="text-xs text-muted-foreground">Nếu không chọn, hệ thống sẽ không lấy nội dung từ kho tri thức.</div>
                 </div>
 
                 <div className="space-y-1">
-                  <div className="text-sm font-medium">参考拆书分析（可多选）</div>
+                  <div className="text-sm font-medium">Phân tích sách tham chiếu (có thể chọn nhiều)</div>
                   <div className="max-h-48 space-y-2 overflow-auto rounded-md border p-2">
                     {bookAnalysesQuery.isLoading ? (
-                      <div className="text-sm text-muted-foreground">加载中...</div>
+                      <div className="text-sm text-muted-foreground">Đang tải...</div>
                     ) : null}
                     {!bookAnalysesQuery.isLoading && bookAnalyses.length === 0 ? (
-                      <div className="text-sm text-muted-foreground">暂无可选拆书分析。</div>
+                      <div className="text-sm text-muted-foreground">Chưa có phân tích sách nào để chọn.</div>
                     ) : null}
                     {bookAnalyses.map((analysis) => (
                       <label key={analysis.id} className="flex items-start gap-2 rounded-md border p-2 text-sm">
@@ -317,18 +317,18 @@ export function CharacterCreateDialog({ onCreated }: CharacterCreateDialogProps)
                       </label>
                     ))}
                   </div>
-                  <div className="text-xs text-muted-foreground">仅展示已完成的拆书分析。</div>
+                  <div className="text-xs text-muted-foreground">Chỉ hiển thị các phân tích sách đã hoàn thành.</div>
                 </div>
               </div>
 
               <div className="text-xs text-muted-foreground">
-                已选参考：知识库 {selectedKnowledgeDocumentIds.length} 项，拆书 {selectedBookAnalysisIds.length} 项。
+                Đã chọn tham chiếu: {selectedKnowledgeDocumentIds.length} tài liệu tri thức, {selectedBookAnalysisIds.length} phân tích sách.
               </div>
               <Button
                 onClick={() => generateMutation.mutate()}
                 disabled={generateMutation.isPending || !aiDescription.trim()}
               >
-                {generateMutation.isPending ? "生成中..." : "生成并入库"}
+                {generateMutation.isPending ? "Đang tạo..." : "Tạo và lưu vào kho"}
               </Button>
             </CardContent>
           </Card>

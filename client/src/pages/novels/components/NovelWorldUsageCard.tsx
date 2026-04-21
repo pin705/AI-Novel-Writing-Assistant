@@ -33,13 +33,13 @@ function toggleId(ids: string[], id: string, checked: boolean): string[] {
 function labelStoryInputSource(source: string | null | undefined): string {
   switch (source) {
     case "explicit":
-      return "来自你这次手动输入的故事想法";
+      return "Từ ý tưởng truyện bạn vừa nhập thủ công";
     case "story_macro":
-      return "来自故事宏观规划里的故事想法";
+      return "Từ ý tưởng truyện trong phần quy hoạch vĩ mô";
     case "novel_description":
-      return "来自小说简介";
+      return "Từ phần giới thiệu tiểu thuyết";
     default:
-      return "暂无";
+      return "Chưa có";
   }
 }
 
@@ -75,19 +75,19 @@ export default function NovelWorldUsageCard(props: NovelWorldUsageCardProps) {
       <CardHeader className="space-y-3">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
           <div className="space-y-1">
-            <CardTitle>围绕这本书的世界边界</CardTitle>
+            <CardTitle>Ranh giới thế giới xoay quanh cuốn sách này</CardTitle>
             <div className="text-sm leading-6 text-muted-foreground">
-              系统会结合这本书的目标读者、卖点和前期承诺，从已绑定世界里裁出真正会用到的组织、地点和规则。你通常只需要确认主舞台、前期必须保留项和不要越界的边界说明。
+              Hệ thống sẽ kết hợp độc giả mục tiêu, điểm bán và cam kết giai đoạn đầu của cuốn sách để chắt ra từ thế giới đã gắn những tổ chức, địa điểm và quy tắc thật sự sẽ dùng. Bạn thường chỉ cần xác nhận sân khấu chính, các mục bắt buộc giữ lại ở giai đoạn đầu và phần ranh giới không được vượt qua.
             </div>
           </div>
           <div className="flex flex-wrap gap-2">
-            {props.view?.isStale ? <Badge variant="secondary">需要刷新</Badge> : null}
-            {slice ? <Badge variant="outline">已生成</Badge> : null}
+            {props.view?.isStale ? <Badge variant="secondary">Cần làm mới</Badge> : null}
+            {slice ? <Badge variant="outline">Đã tạo</Badge> : null}
             <Button type="button" variant="outline" onClick={props.onRefresh} disabled={!hasWorld || props.isRefreshing}>
-              {props.isRefreshing ? "正在刷新..." : "重新整理世界设定"}
+              {props.isRefreshing ? "Đang làm mới..." : "Sắp xếp lại thiết lập thế giới"}
             </Button>
             <Button type="button" onClick={() => props.onSave(savePayload)} disabled={!canSave || props.isSaving}>
-              {props.isSaving ? "正在保存..." : "保存这本书的保留项"}
+              {props.isSaving ? "Đang lưu..." : "Lưu các mục giữ lại của cuốn sách này"}
             </Button>
           </div>
         </div>
@@ -100,18 +100,18 @@ export default function NovelWorldUsageCard(props: NovelWorldUsageCardProps) {
       <CardContent className="space-y-6">
         {!hasWorld ? (
           <div className="rounded-md border border-dashed border-border/70 px-4 py-4 text-sm leading-6 text-muted-foreground">
-            这本小说还没有绑定世界观。先在上面的“基本信息”里选择一个世界，系统才会帮你整理可用设定。
+            Cuốn tiểu thuyết này vẫn chưa gắn thế giới quan. Hãy chọn một thế giới ở phần “Thông tin cơ bản” phía trên, rồi hệ thống mới giúp bạn sắp xếp các thiết lập có thể dùng.
           </div>
         ) : null}
 
         {hasWorld ? (
           <div className="grid gap-4 md:grid-cols-2">
             <div className="rounded-lg border border-border/70 px-4 py-3">
-              <div className="text-sm font-medium text-foreground">已绑定世界</div>
-              <div className="mt-1 text-sm text-muted-foreground">{props.view?.worldName ?? "未命名世界"}</div>
+              <div className="text-sm font-medium text-foreground">Đã gắn thế giới</div>
+              <div className="mt-1 text-sm text-muted-foreground">{props.view?.worldName ?? "Thế giới chưa đặt tên"}</div>
             </div>
             <div className="rounded-lg border border-border/70 px-4 py-3">
-              <div className="text-sm font-medium text-foreground">当前故事想法来源</div>
+              <div className="text-sm font-medium text-foreground">Nguồn ý tưởng truyện hiện tại</div>
               <div className="mt-1 text-sm text-muted-foreground">{labelStoryInputSource(props.view?.storyInputSource)}</div>
             </div>
           </div>
@@ -120,69 +120,69 @@ export default function NovelWorldUsageCard(props: NovelWorldUsageCardProps) {
         {slice ? (
           <div className="grid gap-4 lg:grid-cols-2">
             <div className="rounded-lg border border-border/70 px-4 py-4">
-              <div className="text-sm font-medium text-foreground">这本书当前会用到的内容</div>
+              <div className="text-sm font-medium text-foreground">Những gì cuốn sách hiện sẽ dùng</div>
               <div className="mt-3 space-y-4 text-sm">
                 <div>
-                  <div className="font-medium text-foreground">世界底色</div>
-                  <div className="mt-1 leading-6 text-muted-foreground">{slice.coreWorldFrame || "暂无"}</div>
+                  <div className="font-medium text-foreground">Nền tảng thế giới</div>
+                  <div className="mt-1 leading-6 text-muted-foreground">{slice.coreWorldFrame || "Chưa có"}</div>
                 </div>
                 <div>
-                  <div className="font-medium text-foreground">当前会用到的组织</div>
+                  <div className="font-medium text-foreground">Tổ chức sẽ dùng</div>
                   <div className="mt-2 flex flex-wrap gap-2">
                     {slice.activeForces.length > 0 ? slice.activeForces.map((item) => (
                       <Badge key={item.id} variant="secondary">{item.name}</Badge>
-                    )) : <span className="text-muted-foreground">暂无</span>}
+                    )) : <span className="text-muted-foreground">Chưa có</span>}
                   </div>
                 </div>
                 <div>
-                  <div className="font-medium text-foreground">当前会用到的地点</div>
+                  <div className="font-medium text-foreground">Địa điểm sẽ dùng</div>
                   <div className="mt-2 flex flex-wrap gap-2">
                     {slice.activeLocations.length > 0 ? slice.activeLocations.map((item) => (
                       <Badge key={item.id} variant="secondary">{item.name}</Badge>
-                    )) : <span className="text-muted-foreground">暂无</span>}
+                    )) : <span className="text-muted-foreground">Chưa có</span>}
                   </div>
                 </div>
                 <div>
-                  <div className="font-medium text-foreground">核心规则</div>
+                  <div className="font-medium text-foreground">Quy tắc cốt lõi</div>
                   <div className="mt-2 space-y-2">
                     {slice.appliedRules.length > 0 ? slice.appliedRules.map((item) => (
                       <div key={item.id} className="rounded-md bg-muted/30 px-3 py-2 text-muted-foreground">
                         <div className="font-medium text-foreground">{item.name}</div>
                         <div className="mt-1 leading-6">{item.summary}</div>
                       </div>
-                    )) : <div className="text-muted-foreground">暂无</div>}
+                    )) : <div className="text-muted-foreground">Chưa có</div>}
                   </div>
                 </div>
                 <div>
-                  <div className="font-medium text-foreground">主要压力来源</div>
+                  <div className="font-medium text-foreground">Nguồn áp lực chính</div>
                   <div className="mt-2 space-y-1 text-muted-foreground">
                     {slice.pressureSources.length > 0 ? slice.pressureSources.map((item) => (
                       <div key={item}>{item}</div>
-                    )) : <div>暂无</div>}
+                    )) : <div>Chưa có</div>}
                   </div>
                 </div>
                 <div>
-                  <div className="font-medium text-foreground">这本书先不要越过的边界</div>
-                  <div className="mt-1 leading-6 text-muted-foreground">{slice.storyScopeBoundary || "暂无"}</div>
+                  <div className="font-medium text-foreground">Ranh giới chưa nên vượt qua</div>
+                  <div className="mt-1 leading-6 text-muted-foreground">{slice.storyScopeBoundary || "Chưa có"}</div>
                 </div>
               </div>
             </div>
 
             <div className="rounded-lg border border-border/70 px-4 py-4">
-              <div className="text-sm font-medium text-foreground">如果你想手动指定，只改这几项就够了</div>
+              <div className="text-sm font-medium text-foreground">Nếu muốn chỉ định thủ công, chỉ cần sửa vài mục này</div>
               <div className="mt-1 text-sm leading-6 text-muted-foreground">
-                主舞台 = 故事最常发生的地点。前期必须保留 = 无论系统怎么裁剪，都要强制带进来的组织、地点或规则。
+                Sân khấu chính = nơi câu chuyện diễn ra nhiều nhất. Bắt buộc giữ lại ở giai đoạn đầu = những tổ chức, địa điểm hoặc quy tắc phải được đưa vào dù hệ thống có chắt lọc thế nào.
               </div>
 
               <div className="mt-4 space-y-4">
                 <div>
-                  <label className="text-sm font-medium text-foreground">主舞台</label>
+                  <label className="text-sm font-medium text-foreground">Sân khấu chính</label>
                   <Select value={primaryLocationId} onValueChange={setPrimaryLocationId}>
                     <SelectTrigger className="mt-2">
-                      <SelectValue placeholder="请选择主舞台" />
+                      <SelectValue placeholder="Hãy chọn sân khấu chính" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="__none__">不额外指定</SelectItem>
+                      <SelectItem value="__none__">Không chỉ định thêm</SelectItem>
                       {props.view?.availableLocations.map((item) => (
                         <SelectItem key={item.id} value={item.id}>{item.name}</SelectItem>
                       ))}
@@ -191,7 +191,7 @@ export default function NovelWorldUsageCard(props: NovelWorldUsageCardProps) {
                 </div>
 
                 <div>
-                  <div className="text-sm font-medium text-foreground">前期必须保留的组织</div>
+                  <div className="text-sm font-medium text-foreground">Tổ chức bắt buộc giữ ở giai đoạn đầu</div>
                   <div className="mt-2 grid gap-2">
                     {props.view?.availableForces.length ? props.view.availableForces.map((item) => (
                       <label key={item.id} className="flex items-start gap-3 rounded-md border border-border/60 px-3 py-2 text-sm">
@@ -206,12 +206,12 @@ export default function NovelWorldUsageCard(props: NovelWorldUsageCardProps) {
                           <span className="block text-muted-foreground">{item.summary}</span>
                         </span>
                       </label>
-                    )) : <div className="text-sm text-muted-foreground">当前世界里还没有可选组织。</div>}
+                    )) : <div className="text-sm text-muted-foreground">Thế giới hiện tại chưa có tổ chức nào để chọn.</div>}
                   </div>
                 </div>
 
                 <div>
-                  <div className="text-sm font-medium text-foreground">前期必须保留的地点</div>
+                  <div className="text-sm font-medium text-foreground">Địa điểm bắt buộc giữ ở giai đoạn đầu</div>
                   <div className="mt-2 grid gap-2">
                     {props.view?.availableLocations.length ? props.view.availableLocations.map((item) => (
                       <label key={item.id} className="flex items-start gap-3 rounded-md border border-border/60 px-3 py-2 text-sm">
@@ -226,12 +226,12 @@ export default function NovelWorldUsageCard(props: NovelWorldUsageCardProps) {
                           <span className="block text-muted-foreground">{item.summary}</span>
                         </span>
                       </label>
-                    )) : <div className="text-sm text-muted-foreground">当前世界里还没有可选地点。</div>}
+                    )) : <div className="text-sm text-muted-foreground">Thế giới hiện tại chưa có địa điểm nào để chọn.</div>}
                   </div>
                 </div>
 
                 <div>
-                  <div className="text-sm font-medium text-foreground">前期必须保留的规则</div>
+                  <div className="text-sm font-medium text-foreground">Quy tắc bắt buộc giữ ở giai đoạn đầu</div>
                   <div className="mt-2 grid gap-2">
                     {props.view?.availableRules.length ? props.view.availableRules.map((item) => (
                       <label key={item.id} className="flex items-start gap-3 rounded-md border border-border/60 px-3 py-2 text-sm">
@@ -246,16 +246,16 @@ export default function NovelWorldUsageCard(props: NovelWorldUsageCardProps) {
                           <span className="block text-muted-foreground">{item.summary}</span>
                         </span>
                       </label>
-                    )) : <div className="text-sm text-muted-foreground">当前世界里还没有可选规则。</div>}
+                    )) : <div className="text-sm text-muted-foreground">Thế giới hiện tại chưa có quy tắc nào để chọn.</div>}
                   </div>
                 </div>
 
                 <div>
                   <label className="text-sm font-medium text-foreground" htmlFor="story-world-scope-note">
-                    前期不要越界的边界说明
+                    Mô tả ranh giới không nên vượt qua ở giai đoạn đầu
                   </label>
                   <div className="mt-1 text-sm leading-6 text-muted-foreground">
-                    如果你想补一句边界说明，比如“保留现实都市基底，不要转成玄幻升级文”，写在这里。
+                    Nếu bạn muốn thêm một câu giới hạn, chẳng hạn “giữ nền đô thị hiện thực, đừng biến sang truyện huyền huyễn thăng cấp”, hãy viết ở đây.
                   </div>
                   <textarea
                     id="story-world-scope-note"
@@ -263,7 +263,7 @@ export default function NovelWorldUsageCard(props: NovelWorldUsageCardProps) {
                     onChange={(event) => setScopeNote(event.target.value)}
                     rows={4}
                     className="mt-2 w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none ring-offset-background placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring"
-                    placeholder="例如：保留原作的现实商业环境和人物压迫感，不要引入超自然体系。"
+                    placeholder="Ví dụ: giữ bối cảnh thương trường hiện thực và cảm giác áp lực lên nhân vật, không đưa vào hệ siêu nhiên."
                   />
                 </div>
               </div>
@@ -273,7 +273,7 @@ export default function NovelWorldUsageCard(props: NovelWorldUsageCardProps) {
 
         {hasWorld && !hasSlice ? (
           <div className="rounded-md border border-dashed border-border/70 px-4 py-4 text-sm leading-6 text-muted-foreground">
-            系统还没有整理出这本书会用到的世界设定。点击“重新整理世界设定”后，会根据当前世界和故事想法自动生成一版可用结果。
+            Hệ thống vẫn chưa sắp xếp ra các thiết lập thế giới mà cuốn sách này sẽ dùng. Bấm “Sắp xếp lại thiết lập thế giới” để hệ thống tự tạo một bản khả dụng dựa trên thế giới hiện tại và ý tưởng truyện.
           </div>
         ) : null}
       </CardContent>

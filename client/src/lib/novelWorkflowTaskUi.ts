@@ -15,30 +15,30 @@ export const BACKGROUND_RUNNING_TASK_STATUSES = new Set<TaskStatus>(["running"])
 
 export function formatWorkflowCheckpoint(checkpoint?: NovelWorkflowCheckpoint | null): string {
   if (checkpoint === "candidate_selection_required") {
-    return "等待确认书级方向";
+    return "Chờ xác nhận hướng đi của cả cuốn";
   }
   if (checkpoint === "book_contract_ready") {
-    return "Book Contract 已就绪";
+    return "Bộ khung cuốn sách đã sẵn sàng";
   }
   if (checkpoint === "character_setup_required") {
-    return "角色准备待审核";
+    return "Phần nhân vật chờ duyệt";
   }
   if (checkpoint === "volume_strategy_ready") {
-    return "卷战略待审核";
+    return "Chiến lược từng quyển chờ duyệt";
   }
   if (checkpoint === "front10_ready") {
-    return "前 10 章可开写";
+    return "Đã sẵn sàng triển khai 10 chương đầu";
   }
   if (checkpoint === "chapter_batch_ready") {
-    return "前 10 章自动执行已暂停";
+    return "Tự động triển khai 10 chương đầu đã tạm dừng";
   }
   if (checkpoint === "replan_required") {
-    return "等待重规划";
+    return "Chờ lập lại kế hoạch";
   }
   if (checkpoint === "workflow_completed") {
-    return "自动导演已完成";
+    return "Quy trình tự động đã hoàn tất";
   }
-  return "自动导演";
+  return "Tự động đạo diễn";
 }
 
 export function getWorkflowBadge(task?: NovelAutoDirectorTaskSummary | null): {
@@ -54,13 +54,13 @@ export function getWorkflowBadge(task?: NovelAutoDirectorTaskSummary | null): {
     && (task.checkpointType === "front10_ready" || task.checkpointType === "chapter_batch_ready")
   ) {
     return {
-      label: displayStatus ?? "前 10 章自动执行中",
+      label: displayStatus ?? "Đang tự động triển khai 10 chương đầu",
       variant: "default",
     };
   }
   if ((task.status === "failed" || task.status === "cancelled") && task.checkpointType === "chapter_batch_ready") {
     return {
-      label: displayStatus ?? (task.status === "failed" ? "前 10 章自动执行已暂停" : "前 10 章自动执行已取消"),
+      label: displayStatus ?? (task.status === "failed" ? "Tự động triển khai 10 chương đầu đã tạm dừng" : "Tự động triển khai 10 chương đầu đã hủy"),
       variant: task.status === "failed" ? "destructive" : "outline",
     };
   }
@@ -72,30 +72,30 @@ export function getWorkflowBadge(task?: NovelAutoDirectorTaskSummary | null): {
   }
   if (task.status === "running") {
     return {
-      label: displayStatus ?? "自动导演进行中",
+      label: displayStatus ?? "Đang tự động đạo diễn",
       variant: "default",
     };
   }
   if (task.status === "queued") {
     return {
-      label: displayStatus ?? "自动导演排队中",
+      label: displayStatus ?? "Tự động đạo diễn đang xếp hàng",
       variant: "secondary",
     };
   }
   if (task.status === "failed") {
     return {
-      label: displayStatus ?? "自动导演失败",
+      label: displayStatus ?? "Tự động đạo diễn thất bại",
       variant: "destructive",
     };
   }
   if (task.status === "cancelled") {
     return {
-      label: displayStatus ?? "自动导演已取消",
+      label: displayStatus ?? "Tự động đạo diễn đã hủy",
       variant: "outline",
     };
   }
   return {
-    label: displayStatus ?? (task.checkpointType === "workflow_completed" ? "自动导演已完成" : formatWorkflowCheckpoint(task.checkpointType)),
+    label: displayStatus ?? (task.checkpointType === "workflow_completed" ? "Tự động đạo diễn đã hoàn tất" : formatWorkflowCheckpoint(task.checkpointType)),
     variant: "outline",
   };
 }
@@ -108,10 +108,10 @@ export function getWorkflowDescription(task?: NovelAutoDirectorTaskSummary | nul
     (task.status === "queued" || task.status === "running")
     && (task.checkpointType === "front10_ready" || task.checkpointType === "chapter_batch_ready")
   ) {
-    return `AI 正在后台继续执行前 10 章，当前进度 ${Math.round(task.progress * 100)}%。`;
+    return `AI đang chạy nền để triển khai tiếp 10 chương đầu, tiến độ hiện tại ${Math.round(task.progress * 100)}%.`;
   }
   if ((task.status === "failed" || task.status === "cancelled") && task.checkpointType === "chapter_batch_ready") {
-    return "前 10 章自动执行在批量阶段暂停了，建议先查看任务，再决定是否继续自动执行。";
+    return "Tự động triển khai 10 chương đầu đã tạm dừng ở giai đoạn theo lô, bạn nên xem lại nhiệm vụ rồi hãy quyết định có chạy tiếp hay không.";
   }
   if (task.blockingReason?.trim()) {
     return task.blockingReason.trim();
@@ -123,10 +123,10 @@ export function getWorkflowDescription(task?: NovelAutoDirectorTaskSummary | nul
     return task.currentItemLabel.trim();
   }
   if (task.resumeAction?.trim()) {
-    return `推荐继续：${task.resumeAction.trim()}`;
+    return `Đề xuất tiếp tục: ${task.resumeAction.trim()}`;
   }
   if (task.nextActionLabel?.trim()) {
-    return `下一步：${task.nextActionLabel.trim()}`;
+    return `Bước tiếp theo: ${task.nextActionLabel.trim()}`;
   }
   return null;
 }

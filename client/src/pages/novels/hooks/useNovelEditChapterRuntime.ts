@@ -74,7 +74,7 @@ export function useNovelEditChapterRuntime({
       temperature: llm.temperature,
     }),
     onSuccess: async () => {
-      setChapterOperationMessage("章节执行计划已生成，可直接开始写本章。");
+      setChapterOperationMessage("Kế hoạch thực hiện chương đã được tạo, có thể bắt đầu viết chương này ngay.");
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: queryKeys.novels.chapterPlan(novelId, selectedChapterId) }),
         invalidateNovelDetail(),
@@ -98,8 +98,8 @@ export function useNovelEditChapterRuntime({
       const affectedChapterIds = response.data?.affectedChapterIds ?? [];
       setChapterOperationMessage(
         affectedOrders.length > 0
-          ? `已重规划第 ${affectedOrders.join("、")} 章。`
-          : "章节已完成重规划。",
+          ? `Đã lập lại kế hoạch cho chương ${affectedOrders.join("、")}.`
+          : "Chương đã được lập lại kế hoạch xong.",
       );
       await queryClient.invalidateQueries({ queryKey: queryKeys.novels.detail(novelId) });
       await queryClient.invalidateQueries({ queryKey: queryKeys.novels.qualityReport(novelId) });
@@ -121,7 +121,7 @@ export function useNovelEditChapterRuntime({
     }),
     onSuccess: async (response) => {
       setReviewResult(response.data ?? null);
-      setChapterOperationMessage("完整审校已完成。");
+      setChapterOperationMessage("Đã hoàn tất rà soát toàn bộ.");
       await queryClient.invalidateQueries({ queryKey: queryKeys.novels.chapterAuditReports(novelId, selectedChapterId) });
       await queryClient.invalidateQueries({ queryKey: queryKeys.novels.qualityReport(novelId) });
     },
@@ -139,10 +139,10 @@ export function useNovelEditChapterRuntime({
     if (!selectedChapter) {
       return;
     }
-    setChapterOperationMessage("正在生成本章正文...");
+    setChapterOperationMessage("Đang tạo nội dung chương này...");
     setActiveChapterStream({
       chapterId: selectedChapter.id,
-      chapterLabel: `第${selectedChapter.order}章 ${selectedChapter.title || "未命名章节"}`,
+      chapterLabel: `Chương ${selectedChapter.order} ${selectedChapter.title || "Chưa đặt tên"}`,
     });
     void chapterSSE.start(`/novels/${novelId}/chapters/${selectedChapter.id}/generate`, {
       provider: llm.provider,
@@ -153,26 +153,26 @@ export function useNovelEditChapterRuntime({
 
   const handleAbortChapterStream = () => {
     chapterSSE.abort();
-    setChapterOperationMessage("已停止当前章节生成，你可以保留当前输出继续查看，或重新发起本章写作。");
+    setChapterOperationMessage("Đã dừng tạo chương hiện tại. Bạn có thể giữ bản nháp đang có để xem tiếp hoặc khởi chạy lại việc viết chương này.");
   };
 
   const handleAbortRepair = () => {
     repairSSE.abort();
     setActiveRepairStream(null);
-    setChapterOperationMessage("已停止当前章节修复，你可以先查看当前修复结果，再决定是否继续。");
+    setChapterOperationMessage("Đã dừng sửa chương hiện tại. Bạn có thể xem kết quả sửa vừa có rồi quyết định có tiếp tục hay không.");
   };
 
   const startChapterRepair = (issues: ReviewIssue[]) => {
     if (!selectedChapterId) {
-      setChapterOperationMessage("请先选择章节。");
+      setChapterOperationMessage("Hãy chọn một chương trước.");
       return;
     }
-    setChapterOperationMessage("正在生成修复稿...");
+    setChapterOperationMessage("Đang tạo bản sửa...");
     setRepairBeforeContent(selectedChapter?.content ?? "");
     setRepairAfterContent("");
     setActiveRepairStream({
       chapterId: selectedChapterId,
-      chapterLabel: selectedChapter ? `第${selectedChapter.order}章 ${selectedChapter.title || "未命名章节"}` : "当前章节",
+      chapterLabel: selectedChapter ? `Chương ${selectedChapter.order} ${selectedChapter.title || "Chưa đặt tên"}` : "Chương hiện tại",
     });
     void repairSSE.start(`/novels/${novelId}/chapters/${selectedChapterId}/repair`, {
       provider: llm.provider,

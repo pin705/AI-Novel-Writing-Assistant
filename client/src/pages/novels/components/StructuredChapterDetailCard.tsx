@@ -28,12 +28,12 @@ function renderChapterDetailStatusBadge(
   status: ReturnType<typeof getChapterExecutionDetailStatus>,
 ) {
   if (status === "complete") {
-    return <Badge variant="secondary">已细化</Badge>;
+    return <Badge variant="secondary">Đã tinh chỉnh</Badge>;
   }
   if (status === "partial") {
-    return <Badge>细化中</Badge>;
+    return <Badge>Đang tinh chỉnh</Badge>;
   }
-  return <Badge variant="outline">待细化</Badge>;
+  return <Badge variant="outline">Chờ tinh chỉnh</Badge>;
 }
 
 interface StructuredChapterDetailCardProps {
@@ -126,20 +126,20 @@ export default function StructuredChapterDetailCard(props: StructuredChapterDeta
     if (batchMode === "visible_all" && hasVisibleBatch) {
       return {
         count: visibleChapters.length,
-        hint: `会按照当前节奏筛选，一次补齐当前可见的 ${visibleChapters.length} 章。`,
+        hint: `Hệ thống sẽ lọc theo nhịp hiện tại và bổ sung một lượt cho ${visibleChapters.length} chương đang hiển thị.`,
         request: {
           chapterIds: visibleChapters.map((chapter) => chapter.id),
-          label: `当前可见的 ${visibleChapters.length} 章`,
+          label: `${visibleChapters.length} chương đang hiển thị`,
         },
       };
     }
     if (batchMode === "volume_all" && hasVolumeBatch) {
       return {
         count: volumeChapters.length,
-        hint: `会从第 1 章到第 ${volumeChapters.length} 章，连续补齐当前卷全部章节的细化资产。`,
+        hint: `Hệ thống sẽ đi từ chương 1 tới chương ${volumeChapters.length}, bổ sung liên tục toàn bộ tài sản tinh chỉnh cho các chương của tập hiện tại.`,
         request: {
           chapterIds: volumeChapters.map((chapter) => chapter.id),
-          label: `本卷全部 ${volumeChapters.length} 章`,
+          label: `Toàn bộ ${volumeChapters.length} chương của tập này`,
         },
       };
     }
@@ -149,10 +149,10 @@ export default function StructuredChapterDetailCard(props: StructuredChapterDeta
     const count = Math.min(Math.max(batchCount, 2), remainingChapters.length);
     return {
       count,
-      hint: `会从第${selectedChapter.chapterOrder}章开始，顺次细化接下来的 ${count} 章。`,
+      hint: `Hệ thống sẽ bắt đầu từ chương ${selectedChapter.chapterOrder} và tinh chỉnh lần lượt ${count} chương tiếp theo.`,
       request: {
         chapterIds: remainingChapters.slice(0, count).map((chapter) => chapter.id),
-        label: `从第${selectedChapter.chapterOrder}章起连续 ${count} 章`,
+        label: `Từ chương ${selectedChapter.chapterOrder}, liên tiếp ${count} chương`,
       },
     };
   }, [
@@ -180,10 +180,10 @@ export default function StructuredChapterDetailCard(props: StructuredChapterDeta
         <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
           <div className="space-y-2">
             <div className="flex flex-wrap items-center gap-2">
-              <CardTitle className="text-base leading-none">当前章节细化</CardTitle>
+              <CardTitle className="text-base leading-none">Tinh chỉnh chương hiện tại</CardTitle>
               {selectedChapter ? (
                 <>
-                  <Badge variant="outline">第{selectedChapter.chapterOrder}章</Badge>
+                  <Badge variant="outline">Chương {selectedChapter.chapterOrder}</Badge>
                   {selectedChapterBeatLabel ? <Badge variant="secondary">{selectedChapterBeatLabel}</Badge> : null}
                   {renderChapterDetailStatusBadge(chapterDetailStatus)}
                 </>
@@ -191,8 +191,8 @@ export default function StructuredChapterDetailCard(props: StructuredChapterDeta
             </div>
             <div className="text-sm text-muted-foreground">
               {selectedChapter
-                ? "先补标题、摘要、目标和任务单；写本章时如果执行计划缺失，系统会自动基于这里补齐运行时规划。"
-                : "先在左侧章节列表中选中一章，再开始细化。"}
+                ? "Hãy bổ sung tiêu đề, tóm tắt, mục tiêu và bảng việc trước; nếu lúc viết chương mà thiếu kế hoạch thực thi, hệ thống sẽ tự dựa vào đây để bổ sung kế hoạch chạy."
+                : "Hãy chọn một chương trong danh sách bên trái trước rồi mới bắt đầu tinh chỉnh."}
             </div>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -202,11 +202,11 @@ export default function StructuredChapterDetailCard(props: StructuredChapterDeta
                 onClick={() => onGenerateChapterDetailBundle(selectedVolume.id, selectedChapter.id)}
                 disabled={isGeneratingChapterDetail || locked}
               >
-                {currentBundleRunning ? "当前章细化中..." : "细化当前章"}
+                {currentBundleRunning ? "Đang tinh chỉnh chương này..." : "Tinh chỉnh chương hiện tại"}
               </AiButton>
             ) : null}
             <Button size="sm" variant="outline" onClick={onToggleAdvanced}>
-              {showChapterAdvanced ? "收起高级设置" : "展开高级设置"}
+              {showChapterAdvanced ? "Thu gọn thiết lập nâng cao" : "Mở thiết lập nâng cao"}
             </Button>
           </div>
         </div>
@@ -217,9 +217,9 @@ export default function StructuredChapterDetailCard(props: StructuredChapterDeta
             <div className="rounded-xl border border-border/70 bg-muted/20 p-4">
               <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
                 <div className="space-y-1">
-                  <div className="text-sm font-medium">批量细化</div>
+                  <div className="text-sm font-medium">Tinh chỉnh hàng loạt</div>
                   <div className="text-xs leading-6 text-muted-foreground">
-                    可以从当前章起按数量连续细化，也可以直接补齐当前可见章节或本卷全部章节。
+                    Có thể tinh chỉnh liên tiếp theo số lượng từ chương hiện tại, hoặc bổ sung thẳng cho các chương đang hiển thị hay toàn bộ chương của tập này.
                   </div>
                 </div>
                 <AiButton
@@ -228,25 +228,25 @@ export default function StructuredChapterDetailCard(props: StructuredChapterDeta
                   onClick={() => onGenerateChapterDetailBundle(selectedVolume.id, batchPlan?.request ?? { chapterIds: [] })}
                   disabled={isGeneratingChapterDetail || locked || !batchPlan}
                 >
-                  {isGeneratingChapterDetailBundle ? "批量细化中..." : `批量细化${batchPlan ? ` ${batchPlan.count} 章` : ""}`}
+                  {isGeneratingChapterDetailBundle ? "Đang tinh chỉnh hàng loạt..." : `Tinh chỉnh hàng loạt${batchPlan ? ` ${batchPlan.count} chương` : ""}`}
                 </AiButton>
               </div>
 
               <div className="mt-3 grid gap-3 md:grid-cols-[minmax(0,1fr)_160px]">
                 <label className="space-y-2 text-sm">
-                  <span className="text-xs text-muted-foreground">范围</span>
+                  <span className="text-xs text-muted-foreground">Phạm vi</span>
                   <select
                     className="w-full rounded-xl border bg-background px-3 py-2 text-sm text-foreground"
                     value={batchMode}
                     onChange={(event) => setBatchMode(event.target.value as BatchMode)}
                   >
-                    <option value="count" disabled={!hasCountBatch}>从当前章起连续细化</option>
-                    {hasVisibleBatch ? <option value="visible_all">当前可见章节</option> : null}
-                    {hasVolumeBatch ? <option value="volume_all">本卷全部章节</option> : null}
+                    <option value="count" disabled={!hasCountBatch}>Tinh chỉnh liên tiếp từ chương hiện tại</option>
+                    {hasVisibleBatch ? <option value="visible_all">Các chương đang hiển thị</option> : null}
+                    {hasVolumeBatch ? <option value="volume_all">Toàn bộ chương của tập này</option> : null}
                   </select>
                 </label>
                 <label className="space-y-2 text-sm">
-                  <span className="text-xs text-muted-foreground">{batchMode === "count" ? "章节数" : "本次范围"}</span>
+                  <span className="text-xs text-muted-foreground">{batchMode === "count" ? "Số chương" : "Phạm vi lần này"}</span>
                   {batchMode === "count" ? (
                     <Input
                       type="number"
@@ -258,7 +258,7 @@ export default function StructuredChapterDetailCard(props: StructuredChapterDeta
                     />
                   ) : (
                     <div className="rounded-xl border border-border/70 bg-background px-3 py-2 text-sm text-foreground">
-                      {batchPlan ? `${batchPlan.count} 章` : "不可用"}
+                      {batchPlan ? `${batchPlan.count} chương` : "Không khả dụng"}
                     </div>
                   )}
                 </label>
@@ -266,13 +266,13 @@ export default function StructuredChapterDetailCard(props: StructuredChapterDeta
 
               <div className="mt-2 text-xs leading-6 text-muted-foreground">
                 {locked
-                  ? "请先生成当前卷节奏板，再做整章或批量细化。"
-                  : batchPlan?.hint ?? "当前卷只有 1 章，先细化当前章。"}
+                  ? "Hãy tạo bảng nhịp cho tập hiện tại trước rồi mới tinh chỉnh theo cả chương hoặc hàng loạt."
+                  : batchPlan?.hint ?? "Tập này mới chỉ có 1 chương, hãy tinh chỉnh chương hiện tại trước."}
               </div>
             </div>
 
             <label className="space-y-2 text-sm">
-              <span className="text-xs text-muted-foreground">章节标题</span>
+              <span className="text-xs text-muted-foreground">Tiêu đề chương</span>
               <Input
                 value={selectedChapter.title}
                 onChange={(event) => onChapterFieldChange(selectedVolume.id, selectedChapter.id, "title", event.target.value)}
@@ -280,7 +280,7 @@ export default function StructuredChapterDetailCard(props: StructuredChapterDeta
             </label>
 
             <label className="space-y-2 text-sm">
-              <span className="text-xs text-muted-foreground">章节摘要</span>
+              <span className="text-xs text-muted-foreground">Tóm tắt chương</span>
               <textarea
                 className={cn(textareaClassName, "min-h-[130px]")}
                 value={selectedChapter.summary}
@@ -290,14 +290,14 @@ export default function StructuredChapterDetailCard(props: StructuredChapterDeta
 
             <label className="space-y-2 text-sm">
               <div className="flex items-center justify-between gap-2">
-                <span className="text-xs text-muted-foreground">章节目标</span>
+                <span className="text-xs text-muted-foreground">Mục tiêu chương</span>
                 <AiButton
                   size="sm"
                   variant="outline"
                   onClick={() => onGenerateChapterDetail(selectedVolume.id, selectedChapter.id, "purpose")}
                   disabled={isGeneratingChapterDetail || locked}
                 >
-                  {isGeneratingChapterDetail && generatingChapterDetailMode === "purpose" && generatingChapterDetailChapterId === selectedChapter.id ? "修正中..." : "AI修正"}
+                  {isGeneratingChapterDetail && generatingChapterDetailMode === "purpose" && generatingChapterDetailChapterId === selectedChapter.id ? "Đang chỉnh..." : "AI chỉnh"}
                 </AiButton>
               </div>
               <textarea
@@ -309,14 +309,14 @@ export default function StructuredChapterDetailCard(props: StructuredChapterDeta
 
             <label className="space-y-2 text-sm">
               <div className="flex items-center justify-between gap-2">
-                <span className="text-xs text-muted-foreground">任务单</span>
+                <span className="text-xs text-muted-foreground">Bảng việc</span>
                 <AiButton
                   size="sm"
                   variant="outline"
                   onClick={() => onGenerateChapterDetail(selectedVolume.id, selectedChapter.id, "task_sheet")}
                   disabled={isGeneratingChapterDetail || locked}
                 >
-                  {isGeneratingChapterDetail && generatingChapterDetailMode === "task_sheet" && generatingChapterDetailChapterId === selectedChapter.id ? "修正中..." : "AI修正"}
+                  {isGeneratingChapterDetail && generatingChapterDetailMode === "task_sheet" && generatingChapterDetailChapterId === selectedChapter.id ? "Đang chỉnh..." : "AI chỉnh"}
                 </AiButton>
               </div>
               <textarea
@@ -328,10 +328,10 @@ export default function StructuredChapterDetailCard(props: StructuredChapterDeta
 
             {showChapterAdvanced ? (
               <div className="space-y-4 rounded-xl border border-border/70 bg-muted/20 p-4">
-                <div className="text-sm font-medium">高级设置</div>
+                <div className="text-sm font-medium">Thiết lập nâng cao</div>
                 <div className="grid gap-3 md:grid-cols-3">
                   <label className="space-y-2 text-sm">
-                    <span className="text-xs text-muted-foreground">冲突等级</span>
+                    <span className="text-xs text-muted-foreground">Mức xung đột</span>
                     <Input
                       type="number"
                       min={0}
@@ -341,7 +341,7 @@ export default function StructuredChapterDetailCard(props: StructuredChapterDeta
                     />
                   </label>
                   <label className="space-y-2 text-sm">
-                    <span className="text-xs text-muted-foreground">揭露等级</span>
+                    <span className="text-xs text-muted-foreground">Mức hé lộ</span>
                     <Input
                       type="number"
                       min={0}
@@ -351,7 +351,7 @@ export default function StructuredChapterDetailCard(props: StructuredChapterDeta
                     />
                   </label>
                   <label className="space-y-2 text-sm">
-                    <span className="text-xs text-muted-foreground">目标字数</span>
+                    <span className="text-xs text-muted-foreground">Số chữ mục tiêu</span>
                     <Input
                       type="number"
                       min={200}
@@ -363,7 +363,7 @@ export default function StructuredChapterDetailCard(props: StructuredChapterDeta
                 </div>
 
                 <label className="space-y-2 text-sm">
-                  <span className="text-xs text-muted-foreground">禁止事项</span>
+                  <span className="text-xs text-muted-foreground">Điều cấm</span>
                   <textarea
                     className={cn(textareaClassName, "min-h-[100px]")}
                     value={selectedChapter.mustAvoid ?? ""}
@@ -372,7 +372,7 @@ export default function StructuredChapterDetailCard(props: StructuredChapterDeta
                 </label>
 
                 <label className="space-y-2 text-sm">
-                  <span className="text-xs text-muted-foreground">兑现关联</span>
+                  <span className="text-xs text-muted-foreground">Liên kết hoàn trả</span>
                   <textarea
                     className={cn(textareaClassName, "min-h-[100px]")}
                     value={selectedChapter.payoffRefs.join("\n")}
@@ -382,25 +382,25 @@ export default function StructuredChapterDetailCard(props: StructuredChapterDeta
 
                 <div className="flex flex-wrap gap-2">
                   <Button size="sm" variant="outline" onClick={() => onMoveChapter(selectedVolume.id, selectedChapter.id, -1)} disabled={selectedChapterIndex <= 0}>
-                    上移
+                    Di chuyển lên
                   </Button>
                   <Button size="sm" variant="outline" onClick={() => onMoveChapter(selectedVolume.id, selectedChapter.id, 1)} disabled={selectedChapterIndex < 0 || selectedChapterIndex >= selectedVolume.chapters.length - 1}>
-                    下移
+                    Di chuyển xuống
                   </Button>
                   <Button size="sm" variant="outline" onClick={() => onRemoveChapter(selectedVolume.id, selectedChapter.id)} disabled={selectedVolume.chapters.length <= 1}>
-                    删除
+                    Xóa
                   </Button>
                 </div>
               </div>
             ) : (
               <div className="rounded-xl border border-dashed p-3 text-sm text-muted-foreground">
-                冲突等级、揭露等级、字数、禁止事项和兑现关联已收进高级设置，避免一上来就把表单铺满。
+                Mức xung đột, mức hé lộ, số chữ, điều cấm và liên kết hoàn trả đã được gom vào phần thiết lập nâng cao để khỏi làm biểu mẫu quá dày ngay từ đầu.
               </div>
             )}
           </>
         ) : (
           <div className="rounded-md border border-dashed p-6 text-sm text-muted-foreground">
-            先在左侧选择一个章节，再开始细化。
+            Hãy chọn một chương ở bên trái trước rồi mới bắt đầu tinh chỉnh.
           </div>
         )}
       </CardContent>

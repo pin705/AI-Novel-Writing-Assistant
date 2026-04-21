@@ -37,12 +37,12 @@ interface StructuredChapterListCardProps {
 function renderChapterDetailStatusBadge(chapter: StructuredChapter) {
   const status = getChapterExecutionDetailStatus(chapter);
   if (status === "complete") {
-    return <Badge variant="secondary">已细化</Badge>;
+    return <Badge variant="secondary">Đã tinh chỉnh</Badge>;
   }
   if (status === "partial") {
-    return <Badge>细化中</Badge>;
+    return <Badge>Đang tinh chỉnh</Badge>;
   }
-  return <Badge variant="outline">待细化</Badge>;
+  return <Badge variant="outline">Chờ tinh chỉnh</Badge>;
 }
 
 export default function StructuredChapterListCard(props: StructuredChapterListCardProps) {
@@ -90,11 +90,11 @@ export default function StructuredChapterListCard(props: StructuredChapterListCa
         <div className="space-y-3">
           <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
             <div>
-              <CardTitle className="text-base leading-none">节奏 / 章节导航</CardTitle>
+              <CardTitle className="text-base leading-none">Nhịp truyện / Điều hướng chương</CardTitle>
               <div className="mt-1 text-sm text-muted-foreground">
                 {selectedBeat
-                  ? `当前聚焦「${selectedBeat.label}」。点击组头切换节奏，点击章节直接在右侧继续细化。`
-                  : "按节奏分组显示章节。点击组头可聚焦该节奏，点击章节直接在右侧继续细化。"}
+                  ? `Đang tập trung vào “${selectedBeat.label}”. Bấm vào tiêu đề nhóm để đổi nhịp, bấm vào chương để tiếp tục tinh chỉnh ở bên phải.`
+                  : "Các chương được chia theo nhịp truyện. Bấm vào tiêu đề nhóm để tập trung vào nhịp đó, bấm vào chương để tiếp tục tinh chỉnh ở bên phải."}
               </div>
             </div>
             <div className="flex flex-wrap gap-2">
@@ -102,10 +102,10 @@ export default function StructuredChapterListCard(props: StructuredChapterListCa
                 onClick={() => onGenerateChapterList(selectedVolume.id)}
                 disabled={isGeneratingChapterList || locked}
               >
-                {isGeneratingChapterList ? "生成中..." : "生成当前卷章节列表"}
+                {isGeneratingChapterList ? "Đang tạo..." : "Tạo danh sách chương của tập này"}
               </AiButton>
               <Button size="sm" variant="outline" onClick={() => onAddChapter(selectedVolume.id)}>
-                新增章节
+                Thêm chương
               </Button>
             </div>
           </div>
@@ -119,17 +119,17 @@ export default function StructuredChapterListCard(props: StructuredChapterListCa
                 selectedBeatKey === "all" ? "border-primary/50 bg-primary/5 text-foreground" : "border-border/70 hover:border-primary/30",
               )}
             >
-              全部节奏
+              Tất cả nhịp
             </button>
-            <Badge variant="outline">显示 {visibleChapters.length}/{selectedVolumeChapters.length} 章</Badge>
-            <Badge variant="outline">{visibleRefinedChapterCount}/{Math.max(visibleChapters.length, 1)} 已细化</Badge>
+            <Badge variant="outline">Hiển thị {visibleChapters.length}/{selectedVolumeChapters.length} chương</Badge>
+            <Badge variant="outline">{visibleRefinedChapterCount}/{Math.max(visibleChapters.length, 1)} đã tinh chỉnh</Badge>
           </div>
         </div>
       </CardHeader>
       <CardContent className="space-y-3 pt-0">
         {selectedVolumeNeedsChapterExpansion ? (
           <div className="rounded-md border border-amber-200 bg-amber-50 p-3 text-xs leading-6 text-amber-800">
-            当前卷目前只有 {selectedVolumeChapters.length} 章，但节奏板已经排到 {selectedVolumeRequiredChapterCount} 章。需要先重新生成当前卷章节列表，后半段节奏才会真正映射到章节。
+            Tập hiện tại mới có {selectedVolumeChapters.length} chương, nhưng bảng nhịp đã sắp tới {selectedVolumeRequiredChapterCount} chương. Cần tạo lại danh sách chương của tập này trước, thì nửa sau của nhịp mới thật sự khớp vào các chương.
           </div>
         ) : null}
 
@@ -152,7 +152,7 @@ export default function StructuredChapterListCard(props: StructuredChapterListCa
                           <Badge variant="secondary">{group.chapterSpanHint}</Badge>
                         </div>
                         <span className="text-xs text-muted-foreground">
-                          {group.chapters.length}章 · {group.refinedCount}章已细化
+                          {group.chapters.length} chương · {group.refinedCount} chương đã tinh chỉnh
                         </span>
                       </div>
                     </button>
@@ -175,15 +175,15 @@ export default function StructuredChapterListCard(props: StructuredChapterListCa
                               )}
                             >
                               <div className="flex items-center justify-between gap-2">
-                                <Badge variant={isSelected ? "default" : "outline"}>第{chapter.chapterOrder}章</Badge>
+                                <Badge variant={isSelected ? "default" : "outline"}>Chương {chapter.chapterOrder}</Badge>
                                 {renderChapterDetailStatusBadge(chapter)}
                               </div>
-                              <div className="mt-2 text-sm font-medium">{chapter.title || `第${chapter.chapterOrder}章`}</div>
+                              <div className="mt-2 text-sm font-medium">{chapter.title || `Chương ${chapter.chapterOrder}`}</div>
                             </button>
                           );
                         }) : (
                           <div className="rounded-lg border border-dashed p-3 text-xs text-muted-foreground">
-                            该节奏段下暂时还没有映射到章节。
+                            Nhịp này tạm thời chưa khớp với chương nào.
                           </div>
                         )}
                       </div>
@@ -196,10 +196,10 @@ export default function StructuredChapterListCard(props: StructuredChapterListCa
                 <div className="rounded-xl border border-dashed p-3">
                   <div className="flex items-center justify-between gap-2">
                     <div className="flex flex-wrap items-center gap-2">
-                      <Badge variant="outline">未归入节奏段</Badge>
-                      <Badge variant="secondary">{unmatchedChapters.length}章</Badge>
+                      <Badge variant="outline">Chưa vào nhịp nào</Badge>
+                      <Badge variant="secondary">{unmatchedChapters.length} chương</Badge>
                     </div>
-                    <span className="text-xs text-muted-foreground">这些章节暂时没有落到任何节奏段</span>
+                    <span className="text-xs text-muted-foreground">Những chương này tạm thời chưa nằm trong nhịp nào</span>
                   </div>
                   <div className="mt-3 space-y-2">
                     {unmatchedChapters.map((chapter) => {
@@ -215,10 +215,10 @@ export default function StructuredChapterListCard(props: StructuredChapterListCa
                           )}
                         >
                           <div className="flex items-center justify-between gap-2">
-                            <Badge variant={isSelected ? "default" : "outline"}>第{chapter.chapterOrder}章</Badge>
+                            <Badge variant={isSelected ? "default" : "outline"}>Chương {chapter.chapterOrder}</Badge>
                             {renderChapterDetailStatusBadge(chapter)}
                           </div>
-                          <div className="mt-2 text-sm font-medium">{chapter.title || `第${chapter.chapterOrder}章`}</div>
+                          <div className="mt-2 text-sm font-medium">{chapter.title || `Chương ${chapter.chapterOrder}`}</div>
                         </button>
                       );
                     })}
@@ -231,10 +231,10 @@ export default function StructuredChapterListCard(props: StructuredChapterListCa
               <div className="rounded-md border border-dashed p-4 text-sm text-muted-foreground">
                 {selectedVolumeNeedsChapterExpansion ? (
                   <div className="mb-2 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-xs leading-6 text-amber-800">
-                    当前节奏段是 {selectedBeat.chapterSpanHint}，但本卷目前只生成到 {selectedVolumeChapters.length} 章。请先重新生成当前卷章节列表，把这一卷补到至少 {selectedVolumeRequiredChapterCount} 章。
+                    Nhịp hiện tại là {selectedBeat.chapterSpanHint}, nhưng tập này mới được tạo đến chương {selectedVolumeChapters.length}. Hãy tạo lại danh sách chương của tập này trước, để bổ sung tập này lên ít nhất {selectedVolumeRequiredChapterCount} chương.
                   </div>
                 ) : null}
-                当前节奏段还没有映射到章节，先切回全部节奏或重新调整节奏板。
+                Nhịp hiện tại vẫn chưa khớp với chương nào, hãy quay lại chế độ tất cả nhịp hoặc chỉnh lại bảng nhịp.
               </div>
             ) : null}
           </>
@@ -242,10 +242,10 @@ export default function StructuredChapterListCard(props: StructuredChapterListCa
           <div className="rounded-md border border-dashed p-4 text-sm text-muted-foreground">
             {selectedVolumeRequiredChapterCount > 0 ? (
               <div className="mb-2 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-xs leading-6 text-amber-800">
-                根据当前节奏板，这一卷至少需要 {selectedVolumeRequiredChapterCount} 章，才能把各个节奏段完整映射到章节。
+                Theo bảng nhịp hiện tại, tập này cần ít nhất {selectedVolumeRequiredChapterCount} chương thì các nhịp mới khớp đầy đủ vào từng chương.
               </div>
             ) : null}
-            当前卷还没有章节列表。先生成当前卷章节列表。
+            Tập này chưa có danh sách chương. Hãy tạo danh sách chương của tập này trước.
           </div>
         )}
       </CardContent>

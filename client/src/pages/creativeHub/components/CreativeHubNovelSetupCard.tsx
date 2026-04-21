@@ -11,11 +11,11 @@ interface CreativeHubNovelSetupCardProps {
 function stageLabel(stage: CreativeHubNovelSetupStatus["stage"]): string {
   switch (stage) {
     case "ready_for_production":
-      return "可进入生产";
+      return "Có thể vào sản xuất";
     case "ready_for_planning":
-      return "可进入规划";
+      return "Có thể vào lập kế hoạch";
     default:
-      return "初始化中";
+      return "Đang khởi tạo";
   }
 }
 
@@ -39,7 +39,7 @@ export default function CreativeHubNovelSetupCard({
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-3">
       <div className="mb-3 flex items-center justify-between gap-2">
-        <div className="text-xs font-medium text-slate-500">新书初始化</div>
+        <div className="text-xs font-medium text-slate-500">Khởi tạo sách mới</div>
         <Badge variant="outline">{stageLabel(setup.stage)}</Badge>
       </div>
 
@@ -48,7 +48,7 @@ export default function CreativeHubNovelSetupCard({
           <div>
             <div className="text-sm font-medium text-slate-900">{setup.title}</div>
             <div className="mt-1 text-xs text-slate-500">
-              已就绪 {setup.completedCount}/{setup.totalCount} 项
+              Đã sẵn sàng {setup.completedCount}/{setup.totalCount} mục
             </div>
           </div>
           <div className="text-right">
@@ -75,16 +75,16 @@ export default function CreativeHubNovelSetupCard({
               <div className="flex items-center gap-2 text-[11px] uppercase tracking-[0.14em]">
                 {item.requiredForProduction ? (
                   <span className="rounded-full border border-current/20 bg-white/70 px-2 py-0.5 tracking-normal">
-                    生产前确认
+                    Xác nhận trước sản xuất
                   </span>
                 ) : null}
                 <span>
-                  {item.status === "ready" ? "ready" : item.status === "partial" ? "partial" : "missing"}
+                  {item.status === "ready" ? "đã sẵn sàng" : item.status === "partial" ? "một phần" : "thiếu"}
                 </span>
               </div>
             </div>
             {item.currentValue ? (
-              <div className="mt-1 text-[11px] text-slate-500">当前：{item.currentValue}</div>
+              <div className="mt-1 text-[11px] text-slate-500">Hiện tại: {item.currentValue}</div>
             ) : null}
             <div className="mt-1 text-xs leading-5">{item.summary}</div>
             {item.status !== "ready" && (item.recommendedAction || item.optionPrompt) ? (
@@ -96,7 +96,7 @@ export default function CreativeHubNovelSetupCard({
                     variant="outline"
                     onClick={() => onQuickAction?.(item.recommendedAction!)}
                   >
-                    补这项
+                    Bổ sung mục này
                   </Button>
                 ) : null}
                 {item.optionPrompt ? (
@@ -106,7 +106,7 @@ export default function CreativeHubNovelSetupCard({
                     variant="outline"
                     onClick={() => onQuickAction?.(item.optionPrompt!)}
                   >
-                    给我备选
+                    Gợi ý phương án
                   </Button>
                 ) : null}
               </div>
@@ -117,33 +117,33 @@ export default function CreativeHubNovelSetupCard({
 
       {pendingItems.length > 0 ? (
         <div className="mt-3 rounded-xl border border-amber-200 bg-amber-50 p-3">
-          <div className="text-[11px] font-medium uppercase tracking-[0.16em] text-amber-700">生产前待确认</div>
+          <div className="text-[11px] font-medium uppercase tracking-[0.16em] text-amber-700">Chờ xác nhận trước sản xuất</div>
           <div className="mt-2 text-sm leading-6 text-slate-900">
             {pendingItems.slice(0, 4).map((item) => item.label).join("、")}
-            {pendingItems.length > 4 ? " 等" : ""}
+            {pendingItems.length > 4 ? "..." : ""}
           </div>
           <div className="mt-3 flex flex-wrap gap-2">
             <Button
               type="button"
               size="sm"
-              onClick={() => onQuickAction?.("总结当前小说进入整本生产前仍需确认的条件，并按优先级给出补齐顺序。")}
+              onClick={() => onQuickAction?.("Tóm tắt những điều kiện còn cần xác nhận trước khi sản xuất toàn cuốn và cho thứ tự bổ sung theo mức ưu tiên.")}
             >
-              生成确认清单
+              Tạo danh sách xác nhận
             </Button>
             <Button
               type="button"
               size="sm"
               variant="outline"
-              onClick={() => onQuickAction?.("根据当前小说信息，为生产前缺失的关键条件各给出 3 个备选答案，方便我逐项选择。")}
+              onClick={() => onQuickAction?.("Dựa trên thông tin hiện tại của tiểu thuyết, hãy cho 3 phương án cho từng điều kiện quan trọng còn thiếu trước khi sản xuất, để tôi chọn từng mục.")}
             >
-              批量给我备选
+              Gợi ý hàng loạt
             </Button>
           </div>
         </div>
       ) : null}
 
       <div className="mt-3 rounded-xl border border-sky-200 bg-sky-50 p-3">
-        <div className="text-[11px] font-medium uppercase tracking-[0.16em] text-sky-700">下一问</div>
+        <div className="text-[11px] font-medium uppercase tracking-[0.16em] text-sky-700">Câu hỏi tiếp theo</div>
         <div className="mt-2 text-sm leading-6 text-slate-900">{setup.nextQuestion}</div>
       </div>
 
@@ -153,15 +153,15 @@ export default function CreativeHubNovelSetupCard({
           size="sm"
           onClick={() => onQuickAction?.(setup.recommendedAction)}
         >
-          按引导继续
+          Tiếp tục theo gợi ý
         </Button>
         <Button
           type="button"
           size="sm"
           variant="outline"
-          onClick={() => onQuickAction?.("总结当前这本书的初始化完成度，并告诉我还缺哪些关键信息。")}
+          onClick={() => onQuickAction?.("Tóm tắt mức độ hoàn thiện khởi tạo của cuốn sách này và nói rõ còn thiếu thông tin quan trọng nào.")}
         >
-          查看初始化摘要
+          Xem tóm tắt khởi tạo
         </Button>
       </div>
     </div>

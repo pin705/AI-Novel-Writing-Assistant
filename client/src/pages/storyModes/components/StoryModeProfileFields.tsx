@@ -33,7 +33,7 @@ export default function StoryModeProfileFields({
   return (
     <div className="grid gap-3">
       <label className="space-y-2 text-sm">
-        <span className="font-medium text-foreground">核心驱动</span>
+        <span className="font-medium text-foreground">Động lực cốt lõi</span>
         <textarea
           rows={2}
           className="w-full rounded-md border bg-background px-3 py-2 text-sm outline-none transition focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
@@ -42,7 +42,7 @@ export default function StoryModeProfileFields({
         />
       </label>
       <label className="space-y-2 text-sm">
-        <span className="font-medium text-foreground">读者奖励</span>
+        <span className="font-medium text-foreground">Phần thưởng cho độc giả</span>
         <textarea
           rows={2}
           className="w-full rounded-md border bg-background px-3 py-2 text-sm outline-none transition focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
@@ -52,7 +52,7 @@ export default function StoryModeProfileFields({
       </label>
       <div className="grid gap-3 md:grid-cols-2">
         <label className="space-y-2 text-sm">
-          <span className="font-medium text-foreground">章节推进单位</span>
+          <span className="font-medium text-foreground">Đơn vị thúc đẩy chương</span>
           <textarea
             rows={4}
             className="w-full rounded-md border bg-background px-3 py-2 text-sm outline-none transition focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
@@ -61,7 +61,7 @@ export default function StoryModeProfileFields({
           />
         </label>
         <label className="space-y-2 text-sm">
-          <span className="font-medium text-foreground">允许冲突形式</span>
+          <span className="font-medium text-foreground">Hình thức xung đột cho phép</span>
           <textarea
             rows={4}
             className="w-full rounded-md border bg-background px-3 py-2 text-sm outline-none transition focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
@@ -70,7 +70,7 @@ export default function StoryModeProfileFields({
           />
         </label>
         <label className="space-y-2 text-sm">
-          <span className="font-medium text-foreground">禁止冲突形式</span>
+          <span className="font-medium text-foreground">Hình thức xung đột cấm dùng</span>
           <textarea
             rows={4}
             className="w-full rounded-md border bg-background px-3 py-2 text-sm outline-none transition focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
@@ -79,7 +79,7 @@ export default function StoryModeProfileFields({
           />
         </label>
         <label className="space-y-2 text-sm">
-          <span className="font-medium text-foreground">冲突上限</span>
+          <span className="font-medium text-foreground">Trần xung đột</span>
           <select
             className="w-full rounded-md border bg-background p-2 text-sm"
             value={value.conflictCeiling}
@@ -93,7 +93,7 @@ export default function StoryModeProfileFields({
       </div>
       <div className="grid gap-3 md:grid-cols-2">
         <label className="space-y-2 text-sm">
-          <span className="font-medium text-foreground">化解方式</span>
+          <span className="font-medium text-foreground">Cách hóa giải</span>
           <textarea
             rows={2}
             className="w-full rounded-md border bg-background px-3 py-2 text-sm outline-none transition focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
@@ -102,7 +102,7 @@ export default function StoryModeProfileFields({
           />
         </label>
         <label className="space-y-2 text-sm">
-          <span className="font-medium text-foreground">章节颗粒</span>
+          <span className="font-medium text-foreground">Độ hạt của chương</span>
           <textarea
             rows={2}
             className="w-full rounded-md border bg-background px-3 py-2 text-sm outline-none transition focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
@@ -111,7 +111,7 @@ export default function StoryModeProfileFields({
           />
         </label>
         <label className="space-y-2 text-sm">
-          <span className="font-medium text-foreground">卷末奖励</span>
+          <span className="font-medium text-foreground">Phần thưởng cuối quyển</span>
           <textarea
             rows={2}
             className="w-full rounded-md border bg-background px-3 py-2 text-sm outline-none transition focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
@@ -120,7 +120,7 @@ export default function StoryModeProfileFields({
           />
         </label>
         <label className="space-y-2 text-sm">
-          <span className="font-medium text-foreground">必须出现的信号</span>
+          <span className="font-medium text-foreground">Tín hiệu bắt buộc phải xuất hiện</span>
           <textarea
             rows={4}
             className="w-full rounded-md border bg-background px-3 py-2 text-sm outline-none transition focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
@@ -130,7 +130,7 @@ export default function StoryModeProfileFields({
         </label>
       </div>
       <label className="space-y-2 text-sm">
-        <span className="font-medium text-foreground">必须避免的跑偏信号</span>
+        <span className="font-medium text-foreground">Tín hiệu lệch hướng cần tránh</span>
         <textarea
           rows={4}
           className="w-full rounded-md border bg-background px-3 py-2 text-sm outline-none transition focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"

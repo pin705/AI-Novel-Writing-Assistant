@@ -135,11 +135,11 @@ export default function SettingsPage() {
       }),
     onSuccess: async (response) => {
       resetDialogState();
-      setActionResult(response.message ?? "保存成功。");
+      setActionResult(response.message ?? "Lưu thành công.");
       await invalidateProviderQueries();
     },
     onError: (error) => {
-      setActionResult(error instanceof Error ? error.message : "保存失败。");
+      setActionResult(error instanceof Error ? error.message : "Lưu thất bại.");
     },
   });
 
@@ -153,11 +153,11 @@ export default function SettingsPage() {
       createCustomProvider(payload),
     onSuccess: async (response) => {
       resetDialogState();
-      setActionResult(response.message ?? "自定义厂商创建成功。");
+      setActionResult(response.message ?? "Tạo nhà cung cấp tùy chỉnh thành công.");
       await invalidateProviderQueries();
     },
     onError: (error) => {
-      setActionResult(error instanceof Error ? error.message : "创建自定义厂商失败。");
+      setActionResult(error instanceof Error ? error.message : "Tạo nhà cung cấp tùy chỉnh thất bại.");
     },
   });
 
@@ -165,11 +165,11 @@ export default function SettingsPage() {
     mutationFn: (provider: LLMProvider) => deleteCustomProvider(provider),
     onSuccess: async (response) => {
       resetDialogState();
-      setActionResult(response.message ?? "自定义厂商已删除。");
+      setActionResult(response.message ?? "Nhà cung cấp tùy chỉnh đã được xóa.");
       await invalidateProviderQueries();
     },
     onError: (error) => {
-      setActionResult(error instanceof Error ? error.message : "删除自定义厂商失败。");
+      setActionResult(error instanceof Error ? error.message : "Xóa nhà cung cấp tùy chỉnh thất bại.");
     },
   });
 
@@ -187,18 +187,18 @@ export default function SettingsPage() {
       const structured = response.data?.structured;
       const plainText = plain
         ? plain.ok
-          ? `普通连通正常${plain.latency != null ? ` (${plain.latency}ms)` : ""}`
-          : `普通连通失败${plain.error ? `：${plain.error}` : ""}`
-        : "普通连通未检测";
+          ? `Kết nối thường bình thường${plain.latency != null ? ` (${plain.latency}ms)` : ""}`
+          : `Kết nối thường thất bại${plain.error ? `: ${plain.error}` : ""}`
+        : "Chưa kiểm tra kết nối thường";
       const structuredText = structured
         ? structured.ok
-          ? `结构化正常${structured.strategy ? `，策略 ${structured.strategy}` : ""}${structured.reasoningForcedOff ? "，已强制关闭 thinking" : ""}`
-          : `结构化失败${structured.errorCategory ? `，分类 ${structured.errorCategory}` : ""}${structured.error ? `：${structured.error}` : ""}`
-        : "结构化未检测";
-      setTestResult(`连接成功，总耗时 ${latency}ms · ${plainText} · ${structuredText}`);
+          ? `Cấu trúc hóa bình thường${structured.strategy ? `, chiến lược ${structured.strategy}` : ""}${structured.reasoningForcedOff ? ", đã buộc tắt thinking" : ""}`
+          : `Cấu trúc hóa thất bại${structured.errorCategory ? `, phân loại ${structured.errorCategory}` : ""}${structured.error ? `: ${structured.error}` : ""}`
+        : "Chưa kiểm tra cấu trúc hóa";
+      setTestResult(`Kết nối thành công, tổng thời gian ${latency}ms · ${plainText} · ${structuredText}`);
     },
     onError: (error) => {
-      setTestResult(error instanceof Error ? error.message : "连接测试失败。");
+      setTestResult(error instanceof Error ? error.message : "Kiểm tra kết nối thất bại.");
     },
   });
 
@@ -207,11 +207,11 @@ export default function SettingsPage() {
     onSuccess: async (response, provider) => {
       const count = response.data?.models?.length ?? 0;
       const providerName = providerConfigs.find((item) => item.provider === provider)?.name ?? provider;
-      setActionResult(`${providerName} 模型列表已刷新（${count} 个）。`);
+      setActionResult(`Đã làm mới danh sách mô hình của ${providerName} (${count} mô hình).`);
       await invalidateProviderQueries();
     },
     onError: (error) => {
-      setActionResult(error instanceof Error ? error.message : "刷新模型列表失败。");
+      setActionResult(error instanceof Error ? error.message : "Làm mới danh sách mô hình thất bại.");
     },
   });
 
@@ -222,11 +222,11 @@ export default function SettingsPage() {
       }),
     onSuccess: async (_response, variables) => {
       const providerName = providerConfigs.find((item) => item.provider === variables.provider)?.name ?? variables.provider;
-      setActionResult(`${providerName} 思考功能已${variables.reasoningEnabled ? "开启" : "关闭"}。`);
+      setActionResult(`Chức năng suy luận của ${providerName} đã ${variables.reasoningEnabled ? "bật" : "tắt"}.`);
       await invalidateProviderQueries();
     },
     onError: (error) => {
-      setActionResult(error instanceof Error ? error.message : "更新思考开关失败。");
+      setActionResult(error instanceof Error ? error.message : "Cập nhật công tắc suy luận thất bại.");
     },
   });
 
@@ -234,11 +234,11 @@ export default function SettingsPage() {
     mutationFn: (provider: LLMProvider) => refreshProviderBalance(provider),
     onSuccess: async (response, provider) => {
       const providerName = providerConfigs.find((item) => item.provider === provider)?.name ?? provider;
-      setActionResult(response.message ?? `${providerName} 余额已刷新。`);
+      setActionResult(response.message ?? `Số dư của ${providerName} đã được làm mới.`);
       await queryClient.invalidateQueries({ queryKey: queryKeys.settings.apiKeyBalances });
     },
     onError: (error) => {
-      setActionResult(error instanceof Error ? error.message : "刷新余额失败。");
+      setActionResult(error instanceof Error ? error.message : "Làm mới số dư thất bại.");
     },
   });
 
@@ -302,48 +302,48 @@ export default function SettingsPage() {
     <div className="space-y-4">
       <Card>
         <CardHeader>
-          <CardTitle>Embedding Settings Moved</CardTitle>
-          <CardDescription>
-            Embedding provider and model configuration now live in the knowledge module.
-          </CardDescription>
+        <CardTitle>Cài đặt Embedding đã được chuyển chỗ</CardTitle>
+        <CardDescription>
+            Cấu hình nhà cung cấp và mô hình embedding hiện nằm trong mục tri thức.
+        </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid gap-3 md:grid-cols-2">
             <div className="rounded-md border p-3">
-              <div className="text-xs text-muted-foreground">Current embedding provider</div>
+              <div className="text-xs text-muted-foreground">Nhà cung cấp embedding hiện tại</div>
               <div className="mt-1 font-medium">{ragProvider?.name ?? ragSettings?.embeddingProvider ?? "-"}</div>
             </div>
             <div className="rounded-md border p-3">
-              <div className="text-xs text-muted-foreground">Current embedding model</div>
+              <div className="text-xs text-muted-foreground">Mô hình embedding hiện tại</div>
               <div className="mt-1 font-medium">{ragSettings?.embeddingModel ?? "-"}</div>
             </div>
           </div>
           <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-            <span>Status</span>
+            <span>Trạng thái</span>
             <Badge variant={ragProvider?.isConfigured ? "default" : "outline"}>
-              {ragProvider?.isConfigured ? "API key ready" : "API key missing"}
+              {ragProvider?.isConfigured ? "Đã có API key" : "Thiếu API key"}
             </Badge>
             <Badge variant={ragProvider?.isActive ? "default" : "outline"}>
-              {ragProvider?.isActive ? "Active" : "Inactive"}
+              {ragProvider?.isActive ? "Đang bật" : "Đang tắt"}
             </Badge>
           </div>
           <Button asChild>
-            <Link to="/knowledge?tab=settings">Open knowledge settings</Link>
+            <Link to="/knowledge?tab=settings">Mở cài đặt tri thức</Link>
           </Button>
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader>
-          <CardTitle>模型路由</CardTitle>
-          <CardDescription>把不同写作角色分配给不同模型，建议在独立页面集中管理。</CardDescription>
+          <CardTitle>Điều phối mô hình</CardTitle>
+          <CardDescription>Phân bổ từng vai trò viết cho từng mô hình khác nhau, nên quản lý tập trung ở trang riêng.</CardDescription>
         </CardHeader>
         <CardContent className="flex items-center justify-between gap-3">
           <div className="text-sm text-muted-foreground">
-            现在模型路由已经独立成管理页，支持按角色单独配置服务商和模型。
+            Hiện điều phối mô hình đã có trang quản lý riêng, cho phép cấu hình riêng nhà cung cấp và mô hình theo từng vai trò.
           </div>
           <Button asChild>
-            <Link to="/settings/model-routes">进入模型路由管理</Link>
+            <Link to="/settings/model-routes">Vào trang điều phối mô hình</Link>
           </Button>
         </CardContent>
       </Card>
@@ -351,12 +351,12 @@ export default function SettingsPage() {
       <Card>
         <CardHeader className="flex flex-row items-start justify-between gap-3">
           <div className="space-y-1">
-            <CardTitle>Model Providers</CardTitle>
+            <CardTitle>Nhà cung cấp mô hình</CardTitle>
             <CardDescription>
-              管理内置厂商连接，也可以新增 OpenAI-compatible 自定义厂商。
+              Quản lý các nhà cung cấp tích hợp sẵn, hoặc thêm nhà cung cấp tùy chỉnh tương thích OpenAI.
             </CardDescription>
           </div>
-          <Button onClick={openCreateCustomDialog}>新增自定义厂商</Button>
+          <Button onClick={openCreateCustomDialog}>Thêm nhà cung cấp tùy chỉnh</Button>
         </CardHeader>
         <CardContent className="grid gap-3 md:grid-cols-2">
           {providerConfigs.map((item) => {
@@ -378,28 +378,28 @@ export default function SettingsPage() {
                 <div className="mb-2 flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2">
                     <div className="font-medium">{item.name}</div>
-                    {item.kind === "custom" ? <Badge variant="outline">自定义</Badge> : null}
+                    {item.kind === "custom" ? <Badge variant="outline">Tùy chỉnh</Badge> : null}
                   </div>
                   <Badge
                     variant={item.isConfigured ? "default" : "outline"}
                     className={item.isConfigured ? "bg-emerald-600 text-white hover:bg-emerald-600" : ""}
                   >
-                    {item.isConfigured ? "Configured" : "Not configured"}
+                    {item.isConfigured ? "Đã cấu hình" : "Chưa cấu hình"}
                   </Badge>
                 </div>
-                <div className="mb-2 text-xs text-muted-foreground">Current model: {item.currentModel || "-"}</div>
+                <div className="mb-2 text-xs text-muted-foreground">Mô hình hiện tại: {item.currentModel || "-"}</div>
                 <div className="mb-2 text-xs text-muted-foreground">API URL: {item.currentBaseURL || "-"}</div>
                 <div className="mb-3 flex items-center justify-between rounded-md border bg-background/60 px-3 py-2">
                   <div className="space-y-1">
-                    <div className="text-xs font-medium text-muted-foreground">思考功能</div>
+                    <div className="text-xs font-medium text-muted-foreground">Chế độ suy luận</div>
                     <div className="text-xs text-muted-foreground">
                       {item.reasoningEnabled
-                        ? "当前会返回并展示模型思考内容。"
-                        : "当前会隐藏思考内容；MiniMax 会自动启用分离与清洗，避免 <think> 泄漏到正文。"}
+                        ? "Hiện hệ thống sẽ trả về và hiển thị phần suy luận của mô hình."
+                        : "Hiện hệ thống sẽ ẩn phần suy luận; MiniMax sẽ tự tách và làm sạch để tránh thẻ <think> lọt vào nội dung chính."}
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-xs text-muted-foreground">{item.reasoningEnabled ? "已开启" : "已关闭"}</span>
+                    <span className="text-xs text-muted-foreground">{item.reasoningEnabled ? "Đang bật" : "Đang tắt"}</span>
                     <Switch
                       checked={item.reasoningEnabled}
                       disabled={isReasoningUpdating}
@@ -416,38 +416,38 @@ export default function SettingsPage() {
                 <div className="mb-3 rounded-md border border-dashed bg-background/60 p-3">
                   {item.kind === "custom" ? (
                     <div className="space-y-1">
-                      <div className="text-xs font-medium text-muted-foreground">余额</div>
+                      <div className="text-xs font-medium text-muted-foreground">Số dư</div>
                       <div className="text-sm text-muted-foreground">
-                        自定义 OpenAI-compatible 厂商暂不接入余额查询。
+                        Nhà cung cấp tùy chỉnh tương thích OpenAI hiện chưa hỗ trợ truy vấn số dư.
                       </div>
                     </div>
                   ) : (
                     <>
                       <div className="mb-2 flex items-center justify-between gap-2">
-                        <div className="text-xs font-medium text-muted-foreground">余额</div>
+                        <div className="text-xs font-medium text-muted-foreground">Số dư</div>
                         {balance?.status === "available" ? (
-                          <Badge variant="outline">最近刷新 {formatBalanceTime(balance.fetchedAt)}</Badge>
+                          <Badge variant="outline">Cập nhật gần nhất {formatBalanceTime(balance.fetchedAt)}</Badge>
                         ) : null}
                       </div>
                       {isBalanceLoading ? (
-                        <div className="text-sm text-muted-foreground">正在查询余额...</div>
+                        <div className="text-sm text-muted-foreground">Đang truy vấn số dư...</div>
                       ) : balance?.status === "available" ? (
                         <div className="space-y-2">
                           <div className="text-lg font-semibold">
                             {formatBalanceAmount(balance.availableBalance, balance.currency)}
                           </div>
                           <div className="grid gap-2 text-xs text-muted-foreground sm:grid-cols-2">
-                            {balance.cashBalance !== null ? <div>现金余额：{formatBalanceAmount(balance.cashBalance, balance.currency)}</div> : null}
-                            {balance.voucherBalance !== null ? <div>代金券余额：{formatBalanceAmount(balance.voucherBalance, balance.currency)}</div> : null}
-                            {balance.chargeBalance !== null ? <div>充值余额：{formatBalanceAmount(balance.chargeBalance, balance.currency)}</div> : null}
-                            {balance.toppedUpBalance !== null ? <div>累计充值：{formatBalanceAmount(balance.toppedUpBalance, balance.currency)}</div> : null}
-                            {balance.grantedBalance !== null ? <div>赠送额度：{formatBalanceAmount(balance.grantedBalance, balance.currency)}</div> : null}
+                            {balance.cashBalance !== null ? <div>Số dư tiền mặt: {formatBalanceAmount(balance.cashBalance, balance.currency)}</div> : null}
+                            {balance.voucherBalance !== null ? <div>Số dư voucher: {formatBalanceAmount(balance.voucherBalance, balance.currency)}</div> : null}
+                            {balance.chargeBalance !== null ? <div>Số dư nạp tiền: {formatBalanceAmount(balance.chargeBalance, balance.currency)}</div> : null}
+                            {balance.toppedUpBalance !== null ? <div>Tổng nạp: {formatBalanceAmount(balance.toppedUpBalance, balance.currency)}</div> : null}
+                            {balance.grantedBalance !== null ? <div>Hạn mức tặng: {formatBalanceAmount(balance.grantedBalance, balance.currency)}</div> : null}
                           </div>
                         </div>
                       ) : (
                         <div className="space-y-1">
                           <div className="text-sm text-muted-foreground">
-                            {balance?.error ?? balance?.message ?? (item.isConfigured ? "当前暂未获取余额信息。" : "请先配置 API Key。")}
+                            {balance?.error ?? balance?.message ?? (item.isConfigured ? "Hiện chưa lấy được thông tin số dư." : "Vui lòng cấu hình API Key trước.")}
                           </div>
                         </div>
                       )}
@@ -475,15 +475,15 @@ export default function SettingsPage() {
                       className="text-xs font-medium text-primary transition-opacity hover:opacity-80"
                       onClick={() => toggleProviderExpanded(item.provider)}
                     >
-                      {isProviderExpanded(item.provider)
-                        ? "收起模型列表"
-                        : `展开全部 ${item.models.length} 个模型`}
+                        {isProviderExpanded(item.provider)
+                        ? "Thu gọn danh sách mô hình"
+                        : `Mở rộng toàn bộ ${item.models.length} mô hình`}
                     </button>
                   ) : null}
                 </div>
                 <div className="flex flex-wrap gap-2">
                   <Button size="sm" onClick={() => openBuiltInDialog(item.provider)}>
-                    {item.kind === "custom" ? "编辑" : "Configure"}
+                    {item.kind === "custom" ? "Chỉnh sửa" : "Cấu hình"}
                   </Button>
                   <Button
                     size="sm"
@@ -498,7 +498,7 @@ export default function SettingsPage() {
                     }}
                     disabled={testMutation.isPending}
                   >
-                    Test
+                    Kiểm tra
                   </Button>
                   <Button
                     size="sm"
@@ -509,9 +509,9 @@ export default function SettingsPage() {
                     }}
                     disabled={!item.isConfigured || refreshModelsMutation.isPending}
                   >
-                    {refreshModelsMutation.isPending && refreshModelsMutation.variables === item.provider
-                      ? "Refreshing..."
-                      : "Refresh models"}
+                      {refreshModelsMutation.isPending && refreshModelsMutation.variables === item.provider
+                      ? "Đang làm mới..."
+                      : "Làm mới mô hình"}
                   </Button>
                   {item.kind === "builtin" ? (
                     <Button
@@ -523,7 +523,7 @@ export default function SettingsPage() {
                       }}
                       disabled={!refreshBalanceEnabled || isBalanceRefreshing}
                     >
-                      {isBalanceRefreshing ? "Refreshing balance..." : "刷新余额"}
+                      {isBalanceRefreshing ? "Đang làm mới số dư..." : "Làm mới số dư"}
                     </Button>
                   ) : null}
                 </div>
@@ -547,19 +547,19 @@ export default function SettingsPage() {
           <DialogHeader>
             <DialogTitle>
               {isCreatingCustomProvider
-                ? "新增自定义厂商"
+                ? "Thêm nhà cung cấp tùy chỉnh"
                 : isCustomDialog
-                  ? "编辑自定义厂商"
-                  : "Configure Model Provider"}
+                  ? "Chỉnh sửa nhà cung cấp tùy chỉnh"
+                  : "Cấu hình nhà cung cấp mô hình"}
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-3">
             {isCustomDialog ? (
               <div className="space-y-1">
-                <div className="text-xs text-muted-foreground">厂商名称</div>
+                <div className="text-xs text-muted-foreground">Tên nhà cung cấp</div>
                 <Input
                   value={form.displayName}
-                  placeholder="例如：My Gateway"
+                  placeholder="Ví dụ: My Gateway"
                   onChange={(event) => setForm((prev) => ({ ...prev, displayName: event.target.value }))}
                 />
               </div>
@@ -567,32 +567,32 @@ export default function SettingsPage() {
 
             {(isCustomDialog || editingConfig?.requiresApiKey === false) ? (
               <div className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900">
-                这一项支持本地或免密接入，API Key 可以留空；重点配置模型名和 API URL。
+                Mục này hỗ trợ chạy cục bộ hoặc kết nối không cần mật khẩu, nên có thể để trống API Key; phần quan trọng là tên mô hình và API URL.
               </div>
             ) : null}
 
             <Input
               type="password"
               value={form.key}
-              placeholder={editingConfig?.isConfigured ? "留空则沿用当前已保存的 API Key" : "Enter API key"}
+              placeholder={editingConfig?.isConfigured ? "Để trống để giữ API Key đã lưu" : "Nhập API key"}
               onChange={(event) => setForm((prev) => ({ ...prev, key: event.target.value }))}
             />
 
             <div className="space-y-1">
-              <div className="text-xs text-muted-foreground">Available models</div>
+              <div className="text-xs text-muted-foreground">Các mô hình khả dụng</div>
               <SearchableSelect
                 value={form.model}
                 onValueChange={(value) => setForm((prev) => ({ ...prev, model: value }))}
                 options={(editingConfig?.models ?? []).map((model) => ({ value: model }))}
-                placeholder="Select a model"
-                searchPlaceholder="Search models"
-                emptyText="No models available"
+                placeholder="Chọn mô hình"
+                searchPlaceholder="Tìm mô hình"
+                emptyText="Không có mô hình nào"
               />
             </div>
 
             <Input
               value={form.model}
-              placeholder="也可以直接手动输入模型名"
+              placeholder="Cũng có thể tự nhập tên mô hình"
               onChange={(event) => setForm((prev) => ({ ...prev, model: event.target.value }))}
             />
 
@@ -604,7 +604,7 @@ export default function SettingsPage() {
                 onChange={(event) => setForm((prev) => ({ ...prev, baseURL: event.target.value }))}
               />
               <div className="text-xs text-muted-foreground">
-                本地 Ollama 常见地址是 `http://127.0.0.1:11434/v1`。留空会回退到当前默认地址。
+                Địa chỉ Ollama cục bộ thường là `http://127.0.0.1:11434/v1`. Để trống sẽ dùng địa chỉ mặc định hiện tại.
               </div>
             </div>
 
@@ -640,7 +640,7 @@ export default function SettingsPage() {
                   || (!isCustomDialog && editingConfig?.requiresApiKey !== false && !form.key.trim() && !editingConfig?.isConfigured)
                 }
               >
-                {saveMutation.isPending || createCustomProviderMutation.isPending ? "Saving..." : "Save"}
+                {saveMutation.isPending || createCustomProviderMutation.isPending ? "Đang lưu..." : "Lưu"}
               </Button>
 
               <Button
@@ -656,7 +656,7 @@ export default function SettingsPage() {
                 }
                 disabled={testMutation.isPending || !form.model.trim() || !form.baseURL.trim()}
               >
-                Test
+                Kiểm tra
               </Button>
 
               {editingConfig?.kind === "custom" ? (
@@ -666,14 +666,14 @@ export default function SettingsPage() {
                     if (!editingProvider) {
                       return;
                     }
-                    if (!window.confirm(`确认删除自定义厂商 ${editingConfig.name} 吗？`)) {
+                    if (!window.confirm(`Bạn có chắc muốn xóa nhà cung cấp tùy chỉnh ${editingConfig.name} không?`)) {
                       return;
                     }
                     deleteCustomProviderMutation.mutate(editingProvider);
                   }}
                   disabled={deleteCustomProviderMutation.isPending}
                 >
-                  {deleteCustomProviderMutation.isPending ? "Deleting..." : "Delete"}
+                  {deleteCustomProviderMutation.isPending ? "Đang xóa..." : "Xóa"}
                 </Button>
               ) : null}
             </div>

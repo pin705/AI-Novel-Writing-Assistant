@@ -22,7 +22,7 @@ export function useDirectorChapterTitleRepair(options: DirectorChapterTitleRepai
     mutationFn: async (task: UnifiedTaskDetail) => {
       const warning = resolveChapterTitleWarning(task);
       if (!warning) {
-        throw new Error("当前任务没有可直接 AI 修复的章节标题提醒。");
+        throw new Error("Nhiệm vụ hiện tại không có cảnh báo tiêu đề chương nào có thể sửa trực tiếp bằng AI.");
       }
       const response = await repairNovelWorkflowChapterTitles(task.id, {
         volumeId: warning.volumeId ?? undefined,
@@ -53,10 +53,10 @@ export function useDirectorChapterTitleRepair(options: DirectorChapterTitleRepai
           warning,
         })).catch(() => {});
       }
-      toast.success("已开始 AI 修复章节标题，系统正在重写当前卷拆章。");
+      toast.success("Đã bắt đầu sửa tiêu đề chương bằng AI, hệ thống đang viết lại cấu trúc chương của quyển hiện tại.");
     },
     onError: (error) => {
-      const message = error instanceof Error ? error.message : "AI 修复章节标题失败。";
+      const message = error instanceof Error ? error.message : "Sửa tiêu đề chương bằng AI thất bại.";
       toast.error(message);
     },
   });
@@ -64,7 +64,7 @@ export function useDirectorChapterTitleRepair(options: DirectorChapterTitleRepai
   return {
     startRepair: (task: UnifiedTaskDetail | null | undefined) => {
       if (!task) {
-        toast.error("当前没有可修复的自动导演任务。");
+        toast.error("Hiện không có nhiệm vụ tự động đạo diễn nào có thể sửa.");
         return;
       }
       mutation.mutate(task);

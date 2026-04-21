@@ -50,21 +50,21 @@ export default function StructuredBeatSheetCard(props: StructuredBeatSheetCardPr
   } = props;
 
   const hasExistingBeatSheet = Boolean(selectedBeatSheet);
-  const volumeTitle = selectedVolume.title?.trim() || `第${selectedVolume.sortOrder}卷`;
+  const volumeTitle = selectedVolume.title?.trim() || `Tập ${selectedVolume.sortOrder}`;
   const volumeSummary = selectedVolume.mainPromise?.trim()
     || selectedVolume.summary?.trim()
-    || "先在下方按节奏分组的章节导航里定位当前节奏，再继续细化对应章节。";
+    || "Hãy định vị nhịp hiện tại trong khu điều hướng chương ở phía dưới rồi tiếp tục tinh chỉnh chương tương ứng.";
   const generateButtonLabel = isGeneratingBeatSheet
-    ? (hasExistingBeatSheet ? "重新生成中..." : "生成中...")
-    : (hasExistingBeatSheet ? "重新生成当前卷节奏板" : "生成当前卷节奏板");
+    ? (hasExistingBeatSheet ? "Đang tạo lại..." : "Đang tạo...")
+    : (hasExistingBeatSheet ? "Tạo lại bảng nhịp của tập này" : "Tạo bảng nhịp của tập này");
 
   return (
     <Card>
       <CardHeader className="pb-3">
         <div className="flex flex-col gap-2 lg:flex-row lg:items-start lg:justify-between">
           <div>
-            <CardTitle className="text-base">当前卷节奏</CardTitle>
-            <div className="text-sm text-muted-foreground">先看当前聚焦区间，再在下方按节奏分组的章节导航里切换节奏并选章细化。</div>
+            <CardTitle className="text-base">Nhịp của tập hiện tại</CardTitle>
+            <div className="text-sm text-muted-foreground">Hãy xem vùng đang tập trung trước, rồi dùng điều hướng chương bên dưới để đổi nhịp và chọn chương cần tinh chỉnh.</div>
           </div>
           <AiButton
             variant="outline"
@@ -85,22 +85,22 @@ export default function StructuredBeatSheetCard(props: StructuredBeatSheetCardPr
                 {selectedBeat ? (
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <div className="text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">当前聚焦区间</div>
+                      <div className="text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">Vùng đang tập trung</div>
                       <div className="flex flex-wrap items-center gap-2">
                         <Badge>{selectedBeat.label}</Badge>
                         <Badge variant="secondary">{selectedBeat.chapterSpanHint}</Badge>
-                        <Badge variant="outline">{visibleChapters.length}章</Badge>
-                        <Badge variant="outline">{visibleRefinedChapterCount}/{Math.max(visibleChapters.length, 1)} 已细化</Badge>
+                        <Badge variant="outline">{visibleChapters.length} chương</Badge>
+                        <Badge variant="outline">{visibleRefinedChapterCount}/{Math.max(visibleChapters.length, 1)} đã tinh chỉnh</Badge>
                       </div>
                     </div>
 
                     <div className="rounded-xl border border-border/70 bg-background/90 p-4">
-                      <div className="text-sm font-medium text-foreground">这段负责推进什么</div>
+                      <div className="text-sm font-medium text-foreground">Phần này đẩy câu chuyện về đâu</div>
                       <div className="mt-2 text-sm leading-7 text-foreground">{selectedBeat.summary}</div>
                     </div>
 
                     <div className="space-y-2">
-                      <div className="text-sm font-medium text-foreground">本段必须交付</div>
+                      <div className="text-sm font-medium text-foreground">Phần này bắt buộc phải giao gì</div>
                       {selectedBeat.mustDeliver.length > 0 ? (
                         <ol className="space-y-2 rounded-xl border border-border/70 bg-background/90 p-4">
                           {selectedBeat.mustDeliver.map((item, index) => (
@@ -117,7 +117,7 @@ export default function StructuredBeatSheetCard(props: StructuredBeatSheetCardPr
                         </ol>
                       ) : (
                         <div className="rounded-xl border border-dashed p-3 text-sm text-muted-foreground">
-                          这段还没有明确交付项，建议回到节奏生成结果里补充更具体的兑现目标。
+                          Phần này vẫn chưa có đầu việc giao rõ ràng, nên quay lại kết quả tạo nhịp để bổ sung mục tiêu thực hiện cụ thể hơn.
                         </div>
                       )}
                     </div>
@@ -125,24 +125,24 @@ export default function StructuredBeatSheetCard(props: StructuredBeatSheetCardPr
                 ) : (
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <div className="text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">当前卷总览</div>
+                      <div className="text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">Tổng quan tập hiện tại</div>
                       <div className="flex flex-wrap items-center gap-2">
                         <Badge>{volumeTitle}</Badge>
-                        <Badge variant="outline">{selectedVolumeChapters.length}章</Badge>
-                        <Badge variant="outline">{selectedBeatSheet.beats.length}个节奏段</Badge>
-                        <Badge variant="outline">{refinedChapterCount}/{Math.max(selectedVolumeChapters.length, 1)} 已细化</Badge>
+                        <Badge variant="outline">{selectedVolumeChapters.length} chương</Badge>
+                        <Badge variant="outline">{selectedBeatSheet.beats.length} đoạn nhịp</Badge>
+                        <Badge variant="outline">{refinedChapterCount}/{Math.max(selectedVolumeChapters.length, 1)} đã tinh chỉnh</Badge>
                       </div>
                     </div>
 
                     <div className="rounded-xl border border-border/70 bg-background/90 p-4">
-                      <div className="text-sm font-medium text-foreground">本卷核心承诺</div>
+                      <div className="text-sm font-medium text-foreground">Cam kết cốt lõi của tập này</div>
                       <div className="mt-2 text-sm leading-7 text-foreground">{volumeSummary}</div>
                     </div>
 
                     <div className="grid gap-3 sm:grid-cols-3">
-                      {renderMetric("当前章节数", `${selectedVolumeChapters.length}章`)}
-                      {renderMetric("节奏段数量", `${selectedBeatSheet.beats.length}个`)}
-                      {renderMetric("已细化章节", `${refinedChapterCount}章`)}
+                      {renderMetric("Số chương hiện tại", `${selectedVolumeChapters.length} chương`)}
+                      {renderMetric("Số đoạn nhịp", `${selectedBeatSheet.beats.length} đoạn`)}
+                      {renderMetric("Chương đã tinh chỉnh", `${refinedChapterCount} chương`)}
                     </div>
                   </div>
                 )}
@@ -153,7 +153,7 @@ export default function StructuredBeatSheetCard(props: StructuredBeatSheetCardPr
           </div>
         ) : (
           <div className="rounded-md border border-dashed p-4 text-sm text-muted-foreground">
-            先为当前卷生成节奏板。
+            Hãy tạo bảng nhịp cho tập hiện tại trước.
           </div>
         )}
       </CardContent>

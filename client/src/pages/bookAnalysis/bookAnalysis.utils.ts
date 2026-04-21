@@ -4,19 +4,19 @@ import type { SectionDraft } from "./bookAnalysis.types";
 export function formatStatus(status: BookAnalysisStatus | BookAnalysisSection["status"]): string {
   switch (status) {
     case "draft":
-      return "草稿";
+      return "Bản nháp";
     case "queued":
-      return "排队中";
+      return "Đang xếp hàng";
     case "running":
-      return "运行中";
+      return "Đang chạy";
     case "succeeded":
-      return "成功";
+      return "Thành công";
     case "failed":
-      return "失败";
+      return "Thất bại";
     case "archived":
-      return "已归档";
+      return "Đã lưu trữ";
     case "idle":
-      return "待处理";
+      return "Chờ xử lý";
     default:
       return status;
   }
@@ -25,19 +25,19 @@ export function formatStatus(status: BookAnalysisStatus | BookAnalysisSection["s
 export function formatStage(stage?: string | null): string {
   switch (stage) {
     case "loading_cache":
-      return "查缓存";
+      return "Đang kiểm tra cache";
     case "preparing_notes":
-      return "准备 notes";
+      return "Đang chuẩn bị ghi chú";
     case "generating_sections":
-      return "生成章节";
+      return "Đang tạo phần nội dung";
     default:
-      return stage?.trim() || "暂无";
+      return stage?.trim() || "Chưa có";
   }
 }
 
 export function formatDate(value?: string | null): string {
   if (!value) {
-    return "暂无";
+    return "Chưa có";
   }
   return new Date(value).toLocaleString();
 }

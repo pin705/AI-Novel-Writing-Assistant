@@ -33,13 +33,13 @@ export function buildVolumePlanningReadiness(params: {
   const { volumes, strategyPlan, beatSheets } = params;
   const blockingReasons: string[] = [];
   if (!strategyPlan) {
-    blockingReasons.push("请先生成卷战略建议，再确认卷骨架。");
+    blockingReasons.push("Hãy sinh gợi ý chiến lược tập trước rồi mới xác nhận khung tập.");
   }
   if (volumes.length === 0) {
-    blockingReasons.push("当前还没有卷骨架。");
+    blockingReasons.push("Hiện chưa có khung tập.");
   }
   if (!beatSheets.some((sheet) => sheet.beats.length > 0)) {
-    blockingReasons.push("当前卷还没有节奏板，默认不能直接拆章节列表。");
+    blockingReasons.push("Tập hiện tại chưa có bảng nhịp, nên mặc định chưa thể tách thẳng danh sách chương.");
   }
   return {
     canGenerateStrategy: true,
@@ -63,7 +63,7 @@ export function createEmptyVolume(sortOrder: number): VolumePlan {
     id: createLocalId("volume"),
     novelId: "",
     sortOrder,
-    title: `第${sortOrder}卷`,
+    title: `Tập ${sortOrder}`,
     summary: "",
     openingHook: "",
     mainPromise: "",
@@ -90,7 +90,7 @@ export function createEmptyChapter(chapterOrder: number): VolumeChapterPlan {
     id: createLocalId("chapter"),
     volumeId: "",
     chapterOrder,
-    title: `第${chapterOrder}章`,
+    title: `Chương ${chapterOrder}`,
     summary: "",
     purpose: "",
     conflictLevel: null,
@@ -106,12 +106,12 @@ export function createEmptyChapter(chapterOrder: number): VolumeChapterPlan {
 
 export function buildTaskSheetFromVolumeChapter(chapter: VolumeChapterPlan): string {
   const lines = [
-    `章节目标：${chapter.purpose || chapter.summary || "推进主线"}`,
-    typeof chapter.conflictLevel === "number" ? `冲突等级：${chapter.conflictLevel}` : "",
-    typeof chapter.revealLevel === "number" ? `揭露等级：${chapter.revealLevel}` : "",
-    typeof chapter.targetWordCount === "number" ? `目标字数：${chapter.targetWordCount}` : "",
-    chapter.mustAvoid?.trim() ? `禁止事项：${chapter.mustAvoid.trim()}` : "",
-    chapter.payoffRefs.length > 0 ? `兑现关联：${chapter.payoffRefs.join("、")}` : "",
+    `Mục tiêu chương: ${chapter.purpose || chapter.summary || "Đẩy tuyến chính"}`,
+    typeof chapter.conflictLevel === "number" ? `Mức xung đột: ${chapter.conflictLevel}` : "",
+    typeof chapter.revealLevel === "number" ? `Mức hé lộ: ${chapter.revealLevel}` : "",
+    typeof chapter.targetWordCount === "number" ? `Số chữ mục tiêu: ${chapter.targetWordCount}` : "",
+    chapter.mustAvoid?.trim() ? `Điều cần tránh: ${chapter.mustAvoid.trim()}` : "",
+    chapter.payoffRefs.length > 0 ? `Liên kết hoàn vốn: ${chapter.payoffRefs.join("、")}` : "",
   ].filter(Boolean);
   return lines.join("\n");
 }
@@ -156,23 +156,23 @@ export function buildOutlinePreviewFromVolumes(volumes: VolumePlan[]): string {
     .map((volume) => {
       const chapterSpan = volume.chapters.length > 0
         ? `${volume.chapters[0]?.chapterOrder ?? "-"}-${volume.chapters[volume.chapters.length - 1]?.chapterOrder ?? "-"}`
-        : "未拆章";
+        : "Chưa tách chương";
       return [
-        `【第${volume.sortOrder}卷】${volume.title}`,
-        volume.summary?.trim() ? `卷摘要：${volume.summary.trim()}` : "",
-        volume.openingHook?.trim() ? `开卷抓手：${volume.openingHook.trim()}` : "",
-        volume.mainPromise?.trim() ? `主承诺：${volume.mainPromise.trim()}` : "",
-        volume.primaryPressureSource?.trim() ? `主压迫源：${volume.primaryPressureSource.trim()}` : "",
-        volume.coreSellingPoint?.trim() ? `核心卖点：${volume.coreSellingPoint.trim()}` : "",
-        volume.escalationMode?.trim() ? `升级方式：${volume.escalationMode.trim()}` : "",
-        volume.protagonistChange?.trim() ? `主角变化：${volume.protagonistChange.trim()}` : "",
-        volume.midVolumeRisk?.trim() ? `中段风险：${volume.midVolumeRisk.trim()}` : "",
-        volume.climax?.trim() ? `卷末高潮：${volume.climax.trim()}` : "",
-        volume.payoffType?.trim() ? `兑现类型：${volume.payoffType.trim()}` : "",
-        volume.nextVolumeHook?.trim() ? `下卷钩子：${volume.nextVolumeHook.trim()}` : "",
-        volume.resetPoint?.trim() ? `重置点：${volume.resetPoint.trim()}` : "",
-        volume.openPayoffs.length > 0 ? `未兑现事项：${volume.openPayoffs.join("；")}` : "",
-        `章节范围：${chapterSpan}`,
+        `【Tập ${volume.sortOrder}】${volume.title}`,
+        volume.summary?.trim() ? `Tóm tắt tập: ${volume.summary.trim()}` : "",
+        volume.openingHook?.trim() ? `Móc vào đầu tập: ${volume.openingHook.trim()}` : "",
+        volume.mainPromise?.trim() ? `Cam kết chính: ${volume.mainPromise.trim()}` : "",
+        volume.primaryPressureSource?.trim() ? `Nguồn áp lực chính: ${volume.primaryPressureSource.trim()}` : "",
+        volume.coreSellingPoint?.trim() ? `Điểm bán cốt lõi: ${volume.coreSellingPoint.trim()}` : "",
+        volume.escalationMode?.trim() ? `Cách leo thang: ${volume.escalationMode.trim()}` : "",
+        volume.protagonistChange?.trim() ? `Biến chuyển nhân vật chính: ${volume.protagonistChange.trim()}` : "",
+        volume.midVolumeRisk?.trim() ? `Rủi ro giữa tập: ${volume.midVolumeRisk.trim()}` : "",
+        volume.climax?.trim() ? `Cao trào cuối tập: ${volume.climax.trim()}` : "",
+        volume.payoffType?.trim() ? `Kiểu hoàn vốn: ${volume.payoffType.trim()}` : "",
+        volume.nextVolumeHook?.trim() ? `Móc sang tập sau: ${volume.nextVolumeHook.trim()}` : "",
+        volume.resetPoint?.trim() ? `Điểm reset: ${volume.resetPoint.trim()}` : "",
+        volume.openPayoffs.length > 0 ? `Việc chưa hoàn vốn: ${volume.openPayoffs.join("；")}` : "",
+        `Phạm vi chương: ${chapterSpan}`,
       ].filter(Boolean).join("\n");
     })
     .join("\n\n");
@@ -246,14 +246,14 @@ function compareNumber(a: number | null | undefined, b: number | null | undefine
 }
 
 function getChangedFields(existing: ExistingOutlineChapter, chapter: VolumeChapterPlan, action: "update" | "move"): string[] {
-  const changed: string[] = action === "move" ? ["章节顺序"] : [];
-  if (!compareText(existing.title, chapter.title)) changed.push("标题");
-  if (!compareText(existing.expectation, chapter.summary)) changed.push("摘要");
-  if (!compareNumber(existing.targetWordCount, chapter.targetWordCount)) changed.push("目标字数");
-  if (!compareNumber(existing.conflictLevel, chapter.conflictLevel)) changed.push("冲突等级");
-  if (!compareNumber(existing.revealLevel, chapter.revealLevel)) changed.push("揭露等级");
-  if (!compareText(existing.mustAvoid, chapter.mustAvoid)) changed.push("禁止事项");
-  if (!compareText(existing.taskSheet, chapter.taskSheet)) changed.push("任务单");
+  const changed: string[] = action === "move" ? ["Thứ tự chương"] : [];
+  if (!compareText(existing.title, chapter.title)) changed.push("Tiêu đề");
+  if (!compareText(existing.expectation, chapter.summary)) changed.push("Tóm tắt");
+  if (!compareNumber(existing.targetWordCount, chapter.targetWordCount)) changed.push("Số chữ mục tiêu");
+  if (!compareNumber(existing.conflictLevel, chapter.conflictLevel)) changed.push("Mức xung đột");
+  if (!compareNumber(existing.revealLevel, chapter.revealLevel)) changed.push("Mức hé lộ");
+  if (!compareText(existing.mustAvoid, chapter.mustAvoid)) changed.push("Điều cần tránh");
+  if (!compareText(existing.taskSheet, chapter.taskSheet)) changed.push("Bảng nhiệm vụ");
   return changed;
 }
 
@@ -297,7 +297,7 @@ export function buildVolumeSyncPreview(
         chapterOrder: entry.chapter.chapterOrder,
         nextTitle: entry.chapter.title,
         hasContent: false,
-        changedFields: ["新章节"],
+        changedFields: ["Chương mới"],
       });
       continue;
     }
@@ -351,23 +351,23 @@ export function buildVolumeSyncPreview(
       deleteCount += 1;
       items.push({
         action: "delete",
-        volumeTitle: "未匹配",
+        volumeTitle: "Không khớp",
         chapterOrder: chapter.order,
         nextTitle: chapter.title,
         previousTitle: chapter.title,
         hasContent,
-        changedFields: ["从卷纲移除"],
+        changedFields: ["Bị xóa khỏi khung tập"],
       });
     } else {
       deleteCandidateCount += 1;
       items.push({
         action: "delete_candidate",
-        volumeTitle: "未匹配",
+        volumeTitle: "Không khớp",
         chapterOrder: chapter.order,
         nextTitle: chapter.title,
         previousTitle: chapter.title,
         hasContent,
-        changedFields: ["待确认删除"],
+        changedFields: ["Chờ xác nhận xóa"],
       });
     }
   }

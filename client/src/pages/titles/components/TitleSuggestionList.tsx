@@ -17,12 +17,12 @@ interface TitleSuggestionListProps {
 export default function TitleSuggestionList({
   suggestions,
   selectedTitle = "",
-  primaryActionLabel = "复制标题",
+  primaryActionLabel = "Sao chép tiêu đề",
   onPrimaryAction,
   onCopy,
   onSave,
   savingTitle = "",
-  emptyMessage = "还没有生成任何标题。",
+  emptyMessage = "Chưa có tiêu đề nào được tạo.",
 }: TitleSuggestionListProps) {
   if (suggestions.length === 0) {
     return (
@@ -47,11 +47,11 @@ export default function TitleSuggestionList({
               <div className="space-y-2">
                 <div className="flex flex-wrap items-center gap-2">
                   <Badge className={getClickRateBadgeClass(suggestion.clickRate)}>
-                    预估 {suggestion.clickRate}
+                    Ước tính {suggestion.clickRate}
                   </Badge>
                   <Badge variant="secondary">{getTitleStyleLabel(suggestion.style)}</Badge>
                   {suggestion.angle ? <Badge variant="outline">{suggestion.angle}</Badge> : null}
-                  {isSelected ? <Badge variant="outline">当前选中</Badge> : null}
+                  {isSelected ? <Badge variant="outline">Đang chọn</Badge> : null}
                 </div>
                 <div className="text-lg font-semibold text-foreground">{suggestion.title}</div>
                 {suggestion.reason ? (
@@ -67,7 +67,7 @@ export default function TitleSuggestionList({
                 ) : null}
                 {onCopy ? (
                   <Button type="button" variant="outline" size="sm" onClick={() => onCopy(suggestion)}>
-                    复制
+                    Sao chép
                   </Button>
                 ) : null}
                 {onSave ? (
@@ -75,10 +75,10 @@ export default function TitleSuggestionList({
                     type="button"
                     variant="secondary"
                     size="sm"
-                    disabled={savingTitle === suggestion.title}
-                    onClick={() => onSave(suggestion)}
-                  >
-                    {savingTitle === suggestion.title ? "保存中..." : "加入标题库"}
+                  disabled={savingTitle === suggestion.title}
+                  onClick={() => onSave(suggestion)}
+                >
+                    {savingTitle === suggestion.title ? "Đang lưu..." : "Thêm vào kho tiêu đề"}
                   </Button>
                 ) : null}
               </div>

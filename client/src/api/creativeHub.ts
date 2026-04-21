@@ -12,7 +12,7 @@ import { apiClient } from "./client";
 function ensureThreadId(threadId: string): string {
   const normalized = threadId.trim();
   if (!normalized) {
-    throw new Error("创作中枢线程不存在，请先创建线程。");
+    throw new Error("Luồng sáng tác không tồn tại, vui lòng tạo luồng trước.");
   }
   return normalized;
 }
@@ -110,7 +110,7 @@ export async function* streamCreativeHubRun(
   });
 
   if (!response.ok || !response.body) {
-    throw new Error(`创作中枢请求失败，状态码 ${response.status}`);
+    throw new Error(`Yêu cầu trung tâm sáng tác thất bại, mã trạng thái ${response.status}`);
   }
 
   const reader = response.body.getReader();

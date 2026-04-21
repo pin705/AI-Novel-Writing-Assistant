@@ -30,15 +30,15 @@ export interface AITakeoverContainerProps {
 
 function modeLabel(mode: AITakeoverMode): string {
   if (mode === "loading") {
-    return "加载中";
+    return "Đang tải";
   }
   if (mode === "running") {
-    return "AI 接管中";
+    return "AI đang tiếp quản";
   }
   if (mode === "waiting") {
-    return "等待确认";
+    return "Chờ xác nhận";
   }
-  return "执行异常";
+  return "Lỗi thực thi";
 }
 
 function shellClass(mode: AITakeoverMode): string {
@@ -82,13 +82,13 @@ function progressTone(mode: AITakeoverMode): WorkflowProgressTone {
 
 function progressStatusLabel(mode: AITakeoverMode): string | null {
   if (mode === "running") {
-    return "实时推进中";
+    return "Đang triển khai theo thời gian thực";
   }
   if (mode === "waiting") {
-    return "等待你确认";
+    return "Chờ bạn xác nhận";
   }
   if (mode === "failed") {
-    return "已中断";
+    return "Đã gián đoạn";
   }
   return null;
 }
@@ -123,7 +123,7 @@ export default function AITakeoverContainer({
             >
               {modeLabel(mode)}
             </Badge>
-            {taskId ? <Badge variant="outline">任务 #{taskId.slice(0, 8)}</Badge> : null}
+            {taskId ? <Badge variant="outline">Tác vụ #{taskId.slice(0, 8)}</Badge> : null}
           </div>
           <div className="text-sm text-muted-foreground">{description}</div>
         </div>
@@ -154,7 +154,7 @@ export default function AITakeoverContainer({
                   <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-primary" />
                 </span>
               ) : null}
-              <span className="font-medium text-foreground">流程进度</span>
+              <span className="font-medium text-foreground">Tiến độ quy trình</span>
               {progressStatusLabel(mode) ? (
                 <span className="rounded-full bg-background/80 px-2 py-0.5 text-[11px] text-muted-foreground">
                   {progressStatusLabel(mode)}
@@ -179,7 +179,7 @@ export default function AITakeoverContainer({
             </div>
           ) : null}
           {checkpointLabel ? (
-            <div className="mt-2 text-xs text-muted-foreground">最近检查点：{checkpointLabel}</div>
+            <div className="mt-2 text-xs text-muted-foreground">Điểm kiểm tra gần nhất: {checkpointLabel}</div>
           ) : null}
         </div>
       ) : null}

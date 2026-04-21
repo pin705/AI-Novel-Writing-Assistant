@@ -55,14 +55,14 @@ function resolveOptionLabel<T extends string>(
 
 function buildGenerationBrief(basicForm: NovelBasicFormState): string {
   const lines = [
-    basicForm.description.trim() ? `作品概述：${basicForm.description.trim()}` : "",
-    basicForm.title.trim() ? `当前草拟标题：${basicForm.title.trim()}` : "",
-    `创作模式：${resolveOptionLabel(WRITING_MODE_OPTIONS, basicForm.writingMode) ?? basicForm.writingMode}`,
-    `叙事视角：${resolveOptionLabel(POV_OPTIONS, basicForm.narrativePov) ?? basicForm.narrativePov}`,
-    `节奏偏好：${resolveOptionLabel(PACE_OPTIONS, basicForm.pacePreference) ?? basicForm.pacePreference}`,
-    `情绪浓度：${resolveOptionLabel(EMOTION_OPTIONS, basicForm.emotionIntensity) ?? basicForm.emotionIntensity}`,
-    `AI 自由度：${resolveOptionLabel(AI_FREEDOM_OPTIONS, basicForm.aiFreedom) ?? basicForm.aiFreedom}`,
-    basicForm.styleTone.trim() ? `文风关键词：${basicForm.styleTone.trim()}` : "",
+    basicForm.description.trim() ? `Tổng quan tác phẩm: ${basicForm.description.trim()}` : "",
+    basicForm.title.trim() ? `Tiêu đề nháp hiện tại: ${basicForm.title.trim()}` : "",
+    `Chế độ sáng tác: ${resolveOptionLabel(WRITING_MODE_OPTIONS, basicForm.writingMode) ?? basicForm.writingMode}`,
+    `Góc nhìn kể chuyện: ${resolveOptionLabel(POV_OPTIONS, basicForm.narrativePov) ?? basicForm.narrativePov}`,
+    `Ưu tiên nhịp độ: ${resolveOptionLabel(PACE_OPTIONS, basicForm.pacePreference) ?? basicForm.pacePreference}`,
+    `Cường độ cảm xúc: ${resolveOptionLabel(EMOTION_OPTIONS, basicForm.emotionIntensity) ?? basicForm.emotionIntensity}`,
+    `Độ tự do của AI: ${resolveOptionLabel(AI_FREEDOM_OPTIONS, basicForm.aiFreedom) ?? basicForm.aiFreedom}`,
+    basicForm.styleTone.trim() ? `Từ khóa văn phong: ${basicForm.styleTone.trim()}` : "",
   ].filter(Boolean);
   return lines.join("\n");
 }
@@ -72,9 +72,9 @@ function renderLibraryDescription(entry: TitleLibraryEntry): string {
     return truncateText(entry.description, 100);
   }
   if (entry.keywords?.trim()) {
-    return `关键词：${truncateText(entry.keywords, 80)}`;
+    return `Từ khóa: ${truncateText(entry.keywords, 80)}`;
   }
-  return "标题库候选，可直接写入当前创建表单。";
+  return "Ứng viên trong thư viện tiêu đề, có thể viết thẳng vào biểu mẫu tạo hiện tại.";
 }
 
 function joinKeywords(...values: Array<string | null | undefined>): string | null {
@@ -102,7 +102,7 @@ export default function NovelCreateTitleQuickFill({
 
   const autoBrief = useMemo(() => buildGenerationBrief(basicForm), [basicForm]);
   const resolvedBrief = useMemo(
-    () => [autoBrief, manualBrief.trim() ? `额外补充：${manualBrief.trim()}` : ""].filter(Boolean).join("\n"),
+    () => [autoBrief, manualBrief.trim() ? `Bổ sung thêm: ${manualBrief.trim()}` : ""].filter(Boolean).join("\n"),
     [autoBrief, manualBrief],
   );
   const generationMode = referenceTitle.trim() ? "adapt" : "brief";
@@ -132,7 +132,7 @@ export default function NovelCreateTitleQuickFill({
   const generateMutation = useMutation({
     mutationFn: async () => {
       if (!hasGenerationContext) {
-        throw new Error("请先填写一句标题简报，或补一个参考标题后再生成。");
+        throw new Error("Hãy nhập một câu brief về tiêu đề hoặc thêm một tiêu đề tham chiếu rồi hãy tạo.");
       }
       const response = await generateTitleIdeas({
         mode: generationMode,
@@ -150,7 +150,7 @@ export default function NovelCreateTitleQuickFill({
     onSuccess: (rows) => {
       const next = sortSuggestions(rows);
       setSuggestions(next);
-      toast.success(`已生成 ${next.length} 个标题候选。`);
+      toast.success(`Đã tạo ${next.length} ứng viên tiêu đề.`);
     },
   });
 
@@ -164,35 +164,35 @@ export default function NovelCreateTitleQuickFill({
     }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: queryKeys.titles.all });
-      toast.success("标题已加入标题库。");
+      toast.success("Đã thêm tiêu đề vào thư viện.");
     },
   });
 
   const handleApplyTitle = (title: string, source: "generated" | "library") => {
     onApplyTitle(title);
     setOpen(false);
-    toast.success(source === "generated" ? "标题候选已写入创建表单。" : "标题库标题已写入创建表单。");
+    toast.success(source === "generated" ? "Ứng viên tiêu đề đã được điền vào biểu mẫu tạo." : "Tiêu đề trong thư viện đã được điền vào biểu mẫu tạo.");
   };
 
   const handleCopySuggestion = async (suggestion: TitleFactorySuggestion) => {
     await navigator.clipboard.writeText(suggestion.title);
-    toast.success("标题已复制到剪贴板。");
+    toast.success("Đã sao chép tiêu đề vào clipboard.");
   };
 
   return (
     <>
       <div className="flex items-center justify-end">
         <AiButton type="button" variant="outline" size="sm" onClick={() => setOpen(true)}>
-          标题快速选填
+          Chọn tiêu đề nhanh
         </AiButton>
       </div>
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="max-h-[85vh] max-w-5xl overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>标题快速选填</DialogTitle>
+            <DialogTitle>Chọn tiêu đề nhanh</DialogTitle>
             <DialogDescription>
-              不做绑定关系，只是帮你更快把标题写进创建表单。可以直接生成候选，也可以从标题库挑一个回填。
+              Không liên kết gì cả, chỉ giúp bạn điền tiêu đề vào biểu mẫu tạo nhanh hơn. Bạn có thể sinh ứng viên mới hoặc chọn một tiêu đề từ thư viện để điền lại.
             </DialogDescription>
           </DialogHeader>
 
@@ -202,14 +202,14 @@ export default function NovelCreateTitleQuickFill({
             className="space-y-4"
           >
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="generate">快速生成</TabsTrigger>
-              <TabsTrigger value="library">标题库选择</TabsTrigger>
+              <TabsTrigger value="generate">Sinh nhanh</TabsTrigger>
+              <TabsTrigger value="library">Chọn từ thư viện</TabsTrigger>
             </TabsList>
 
             <TabsContent value="generate" className="space-y-4">
               <div className="rounded-lg border bg-background/80 p-3">
                 <div className="text-xs leading-6 text-muted-foreground">
-                  会优先读取当前创建页里已经填写的简介、题材、文风、节奏和叙事视角。你也可以在下面临时补充一句简报，不用先回到表单里填写。
+                  Hệ thống sẽ ưu tiên đọc phần giới thiệu, thể loại, văn phong, nhịp độ và góc nhìn đã có ở trang tạo hiện tại. Bạn cũng có thể bổ sung tạm một câu brief bên dưới, không cần quay lại biểu mẫu trước.
                 </div>
                 <div className="mt-3">
                   <LLMSelector />
@@ -221,17 +221,17 @@ export default function NovelCreateTitleQuickFill({
                       htmlFor="novel-create-title-quick-brief"
                       className="text-sm font-medium text-foreground"
                     >
-                      补充标题简报
+                      Bổ sung brief tiêu đề
                     </label>
                     <textarea
                       id="novel-create-title-quick-brief"
                       className="min-h-[132px] w-full rounded-md border bg-background px-3 py-2 text-sm outline-none transition focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
                       value={manualBrief}
                       onChange={(event) => setManualBrief(event.target.value)}
-                      placeholder="例如：末世废土里，一个被流放的维修师意外掌握古代机甲核心，想要标题更有硬核设定感和命运感。"
+                      placeholder="Ví dụ: Trong thế giới hậu tận thế, một kỹ sư bị lưu đày bất ngờ nắm được lõi cơ giáp cổ đại, muốn tiêu đề mang cảm giác thiết lập cứng tay và số phận."
                     />
                     <div className="text-xs leading-6 text-muted-foreground">
-                      这里只影响这一次生成，不会自动回写到小说创建表单。
+                      Chỉ ảnh hưởng cho lần sinh này, sẽ không tự ghi ngược về biểu mẫu tạo truyện.
                     </div>
                   </div>
 
@@ -241,33 +241,33 @@ export default function NovelCreateTitleQuickFill({
                         htmlFor="novel-create-title-reference"
                         className="text-sm font-medium text-foreground"
                       >
-                        参考标题
+                        Tiêu đề tham chiếu
                       </label>
                       <Input
                         id="novel-create-title-reference"
                         value={referenceTitle}
                         onChange={(event) => setReferenceTitle(event.target.value)}
-                        placeholder="可选，填了会按参考改编式生成"
+                        placeholder="Tùy chọn, nhập vào sẽ sinh theo kiểu biến tấu từ tiêu đề tham chiếu"
                       />
                     </div>
                     <div className="rounded-md border bg-muted/20 p-3 text-xs leading-6 text-muted-foreground">
                       {referenceTitle.trim()
-                        ? "当前会参考你输入的标题节奏和命名结构，再结合这本小说的信息重新产出候选。"
-                        : "留空时会按简报直接生成。如果你心里已经有一个风格方向，可以在这里填参考标题。"}
+                        ? "Hiện hệ thống sẽ tham chiếu nhịp tiêu đề và cấu trúc đặt tên bạn nhập, rồi kết hợp thông tin cuốn truyện để sinh lại ứng viên."
+                        : "Để trống thì hệ thống sẽ sinh trực tiếp từ brief. Nếu trong đầu bạn đã có hướng phong cách, có thể nhập tiêu đề tham chiếu ở đây."}
                     </div>
                   </div>
                 </div>
 
                 <div className="mt-3 rounded-md border bg-muted/20 p-3">
-                  <div className="text-xs font-medium text-foreground">当前已自动读取的创建页信息</div>
+                  <div className="text-xs font-medium text-foreground">Thông tin đã tự đọc từ trang tạo</div>
                   <div className="mt-2 whitespace-pre-wrap text-xs leading-6 text-muted-foreground">
-                    {autoBrief || "创建页里暂时还没有足够的信息。你可以直接在上面的“补充标题简报”里写一句题材、卖点或冲突再生成。"}
+                    {autoBrief || "Trang tạo hiện chưa có đủ thông tin. Bạn có thể viết một câu về thể loại, điểm hút hoặc xung đột trong phần brief tiêu đề ở trên rồi tạo lại."}
                   </div>
                 </div>
 
                 <div className="mt-3 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
                   <label className="space-y-2 text-sm">
-                    <span className="font-medium text-foreground">生成数量</span>
+                    <span className="font-medium text-foreground">Số lượng tiêu đề</span>
                     <Input
                       type="number"
                       min={3}
@@ -283,13 +283,13 @@ export default function NovelCreateTitleQuickFill({
                     onClick={() => generateMutation.mutate()}
                     disabled={generateMutation.isPending || !hasGenerationContext}
                   >
-                    {generateMutation.isPending ? "生成中..." : "生成标题候选"}
+                    {generateMutation.isPending ? "Đang sinh..." : "Sinh ứng viên tiêu đề"}
                   </AiButton>
                 </div>
 
                 {!hasGenerationContext ? (
                   <div className="mt-3 rounded-md border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs text-amber-800">
-                    至少先补一句标题简报，或填写一个参考标题；如果创建页里已经有简介、类型或文风，也会自动参与生成。
+                    Hãy thêm ít nhất một câu brief tiêu đề hoặc một tiêu đề tham chiếu; nếu trang tạo đã có phần giới thiệu, thể loại hay văn phong thì chúng cũng sẽ tự động tham gia vào quá trình sinh.
                   </div>
                 ) : null}
               </div>
@@ -297,40 +297,40 @@ export default function NovelCreateTitleQuickFill({
               <TitleSuggestionList
                 suggestions={suggestions}
                 selectedTitle={basicForm.title}
-                primaryActionLabel="填入标题"
+                primaryActionLabel="Điền tiêu đề"
                 onPrimaryAction={(suggestion) => handleApplyTitle(suggestion.title, "generated")}
                 onCopy={handleCopySuggestion}
                 onSave={(suggestion) => saveMutation.mutate(suggestion)}
                 savingTitle={saveMutation.isPending ? saveMutation.variables?.title ?? "" : ""}
-                emptyMessage="可以直接在上面的补充标题简报里写一句题材或卖点，再点一次生成，结果会直接作为创建页的标题候选。"
+                emptyMessage="Bạn có thể viết một câu về thể loại hoặc điểm hút trong phần brief ở trên rồi bấm sinh lại, kết quả sẽ dùng trực tiếp làm ứng viên tiêu đề cho trang tạo."
               />
             </TabsContent>
 
             <TabsContent value="library" className="space-y-4">
               <div className="flex flex-col gap-3 rounded-lg border bg-background/80 p-3 md:flex-row md:items-center md:justify-between">
                 <div className="space-y-1">
-                  <div className="text-sm font-medium text-foreground">从标题库快速选用</div>
+                  <div className="text-sm font-medium text-foreground">Chọn nhanh từ thư viện tiêu đề</div>
                   <div className="text-xs leading-6 text-muted-foreground">
-                    默认按点击率排序
-                    {basicForm.genreId ? "，并按当前题材基底过滤" : ""}
-                    。
+                    Mặc định sắp xếp theo tỉ lệ click
+                    {basicForm.genreId ? ", đồng thời lọc theo nền tảng thể loại hiện tại" : ""}
+                    .
                   </div>
                 </div>
                 <Input
                   value={search}
                   onChange={(event) => setSearch(event.target.value)}
-                  placeholder="搜索标题关键词"
+                  placeholder="Tìm theo từ khóa tiêu đề"
                   className="md:max-w-xs"
                 />
               </div>
 
               {libraryQuery.isLoading ? (
                 <div className="rounded-xl border border-dashed p-6 text-center text-sm text-muted-foreground">
-                  标题库加载中...
+                  Đang tải thư viện tiêu đề...
                 </div>
               ) : (libraryQuery.data?.data?.items ?? []).length === 0 ? (
                 <div className="rounded-xl border border-dashed p-6 text-center text-sm text-muted-foreground">
-                  当前条件下还没有可用标题。可以切到“快速生成”先产出一批候选。
+                  Hiện chưa có tiêu đề nào phù hợp với điều kiện này. Bạn có thể chuyển sang “Sinh nhanh” để tạo trước một lô ứng viên.
                 </div>
               ) : (
                 <div className="grid gap-3">
@@ -348,14 +348,14 @@ export default function NovelCreateTitleQuickFill({
                             <div className="flex flex-wrap items-center gap-2">
                               {typeof entry.clickRate === "number" ? (
                                 <Badge className={getClickRateBadgeClass(entry.clickRate)}>
-                                  预估 {entry.clickRate}
+                                  Dự đoán {entry.clickRate}
                                 </Badge>
                               ) : null}
                               {typeof entry.usedCount === "number" ? (
-                                <Badge variant="secondary">已用 {entry.usedCount}</Badge>
+                                <Badge variant="secondary">Đã dùng {entry.usedCount}</Badge>
                               ) : null}
                               {entry.genre?.name ? <Badge variant="outline">{entry.genre.name}</Badge> : null}
-                              {isSelected ? <Badge variant="outline">当前选中</Badge> : null}
+                              {isSelected ? <Badge variant="outline">Đang chọn</Badge> : null}
                             </div>
                             <div className="text-lg font-semibold text-foreground">{entry.title}</div>
                             <div className="text-sm leading-6 text-muted-foreground">
@@ -363,9 +363,9 @@ export default function NovelCreateTitleQuickFill({
                             </div>
                           </div>
 
-                          <div className="flex flex-wrap items-center gap-2">
-                            <Button type="button" size="sm" onClick={() => handleApplyTitle(entry.title, "library")}>
-                              填入标题
+                            <div className="flex flex-wrap items-center gap-2">
+                              <Button type="button" size="sm" onClick={() => handleApplyTitle(entry.title, "library")}>
+                              Điền tiêu đề
                             </Button>
                           </div>
                         </div>

@@ -51,9 +51,9 @@ export default function NovelChapterEdit() {
   const styleSummary = useMemo(
     () => [
       detail?.styleTone?.trim(),
-      detail?.narrativePov ? `视角: ${detail.narrativePov}` : null,
-      detail?.pacePreference ? `节奏: ${detail.pacePreference}` : null,
-      detail?.emotionIntensity ? `情绪强度: ${detail.emotionIntensity}` : null,
+      detail?.narrativePov ? `Góc nhìn: ${detail.narrativePov}` : null,
+      detail?.pacePreference ? `Nhịp độ: ${detail.pacePreference}` : null,
+      detail?.emotionIntensity ? `Cường độ cảm xúc: ${detail.emotionIntensity}` : null,
     ].filter((item): item is string => Boolean(item && item.trim())).join(" · ") || null,
     [detail?.emotionIntensity, detail?.narrativePov, detail?.pacePreference, detail?.styleTone],
   );
@@ -61,7 +61,7 @@ export default function NovelChapterEdit() {
   if (novelDetailQuery.isLoading && !detail) {
     return (
       <div className="flex h-full min-h-0 flex-col gap-4">
-        <PageStateCard message="正在加载章节编辑器..." />
+        <PageStateCard message="Đang tải trình chỉnh chương..." />
       </div>
     );
   }
@@ -69,7 +69,7 @@ export default function NovelChapterEdit() {
   if (novelDetailQuery.isError) {
     return (
       <div className="flex h-full min-h-0 flex-col gap-4">
-        <PageStateCard message="章节数据加载失败，请刷新后重试。" />
+        <PageStateCard message="Tải dữ liệu chương thất bại, hãy làm mới rồi thử lại." />
       </div>
     );
   }
@@ -77,7 +77,7 @@ export default function NovelChapterEdit() {
   if (!chapter) {
     return (
       <div className="flex h-full min-h-0 flex-col gap-4">
-        <PageStateCard message="没有找到对应章节，可能已被删除或当前链接不完整。" />
+        <PageStateCard message="Không tìm thấy chương tương ứng, có thể đã bị xóa hoặc đường dẫn hiện tại chưa đầy đủ." />
       </div>
     );
   }

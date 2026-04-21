@@ -270,11 +270,11 @@ export default function WorldWorkspace() {
     mutationFn: (worldId: string) => deleteWorld(worldId),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: queryKeys.worlds.all });
-      toast.success("世界观已删除。");
+      toast.success("Đã xóa thế giới quan.");
       navigate("/worlds", { replace: true });
     },
     onError: (error) => {
-      toast.error(error instanceof Error ? error.message : "删除世界观失败。");
+      toast.error(error instanceof Error ? error.message : "Không xóa được thế giới quan.");
     },
   });
 
@@ -291,7 +291,7 @@ export default function WorldWorkspace() {
     if (!id || !world) {
       return;
     }
-    const confirmed = window.confirm(`确认删除世界观「${world.name}」？此操作不可恢复。`);
+    const confirmed = window.confirm(`Bạn có chắc muốn xóa thế giới quan “${world.name}” không? Thao tác này không thể hoàn tác.`);
     if (!confirmed) {
       return;
     }
@@ -302,7 +302,7 @@ export default function WorldWorkspace() {
     <div className="space-y-4">
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>世界工作台：{world?.name ?? "加载中..."} {world?.version ? `(v${world.version})` : ""}</CardTitle>
+          <CardTitle>Không gian làm việc thế giới: {world?.name ?? "Đang tải..."} {world?.version ? `(v${world.version})` : ""}</CardTitle>
           <div className="flex flex-wrap items-center justify-end gap-2">
             <LLMSelector />
             <Button
@@ -311,7 +311,7 @@ export default function WorldWorkspace() {
               onClick={handleDelete}
               disabled={!id || !world || deleteWorldMutation.isPending}
             >
-              {deleteWorldMutation.isPending ? "删除中..." : "删除世界观"}
+              {deleteWorldMutation.isPending ? "Đang xóa..." : "Xóa thế giới quan"}
             </Button>
           </div>
         </CardHeader>
@@ -320,10 +320,10 @@ export default function WorldWorkspace() {
       {id ? (
         <Card>
           <CardHeader>
-            <CardTitle>参考资料</CardTitle>
+            <CardTitle>Tài liệu tham chiếu</CardTitle>
           </CardHeader>
           <CardContent>
-            <KnowledgeBindingPanel targetType="world" targetId={id} title="已绑定的参考资料" />
+            <KnowledgeBindingPanel targetType="world" targetId={id} title="Tài liệu đã liên kết" />
           </CardContent>
         </Card>
       ) : null}
@@ -338,12 +338,12 @@ export default function WorldWorkspace() {
 
       <Tabs defaultValue="layers" className="space-y-4">
         <TabsList className="flex flex-wrap">
-          <TabsTrigger value="structure">结构化设定</TabsTrigger>
-          <TabsTrigger value="layers">分层构建</TabsTrigger>
-          <TabsTrigger value="deepening">问答深化</TabsTrigger>
-          <TabsTrigger value="consistency">一致性</TabsTrigger>
-          <TabsTrigger value="overview">总览{featureFlags.worldVisEnabled ? "/可视化" : ""}</TabsTrigger>
-          <TabsTrigger value="assets">素材/版本/导入导出</TabsTrigger>
+          <TabsTrigger value="structure">Thiết lập có cấu trúc</TabsTrigger>
+          <TabsTrigger value="layers">Xây dựng theo lớp</TabsTrigger>
+          <TabsTrigger value="deepening">Hỏi đáp đào sâu</TabsTrigger>
+          <TabsTrigger value="consistency">Tính nhất quán</TabsTrigger>
+          <TabsTrigger value="overview">Tổng quan{featureFlags.worldVisEnabled ? "/trực quan" : ""}</TabsTrigger>
+          <TabsTrigger value="assets">Tài nguyên / phiên bản / nhập xuất</TabsTrigger>
         </TabsList>
 
         <TabsContent value="structure">

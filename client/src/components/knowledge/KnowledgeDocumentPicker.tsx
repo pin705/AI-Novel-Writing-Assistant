@@ -47,35 +47,35 @@ export default function KnowledgeDocumentPicker(props: KnowledgeDocumentPickerPr
             className={`rounded-md border px-3 py-1 text-sm ${isAuto ? "bg-accent" : ""}`}
             onClick={() => props.onChange(null)}
           >
-            自动
+            Tự động
           </button>
           <button
             type="button"
             className={`rounded-md border px-3 py-1 text-sm ${!isAuto ? "bg-accent" : ""}`}
             onClick={() => props.onChange(selectedIds)}
           >
-            自定义
+            Tùy chỉnh
           </button>
         </div>
       ) : null}
 
       {isAuto ? (
         <div className="rounded-md border border-dashed p-3 text-sm text-muted-foreground">
-          当前使用自动规则：若有实体绑定文档则优先使用绑定文档，否则回退到全部启用文档。
+          Đang dùng quy tắc tự động: nếu thực thể có tài liệu ràng buộc thì ưu tiên dùng tài liệu đó, nếu không sẽ quay về toàn bộ tài liệu đang bật.
         </div>
       ) : (
         <>
           <Input
             value={keyword}
             onChange={(event) => setKeyword(event.target.value)}
-            placeholder="搜索知识文档"
+            placeholder="Tìm tài liệu tri thức"
           />
           <div className="max-h-64 space-y-2 overflow-auto rounded-md border p-2">
             {documentsQuery.isLoading ? (
-              <div className="text-sm text-muted-foreground">加载中...</div>
+              <div className="text-sm text-muted-foreground">Đang tải...</div>
             ) : null}
             {visibleDocuments.length === 0 && !documentsQuery.isLoading ? (
-              <div className="text-sm text-muted-foreground">没有可选文档。</div>
+              <div className="text-sm text-muted-foreground">Không có tài liệu nào để chọn.</div>
             ) : null}
             {visibleDocuments.map((item) => {
               const checked = selectedIds.includes(item.id);
@@ -106,7 +106,7 @@ export default function KnowledgeDocumentPicker(props: KnowledgeDocumentPickerPr
             })}
           </div>
           <div className="text-xs text-muted-foreground">
-            已选择 {selectedIds.length} 个文档。保持为空会显式关闭知识库检索。
+            Đã chọn {selectedIds.length} tài liệu. Để trống nghĩa là tắt hẳn truy xuất tri thức.
           </div>
         </>
       )}

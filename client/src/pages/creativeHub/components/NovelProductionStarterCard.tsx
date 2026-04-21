@@ -13,60 +13,60 @@ interface NovelProductionStarterCardProps {
 }
 
 function fromNarrativePov(value: "first_person" | "third_person" | "mixed" | null | undefined): string {
-  if (value === "first_person") return "第一人称";
-  if (value === "third_person") return "第三人称";
-  if (value === "mixed") return "混合视角";
+  if (value === "first_person") return "Ngôi thứ nhất";
+  if (value === "third_person") return "Ngôi thứ ba";
+  if (value === "mixed") return "Góc nhìn hỗn hợp";
   return "";
 }
 
 function toNarrativePov(value: string): "first_person" | "third_person" | "mixed" | null {
-  if (value === "第一人称") return "first_person";
-  if (value === "第三人称") return "third_person";
-  if (value === "混合视角") return "mixed";
+  if (value === "Ngôi thứ nhất") return "first_person";
+  if (value === "Ngôi thứ ba") return "third_person";
+  if (value === "Góc nhìn hỗn hợp") return "mixed";
   return null;
 }
 
 function fromPacePreference(value: "slow" | "balanced" | "fast" | null | undefined): string {
-  if (value === "slow") return "慢节奏";
-  if (value === "balanced") return "均衡节奏";
-  if (value === "fast") return "快节奏";
+  if (value === "slow") return "Nhịp chậm";
+  if (value === "balanced") return "Nhịp cân bằng";
+  if (value === "fast") return "Nhịp nhanh";
   return "";
 }
 
 function toPacePreference(value: string): "slow" | "balanced" | "fast" | null {
-  if (value === "慢节奏") return "slow";
-  if (value === "均衡节奏") return "balanced";
-  if (value === "快节奏") return "fast";
+  if (value === "Nhịp chậm") return "slow";
+  if (value === "Nhịp cân bằng") return "balanced";
+  if (value === "Nhịp nhanh") return "fast";
   return null;
 }
 
 function fromProjectMode(value: "ai_led" | "co_pilot" | "draft_mode" | "auto_pipeline" | null | undefined): string {
-  if (value === "ai_led") return "AI 主导";
-  if (value === "co_pilot") return "人机协作";
-  if (value === "draft_mode") return "草稿优先";
-  if (value === "auto_pipeline") return "自动流水线";
+  if (value === "ai_led") return "AI dẫn dắt";
+  if (value === "co_pilot") return "Đồng sáng tác người - máy";
+  if (value === "draft_mode") return "Ưu tiên bản nháp";
+  if (value === "auto_pipeline") return "Dây chuyền tự động";
   return "";
 }
 
 function toProjectMode(value: string): "ai_led" | "co_pilot" | "draft_mode" | "auto_pipeline" | null {
-  if (value === "AI 主导") return "ai_led";
-  if (value === "人机协作") return "co_pilot";
-  if (value === "草稿优先") return "draft_mode";
-  if (value === "自动流水线") return "auto_pipeline";
+  if (value === "AI dẫn dắt") return "ai_led";
+  if (value === "Đồng sáng tác người - máy") return "co_pilot";
+  if (value === "Ưu tiên bản nháp") return "draft_mode";
+  if (value === "Dây chuyền tự động") return "auto_pipeline";
   return null;
 }
 
 function fromLevel(value: "low" | "medium" | "high" | null | undefined): string {
-  if (value === "low") return "低";
-  if (value === "medium") return "中";
-  if (value === "high") return "高";
+  if (value === "low") return "Thấp";
+  if (value === "medium") return "Trung bình";
+  if (value === "high") return "Cao";
   return "";
 }
 
 function toLevel(value: string): "low" | "medium" | "high" | null {
-  if (value === "低") return "low";
-  if (value === "中") return "medium";
-  if (value === "高") return "high";
+  if (value === "Thấp") return "low";
+  if (value === "Trung bình") return "medium";
+  if (value === "Cao") return "high";
   return null;
 }
 
@@ -97,70 +97,70 @@ function buildProductionPrompt(input: {
   const worldType = input.worldType.trim();
   const targetChapterCount = Math.max(1, Math.min(200, Math.floor(input.targetChapterCount || 20)));
   if (input.currentNovelId) {
-    const segments = [`继续生成当前小说。目标章节数：${targetChapterCount}。`];
+    const segments = [`Tiếp tục tạo tiểu thuyết hiện tại. Số chương mục tiêu: ${targetChapterCount}.`];
     if (description) {
-      segments.push(`补充设定：${description}。`);
+      segments.push(`Thiết lập bổ sung: ${description}.`);
     }
     if (genre) {
-      segments.push(`题材偏好：${genre}。`);
+      segments.push(`Ưu tiên thể loại: ${genre}.`);
     }
     if (styleTone) {
-      segments.push(`风格基调：${styleTone}。`);
+      segments.push(`Tông phong cách: ${styleTone}.`);
     }
     if (narrativePov) {
-      segments.push(`叙事视角：${narrativePov}。`);
+      segments.push(`Góc nhìn kể chuyện: ${narrativePov}.`);
     }
     if (pacePreference) {
-      segments.push(`推进节奏：${pacePreference}。`);
+      segments.push(`Nhịp triển khai: ${pacePreference}.`);
     }
     if (projectMode) {
-      segments.push(`协作模式：${projectMode}。`);
+      segments.push(`Chế độ cộng tác: ${projectMode}.`);
     }
     if (emotionIntensity) {
-      segments.push(`情绪强度：${emotionIntensity}。`);
+      segments.push(`Cường độ cảm xúc: ${emotionIntensity}.`);
     }
     if (aiFreedom) {
-      segments.push(`AI 自由度：${aiFreedom}。`);
+      segments.push(`Mức tự do của AI: ${aiFreedom}.`);
     }
     if (defaultChapterLength) {
-      segments.push(`默认章长：约 ${defaultChapterLength} 字。`);
+      segments.push(`Độ dài chương mặc định: khoảng ${defaultChapterLength} chữ.`);
     }
     if (worldType) {
-      segments.push(`世界观类型偏好：${worldType}。`);
+      segments.push(`Ưu tiên loại thế giới quan: ${worldType}.`);
     }
     return segments.join("");
   }
   const title = input.title.trim();
-  const segments = [`创建一本${targetChapterCount}章小说《${title}》，并开始整本生成。`];
+  const segments = [`Tạo một tiểu thuyết ${targetChapterCount} chương tên “${title}” và bắt đầu sản xuất toàn bộ cuốn sách.`];
   if (description) {
-    segments.push(`简介：${description}。`);
+    segments.push(`Giới thiệu: ${description}.`);
   }
   if (genre) {
-    segments.push(`题材：${genre}。`);
+    segments.push(`Thể loại: ${genre}.`);
   }
   if (styleTone) {
-    segments.push(`风格基调：${styleTone}。`);
+    segments.push(`Tông phong cách: ${styleTone}.`);
   }
   if (narrativePov) {
-    segments.push(`叙事视角：${narrativePov}。`);
+    segments.push(`Góc nhìn kể chuyện: ${narrativePov}.`);
   }
   if (pacePreference) {
-    segments.push(`推进节奏：${pacePreference}。`);
+    segments.push(`Nhịp triển khai: ${pacePreference}.`);
   }
   if (projectMode) {
-    segments.push(`协作模式：${projectMode}。`);
+    segments.push(`Chế độ cộng tác: ${projectMode}.`);
   }
   if (emotionIntensity) {
-    segments.push(`情绪强度：${emotionIntensity}。`);
+    segments.push(`Cường độ cảm xúc: ${emotionIntensity}.`);
   }
   if (aiFreedom) {
-    segments.push(`AI 自由度：${aiFreedom}。`);
+    segments.push(`Mức tự do của AI: ${aiFreedom}.`);
   }
   if (defaultChapterLength) {
-    segments.push(`默认章长：约 ${defaultChapterLength} 字。`);
+    segments.push(`Độ dài chương mặc định: khoảng ${defaultChapterLength} chữ.`);
   }
   if (worldType) {
-    segments.push(`世界观类型：${worldType}。`);
+    segments.push(`Loại thế giới quan: ${worldType}.`);
   }
   return segments.join("");
 }
@@ -229,40 +229,40 @@ export default function NovelProductionStarterCard({
 
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-3">
-      <div className="mb-2 text-xs font-medium text-slate-500">整本生产</div>
+      <div className="mb-2 text-xs font-medium text-slate-500">Sản xuất toàn cuốn</div>
       <div className="space-y-3">
         <div className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600">
           {isContinueMode
-            ? `当前将继续生产《${resolvedTitle || "当前小说"}》。`
-            : "当前处于全局模式，可直接创建新书并启动整本生产。"}
+            ? `Hiện sẽ tiếp tục sản xuất “${resolvedTitle || "tiểu thuyết hiện tại"}”.`
+            : "Hiện đang ở chế độ toàn cục, có thể tạo sách mới và khởi động sản xuất toàn cuốn ngay."}
         </div>
         <div className="rounded-lg border border-dashed border-slate-200 bg-white px-3 py-2 text-xs leading-5 text-slate-600">
-          建议先确认：题材、风格、视角、节奏、章长、AI 自由度。条件越完整，整本生产偏差越小。
+          Nên xác nhận trước: thể loại, phong cách, góc nhìn, nhịp điệu, độ dài chương và mức tự do của AI. Điều kiện càng đầy đủ, sai lệch khi sản xuất toàn cuốn càng thấp.
         </div>
         {!isContinueMode ? (
           <input
             className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 outline-none focus:border-slate-400"
-            placeholder="小说标题"
+            placeholder="Tiêu đề tiểu thuyết"
             value={title}
             onChange={(event) => setTitle(event.target.value)}
           />
         ) : null}
         <textarea
           className="min-h-[88px] w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 outline-none focus:border-slate-400"
-          placeholder="简介 / 核心设定"
+          placeholder="Giới thiệu / thiết lập cốt lõi"
           value={description}
           onChange={(event) => setDescription(event.target.value)}
         />
         <div className="grid gap-2 sm:grid-cols-2">
           <input
             className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 outline-none focus:border-slate-400"
-            placeholder="题材类型，例如：东方玄幻 / 都市悬疑"
+            placeholder="Loại thể loại, ví dụ: huyền huyễn phương Đông / đô thị huyền nghi"
             value={genre}
             onChange={(event) => setGenre(event.target.value)}
           />
           <input
             className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 outline-none focus:border-slate-400"
-            placeholder="风格基调，例如：冷峻压抑 / 轻快热血"
+            placeholder="Tông phong cách, ví dụ: lạnh lẽo, nặng nề / tươi sáng, nhiệt huyết"
             value={styleTone}
             onChange={(event) => setStyleTone(event.target.value)}
           />
@@ -273,20 +273,20 @@ export default function NovelProductionStarterCard({
             value={narrativePov}
             onChange={(event) => setNarrativePov(event.target.value)}
           >
-            <option value="">叙事视角</option>
-            <option value="第一人称">第一人称</option>
-            <option value="第三人称">第三人称</option>
-            <option value="混合视角">混合视角</option>
+            <option value="">Góc nhìn kể chuyện</option>
+            <option value="Ngôi thứ nhất">Ngôi thứ nhất</option>
+            <option value="Ngôi thứ ba">Ngôi thứ ba</option>
+            <option value="Góc nhìn hỗn hợp">Góc nhìn hỗn hợp</option>
           </select>
           <select
             className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 outline-none focus:border-slate-400"
             value={pacePreference}
             onChange={(event) => setPacePreference(event.target.value)}
           >
-            <option value="">推进节奏</option>
-            <option value="慢节奏">慢节奏</option>
-            <option value="均衡节奏">均衡节奏</option>
-            <option value="快节奏">快节奏</option>
+            <option value="">Nhịp triển khai</option>
+            <option value="Nhịp chậm">Nhịp chậm</option>
+            <option value="Nhịp cân bằng">Nhịp cân bằng</option>
+            <option value="Nhịp nhanh">Nhịp nhanh</option>
           </select>
         </div>
         <div className="grid gap-2 sm:grid-cols-3">
@@ -295,37 +295,37 @@ export default function NovelProductionStarterCard({
             value={projectMode}
             onChange={(event) => setProjectMode(event.target.value)}
           >
-            <option value="">协作模式</option>
-            <option value="AI 主导">AI 主导</option>
-            <option value="人机协作">人机协作</option>
-            <option value="草稿优先">草稿优先</option>
-            <option value="自动流水线">自动流水线</option>
+            <option value="">Chế độ cộng tác</option>
+            <option value="AI dẫn dắt">AI dẫn dắt</option>
+            <option value="Đồng sáng tác người - máy">Đồng sáng tác người - máy</option>
+            <option value="Ưu tiên bản nháp">Ưu tiên bản nháp</option>
+            <option value="Dây chuyền tự động">Dây chuyền tự động</option>
           </select>
           <select
             className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 outline-none focus:border-slate-400"
             value={emotionIntensity}
             onChange={(event) => setEmotionIntensity(event.target.value)}
           >
-            <option value="">情绪强度</option>
-            <option value="低">低</option>
-            <option value="中">中</option>
-            <option value="高">高</option>
+            <option value="">Cường độ cảm xúc</option>
+            <option value="Thấp">Thấp</option>
+            <option value="Trung bình">Trung bình</option>
+            <option value="Cao">Cao</option>
           </select>
           <select
             className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 outline-none focus:border-slate-400"
             value={aiFreedom}
             onChange={(event) => setAiFreedom(event.target.value)}
           >
-            <option value="">AI 自由度</option>
-            <option value="低">低</option>
-            <option value="中">中</option>
-            <option value="高">高</option>
+            <option value="">Mức tự do của AI</option>
+            <option value="Thấp">Thấp</option>
+            <option value="Trung bình">Trung bình</option>
+            <option value="Cao">Cao</option>
           </select>
         </div>
         <div className="grid gap-2 sm:grid-cols-3">
           <input
             className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 outline-none focus:border-slate-400"
-            placeholder="目标章节数"
+            placeholder="Số chương mục tiêu"
             type="number"
             min={1}
             max={200}
@@ -334,7 +334,7 @@ export default function NovelProductionStarterCard({
           />
           <input
             className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 outline-none focus:border-slate-400"
-            placeholder="默认章长（字）"
+            placeholder="Độ dài chương mặc định (chữ)"
             type="number"
             min={500}
             max={10000}
@@ -343,7 +343,7 @@ export default function NovelProductionStarterCard({
           />
           <input
             className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 outline-none focus:border-slate-400"
-            placeholder="可选世界观类型"
+            placeholder="Loại thế giới quan tùy chọn"
             value={worldType}
             onChange={(event) => setWorldType(event.target.value)}
           />
@@ -386,34 +386,34 @@ export default function NovelProductionStarterCard({
                   worldType,
                 }));
               } catch (error) {
-                toast.error(error instanceof Error ? error.message : "生产前条件保存失败。");
+                toast.error(error instanceof Error ? error.message : "Lưu điều kiện trước khi sản xuất thất bại.");
               } finally {
                 setIsSubmitting(false);
               }
             }}
           >
-            {isSubmitting ? "处理中..." : isContinueMode ? "继续整本生产" : "启动整本生产"}
+            {isSubmitting ? "Đang xử lý..." : isContinueMode ? "Tiếp tục sản xuất toàn cuốn" : "Bắt đầu sản xuất toàn cuốn"}
           </Button>
           <Button
             type="button"
             variant="outline"
             onClick={() => onQuickAction?.("整本生成到哪一步了")}
           >
-            查看进度
+            Xem tiến độ
           </Button>
           <Button
             type="button"
             variant="outline"
             onClick={() => onQuickAction?.("为什么整本生成没有启动")}
             >
-              查看阻塞
+              Xem điểm chặn
             </Button>
           <Button
             type="button"
             variant="outline"
             onClick={() => onQuickAction?.("基于当前小说信息，为生产前的题材、风格、视角、节奏、章长和 AI 自由度各给出 3 个备选答案。")}
           >
-            生成备选
+            Tạo phương án thay thế
           </Button>
         </div>
       </div>

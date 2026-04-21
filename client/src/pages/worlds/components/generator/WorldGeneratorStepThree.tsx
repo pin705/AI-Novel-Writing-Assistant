@@ -15,7 +15,7 @@ export default function WorldGeneratorStepThree(props: WorldGeneratorStepThreePr
   return (
     <div className="space-y-3">
       <div className="rounded-md border p-3 text-sm text-muted-foreground">
-        这些是系统先整理出的核心规则。你可以直接改字，也可以保持不动后进入编辑页继续细化。
+        Đây là các quy tắc cốt lõi hệ thống đã tổng hợp sẵn. Bạn có thể sửa trực tiếp hoặc giữ nguyên rồi vào trang chỉnh sửa để hoàn thiện tiếp.
       </div>
       {axioms.map((axiom, index) => (
         <Input
@@ -25,10 +25,10 @@ export default function WorldGeneratorStepThree(props: WorldGeneratorStepThreePr
         />
       ))}
       <Button variant="secondary" onClick={onAddAxiom}>
-        新增公理
+        Thêm quy tắc
       </Button>
       <Button onClick={onFinalize} disabled={finalizePending}>
-        {finalizePending ? "保存中..." : "进入世界工作台"}
+        {finalizePending ? "Đang lưu..." : "Vào thế giới làm việc"}
       </Button>
     </div>
   );

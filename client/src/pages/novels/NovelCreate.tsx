@@ -173,9 +173,9 @@ export default function NovelCreate() {
     <div className="mx-auto max-w-5xl space-y-4">
       <Card>
         <CardHeader>
-          <CardTitle>创建小说项目</CardTitle>
+          <CardTitle>Tạo dự án tiểu thuyết</CardTitle>
           <CardDescription>
-            先把这本书写给谁、靠什么吸引追读、前 30 章要兑现什么定义清楚。这里的设置会直接影响后续主线规划、世界边界、写法建议和 AI 生成行为，创建后仍可继续调整。
+            Hãy chốt rõ cuốn sách này viết cho ai, dựa vào gì để giữ độc giả theo dõi, và 30 chương đầu cần thực hiện điều gì. Các thiết lập ở đây sẽ ảnh hưởng trực tiếp đến quy hoạch tuyến chính, biên giới thế giới, gợi ý phong cách và hành vi sinh của AI, và vẫn có thể chỉnh tiếp sau khi tạo.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -192,7 +192,7 @@ export default function NovelCreate() {
             onFormChange={(patch) => setBasicForm((prev) => patchNovelBasicForm(prev, patch))}
             onSubmit={() => createNovelMutation.mutate()}
             isSubmitting={createNovelMutation.isPending}
-            submitLabel="创建并进入项目"
+            submitLabel="Tạo và vào dự án"
             showPublicationStatus={false}
             framingQuickFill={(
               <BookFramingQuickFillButton

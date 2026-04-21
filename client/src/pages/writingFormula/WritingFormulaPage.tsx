@@ -155,7 +155,7 @@ export default function WritingFormulaPage() {
 
     setSelectedProfileId(incomingProfile.id);
     if (incomingSource === "book-analysis") {
-      setMessage(`已从拆书生成写法「${incomingProfile.name}」，可以继续编辑、绑定和试写。`);
+      setMessage(`Đã tạo phong cách viết từ bản phân tích sách “${incomingProfile.name}”, bạn có thể tiếp tục chỉnh sửa, ràng buộc và thử viết.`);
     }
     setSearchParams(nextSearchParams, { replace: true });
   }, [incomingProfileId, incomingSource, profiles, searchParams, setSearchParams]);
@@ -205,7 +205,7 @@ export default function WritingFormulaPage() {
       if (response.data) {
         setSelectedProfileId(response.data.id);
         setCreateForm((prev) => ({ ...prev, manualName: "" }));
-        setMessage("已创建空白写法资产。");
+        setMessage("Đã tạo một tài sản phong cách viết trống.");
       }
       await refreshStyleData();
     },
@@ -226,8 +226,8 @@ export default function WritingFormulaPage() {
         const featureCount = response.data.extractedFeatures?.length ?? 0;
         setMessage(
           featureCount > 0
-            ? `已提取 ${featureCount} 项特征，可在编辑页的“提取特征启用”区域逐项勾选。`
-            : "已创建写法资产，但这次还没有生成可选特征条目。编辑页里可以直接重新提取特征。",
+            ? `Đã trích xuất ${featureCount} đặc trưng, bạn có thể tick từng mục trong vùng “Bật đặc trưng trích xuất” ở trang chỉnh sửa.`
+            : "Đã tạo tài sản phong cách viết, nhưng lần này chưa sinh ra các đặc trưng có thể chọn. Bạn có thể trích xuất lại ngay trong trang chỉnh sửa.",
         );
       }
       await refreshStyleData();
@@ -239,7 +239,7 @@ export default function WritingFormulaPage() {
     onSuccess: async (response) => {
       if (response.data) {
         setSelectedProfileId(response.data.id);
-        setMessage("已基于模板创建写法资产。");
+        setMessage("Đã tạo tài sản phong cách viết dựa trên mẫu.");
       }
       await refreshStyleData();
     },
@@ -263,7 +263,7 @@ export default function WritingFormulaPage() {
           briefCategory: "",
           briefPrompt: "",
         }));
-        setMessage("AI 已根据你的描述生成一套起步写法，可以直接继续微调。");
+        setMessage("AI đã tạo một bộ phong cách khởi đầu dựa trên mô tả của bạn, bạn có thể chỉnh tiếp ngay.");
       }
       await refreshStyleData();
     },
@@ -272,10 +272,10 @@ export default function WritingFormulaPage() {
   const reextractFeaturesMutation = useMutation({
     mutationFn: async () => {
       if (!selectedProfileId || !editor.sourceContent.trim()) {
-        throw new Error("请先准备原文样本。");
+        throw new Error("Vui lòng chuẩn bị mẫu văn bản trước.");
       }
       return extractStyleFeaturesFromText({
-        name: editor.name.trim() || selectedProfile?.name || "文本提取写法",
+        name: editor.name.trim() || selectedProfile?.name || "Phong cách trích xuất từ văn bản",
         category: editor.category || undefined,
         sourceText: editor.sourceContent,
         provider: llm.provider,
@@ -301,8 +301,8 @@ export default function WritingFormulaPage() {
       }));
       setMessage(
         extractedFeatures.length > 0
-          ? `已重新提取 ${extractedFeatures.length} 项特征，勾选确认后记得保存。`
-          : "这次仍然没有生成可选特征条目，我已经把空状态保留在编辑页里了。",
+          ? `Đã trích xuất lại ${extractedFeatures.length} đặc trưng, nhớ tick xác nhận rồi lưu lại.`
+          : "Lần này vẫn chưa tạo ra đặc trưng có thể chọn, mình đã giữ trạng thái trống trong trang chỉnh sửa.",
       );
     },
   });
@@ -329,7 +329,7 @@ export default function WritingFormulaPage() {
       });
     },
     onSuccess: async () => {
-      setMessage("写法资产已保存。");
+      setMessage("Tài sản phong cách viết đã được lưu.");
       await refreshStyleData();
     },
   });
@@ -338,7 +338,7 @@ export default function WritingFormulaPage() {
     mutationFn: (id: string) => deleteStyleProfile(id),
     onSuccess: async () => {
       setSelectedProfileId("");
-      setMessage("写法资产已删除。");
+      setMessage("Tài sản phong cách viết đã được xóa.");
       await refreshStyleData();
     },
   });
@@ -370,7 +370,7 @@ export default function WritingFormulaPage() {
       });
     },
     onSuccess: async () => {
-      setMessage("写法绑定已创建。");
+      setMessage("Ràng buộc phong cách viết đã được tạo.");
       await queryClient.invalidateQueries({ queryKey: queryKeys.styleEngine.bindings(selectedProfileId || "all") });
     },
   });
@@ -385,7 +385,7 @@ export default function WritingFormulaPage() {
   const testWriteMutation = useMutation({
     mutationFn: () => {
       if (!selectedProfileId) {
-        throw new Error("请先选择写法资产。");
+        throw new Error("Vui lòng chọn tài sản phong cách viết trước.");
       }
       return testWriteWithStyleProfile(selectedProfileId, {
         mode: testWriteForm.mode,
@@ -403,7 +403,7 @@ export default function WritingFormulaPage() {
   const detectionMutation = useMutation({
     mutationFn: () => {
       if (!selectedProfileId) {
-        throw new Error("请先选择写法资产。");
+        throw new Error("Vui lòng chọn tài sản phong cách viết trước.");
       }
       return detectStyleIssues({
         content: detectInput,
@@ -418,7 +418,7 @@ export default function WritingFormulaPage() {
   const rewriteMutation = useMutation({
     mutationFn: async () => {
       if (!selectedProfileId) {
-        throw new Error("请先选择写法资产。");
+        throw new Error("Vui lòng chọn tài sản phong cách viết trước.");
       }
       const report = detectionMutation.data?.data ?? (await detectStyleIssues({
         content: detectInput,
@@ -450,12 +450,12 @@ export default function WritingFormulaPage() {
     <div className="flex h-full min-h-0 flex-col gap-4">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-semibold">写法引擎</h1>
+          <h1 className="text-2xl font-semibold">Bộ máy phong cách viết</h1>
           <p className="text-sm text-muted-foreground">
-            先选一套预置写法或模板起步，再慢慢微调规则、绑定对象和试写结果。
+            Hãy chọn một phong cách hoặc mẫu có sẵn để bắt đầu, rồi tinh chỉnh dần quy tắc, đối tượng ràng buộc và kết quả thử viết.
           </p>
         </div>
-        <OpenInCreativeHubButton bindings={{ styleProfileId: selectedProfileId || null }} label="写法资产发往创作中枢" />
+        <OpenInCreativeHubButton bindings={{ styleProfileId: selectedProfileId || null }} label="Gửi tài sản phong cách viết sang trung tâm sáng tác" />
       </div>
 
       {message ? <div className="rounded-md border bg-muted/30 px-3 py-2 text-sm">{message}</div> : null}

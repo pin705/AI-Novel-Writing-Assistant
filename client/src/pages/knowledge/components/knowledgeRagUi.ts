@@ -3,19 +3,19 @@ import type { RagJobSummary } from "@/api/knowledge";
 export function formatStatus(status: string): string {
   switch (status) {
     case "enabled":
-      return "已启用";
+      return "Đã bật";
     case "disabled":
-      return "已停用";
+      return "Đã tắt";
     case "archived":
-      return "已归档";
+      return "Đã lưu trữ";
     case "queued":
-      return "排队中";
+      return "Đang xếp hàng";
     case "running":
-      return "执行中";
+      return "Đang chạy";
     case "succeeded":
-      return "成功";
+      return "Thành công";
     case "failed":
-      return "失败";
+      return "Thất bại";
     default:
       return status;
   }
@@ -35,15 +35,15 @@ export function getRagJobProgressWidth(job: RagJobSummary): string {
 }
 
 export function formatRagJobMeta(job: RagJobSummary): string {
-  const parts = [job.jobType, `尝试 ${job.attempts}/${job.maxAttempts}`];
+  const parts = [job.jobType, `Lần thử ${job.attempts}/${job.maxAttempts}`];
   if (job.progress?.current !== undefined && job.progress?.total !== undefined && job.progress.total > 0) {
     parts.push(`${job.progress.current}/${job.progress.total}`);
   }
   if (job.progress?.chunks) {
-    parts.push(`${job.progress.chunks} 分块`);
+    parts.push(`${job.progress.chunks} phân đoạn`);
   }
   if (job.progress?.documents) {
-    parts.push(`${job.progress.documents} 文档`);
+    parts.push(`${job.progress.documents} tài liệu`);
   }
   return parts.join(" | ");
 }

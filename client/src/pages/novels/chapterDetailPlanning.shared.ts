@@ -14,9 +14,9 @@ export interface ChapterDetailBatchSelection {
 export type ChapterDetailBundleRequest = string | ChapterDetailBatchSelection;
 
 export function detailModeLabel(mode: ChapterDetailMode): string {
-  if (mode === "purpose") return "章节目标";
-  if (mode === "boundary") return "执行边界";
-  return "任务单";
+  if (mode === "purpose") return "Mục tiêu chương";
+  if (mode === "boundary") return "Ranh giới triển khai";
+  return "Bảng nhiệm vụ";
 }
 
 export function hasChapterDetailDraft(

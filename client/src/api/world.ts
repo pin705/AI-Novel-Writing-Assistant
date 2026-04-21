@@ -47,7 +47,7 @@ function normalizeSuggestedAxioms(raw: unknown): string[] {
         .find((value) => typeof value === "string") as string | undefined;
 
       if (title && description && effect) {
-        return `${title}（${description}，影响：${effect}）`.trim();
+        return `${title}（${description}，ảnh hưởng：${effect}）`.trim();
       }
       if (title && description) {
         return `${title}：${description}`.trim();
@@ -383,19 +383,19 @@ export async function useWorldLibraryItem(
   payload?: {
     worldId?: string;
     targetField?:
-      | "description"
-      | "background"
-      | "geography"
-      | "cultures"
-      | "magicSystem"
-      | "politics"
-      | "races"
-      | "religions"
-      | "technology"
-      | "conflicts"
-      | "history"
-      | "economy"
-      | "factions";
+    | "description"
+    | "background"
+    | "geography"
+    | "cultures"
+    | "magicSystem"
+    | "politics"
+    | "races"
+    | "religions"
+    | "technology"
+    | "conflicts"
+    | "history"
+    | "economy"
+    | "factions";
     targetCollection?: "forces" | "locations";
   },
 ) {
