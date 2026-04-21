@@ -12,6 +12,7 @@ import { llmProviderSchema } from "../llm/providerSchema";
 import {
   toBindings,
 } from "../creativeHub/creativeHubRuntimeHelpers";
+import { localizeCreativeHubFrame, translateBackendText } from "../i18n";
 import { authMiddleware } from "../middleware/auth";
 import { validate } from "../middleware/validate";
 import { creativeHubService } from "../creativeHub/CreativeHubService";
@@ -76,7 +77,7 @@ router.use(authMiddleware);
 
 function writeCreativeHubFrame(res: Response, frame: CreativeHubStreamFrame): void {
   if (res.writableEnded) return;
-  res.write(`data: ${JSON.stringify(frame)}\n\n`);
+  res.write(`data: ${JSON.stringify(localizeCreativeHubFrame(frame))}\n\n`);
 }
 
 function initCreativeHubSSE(res: Response): () => void {
@@ -283,7 +284,7 @@ router.post("/threads/:threadId/runs/stream", validate({
     } catch (error) {
       writeCreativeHubFrame(res, {
         event: "creative_hub/error",
-        data: { message: error instanceof Error ? error.message : "创作中枢运行失败。" },
+        data: { message: error instanceof Error ? error.message : translateBackendText("创作中枢运行失败。") },
       });
     } finally {
       disposeHeartbeat();

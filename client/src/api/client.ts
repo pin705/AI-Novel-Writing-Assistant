@@ -2,6 +2,7 @@ import axios, { AxiosError } from "axios";
 import type { ApiResponse } from "@ai-novel/shared/types/api";
 import { API_BASE_URL, API_TIMEOUT_MS } from "@/lib/constants";
 import { toast } from "@/components/ui/toast";
+import { getAppLanguage } from "@/i18n";
 
 export interface ApiHttpError extends Error {
   status?: number;
@@ -17,6 +18,15 @@ declare module "axios" {
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,
   timeout: API_TIMEOUT_MS,
+});
+
+apiClient.interceptors.request.use((config) => {
+  const locale = getAppLanguage();
+  config.headers = config.headers ?? {};
+  // Keep backend response text aligned with the active app locale.
+  config.headers["Accept-Language"] = locale;
+  config.headers["X-AI-Novel-Locale"] = locale;
+  return config;
 });
 
 apiClient.interceptors.response.use(

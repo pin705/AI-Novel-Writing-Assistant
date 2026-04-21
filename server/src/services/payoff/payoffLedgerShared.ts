@@ -6,6 +6,7 @@ import type {
   PayoffLedgerStatus,
   PayoffLedgerSummary,
 } from "@ai-novel/shared/types/payoffLedger";
+import { compareLocalizedText } from "../../i18n";
 
 type PayoffLedgerRowLike = {
   id: string;
@@ -185,7 +186,7 @@ export function buildPayoffLedgerResponse(
     if (leftOrder !== rightOrder) {
       return leftOrder - rightOrder;
     }
-    return left.title.localeCompare(right.title, "zh-Hans-CN");
+    return compareLocalizedText(left.title, right.title);
   });
   return {
     summary: buildPayoffLedgerSummary(orderedItems, chapterOrder),

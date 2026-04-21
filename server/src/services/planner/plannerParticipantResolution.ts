@@ -1,4 +1,5 @@
 import type { RuntimeDynamicCharacterOverview } from "@ai-novel/shared/types/chapterRuntime";
+import { compareLocalizedText } from "../../i18n";
 
 type PlannerCharacterSeed = {
   id: string;
@@ -97,7 +98,7 @@ function buildPreferredDynamicParticipantNames(
       if (left.absenceRisk !== right.absenceRisk) {
         return absenceRiskRank(right.absenceRisk) - absenceRiskRank(left.absenceRisk);
       }
-      return left.name.localeCompare(right.name, "zh-Hans-CN");
+      return compareLocalizedText(left.name, right.name);
     })
     .map((item) => item.name);
 }

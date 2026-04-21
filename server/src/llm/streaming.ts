@@ -1,6 +1,7 @@
 import type { Response } from "express";
 import type { BaseMessageChunk } from "@langchain/core/messages";
 import type { SSEFrame } from "@ai-novel/shared/types/api";
+import { localizeSseFrame, translateBackendText } from "../i18n";
 
 export type WritableSSEFrame = Extract<
   SSEFrame,
@@ -33,7 +34,7 @@ export function writeSSEFrame(res: Response, payload: WritableSSEFrame): void {
   if (res.writableEnded) {
     return;
   }
-  res.write(`data: ${JSON.stringify(payload)}\n\n`);
+  res.write(`data: ${JSON.stringify(localizeSseFrame(payload))}\n\n`);
 }
 
 function normalizeChunkContent(content: BaseMessageChunk["content"]): string {
@@ -110,7 +111,7 @@ export async function streamToSSE(
   } catch (error) {
     writeSSEFrame(res, {
       type: "error",
-      error: error instanceof Error ? error.message : "流式输出失败。",
+      error: error instanceof Error ? error.message : translateBackendText("流式输出失败。"),
     });
   } finally {
     disposeHeartbeat();

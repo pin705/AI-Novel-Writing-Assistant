@@ -1,5 +1,6 @@
 import type { Prisma } from "@prisma/client";
 import { prisma } from "../../db/prisma";
+import { compareLocalizedText } from "../../i18n";
 import { AppError } from "../../middleware/errorHandler";
 import { buildStoryModePromptBlock, normalizeStoryModeOutput, sanitizeStoryModeProfile, serializeStoryModeProfile } from "./storyModeProfile";
 import type { StoryModeTreeDraft } from "./storyModeGenerate";
@@ -92,7 +93,7 @@ function validateDraftSubtree(draft: StoryModeTreeDraft, depth = 1): void {
 }
 
 function sortTree(nodes: StoryModeTreeNode[]): StoryModeTreeNode[] {
-  nodes.sort((left, right) => left.name.localeCompare(right.name, "zh-CN"));
+  nodes.sort((left, right) => compareLocalizedText(left.name, right.name));
   for (const node of nodes) {
     sortTree(node.children);
   }

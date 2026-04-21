@@ -1,5 +1,6 @@
 import type { Prisma } from "@prisma/client";
 import { prisma } from "../../db/prisma";
+import { compareLocalizedText } from "../../i18n";
 import { AppError } from "../../middleware/errorHandler";
 import type { GenreTreeDraft } from "./genreGenerate";
 
@@ -77,7 +78,7 @@ function normalizeDraft(input: CreateGenreTreeNodeInput): GenreTreeDraft & { tem
 }
 
 function sortTree(nodes: GenreTreeNode[]): GenreTreeNode[] {
-  nodes.sort((left, right) => left.name.localeCompare(right.name, "zh-CN"));
+  nodes.sort((left, right) => compareLocalizedText(left.name, right.name));
   for (const node of nodes) {
     sortTree(node.children);
   }

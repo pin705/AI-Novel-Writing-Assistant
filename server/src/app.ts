@@ -8,6 +8,8 @@ import morgan from "morgan";
 import type { ApiResponse } from "@ai-novel/shared/types/api";
 import { ensureRuntimeDatabaseReady } from "./db/runtimeMigrations";
 import { errorHandler } from "./middleware/errorHandler";
+import { responseLocalizationMiddleware } from "./middleware/responseLocalization";
+import { requestLocaleMiddleware } from "./i18n";
 import { loadProviderApiKeys } from "./llm/factory";
 import astrologyRouter from "./routes/astrology";
 import agentCatalogRouter from "./routes/agentCatalog";
@@ -104,6 +106,8 @@ export function createApp() {
     return `${method} ${url} ${status} ${responseTime} ms - ${contentLength}${errorSuffix}`;
   }));
   app.use(express.json({ limit: jsonBodyLimit }));
+  app.use(requestLocaleMiddleware);
+  app.use(responseLocalizationMiddleware);
 
   app.use("/api/health", healthRouter);
   app.use("/api/agent-catalog", agentCatalogRouter);

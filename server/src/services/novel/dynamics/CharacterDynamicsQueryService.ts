@@ -3,6 +3,7 @@ import type {
   DynamicCharacterOverview,
 } from "@ai-novel/shared/types/characterDynamics";
 import { prisma } from "../../../db/prisma";
+import { compareLocalizedText } from "../../../i18n";
 import { compareDynamicRows } from "./characterDynamicsShared";
 import {
   buildOverviewItem,
@@ -165,7 +166,7 @@ export class CharacterDynamicsQueryService {
         if (left.absenceRisk !== right.absenceRisk) {
           return ["high", "warn", "info", "none"].indexOf(left.absenceRisk) - ["high", "warn", "info", "none"].indexOf(right.absenceRisk);
         }
-        return left.name.localeCompare(right.name, "zh-Hans-CN");
+        return compareLocalizedText(left.name, right.name);
       });
 
     const highCount = characters.filter((item) => item.absenceRisk === "high").length;
