@@ -1,3 +1,4 @@
+import { t } from "@/i18n";
 export interface StorylineStructuredView {
   coreTheme: string;
   mainGoal: string;
@@ -46,27 +47,27 @@ function buildFallbackPhases(lines: string[]): { early: string; middle: string; 
 export function parseStorylineStructuredView(draftText: string): StorylineStructuredView {
   const lines = normalizeLines(draftText);
   const fallbackPhases = buildFallbackPhases(lines);
-  const coreTheme = findByKeywords(lines, ["核心主题", "主题"]);
-  const mainGoal = findByKeywords(lines, ["主线目标", "目标", "核心任务"]);
-  const earlyPhase = findByKeywords(lines, ["前期", "开篇", "第一阶段"]) || fallbackPhases.early;
-  const middlePhase = findByKeywords(lines, ["中期", "第二阶段", "转折"]) || fallbackPhases.middle;
-  const latePhase = findByKeywords(lines, ["后期", "第三阶段", "收束", "结局阶段"]) || fallbackPhases.late;
-  const growthCurve = findByKeywords(lines, ["成长", "成长路径", "成长弧"]);
-  const emotionTrend = findByKeywords(lines, ["情感", "情绪", "情感线"]);
-  const coreConflicts = findByKeywords(lines, ["冲突", "矛盾", "对抗"]);
-  const endingDirection = findByKeywords(lines, ["结局", "终局", "收尾"]);
-  const forbiddenItems = findByKeywords(lines, ["禁止", "避免", "禁忌"]);
+  const coreTheme = findByKeywords(lines, [t("核心主题"), t("主题")]);
+  const mainGoal = findByKeywords(lines, [t("主线目标"), t("目标"), t("核心任务")]);
+  const earlyPhase = findByKeywords(lines, [t("前期"), t("开篇"), t("第一阶段")]) || fallbackPhases.early;
+  const middlePhase = findByKeywords(lines, [t("中期"), t("第二阶段"), t("转折")]) || fallbackPhases.middle;
+  const latePhase = findByKeywords(lines, [t("后期"), t("第三阶段"), t("收束"), t("结局阶段")]) || fallbackPhases.late;
+  const growthCurve = findByKeywords(lines, [t("成长"), t("成长路径"), t("成长弧")]);
+  const emotionTrend = findByKeywords(lines, [t("情感"), t("情绪"), t("情感线")]);
+  const coreConflicts = findByKeywords(lines, [t("冲突"), t("矛盾"), t("对抗")]);
+  const endingDirection = findByKeywords(lines, [t("结局"), t("终局"), t("收尾")]);
+  const forbiddenItems = findByKeywords(lines, [t("禁止"), t("避免"), t("禁忌")]);
 
   return {
-    coreTheme: coreTheme || "未标注",
-    mainGoal: mainGoal || "未标注",
-    earlyPhase: earlyPhase || "未标注",
-    middlePhase: middlePhase || "未标注",
-    latePhase: latePhase || "未标注",
-    growthCurve: growthCurve || "未标注",
-    emotionTrend: emotionTrend || "未标注",
-    coreConflicts: coreConflicts || "未标注",
-    endingDirection: endingDirection || "未标注",
-    forbiddenItems: forbiddenItems || "未标注",
+    coreTheme: coreTheme || t("未标注"),
+    mainGoal: mainGoal || t("未标注"),
+    earlyPhase: earlyPhase || t("未标注"),
+    middlePhase: middlePhase || t("未标注"),
+    latePhase: latePhase || t("未标注"),
+    growthCurve: growthCurve || t("未标注"),
+    emotionTrend: emotionTrend || t("未标注"),
+    coreConflicts: coreConflicts || t("未标注"),
+    endingDirection: endingDirection || t("未标注"),
+    forbiddenItems: forbiddenItems || t("未标注"),
   };
 }

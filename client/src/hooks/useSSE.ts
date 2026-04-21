@@ -2,6 +2,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type { SSEFrame } from "@ai-novel/shared/types/api";
 import type { ChapterRuntimePackage } from "@ai-novel/shared/types/chapterRuntime";
 import { API_BASE_URL } from "@/lib/constants";
+import { t } from "@/i18n";
+
 
 interface UseSSEOptions {
   headers?: Record<string, string>;
@@ -116,7 +118,7 @@ export function useSSE(options?: UseSSEOptions) {
         });
 
         if (!response.ok || !response.body) {
-          throw new Error(`请求失败，状态码 ${response.status}`);
+          throw new Error(t("请求失败，状态码 {{status}}", { status: response.status }));
         }
 
         const reader = response.body.getReader();
@@ -150,7 +152,7 @@ export function useSSE(options?: UseSSEOptions) {
         }
       } catch (streamError) {
         if ((streamError as Error).name !== "AbortError") {
-          setError(streamError instanceof Error ? streamError.message : "流式请求失败。");
+          setError(streamError instanceof Error ? streamError.message : t("流式请求失败。"));
           setIsStreaming(false);
         }
       } finally {

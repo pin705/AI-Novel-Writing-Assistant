@@ -8,6 +8,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import TitleFactoryPanel from "./components/TitleFactoryPanel";
 import TitleLibraryPanel from "./components/TitleLibraryPanel";
+import { t } from "@/i18n";
+
 
 export default function TitleStudioPage() {
   const [tab, setTab] = useState("factory");
@@ -28,16 +30,15 @@ export default function TitleStudioPage() {
     <div className="mx-auto max-w-6xl space-y-4">
       <Card>
         <CardHeader className="space-y-2">
-          <CardTitle>标题工坊</CardTitle>
+          <CardTitle>{t("标题工坊")}</CardTitle>
           <CardDescription>
-            把“标题生成”和“标题沉淀”统一成正式资产模块。工坊负责产出候选，标题库负责复用和统计。
-          </CardDescription>
+            {t("把“标题生成”和“标题沉淀”统一成正式资产模块。工坊负责产出候选，标题库负责复用和统计。")}</CardDescription>
         </CardHeader>
         <CardContent>
           <Tabs value={tab} onValueChange={setTab} className="space-y-4">
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="factory">标题工坊</TabsTrigger>
-              <TabsTrigger value="library">标题库</TabsTrigger>
+              <TabsTrigger value="factory">{t("标题工坊")}</TabsTrigger>
+              <TabsTrigger value="library">{t("标题库")}</TabsTrigger>
             </TabsList>
 
             <TabsContent value="factory">

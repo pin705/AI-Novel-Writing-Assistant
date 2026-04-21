@@ -20,6 +20,8 @@ import {
   FieldLabel,
   findOptionSummary,
 } from "./basicInfoForm/BasicInfoFormPrimitives";
+import { t } from "@/i18n";
+
 
 interface RunModeOption {
   value: DirectorRunMode;
@@ -72,26 +74,25 @@ export default function NovelAutoDirectorSetupPanel(props: NovelAutoDirectorSetu
 
   return (
     <div className="rounded-lg border bg-background/80 p-4">
-      <div className="text-sm font-medium text-foreground">你的起始想法</div>
+      <div className="text-sm font-medium text-foreground">{t("你的起始想法")}</div>
       <textarea
         className="mt-2 min-h-[128px] w-full rounded-md border bg-background px-3 py-2 text-sm outline-none transition focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
         value={idea}
         onChange={(event) => onIdeaChange(event.target.value)}
-        placeholder="例如：普通女大学生误入异能组织，一边上学打工，一边调查父亲失踪真相。"
+        placeholder={t("例如：普通女大学生误入异能组织，一边上学打工，一边调查父亲失踪真相。")}
       />
 
       <div className="mt-4 grid gap-4 xl:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]">
         <div className="space-y-4">
           {hasEditableBasicForm ? (
             <section className="rounded-xl border bg-muted/20 p-4">
-              <div className="text-sm font-medium text-foreground">导演起始设置</div>
+              <div className="text-sm font-medium text-foreground">{t("导演起始设置")}</div>
               <div className="mt-1 text-xs leading-5 text-muted-foreground">
-                这里只保留自动导演真正需要你快速确认的参数。先保持默认也可以，只有你明确想要某种手感时再调整。
-              </div>
+                {t("这里只保留自动导演真正需要你快速确认的参数。先保持默认也可以，只有你明确想要某种手感时再调整。")}</div>
 
               <div className="mt-3 grid gap-3 md:grid-cols-2">
                 <div className="space-y-2">
-                  <FieldLabel htmlFor="director-basic-pov" hint={BASIC_INFO_FIELD_HINTS.narrativePov}>叙事视角</FieldLabel>
+                  <FieldLabel htmlFor="director-basic-pov" hint={BASIC_INFO_FIELD_HINTS.narrativePov}>{t("叙事视角")}</FieldLabel>
                   <select
                     id="director-basic-pov"
                     className="w-full rounded-md border bg-background p-2 text-sm"
@@ -108,7 +109,7 @@ export default function NovelAutoDirectorSetupPanel(props: NovelAutoDirectorSetu
                 </div>
 
                 <div className="space-y-2">
-                  <FieldLabel htmlFor="director-basic-pace" hint={BASIC_INFO_FIELD_HINTS.pacePreference}>节奏偏好</FieldLabel>
+                  <FieldLabel htmlFor="director-basic-pace" hint={BASIC_INFO_FIELD_HINTS.pacePreference}>{t("节奏偏好")}</FieldLabel>
                   <select
                     id="director-basic-pace"
                     className="w-full rounded-md border bg-background p-2 text-sm"
@@ -125,7 +126,7 @@ export default function NovelAutoDirectorSetupPanel(props: NovelAutoDirectorSetu
                 </div>
 
                 <div className="space-y-2">
-                  <FieldLabel htmlFor="director-basic-emotion" hint={BASIC_INFO_FIELD_HINTS.emotionIntensity}>情绪浓度</FieldLabel>
+                  <FieldLabel htmlFor="director-basic-emotion" hint={BASIC_INFO_FIELD_HINTS.emotionIntensity}>{t("情绪浓度")}</FieldLabel>
                   <select
                     id="director-basic-emotion"
                     className="w-full rounded-md border bg-background p-2 text-sm"
@@ -142,7 +143,7 @@ export default function NovelAutoDirectorSetupPanel(props: NovelAutoDirectorSetu
                 </div>
 
                 <div className="space-y-2">
-                  <FieldLabel htmlFor="director-basic-estimated" hint={BASIC_INFO_FIELD_HINTS.estimatedChapterCount}>预计章节数</FieldLabel>
+                  <FieldLabel htmlFor="director-basic-estimated" hint={BASIC_INFO_FIELD_HINTS.estimatedChapterCount}>{t("预计章节数")}</FieldLabel>
                   <Input
                     id="director-basic-estimated"
                     type="number"
@@ -157,8 +158,7 @@ export default function NovelAutoDirectorSetupPanel(props: NovelAutoDirectorSetu
                     })}
                   />
                   <div className="text-xs text-muted-foreground">
-                    会作为整书结构密度和后续卷章规划的参考，不是硬性上限。
-                  </div>
+                    {t("会作为整书结构密度和后续卷章规划的参考，不是硬性上限。")}</div>
                 </div>
               </div>
             </section>
@@ -182,14 +182,14 @@ export default function NovelAutoDirectorSetupPanel(props: NovelAutoDirectorSetu
 
         <div className="space-y-4">
           <section className="rounded-xl border bg-background/70 p-4">
-            <div className="text-sm font-medium text-foreground">模型设置</div>
+            <div className="text-sm font-medium text-foreground">{t("模型设置")}</div>
             <div className="mt-3">
               <LLMSelector />
             </div>
           </section>
 
           <section className="rounded-xl border bg-background/70 p-4">
-            <div className="text-sm font-medium text-foreground">自动导演运行方式</div>
+            <div className="text-sm font-medium text-foreground">{t("自动导演运行方式")}</div>
             <div className="mt-3 grid gap-3 md:grid-cols-2 xl:grid-cols-1">
               {runModeOptions.map((option) => {
                 const active = option.value === runMode;
@@ -221,10 +221,10 @@ export default function NovelAutoDirectorSetupPanel(props: NovelAutoDirectorSetu
           <div className="flex justify-end">
             <Button type="button" onClick={onGenerate} disabled={!canGenerate}>
               {isGenerating
-                ? "生成中..."
+                ? t("生成中...")
                 : batchCount === 0
-                  ? "生成第一批方案"
-                  : "按修正建议继续生成"}
+                  ? t("生成第一批方案")
+                  : t("按修正建议继续生成")}
             </Button>
           </div>
         </div>

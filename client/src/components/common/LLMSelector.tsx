@@ -9,6 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { cn } from "@/lib/utils";
 import { useLLMStore } from "@/store/llmStore";
 import SearchableSelect from "./SearchableSelect";
+import { t } from "@/i18n";
+
 
 export interface LLMSelectorValue {
   provider: LLMProvider;
@@ -202,14 +204,14 @@ export default function LLMSelector({
   return (
     <div className={cn("space-y-2", compact && "space-y-1", className)}>
       <div className={cn("flex items-center gap-2", compact ? "flex-nowrap gap-1.5" : "flex-wrap")}>
-        {showBadge ? <Badge variant="secondary">模型</Badge> : null}
+        {showBadge ? <Badge variant="secondary">{t("模型")}</Badge> : null}
         <Select
           value={hasRunnableProviders ? effectiveProvider : undefined}
           onValueChange={onProviderChange}
           disabled={!hasRunnableProviders}
         >
           <SelectTrigger className={cn(compact ? "h-9 w-[148px] lg:w-[164px]" : "w-[180px]")}>
-            <SelectValue placeholder={hasRunnableProviders ? "选择厂商" : "请先配置可用厂商"} />
+            <SelectValue placeholder={hasRunnableProviders ? t("选择厂商") : t("请先配置可用厂商")} />
           </SelectTrigger>
           <SelectContent>
             {providerOptions.map((provider) => (
@@ -225,9 +227,9 @@ export default function LLMSelector({
             value={resolvedModel}
             onValueChange={onModelChange}
             options={models.map((model) => ({ value: model }))}
-            placeholder={hasRunnableProviders ? "选择模型" : "暂无可用模型"}
-            searchPlaceholder="搜索模型"
-            emptyText="没有可用模型"
+            placeholder={hasRunnableProviders ? t("选择模型") : t("暂无可用模型")}
+            searchPlaceholder={t("搜索模型")}
+            emptyText={t("没有可用模型")}
             className={cn(compact ? "w-[184px] lg:w-[220px]" : "w-[240px]")}
             triggerClassName={compact ? "h-9 px-2.5" : undefined}
             disabled={!hasRunnableProviders}
@@ -237,14 +239,13 @@ export default function LLMSelector({
 
       {showHelperText && !hasRunnableProviders && !apiKeySettingsQuery.isLoading ? (
         <div className="text-xs text-muted-foreground">
-          当前没有已配置且启用的模型厂商，请先到系统设置里完成 API Key 和模型配置。
-        </div>
+          {t("当前没有已配置且启用的模型厂商，请先到系统设置里完成 API Key 和模型配置。")}</div>
       ) : null}
 
       {showParameters ? (
         <div className="grid gap-2 md:grid-cols-2">
           <label className="space-y-1 text-sm">
-            <span className="text-muted-foreground">温度 (0~2)</span>
+            <span className="text-muted-foreground">{t("温度 (0~2)")}</span>
             <Input
               type="number"
               step="0.1"
@@ -276,7 +277,7 @@ export default function LLMSelector({
           </label>
 
           <label className="space-y-1 text-sm">
-            <span className="text-muted-foreground">最大 Tokens (留空 = 不限制)</span>
+            <span className="text-muted-foreground">{t("最大 Tokens (留空 = 不限制)")}</span>
             <Input
               type="number"
               step="1"

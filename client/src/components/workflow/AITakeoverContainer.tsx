@@ -6,6 +6,8 @@ import WorkflowProgressBar, {
   normalizeProgressPercent,
   type WorkflowProgressTone,
 } from "./WorkflowProgressBar";
+import { t } from "@/i18n";
+
 
 export type AITakeoverMode = "loading" | "running" | "waiting" | "action_required" | "failed";
 
@@ -31,16 +33,16 @@ export interface AITakeoverContainerProps {
 function modeLabel(mode: AITakeoverMode): string {
   switch (mode) {
     case "loading":
-      return "加载中";
+      return t("加载中");
     case "running":
-      return "AI 接管中";
+      return t("AI 接管中");
     case "waiting":
-      return "等待确认";
+      return t("等待确认");
     case "action_required":
-      return "待处理";
+      return t("待处理");
     case "failed":
     default:
-      return "执行异常";
+      return t("执行异常");
   }
 }
 
@@ -94,13 +96,13 @@ function progressTone(mode: AITakeoverMode): WorkflowProgressTone {
 function progressStatusLabel(mode: AITakeoverMode): string | null {
   switch (mode) {
     case "running":
-      return "实时推进中";
+      return t("实时推进中");
     case "waiting":
-      return "等待你确认";
+      return t("等待你确认");
     case "action_required":
-      return "需要你处理";
+      return t("需要你处理");
     case "failed":
-      return "已中断";
+      return t("已中断");
     default:
       return null;
   }
@@ -136,7 +138,7 @@ export default function AITakeoverContainer({
           <div className="flex flex-wrap items-center gap-2">
             <div className="text-base font-semibold text-foreground">{title}</div>
             <Badge variant={badgeVariant(mode)}>{modeLabel(mode)}</Badge>
-            {taskId ? <Badge variant="outline">任务 #{taskId.slice(0, 8)}</Badge> : null}
+            {taskId ? <Badge variant="outline">{t("任务 #")}{taskId.slice(0, 8)}</Badge> : null}
           </div>
           <div className="text-sm text-muted-foreground">{description}</div>
         </div>
@@ -167,7 +169,7 @@ export default function AITakeoverContainer({
                   <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-primary" />
                 </span>
               ) : null}
-              <span className="font-medium text-foreground">流程进度</span>
+              <span className="font-medium text-foreground">{t("流程进度")}</span>
               {progressStatusLabel(mode) ? (
                 <span className="rounded-full bg-background/80 px-2 py-0.5 text-[11px] text-muted-foreground">
                   {progressStatusLabel(mode)}
@@ -192,7 +194,7 @@ export default function AITakeoverContainer({
             </div>
           ) : null}
           {checkpointLabel ? (
-            <div className="mt-2 text-xs text-muted-foreground">最近检查点：{checkpointLabel}</div>
+            <div className="mt-2 text-xs text-muted-foreground">{t("最近检查点：")}{checkpointLabel}</div>
           ) : null}
         </div>
       ) : null}

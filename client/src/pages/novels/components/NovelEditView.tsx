@@ -29,6 +29,8 @@ import {
   NOVEL_WORKSPACE_FLOW_STEPS,
   normalizeNovelWorkspaceTab,
 } from "../novelWorkspaceNavigation";
+import { t } from "@/i18n";
+
 
 export default function NovelEditView(props: NovelEditViewProps) {
   const {
@@ -69,12 +71,12 @@ export default function NovelEditView(props: NovelEditViewProps) {
 
   const taskAttentionLabel = taskDrawer?.task
     ? taskDrawer.task.status === "failed"
-      ? "异常"
+      ? t("异常")
       : taskDrawer.task.status === "waiting_approval"
-        ? "待审核"
+        ? t("待审核")
         : taskDrawer.task.status === "running" || taskDrawer.task.status === "queued"
-          ? "进行中"
-          : "最近任务"
+          ? t("进行中")
+          : t("最近任务")
     : null;
 
   const normalizedActiveTab = normalizeNovelWorkspaceTab(activeTab);
@@ -84,12 +86,12 @@ export default function NovelEditView(props: NovelEditViewProps) {
       ? "basic"
       : normalizedWorkflowTab
     : normalizedActiveTab;
-  const novelTitle = basicTab.basicForm.title.trim() || "未命名小说";
+  const novelTitle = basicTab.basicForm.title.trim() || t("未命名小说");
   const currentStepLabel = getNovelWorkspaceTabLabel(normalizedActiveTab);
   const workflowStepLabel = getNovelWorkspaceTabLabel(normalizedWorkflowTab);
   const stepIndex = getNovelWorkspaceFlowStepIndex(guidedFlowTab);
   const progressLabel = stepIndex >= 0
-    ? `第 ${stepIndex + 1} 步 / 共 ${NOVEL_WORKSPACE_FLOW_STEPS.length} 步`
+    ? t("第 {{value}} 步 / 共 {{length}} 步", { value: stepIndex + 1, length: NOVEL_WORKSPACE_FLOW_STEPS.length })
     : null;
   const isTakeoverLoading = takeover?.mode === "loading";
   const hideTakeoverEntry = takeover?.mode === "running" || takeover?.mode === "waiting";
@@ -124,7 +126,7 @@ export default function NovelEditView(props: NovelEditViewProps) {
           <div className="flex min-w-0 flex-wrap items-center gap-3 text-sm">
             <span className="truncate font-semibold text-foreground">{novelTitle}</span>
             <span className="h-1 w-1 shrink-0 rounded-full bg-border" />
-            <span className="shrink-0 text-muted-foreground">当前步骤：{currentStepLabel}</span>
+            <span className="shrink-0 text-muted-foreground">{t("当前步骤：")}{currentStepLabel}</span>
             {progressLabel ? (
               <>
                 <span className="h-1 w-1 shrink-0 rounded-full bg-border" />
@@ -134,7 +136,7 @@ export default function NovelEditView(props: NovelEditViewProps) {
             {normalizedWorkflowTab !== normalizedActiveTab ? (
               <>
                 <span className="h-1 w-1 shrink-0 rounded-full bg-border" />
-                <span className="shrink-0 text-sky-700">流程推荐：{workflowStepLabel}</span>
+                <span className="shrink-0 text-sky-700">{t("流程推荐：")}{workflowStepLabel}</span>
               </>
             ) : null}
           </div>
@@ -143,26 +145,24 @@ export default function NovelEditView(props: NovelEditViewProps) {
               isTakeoverLoading ? (
                 <Button type="button" size="sm" disabled>
                   <Loader2 className="animate-spin" />
-                  AI 自动导演接管
-                </Button>
+                  {t("AI 自动导演接管")}</Button>
               ) : activeStepTakeoverEntry
             ) : null}
 
             <Dialog open={isExportDialogOpen} onOpenChange={setIsExportDialogOpen}>
               <DialogTrigger asChild>
-                <Button variant="outline">导出</Button>
+                <Button variant="outline">{t("导出")}</Button>
               </DialogTrigger>
               <DialogContent className="max-w-2xl">
                 <DialogHeader>
-                  <DialogTitle>导出项目内容</DialogTitle>
+                  <DialogTitle>{t("导出项目内容")}</DialogTitle>
                   <DialogDescription>
-                    当前步骤会按你正在查看的工作台导出；整本书会把项目设定、故事规划、角色、卷规划、拆章、章节和质量修复资产一起导出。
-                  </DialogDescription>
+                    {t("当前步骤会按你正在查看的工作台导出；整本书会把项目设定、故事规划、角色、卷规划、拆章、章节和质量修复资产一起导出。")}</DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-4 md:grid-cols-2">
                   <Card>
                     <CardHeader>
-                      <CardTitle className="text-base">当前步骤：{currentStepLabel}</CardTitle>
+                      <CardTitle className="text-base">{t("当前步骤：")}{currentStepLabel}</CardTitle>
                     </CardHeader>
                     <CardContent className="flex flex-wrap gap-2">
                       <Button
@@ -170,20 +170,20 @@ export default function NovelEditView(props: NovelEditViewProps) {
                         onClick={() => exportControls.onExportCurrent("markdown")}
                         disabled={!exportControls.canExportCurrentStep || exportControls.isExportingCurrentMarkdown}
                       >
-                        {exportControls.isExportingCurrentMarkdown ? "导出中..." : "Markdown"}
+                        {exportControls.isExportingCurrentMarkdown ? t("导出中...") : "Markdown"}
                       </Button>
                       <Button
                         variant="outline"
                         onClick={() => exportControls.onExportCurrent("json")}
                         disabled={!exportControls.canExportCurrentStep || exportControls.isExportingCurrentJson}
                       >
-                        {exportControls.isExportingCurrentJson ? "导出中..." : "JSON"}
+                        {exportControls.isExportingCurrentJson ? t("导出中...") : "JSON"}
                       </Button>
                     </CardContent>
                   </Card>
                   <Card>
                     <CardHeader>
-                      <CardTitle className="text-base">整本书</CardTitle>
+                      <CardTitle className="text-base">{t("整本书")}</CardTitle>
                     </CardHeader>
                     <CardContent className="flex flex-wrap gap-2">
                       <Button
@@ -191,14 +191,14 @@ export default function NovelEditView(props: NovelEditViewProps) {
                         onClick={() => exportControls.onExportFull("markdown")}
                         disabled={exportControls.isExportingFullMarkdown}
                       >
-                        {exportControls.isExportingFullMarkdown ? "导出中..." : "Markdown"}
+                        {exportControls.isExportingFullMarkdown ? t("导出中...") : "Markdown"}
                       </Button>
                       <Button
                         variant="outline"
                         onClick={() => exportControls.onExportFull("json")}
                         disabled={exportControls.isExportingFullJson}
                       >
-                        {exportControls.isExportingFullJson ? "导出中..." : "JSON"}
+                        {exportControls.isExportingFullJson ? t("导出中...") : "JSON"}
                       </Button>
                     </CardContent>
                   </Card>
@@ -208,27 +208,26 @@ export default function NovelEditView(props: NovelEditViewProps) {
 
             <Dialog open={isProjectToolsOpen} onOpenChange={setIsProjectToolsOpen}>
               <DialogTrigger asChild>
-                <Button variant="outline">项目工具</Button>
+                <Button variant="outline">{t("项目工具")}</Button>
               </DialogTrigger>
               <DialogContent className="max-h-[90vh] w-[calc(100vw-2rem)] max-w-4xl overflow-auto">
                 <DialogHeader>
-                  <DialogTitle>项目工具</DialogTitle>
+                  <DialogTitle>{t("项目工具")}</DialogTitle>
                   <DialogDescription>
-                    这里收纳次级信息。首屏只保留当前步骤和恢复接管入口，避免主工作区被项目辅助信息挤满。
-                  </DialogDescription>
+                    {t("这里收纳次级信息。首屏只保留当前步骤和恢复接管入口，避免主工作区被项目辅助信息挤满。")}</DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-3 md:grid-cols-2">
                   <Card>
                     <CardHeader>
-                      <CardTitle>章节进度</CardTitle>
+                      <CardTitle>{t("章节进度")}</CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <p>{generatedChapters} / {Math.max(totalChapters, 1)} 已生成</p>
+                      <p>{generatedChapters} / {Math.max(totalChapters, 1)} {t("已生成")}</p>
                     </CardContent>
                   </Card>
                   <Card>
                     <CardHeader>
-                      <CardTitle>待修复章节</CardTitle>
+                      <CardTitle>{t("待修复章节")}</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <p>{pendingRepairs}</p>
@@ -236,7 +235,7 @@ export default function NovelEditView(props: NovelEditViewProps) {
                   </Card>
                   <Card>
                     <CardHeader>
-                      <CardTitle>当前模型</CardTitle>
+                      <CardTitle>{t("当前模型")}</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <p>{currentModel}</p>
@@ -244,14 +243,14 @@ export default function NovelEditView(props: NovelEditViewProps) {
                   </Card>
                   <Card>
                     <CardHeader>
-                      <CardTitle>最近任务</CardTitle>
+                      <CardTitle>{t("最近任务")}</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <p>{pipelineTab.pipelineJob?.status ?? "idle"}</p>
                     </CardContent>
                   </Card>
                 </div>
-                <KnowledgeBindingPanel targetType="novel" targetId={id} title="参考知识" />
+                <KnowledgeBindingPanel targetType="novel" targetId={id} title={t("参考知识")} />
               </DialogContent>
             </Dialog>
 
@@ -259,8 +258,7 @@ export default function NovelEditView(props: NovelEditViewProps) {
               variant={taskDrawer?.task?.status === "failed" ? "destructive" : "outline"}
               onClick={() => taskDrawer?.onOpenChange(true)}
             >
-              任务面板
-              {taskAttentionLabel ? <Badge variant="secondary">{taskAttentionLabel}</Badge> : null}
+              {t("任务面板")}{taskAttentionLabel ? <Badge variant="secondary">{taskAttentionLabel}</Badge> : null}
             </Button>
           </div>
         </div>

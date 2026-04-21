@@ -1,22 +1,24 @@
 import type { BookAnalysisDetail, BookAnalysisSection, BookAnalysisStatus } from "@ai-novel/shared/types/bookAnalysis";
 import type { SectionDraft } from "./bookAnalysis.types";
+import { t } from "@/i18n";
+
 
 export function formatStatus(status: BookAnalysisStatus | BookAnalysisSection["status"]): string {
   switch (status) {
     case "draft":
-      return "草稿";
+      return t("草稿");
     case "queued":
-      return "排队中";
+      return t("排队中");
     case "running":
-      return "运行中";
+      return t("运行中");
     case "succeeded":
-      return "成功";
+      return t("成功");
     case "failed":
-      return "失败";
+      return t("失败");
     case "archived":
-      return "已归档";
+      return t("已归档");
     case "idle":
-      return "待处理";
+      return t("待处理");
     default:
       return status;
   }
@@ -25,19 +27,19 @@ export function formatStatus(status: BookAnalysisStatus | BookAnalysisSection["s
 export function formatStage(stage?: string | null): string {
   switch (stage) {
     case "loading_cache":
-      return "查缓存";
+      return t("查缓存");
     case "preparing_notes":
-      return "准备 notes";
+      return t("准备 notes");
     case "generating_sections":
-      return "生成章节";
+      return t("生成章节");
     default:
-      return stage?.trim() || "暂无";
+      return stage?.trim() || t("暂无");
   }
 }
 
 export function formatDate(value?: string | null): string {
   if (!value) {
-    return "暂无";
+    return t("暂无");
   }
   return new Date(value).toLocaleString();
 }

@@ -1,4 +1,6 @@
 import type { VolumePlan } from "@ai-novel/shared/types/novel";
+import { t } from "@/i18n";
+
 
 export type StructuredVolumeChapter = VolumePlan["chapters"][number];
 export type ChapterDetailMode = "purpose" | "boundary" | "task_sheet";
@@ -14,9 +16,9 @@ export interface ChapterDetailBatchSelection {
 export type ChapterDetailBundleRequest = string | ChapterDetailBatchSelection;
 
 export function detailModeLabel(mode: ChapterDetailMode): string {
-  if (mode === "purpose") return "章节目标";
-  if (mode === "boundary") return "执行边界";
-  return "任务单";
+  if (mode === "purpose") return t("章节目标");
+  if (mode === "boundary") return t("执行边界");
+  return t("任务单");
 }
 
 export function hasChapterDetailDraft(

@@ -4,6 +4,8 @@ import type {
   ChapterExecutionFlowStageKey,
   ChapterExecutionFlowStageStatus,
 } from "./chapterExecution.shared";
+import { t } from "@/i18n";
+
 
 interface ChapterExecutionStatusFlowProps {
   stages: ChapterExecutionFlowStage[];
@@ -55,8 +57,7 @@ export default function ChapterExecutionStatusFlow(props: ChapterExecutionStatus
       </div>
       <div className="text-xs leading-6 text-muted-foreground">
         <span className="font-medium text-foreground">
-          当前阶段：
-          {stages.find((stage) => stage.key === currentStageKey)?.label ?? "未开始"}
+          {t("当前阶段：")}{stages.find((stage) => stage.key === currentStageKey)?.label ?? t("未开始")}
         </span>
         <span className="ml-2">{currentStageNote}</span>
       </div>

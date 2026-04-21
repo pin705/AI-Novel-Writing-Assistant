@@ -7,18 +7,20 @@ import { BookFramingQuickFillButton } from "./basicInfoForm/BookFramingQuickFill
 import CollapsibleSummary from "./CollapsibleSummary";
 import NovelCreateTitleQuickFill from "./titleWorkshop/NovelCreateTitleQuickFill";
 import DirectorTakeoverEntryPanel from "./DirectorTakeoverEntryPanel";
+import { t } from "@/i18n";
+
 
 export default function BasicInfoTab(props: BasicTabProps) {
   return (
     <div className="space-y-4">
       <DirectorTakeoverEntryPanel
-        title="让 AI 从当前项目继续接管"
-        description="如果你已经填过基础信息，可以直接从当前步骤开始自动接管，并选择继续已有进度或重跑当前步。"
+        title={t("让 AI 从当前项目继续接管")}
+        description={t("如果你已经填过基础信息，可以直接从当前步骤开始自动接管，并选择继续已有进度或重跑当前步。")}
         entry={props.directorTakeoverEntry}
       />
       <Card>
         <CardHeader>
-          <CardTitle>书级定位与基本信息</CardTitle>
+          <CardTitle>{t("书级定位与基本信息")}</CardTitle>
         </CardHeader>
         <CardContent>
           <NovelBasicInfoForm
@@ -56,8 +58,8 @@ export default function BasicInfoTab(props: BasicTabProps) {
       <details className="group rounded-2xl border border-border/70 bg-background/95 p-4">
         <summary className="cursor-pointer list-none">
           <CollapsibleSummary
-            title="写法与世界补强"
-            description="标题快速选填已经放在上方标题字段旁。这里保留开写前的写法确认和本书世界边界整理。"
+            title={t("写法与世界补强")}
+            description={t("标题快速选填已经放在上方标题字段旁。这里保留开写前的写法确认和本书世界边界整理。")}
             meta="写法建议 / 世界使用"
           />
         </summary>

@@ -1,6 +1,8 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import MarkdownViewer from "./MarkdownViewer";
+import { t } from "@/i18n";
+
 
 interface StreamOutputProps {
   isStreaming: boolean;
@@ -10,7 +12,7 @@ interface StreamOutputProps {
   emptyText?: string;
 }
 
-export default function StreamOutput({ isStreaming, content, onAbort, title = "AI 输出", emptyText = "等待流式输出..." }: StreamOutputProps) {
+export default function StreamOutput({ isStreaming, content, onAbort, title = t("AI 输出"), emptyText = t("等待流式输出...") }: StreamOutputProps) {
   const wordCount = content.trim().length;
 
   return (
@@ -24,14 +26,13 @@ export default function StreamOutput({ isStreaming, content, onAbort, title = "A
         <span className="text-sm font-medium">{title}</span>
         <div className="flex items-center gap-2">
           {isStreaming ? (
-            <span className="text-xs text-muted-foreground">正在生成...</span>
+            <span className="text-xs text-muted-foreground">{t("正在生成...")}</span>
           ) : (
-            <span className="text-xs text-muted-foreground">字数：{wordCount}</span>
+            <span className="text-xs text-muted-foreground">{t("字数：")}{wordCount}</span>
           )}
           {isStreaming && onAbort ? (
             <Button size="sm" variant="secondary" onClick={onAbort}>
-              停止生成
-            </Button>
+              {t("停止生成")}</Button>
           ) : null}
         </div>
       </div>

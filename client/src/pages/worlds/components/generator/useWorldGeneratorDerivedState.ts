@@ -6,6 +6,8 @@ import { getWorldTemplates } from "@/api/world";
 import { queryKeys } from "@/api/queryKeys";
 import type { GeneratorGenreOption, InspirationMode, WorldGeneratorTemplateOption } from "./worldGeneratorShared";
 import { parseReferenceControlText } from "./worldGeneratorShared";
+import { t } from "@/i18n";
+
 
 interface UseWorldGeneratorDerivedStateInput {
   selectedGenreId: string;
@@ -65,10 +67,10 @@ export function useWorldGeneratorDerivedState(input: UseWorldGeneratorDerivedSta
       return "";
     }
     return [
-      `主类型：${selectedGenre.name}`,
-      `类型路径：${selectedGenre.path}`,
-      selectedGenre.description?.trim() ? `类型说明：${selectedGenre.description.trim()}` : "",
-      selectedGenre.template?.trim() ? `类型模板：${selectedGenre.template.trim()}` : "",
+      t("主类型：{{name}}", { name: selectedGenre.name }),
+      t("类型路径：{{path}}", { path: selectedGenre.path }),
+      selectedGenre.description?.trim() ? t("类型说明：{{trim}}", { trim: selectedGenre.description.trim() }) : "",
+      selectedGenre.template?.trim() ? t("类型模板：{{trim}}", { trim: selectedGenre.template.trim() }) : "",
     ]
       .filter(Boolean)
       .join("\n");

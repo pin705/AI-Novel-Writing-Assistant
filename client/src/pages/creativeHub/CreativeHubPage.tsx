@@ -22,9 +22,11 @@ import CreativeHubConversation from "./components/CreativeHubConversation";
 import CreativeHubSidebar from "./components/CreativeHubSidebar";
 import CreativeHubThreadList from "./components/CreativeHubThreadList";
 import { useCreativeHubRuntime } from "./hooks/useCreativeHubRuntime";
+import { t } from "@/i18n";
+
 
 const RUNTIME_DETAILS_COLLAPSED_STORAGE_KEY = "creative-hub.runtime-details-collapsed";
-const DEFAULT_THREAD_TITLE = "\u65b0\u5bf9\u8bdd";
+const DEFAULT_THREAD_TITLE = t("新对话");
 const pendingAutoCreateThreadKeys = new Set<string>();
 
 function buildBindingsFromSearch(searchParams: URLSearchParams): CreativeHubResourceBinding {
@@ -364,7 +366,7 @@ export default function CreativeHubPage() {
     if (!normalized) {
       return;
     }
-    await runtimeState.sendPrompt(`创建一本小说《${normalized}》。`);
+    await runtimeState.sendPrompt(t("创建一本小说《{{normalized}}》。", { normalized: normalized }));
   }, [runtimeState]);
 
   useEffect(() => {
@@ -386,18 +388,18 @@ export default function CreativeHubPage() {
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center gap-2">
-        <Badge variant="secondary">创作中枢</Badge>
+        <Badge variant="secondary">{t("创作中枢")}</Badge>
         {currentThread ? <Badge variant="outline">{currentThread.title}</Badge> : null}
-        {currentBindings.novelId ? <Badge variant="outline">小说 {currentBindings.novelId}</Badge> : null}
-        {currentBindings.worldId ? <Badge variant="outline">世界观 {currentBindings.worldId}</Badge> : null}
-        {currentBindings.taskId ? <Badge variant="outline">任务 {currentBindings.taskId}</Badge> : null}
-        {currentBindings.bookAnalysisId ? <Badge variant="outline">拆书 {currentBindings.bookAnalysisId}</Badge> : null}
-        {currentBindings.formulaId ? <Badge variant="outline">公式 {currentBindings.formulaId}</Badge> : null}
-        {currentBindings.baseCharacterId ? <Badge variant="outline">角色 {currentBindings.baseCharacterId}</Badge> : null}
-        {currentBindings.styleProfileId ? <Badge variant="outline">鍐欐硶 {currentBindings.styleProfileId}</Badge> : null}
+        {currentBindings.novelId ? <Badge variant="outline">{t("小说")}{currentBindings.novelId}</Badge> : null}
+        {currentBindings.worldId ? <Badge variant="outline">{t("世界观")}{currentBindings.worldId}</Badge> : null}
+        {currentBindings.taskId ? <Badge variant="outline">{t("任务")}{currentBindings.taskId}</Badge> : null}
+        {currentBindings.bookAnalysisId ? <Badge variant="outline">{t("拆书")}{currentBindings.bookAnalysisId}</Badge> : null}
+        {currentBindings.formulaId ? <Badge variant="outline">{t("公式")}{currentBindings.formulaId}</Badge> : null}
+        {currentBindings.baseCharacterId ? <Badge variant="outline">{t("角色")}{currentBindings.baseCharacterId}</Badge> : null}
+        {currentBindings.styleProfileId ? <Badge variant="outline">{t("鍐欐硶")}{currentBindings.styleProfileId}</Badge> : null}
         {latestTurnSummary?.currentStage ? <Badge variant="outline">{latestTurnSummary.currentStage}</Badge> : null}
         {currentBindings.knowledgeDocumentIds?.length ? (
-          <Badge variant="outline">知识文档 {currentBindings.knowledgeDocumentIds.length} 份</Badge>
+          <Badge variant="outline">{t("知识文档")}{currentBindings.knowledgeDocumentIds.length} {t("份")}</Badge>
         ) : null}
         {currentCheckpointId ? (
           <Badge variant="outline">Checkpoint {currentCheckpointId.slice(0, 8)}</Badge>

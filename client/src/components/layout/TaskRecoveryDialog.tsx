@@ -19,18 +19,20 @@ import {
 } from "@/components/ui/dialog";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "@/components/ui/toast";
+import { t } from "@/i18n";
+
 
 function formatTaskKind(kind: RecoverableTaskSummary["kind"]): string {
   if (kind === "novel_workflow") {
-    return "小说主流程";
+    return t("小说主流程");
   }
   if (kind === "novel_pipeline") {
-    return "章节流水线";
+    return t("章节流水线");
   }
   if (kind === "book_analysis") {
-    return "拆书任务";
+    return t("拆书任务");
   }
-  return "图片任务";
+  return t("图片任务");
 }
 
 export default function TaskRecoveryDialog() {
@@ -62,12 +64,12 @@ export default function TaskRecoveryDialog() {
   const resumeSingleMutation = useMutation({
     mutationFn: (input: { kind: RecoverableTaskSummary["kind"]; id: string }) => resumeRecoveryCandidate(input.kind, input.id),
     onSuccess: async () => {
-      toast.success("任务已恢复运行。");
+      toast.success(t("任务已恢复运行。"));
       await refreshTaskState();
       await recoveryQuery.refetch();
     },
     onError: (error) => {
-      toast.error(error instanceof Error ? error.message : "恢复任务失败。");
+      toast.error(error instanceof Error ? error.message : t("恢复任务失败。"));
     },
   });
 
@@ -75,12 +77,12 @@ export default function TaskRecoveryDialog() {
     mutationFn: resumeAllRecoveryCandidates,
     onSuccess: async (response) => {
       const resumedCount = response.data?.resumed.length ?? 0;
-      toast.success(resumedCount > 0 ? `已恢复 ${resumedCount} 个任务。` : "当前没有可恢复任务。");
+      toast.success(resumedCount > 0 ? t("已恢复 {{resumedCount}} 个任务。", { resumedCount: resumedCount }) : t("当前没有可恢复任务。"));
       await refreshTaskState();
       await recoveryQuery.refetch();
     },
     onError: (error) => {
-      toast.error(error instanceof Error ? error.message : "批量恢复任务失败。");
+      toast.error(error instanceof Error ? error.message : t("批量恢复任务失败。"));
     },
   });
 
@@ -95,10 +97,9 @@ export default function TaskRecoveryDialog() {
     <Dialog open={open} onOpenChange={(nextOpen) => { if (!nextOpen) setDismissed(true); }}>
       <DialogContent className="max-h-[88vh] w-[calc(100vw-1.5rem)] max-w-3xl overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>检测到待恢复任务</DialogTitle>
+          <DialogTitle>{t("检测到待恢复任务")}</DialogTitle>
           <DialogDescription>
-            系统启动时发现有后台任务在服务重启前中断了。现在不会自动继续执行，你可以先逐个确认，再决定是否恢复。
-          </DialogDescription>
+            {t("系统启动时发现有后台任务在服务重启前中断了。现在不会自动继续执行，你可以先逐个确认，再决定是否恢复。")}</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-3">
@@ -110,11 +111,11 @@ export default function TaskRecoveryDialog() {
                     <div className="flex flex-wrap items-center gap-2">
                       <Badge variant="outline">{formatTaskKind(item.kind)}</Badge>
                       <Badge variant={item.status === "running" ? "default" : "secondary"}>
-                        {item.status === "running" ? "运行中断" : "排队中断"}
+                        {item.status === "running" ? t("运行中断") : t("排队中断")}
                       </Badge>
                     </div>
                     <div className="text-base font-semibold">{item.title}</div>
-                    <div className="text-sm text-muted-foreground">所属对象：{item.ownerLabel}</div>
+                    <div className="text-sm text-muted-foreground">{t("所属对象：")}{item.ownerLabel}</div>
                   </div>
                   <div className="flex flex-wrap items-center gap-2">
                     <Button
@@ -122,19 +123,19 @@ export default function TaskRecoveryDialog() {
                       onClick={() => resumeSingleMutation.mutate({ kind: item.kind, id: item.id })}
                       disabled={resumeAllMutation.isPending || (resumeSingleMutation.isPending && busyTaskId !== item.id)}
                     >
-                      {resumeSingleMutation.isPending && busyTaskId === item.id ? "恢复中..." : "继续单个"}
+                      {resumeSingleMutation.isPending && busyTaskId === item.id ? t("恢复中...") : t("继续单个")}
                     </Button>
                     <Button asChild size="sm" variant="outline">
-                      <Link to={item.sourceRoute} onClick={() => setDismissed(true)}>打开任务位置</Link>
+                      <Link to={item.sourceRoute} onClick={() => setDismissed(true)}>{t("打开任务位置")}</Link>
                     </Button>
                   </div>
                 </div>
 
                 <div className="grid gap-2 text-sm text-muted-foreground">
-                  {item.currentStage ? <div>当前阶段：{item.currentStage}</div> : null}
-                  {item.currentItemLabel ? <div>中断位置：{item.currentItemLabel}</div> : null}
-                  {item.resumeAction ? <div>建议动作：{item.resumeAction}</div> : null}
-                  {item.recoveryHint ? <div>恢复建议：{item.recoveryHint}</div> : null}
+                  {item.currentStage ? <div>{t("当前阶段：")}{item.currentStage}</div> : null}
+                  {item.currentItemLabel ? <div>{t("中断位置：")}{item.currentItemLabel}</div> : null}
+                  {item.resumeAction ? <div>{t("建议动作：")}{item.resumeAction}</div> : null}
+                  {item.recoveryHint ? <div>{t("恢复建议：")}{item.recoveryHint}</div> : null}
                 </div>
               </CardContent>
             </Card>
@@ -143,10 +144,9 @@ export default function TaskRecoveryDialog() {
 
         <div className="flex flex-wrap justify-end gap-2">
           <Button variant="outline" onClick={() => setDismissed(true)}>
-            稍后处理
-          </Button>
+            {t("稍后处理")}</Button>
           <Button onClick={() => resumeAllMutation.mutate()} disabled={resumeSingleMutation.isPending || resumeAllMutation.isPending}>
-            {resumeAllMutation.isPending ? "恢复全部中..." : "继续全部"}
+            {resumeAllMutation.isPending ? t("恢复全部中...") : t("继续全部")}
           </Button>
         </div>
       </DialogContent>

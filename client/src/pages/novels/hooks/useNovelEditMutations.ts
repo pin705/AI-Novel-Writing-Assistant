@@ -17,6 +17,8 @@ import { buildNovelUpdatePayload, type NovelBasicFormState } from "../novelBasic
 import type { ChapterReviewResult } from "../chapterPlanning.shared";
 import type { StructuredSyncOptions } from "../novelEdit.utils";
 import { syncNovelWorkflowStageSilently } from "../novelWorkflow.client";
+import { t } from "@/i18n";
+
 
 interface LlmSettings {
   provider?: LLMProvider;
@@ -182,7 +184,7 @@ export function useNovelEditMutations({
     onSuccess: async (response) => {
       const preview = response.data;
       setStructuredMessage(
-        `同步完成：新增 ${preview?.createCount ?? 0}，更新 ${preview?.updateCount ?? 0}，删除 ${preview?.deleteCount ?? 0}。`,
+        t("同步完成：新增 {{value}}，更新 {{value1}}，删除 {{value2}}。", { value: preview?.createCount ?? 0, value1: preview?.updateCount ?? 0, value2: preview?.deleteCount ?? 0 }),
       );
       await syncNovelWorkflowStageSilently({
         novelId: id,
@@ -195,7 +197,7 @@ export function useNovelEditMutations({
       await invalidateNovelDetail();
     },
     onError: (error) => {
-      const message = error instanceof Error ? error.message : "章节同步失败。";
+      const message = error instanceof Error ? error.message : t("章节同步失败。");
       setStructuredMessage(message);
     },
   });

@@ -20,6 +20,7 @@ import type {
   WorldReferenceMode,
   WorldReferenceSeedBundle,
 } from "@ai-novel/shared/types/worldWizard";
+import { t } from "@/i18n";
 import { apiClient } from "./client";
 
 const WORLD_GENERATE_ALL_TIMEOUT_MS = 3 * 60 * 1000;
@@ -47,10 +48,10 @@ function normalizeSuggestedAxioms(raw: unknown): string[] {
         .find((value) => typeof value === "string") as string | undefined;
 
       if (title && description && effect) {
-        return `${title}（${description}，影响：${effect}）`.trim();
+        return t("{{title}}（{{description}}，影响：{{effect}}）", { title, description, effect }).trim();
       }
       if (title && description) {
-        return `${title}：${description}`.trim();
+        return t("{{title}}：{{description}}", { title, description }).trim();
       }
       if (title) {
         return title.trim();

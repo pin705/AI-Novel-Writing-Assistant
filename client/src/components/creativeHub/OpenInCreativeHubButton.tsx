@@ -3,6 +3,8 @@ import type { CreativeHubResourceBinding } from "@ai-novel/shared/types/creative
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { buildCreativeHubPath } from "@/lib/creativeHubLinks";
+import { t } from "@/i18n";
+
 
 interface OpenInCreativeHubButtonProps {
   bindings: CreativeHubResourceBinding;
@@ -14,7 +16,7 @@ interface OpenInCreativeHubButtonProps {
 
 export default function OpenInCreativeHubButton({
   bindings,
-  label = "在创作中枢中继续",
+  label = t("在创作中枢中继续"),
   variant = "outline",
   size = "sm",
   className,

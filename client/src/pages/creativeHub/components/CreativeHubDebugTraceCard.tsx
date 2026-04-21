@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
+import { t } from "@/i18n";
+
 
 export interface CreativeHubDebugTraceEntry {
   id: string;
@@ -41,25 +43,23 @@ export default function CreativeHubDebugTraceCard({
     <div className="mt-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 shadow-sm">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
-          <div className="text-sm font-medium text-slate-900">运行细节</div>
+          <div className="text-sm font-medium text-slate-900">{t("运行细节")}</div>
           <div className="mt-1 text-xs text-slate-500">
-            {runId ? `Run ${runId.slice(0, 8)}` : "当前回合调试信息"} · {entries.length} 条
-          </div>
+            {runId ? `Run ${runId.slice(0, 8)}` : t("当前回合调试信息")} · {entries.length} {t("条")}</div>
         </div>
         <button
           type="button"
           className="rounded-full border border-slate-300 bg-white px-3 py-1 text-[11px] text-slate-600 transition hover:bg-slate-100"
           onClick={() => setExpanded((value) => !value)}
         >
-          {expanded ? "收起细节" : "展开细节"}
+          {expanded ? t("收起细节") : t("展开细节")}
         </button>
       </div>
       {expanded ? (
         <div className="mt-3 space-y-3">
           {entries.length === 0 ? (
             <div className="rounded-xl border border-dashed border-slate-200 bg-white px-3 py-3 text-xs text-slate-500">
-              当前回合还没有可展示的调试信息。
-            </div>
+              {t("当前回合还没有可展示的调试信息。")}</div>
           ) : (
             entries.map((entry) => (
               <div key={entry.id} className="rounded-xl border border-slate-200 bg-white px-3 py-3">
@@ -83,8 +83,7 @@ export default function CreativeHubDebugTraceCard({
         </div>
       ) : (
         <div className="mt-2 text-xs text-slate-500">
-          默认已折叠底层运行、工具与 checkpoint 细节；展开后可查看完整调试轨迹。
-        </div>
+          {t("默认已折叠底层运行、工具与 checkpoint 细节；展开后可查看完整调试轨迹。")}</div>
       )}
     </div>
   );

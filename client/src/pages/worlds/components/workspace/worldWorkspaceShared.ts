@@ -1,12 +1,14 @@
 import type { World } from "@ai-novel/shared/types/world";
+import { t } from "@/i18n";
+
 
 export const LAYERS = [
-  { key: "foundation", label: "L1 基础层", primaryField: "background" },
-  { key: "power", label: "L2 力量层", primaryField: "magicSystem" },
-  { key: "society", label: "L3 社会层", primaryField: "politics" },
-  { key: "culture", label: "L4 文化层", primaryField: "cultures" },
-  { key: "history", label: "L5 历史层", primaryField: "history" },
-  { key: "conflict", label: "L6 冲突层", primaryField: "conflicts" },
+  { key: "foundation", label: t("L1 基础层"), primaryField: "background" },
+  { key: "power", label: t("L2 力量层"), primaryField: "magicSystem" },
+  { key: "society", label: t("L3 社会层"), primaryField: "politics" },
+  { key: "culture", label: t("L4 文化层"), primaryField: "cultures" },
+  { key: "history", label: t("L5 历史层"), primaryField: "history" },
+  { key: "conflict", label: t("L6 冲突层"), primaryField: "conflicts" },
 ] as const;
 
 export type LayerKey = (typeof LAYERS)[number]["key"];
@@ -58,19 +60,19 @@ export type RefineAttribute =
   | "factions";
 
 export const REFINE_ATTRIBUTE_OPTIONS: Array<{ value: RefineAttribute; label: string }> = [
-  { value: "background", label: "基础背景" },
-  { value: "geography", label: "地理环境" },
-  { value: "cultures", label: "文化习俗" },
-  { value: "magicSystem", label: "力量体系" },
-  { value: "politics", label: "政治结构" },
-  { value: "races", label: "种族设定" },
-  { value: "religions", label: "宗教信仰" },
-  { value: "technology", label: "技术体系" },
-  { value: "history", label: "历史脉络" },
-  { value: "economy", label: "经济系统" },
-  { value: "conflicts", label: "核心冲突" },
-  { value: "description", label: "世界概述" },
-  { value: "factions", label: "势力关系" },
+  { value: "background", label: t("基础背景") },
+  { value: "geography", label: t("地理环境") },
+  { value: "cultures", label: t("文化习俗") },
+  { value: "magicSystem", label: t("力量体系") },
+  { value: "politics", label: t("政治结构") },
+  { value: "races", label: t("种族设定") },
+  { value: "religions", label: t("宗教信仰") },
+  { value: "technology", label: t("技术体系") },
+  { value: "history", label: t("历史脉络") },
+  { value: "economy", label: t("经济系统") },
+  { value: "conflicts", label: t("核心冲突") },
+  { value: "description", label: t("世界概述") },
+  { value: "factions", label: t("势力关系") },
 ];
 
 export function normalizeLayerText(raw: unknown): string {

@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { t } from "@/i18n";
+
 
 interface CollapsibleSummaryProps {
   title: string;
@@ -17,8 +19,8 @@ export default function CollapsibleSummary(props: CollapsibleSummaryProps) {
     description,
     meta,
     className,
-    collapsedLabel = "展开查看",
-    expandedLabel = "收起内容",
+    collapsedLabel = t("展开查看"),
+    expandedLabel = t("收起内容"),
   } = props;
 
   return (

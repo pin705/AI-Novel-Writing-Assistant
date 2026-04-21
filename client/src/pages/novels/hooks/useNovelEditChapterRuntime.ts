@@ -7,6 +7,8 @@ import { queryKeys } from "@/api/queryKeys";
 import type { ChapterExecutionStrategy } from "../chapterExecution.utils";
 import type { ChapterReviewResult } from "../chapterPlanning.shared";
 import { useChapterExecutionActions } from "./useChapterExecutionActions";
+import { t } from "@/i18n";
+
 
 interface StreamHandle {
   start: (path: string, payload: Record<string, unknown>) => Promise<void> | void;
@@ -74,7 +76,7 @@ export function useNovelEditChapterRuntime({
       temperature: llm.temperature,
     }),
     onSuccess: async () => {
-      setChapterOperationMessage("章节执行计划已生成，可直接开始写本章。");
+      setChapterOperationMessage(t("章节执行计划已生成，可直接开始写本章。"));
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: queryKeys.novels.chapterPlan(novelId, selectedChapterId) }),
         invalidateNovelDetail(),
@@ -98,8 +100,8 @@ export function useNovelEditChapterRuntime({
       const affectedChapterIds = response.data?.affectedChapterIds ?? [];
       setChapterOperationMessage(
         affectedOrders.length > 0
-          ? `已重规划第 ${affectedOrders.join("、")} 章。`
-          : "章节已完成重规划。",
+          ? t("已重规划第 {{value}} 章。", { value: affectedOrders.join("、") })
+          : t("章节已完成重规划。"),
       );
       await queryClient.invalidateQueries({ queryKey: queryKeys.novels.detail(novelId) });
       await queryClient.invalidateQueries({ queryKey: queryKeys.novels.qualityReport(novelId) });
@@ -121,7 +123,7 @@ export function useNovelEditChapterRuntime({
     }),
     onSuccess: async (response) => {
       setReviewResult(response.data ?? null);
-      setChapterOperationMessage("完整审校已完成。");
+      setChapterOperationMessage(t("完整审校已完成。"));
       await queryClient.invalidateQueries({ queryKey: queryKeys.novels.chapterAuditReports(novelId, selectedChapterId) });
       await queryClient.invalidateQueries({ queryKey: queryKeys.novels.qualityReport(novelId) });
     },
@@ -139,10 +141,13 @@ export function useNovelEditChapterRuntime({
     if (!selectedChapter) {
       return;
     }
-    setChapterOperationMessage("正在生成本章正文...");
+    setChapterOperationMessage(t("正在生成本章正文..."));
     setActiveChapterStream({
       chapterId: selectedChapter.id,
-      chapterLabel: `第${selectedChapter.order}章 ${selectedChapter.title || "未命名章节"}`,
+      chapterLabel: t("第{{order}}章 {{title}}", {
+        order: selectedChapter.order,
+        title: selectedChapter.title || t("未命名章节"),
+      }),
     });
     void chapterSSE.start(`/novels/${novelId}/chapters/${selectedChapter.id}/generate`, {
       provider: llm.provider,
@@ -153,26 +158,26 @@ export function useNovelEditChapterRuntime({
 
   const handleAbortChapterStream = () => {
     chapterSSE.abort();
-    setChapterOperationMessage("已停止当前章节生成，你可以保留当前输出继续查看，或重新发起本章写作。");
+    setChapterOperationMessage(t("已停止当前章节生成，你可以保留当前输出继续查看，或重新发起本章写作。"));
   };
 
   const handleAbortRepair = () => {
     repairSSE.abort();
     setActiveRepairStream(null);
-    setChapterOperationMessage("已停止当前章节修复，你可以先查看当前修复结果，再决定是否继续。");
+    setChapterOperationMessage(t("已停止当前章节修复，你可以先查看当前修复结果，再决定是否继续。"));
   };
 
   const startChapterRepair = (issues: ReviewIssue[]) => {
     if (!selectedChapterId) {
-      setChapterOperationMessage("请先选择章节。");
+      setChapterOperationMessage(t("请先选择章节。"));
       return;
     }
-    setChapterOperationMessage("正在生成修复稿...");
+    setChapterOperationMessage(t("正在生成修复稿..."));
     setRepairBeforeContent(selectedChapter?.content ?? "");
     setRepairAfterContent("");
     setActiveRepairStream({
       chapterId: selectedChapterId,
-      chapterLabel: selectedChapter ? `第${selectedChapter.order}章 ${selectedChapter.title || "未命名章节"}` : "当前章节",
+      chapterLabel: selectedChapter ? t("第{{order}}章 {{value}}", { order: selectedChapter.order, value: selectedChapter.title || t("未命名章节") }) : t("当前章节"),
     });
     void repairSSE.start(`/novels/${novelId}/chapters/${selectedChapterId}/repair`, {
       provider: llm.provider,

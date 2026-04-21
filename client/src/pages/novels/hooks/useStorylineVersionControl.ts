@@ -10,6 +10,8 @@ import {
   listStorylineVersions,
 } from "@/api/novel";
 import { queryKeys } from "@/api/queryKeys";
+import { t } from "@/i18n";
+
 
 interface StorylineImpactResult {
   novelId: string;
@@ -77,11 +79,11 @@ export function useStorylineVersionControl({
       if (nextVersionId) {
         setSelectedVersionId(nextVersionId);
       }
-      setStorylineMessage(response.message ?? "主线草稿版本已创建。");
+      setStorylineMessage(response.message ?? t("主线草稿版本已创建。"));
       await invalidateVersionList();
     },
     onError: (error) => {
-      const message = error instanceof Error ? error.message : "创建主线草稿版本失败。";
+      const message = error instanceof Error ? error.message : t("创建主线草稿版本失败。");
       setStorylineMessage(message);
     },
   });
@@ -89,17 +91,17 @@ export function useStorylineVersionControl({
   const activateVersionMutation = useMutation({
     mutationFn: () => {
       if (!selectedVersionId) {
-        throw new Error("请先选择一个主线版本。");
+        throw new Error(t("请先选择一个主线版本。"));
       }
       return activateStorylineVersion(novelId, selectedVersionId);
     },
     onSuccess: async (response) => {
-      setStorylineMessage(response.message ?? "已设为生效主线。");
+      setStorylineMessage(response.message ?? t("已设为生效主线。"));
       await invalidateVersionList();
       await invalidateNovelDetail();
     },
     onError: (error) => {
-      const message = error instanceof Error ? error.message : "设置生效版失败。";
+      const message = error instanceof Error ? error.message : t("设置生效版失败。");
       setStorylineMessage(message);
     },
   });
@@ -107,16 +109,16 @@ export function useStorylineVersionControl({
   const freezeVersionMutation = useMutation({
     mutationFn: () => {
       if (!selectedVersionId) {
-        throw new Error("请先选择一个主线版本。");
+        throw new Error(t("请先选择一个主线版本。"));
       }
       return freezeStorylineVersion(novelId, selectedVersionId);
     },
     onSuccess: async (response) => {
-      setStorylineMessage(response.message ?? "主线版本已冻结。");
+      setStorylineMessage(response.message ?? t("主线版本已冻结。"));
       await invalidateVersionList();
     },
     onError: (error) => {
-      const message = error instanceof Error ? error.message : "冻结主线版本失败。";
+      const message = error instanceof Error ? error.message : t("冻结主线版本失败。");
       setStorylineMessage(message);
     },
   });
@@ -124,16 +126,16 @@ export function useStorylineVersionControl({
   const diffMutation = useMutation({
     mutationFn: () => {
       if (!selectedVersionId) {
-        throw new Error("请先选择一个主线版本。");
+        throw new Error(t("请先选择一个主线版本。"));
       }
       return getStorylineDiff(novelId, selectedVersionId);
     },
     onSuccess: (response) => {
       setDiffResult(response.data ?? null);
-      setStorylineMessage(response.message ?? "主线版本差异已更新。");
+      setStorylineMessage(response.message ?? t("主线版本差异已更新。"));
     },
     onError: (error) => {
-      const message = error instanceof Error ? error.message : "加载版本差异失败。";
+      const message = error instanceof Error ? error.message : t("加载版本差异失败。");
       setStorylineMessage(message);
     },
   });
@@ -142,10 +144,10 @@ export function useStorylineVersionControl({
     mutationFn: () => analyzeStorylineImpact(novelId, { content: draftText }),
     onSuccess: (response) => {
       setImpactResult(response.data ?? null);
-      setStorylineMessage(response.message ?? "草稿影响分析完成。");
+      setStorylineMessage(response.message ?? t("草稿影响分析完成。"));
     },
     onError: (error) => {
-      const message = error instanceof Error ? error.message : "草稿影响分析失败。";
+      const message = error instanceof Error ? error.message : t("草稿影响分析失败。");
       setStorylineMessage(message);
     },
   });
@@ -153,16 +155,16 @@ export function useStorylineVersionControl({
   const analyzeVersionImpactMutation = useMutation({
     mutationFn: () => {
       if (!selectedVersionId) {
-        throw new Error("请先选择一个主线版本。");
+        throw new Error(t("请先选择一个主线版本。"));
       }
       return analyzeStorylineImpact(novelId, { versionId: selectedVersionId });
     },
     onSuccess: (response) => {
       setImpactResult(response.data ?? null);
-      setStorylineMessage(response.message ?? "版本影响分析完成。");
+      setStorylineMessage(response.message ?? t("版本影响分析完成。"));
     },
     onError: (error) => {
-      const message = error instanceof Error ? error.message : "版本影响分析失败。";
+      const message = error instanceof Error ? error.message : t("版本影响分析失败。");
       setStorylineMessage(message);
     },
   });
@@ -172,7 +174,7 @@ export function useStorylineVersionControl({
       return;
     }
     setDraftText(selectedVersion.content);
-    setStorylineMessage(`已加载 V${selectedVersion.version} 到当前草稿。`);
+    setStorylineMessage(t("已加载 V{{version}} 到当前草稿。", { version: selectedVersion.version }));
   };
 
   return {

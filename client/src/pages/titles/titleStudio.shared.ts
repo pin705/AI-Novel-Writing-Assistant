@@ -1,17 +1,19 @@
 import type { TitleSuggestionStyle } from "@ai-novel/shared/types/title";
+import { t } from "@/i18n";
+
 
 export function getTitleStyleLabel(style: TitleSuggestionStyle): string {
   switch (style) {
     case "literary":
-      return "叙事感";
+      return t("叙事感");
     case "conflict":
-      return "冲突钩子";
+      return t("冲突钩子");
     case "suspense":
-      return "悬念感";
+      return t("悬念感");
     case "high_concept":
-      return "高概念";
+      return t("高概念");
     default:
-      return "标题策略";
+      return t("标题策略");
   }
 }
 

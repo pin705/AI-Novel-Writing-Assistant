@@ -2,6 +2,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Check, ChevronDown, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { t } from "@/i18n";
+
 
 export interface SearchableSelectOption {
   value: string;
@@ -31,9 +33,9 @@ export default function SearchableSelect({
   value,
   onValueChange,
   options,
-  placeholder = "请选择",
-  searchPlaceholder = "搜索",
-  emptyText = "没有可选项",
+  placeholder = t("请选择"),
+  searchPlaceholder = t("搜索"),
+  emptyText = t("没有可选项"),
   disabled = false,
   className,
   triggerClassName,

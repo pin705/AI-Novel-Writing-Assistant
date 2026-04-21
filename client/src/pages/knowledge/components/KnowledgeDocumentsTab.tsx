@@ -13,6 +13,8 @@ import {
   getRagJobProgressPercent,
   getRagJobProgressWidth,
 } from "./knowledgeRagUi";
+import { t } from "@/i18n";
+
 
 interface KnowledgeDocumentsTabProps {
   uploadTitle: string;
@@ -46,10 +48,10 @@ export default function KnowledgeDocumentsTab({
   onUpdateStatus,
 }: KnowledgeDocumentsTabProps) {
   const statusOptions = [
-    { value: "", label: "全部未归档" },
-    { value: "enabled", label: "仅启用" },
-    { value: "disabled", label: "仅停用" },
-    { value: "archived", label: "仅归档" },
+    { value: "", label: t("全部未归档") },
+    { value: "enabled", label: t("仅启用") },
+    { value: "disabled", label: t("仅停用") },
+    { value: "archived", label: t("仅归档") },
   ] as const;
 
   const renderDocumentRow = (document: KnowledgeDocumentSummary) => {
@@ -64,9 +66,9 @@ export default function KnowledgeDocumentsTab({
           <div className="min-w-0 space-y-1">
             <div className="font-medium">{document.title}</div>
             <div className="text-xs text-muted-foreground">
-              {document.fileName} | 版本数 {document.versionCount} | 当前 v{document.activeVersionNumber}
+              {document.fileName} {t("| 版本数")}{document.versionCount} {t("| 当前 v")}{document.activeVersionNumber}
             </div>
-            <div className="text-xs text-muted-foreground">拆书项目 {document.bookAnalysisCount}</div>
+            <div className="text-xs text-muted-foreground">{t("拆书项目")}{document.bookAnalysisCount}</div>
             {documentJob?.progress && (documentJob.status === "queued" || documentJob.status === "running") ? (
               <div className="mt-2 rounded-md border border-dashed p-2">
                 <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
@@ -86,7 +88,7 @@ export default function KnowledgeDocumentsTab({
               </div>
             ) : null}
             {document.latestIndexStatus === "failed" && document.latestIndexError ? (
-              <div className="text-xs text-destructive">失败原因：{document.latestIndexError}</div>
+              <div className="text-xs text-destructive">{t("失败原因：")}{document.latestIndexError}</div>
             ) : null}
           </div>
           <div className="flex flex-wrap gap-2">
@@ -96,34 +98,30 @@ export default function KnowledgeDocumentsTab({
         </div>
         <div className="mt-3 flex flex-wrap gap-2">
           <Button size="sm" variant="secondary" onClick={() => onSelectDocument(document.id)}>
-            查看版本
-          </Button>
+            {t("查看版本")}</Button>
           <OpenInCreativeHubButton
             bindings={{ knowledgeDocumentIds: [document.id] }}
-            label="在创作中枢中继续"
+            label={t("在创作中枢中继续")}
           />
           <Button asChild size="sm" variant="outline">
-            <Link to={`/book-analysis?documentId=${document.id}`}>新建拆书</Link>
+            <Link to={`/book-analysis?documentId=${document.id}`}>{t("新建拆书")}</Link>
           </Button>
           <Button size="sm" variant="outline" onClick={() => onReindexDocument(document.id)}>
-            重建索引
-          </Button>
+            {t("重建索引")}</Button>
           {document.status === "enabled" ? (
             <Button
               size="sm"
               variant="outline"
               onClick={() => onUpdateStatus(document.id, "disabled")}
             >
-              停用
-            </Button>
+              {t("停用")}</Button>
           ) : document.status === "disabled" ? (
             <Button
               size="sm"
               variant="outline"
               onClick={() => onUpdateStatus(document.id, "enabled")}
             >
-              启用
-            </Button>
+              {t("启用")}</Button>
           ) : null}
           {document.status !== "archived" ? (
             <Button
@@ -131,8 +129,7 @@ export default function KnowledgeDocumentsTab({
               variant="outline"
               onClick={() => onUpdateStatus(document.id, "archived")}
             >
-              归档
-            </Button>
+              {t("归档")}</Button>
           ) : null}
         </div>
       </div>
@@ -143,13 +140,13 @@ export default function KnowledgeDocumentsTab({
     <div className="grid gap-4 lg:grid-cols-[360px_1fr]">
       <Card>
         <CardHeader>
-          <CardTitle>上传文档</CardTitle>
+          <CardTitle>{t("上传文档")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           <Input
             value={uploadTitle}
             onChange={(event) => onUploadTitleChange(event.target.value)}
-            placeholder="可选标题，留空则使用文件名"
+            placeholder={t("可选标题，留空则使用文件名")}
           />
           <input
             type="file"
@@ -166,27 +163,26 @@ export default function KnowledgeDocumentsTab({
             disabled={uploadBusy}
           />
           <div className="text-xs text-muted-foreground">
-            仅支持 `.txt`，前端会读取文本后提交 JSON。上传同名标题时会自动追加新版本并切换激活版本。
-          </div>
+            {t("仅支持 `.txt`，前端会读取文本后提交 JSON。上传同名标题时会自动追加新版本并切换激活版本。")}</div>
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader>
-          <CardTitle>文档列表</CardTitle>
+          <CardTitle>{t("文档列表")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="grid gap-2 md:grid-cols-[1fr_180px]">
             <Input
               value={keyword}
               onChange={(event) => onKeywordChange(event.target.value)}
-              placeholder="按标题或文件名搜索"
+              placeholder={t("按标题或文件名搜索")}
             />
             <SelectField
               value={status}
               onValueChange={(value) => onStatusChange(value as KnowledgeDocumentStatus | "")}
               options={statusOptions.map((option) => ({ ...option }))}
-              placeholder="筛选状态"
+              placeholder={t("筛选状态")}
               className="space-y-0"
               triggerClassName="h-10"
             />
@@ -195,8 +191,7 @@ export default function KnowledgeDocumentsTab({
             {documents.map(renderDocumentRow)}
             {documents.length === 0 ? (
               <div className="rounded-md border border-dashed p-6 text-sm text-muted-foreground">
-                当前没有符合条件的知识文档。
-              </div>
+                {t("当前没有符合条件的知识文档。")}</div>
             ) : null}
           </div>
         </CardContent>

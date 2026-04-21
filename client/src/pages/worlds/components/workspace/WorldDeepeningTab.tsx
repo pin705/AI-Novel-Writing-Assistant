@@ -2,6 +2,8 @@ import type { Dispatch, SetStateAction } from "react";
 import type { WorldDeepeningQuestion } from "@ai-novel/shared/types/world";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { t } from "@/i18n";
+
 
 interface WorldDeepeningTabProps {
   questions: WorldDeepeningQuestion[];
@@ -29,11 +31,11 @@ export default function WorldDeepeningTab(props: WorldDeepeningTabProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>问答深化</CardTitle>
+        <CardTitle>{t("问答深化")}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">
         <Button onClick={onGenerate} disabled={generatePending}>
-          {generatePending ? "生成中..." : "生成深化问题"}
+          {generatePending ? t("生成中...") : t("生成深化问题")}
         </Button>
         {questions.map((question) => {
           const quickOptions = (question.quickOptions ?? llmQuickOptions[question.id] ?? [])
@@ -49,8 +51,7 @@ export default function WorldDeepeningTab(props: WorldDeepeningTabProps) {
               {quickOptions.length > 0 ? (
                 <div className="space-y-1">
                   <div className="text-xs text-muted-foreground">
-                    快捷选项（由模型返回，可一键填入）
-                  </div>
+                    {t("快捷选项（由模型返回，可一键填入）")}</div>
                   <div className="flex flex-wrap gap-2">
                     {quickOptions.map((option) => (
                       <Button
@@ -69,8 +70,7 @@ export default function WorldDeepeningTab(props: WorldDeepeningTabProps) {
                 </div>
               ) : (
                 <div className="text-xs text-muted-foreground">
-                  当前问题未返回快捷选项，请直接填写回答。
-                </div>
+                  {t("当前问题未返回快捷选项，请直接填写回答。")}</div>
               )}
               <textarea
                 className="min-h-[100px] w-full rounded-md border bg-background p-2 text-sm"
@@ -78,7 +78,7 @@ export default function WorldDeepeningTab(props: WorldDeepeningTabProps) {
                 onChange={(event) =>
                   setAnswerDrafts((prev) => ({ ...prev, [question.id]: event.target.value }))
                 }
-                placeholder="填写你的回答"
+                placeholder={t("填写你的回答")}
               />
               <div className="text-xs text-muted-foreground">
                 target: {question.targetLayer ?? "-"} / {question.targetField ?? "-"} / status:{" "}
@@ -91,7 +91,7 @@ export default function WorldDeepeningTab(props: WorldDeepeningTabProps) {
           onClick={onSubmit}
           disabled={submitPending || Object.keys(answerDrafts).length === 0 || questions.length === 0}
         >
-          {submitPending ? "整合中..." : "提交并整合回答"}
+          {submitPending ? t("整合中...") : t("提交并整合回答")}
         </Button>
       </CardContent>
     </Card>

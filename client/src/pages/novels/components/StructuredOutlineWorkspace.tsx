@@ -20,18 +20,20 @@ import {
   getBeatSheetRequiredChapterCount,
 } from "./structuredOutlineWorkspace.shared";
 import type { StructuredTabViewProps } from "./NovelEditView.types";
+import { t } from "@/i18n";
+
 
 type StructuredVolume = StructuredTabViewProps["volumes"][number];
 type StructuredChapter = StructuredVolume["chapters"][number];
 type StructuredBeat = StructuredTabViewProps["beatSheets"][number]["beats"][number];
 
 function actionLabel(action: StructuredTabViewProps["syncPreview"]["items"][number]["action"]) {
-  if (action === "create") return "新增";
-  if (action === "update") return "更新";
-  if (action === "move") return "移动";
-  if (action === "keep") return "保留";
-  if (action === "delete") return "删除";
-  return "待删候选";
+  if (action === "create") return t("新增");
+  if (action === "update") return t("更新");
+  if (action === "move") return t("移动");
+  if (action === "keep") return t("保留");
+  if (action === "delete") return t("删除");
+  return t("待删候选");
 }
 
 function getWorkspaceGuidance(params: {
@@ -43,14 +45,14 @@ function getWorkspaceGuidance(params: {
 }): string {
   const { locked, selectedBeat, selectedChapter, visibleChapterCount, totalChapterCount } = params;
   if (locked) {
-    return "先为当前卷生成节奏板，系统才能把卷内推进节奏和章节拆分对齐起来。";
+    return t("先为当前卷生成节奏板，系统才能把卷内推进节奏和章节拆分对齐起来。");
   }
   if (selectedBeat) {
     return selectedChapter
-      ? `已聚焦到「${selectedBeat.label}」，当前显示 ${visibleChapterCount} 章，右侧正在细化第 ${selectedChapter.chapterOrder} 章。`
-      : `已聚焦到「${selectedBeat.label}」，当前显示 ${visibleChapterCount} 章，接下来在左侧选择要细化的章节。`;
+      ? t("已聚焦到「{{label}}」，当前显示 {{visibleChapterCount}} 章，右侧正在细化第 {{chapterOrder}} 章。", { label: selectedBeat.label, visibleChapterCount: visibleChapterCount, chapterOrder: selectedChapter.chapterOrder })
+      : t("已聚焦到「{{label}}」，当前显示 {{visibleChapterCount}} 章，接下来在左侧选择要细化的章节。", { label: selectedBeat.label, visibleChapterCount: visibleChapterCount });
   }
-  return `当前展示本卷全部 ${totalChapterCount} 章。建议先点一个节奏段，让系统把对应章节收束出来，再开始细化。`;
+  return t("当前展示本卷全部 {{totalChapterCount}} 章。建议先点一个节奏段，让系统把对应章节收束出来，再开始细化。", { totalChapterCount: totalChapterCount });
 }
 
 export default function StructuredOutlineWorkspace(props: StructuredTabViewProps) {
@@ -205,16 +207,16 @@ export default function StructuredOutlineWorkspace(props: StructuredTabViewProps
   if (volumes.length === 0) {
     return (
       <Card>
-        <CardHeader><CardTitle>节奏 / 拆章</CardTitle></CardHeader>
+        <CardHeader><CardTitle>{t("节奏 / 拆章")}</CardTitle></CardHeader>
         <CardContent className="space-y-4">
           <WorldInjectionHint worldInjectionSummary={worldInjectionSummary} />
           {!hasCharacters ? (
             <div className="flex items-center justify-between gap-2 rounded-md border border-amber-200 bg-amber-50 p-3 text-xs text-amber-800">
-              <span>请先补角色，再拆节奏和章节。</span>
-              <Button size="sm" variant="outline" onClick={onGoToCharacterTab}>去角色管理</Button>
+              <span>{t("请先补角色，再拆节奏和章节。")}</span>
+              <Button size="sm" variant="outline" onClick={onGoToCharacterTab}>{t("去角色管理")}</Button>
             </div>
           ) : null}
-          <div className="rounded-md border border-dashed p-6 text-sm text-muted-foreground">先在上一页生成卷战略和卷骨架。</div>
+          <div className="rounded-md border border-dashed p-6 text-sm text-muted-foreground">{t("先在上一页生成卷战略和卷骨架。")}</div>
         </CardContent>
       </Card>
     );
@@ -224,11 +226,11 @@ export default function StructuredOutlineWorkspace(props: StructuredTabViewProps
     <Card>
       <CardHeader className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div className="space-y-1">
-          <CardTitle>节奏 / 拆章</CardTitle>
-          <div className="text-sm text-muted-foreground">先选卷，再看节奏，再从对应章节里挑当前要细化的一章。</div>
+          <CardTitle>{t("节奏 / 拆章")}</CardTitle>
+          <div className="text-sm text-muted-foreground">{t("先选卷，再看节奏，再从对应章节里挑当前要细化的一章。")}</div>
         </div>
         <Button variant="secondary" onClick={onSave} disabled={isSaving}>
-          {isSaving ? "保存中..." : "保存卷工作区"}
+          {isSaving ? t("保存中...") : t("保存卷工作区")}
         </Button>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -237,10 +239,9 @@ export default function StructuredOutlineWorkspace(props: StructuredTabViewProps
         {directorTakeoverEntry ? (
           <div className="flex flex-col gap-3 rounded-xl border border-primary/20 bg-primary/5 p-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="space-y-1">
-              <div className="text-sm font-medium text-foreground">想让 AI 继续接管当前项目？</div>
+              <div className="text-sm font-medium text-foreground">{t("想让 AI 继续接管当前项目？")}</div>
               <div className="text-sm text-muted-foreground">
-                不用回到项目设定，直接在这里重新进入自动导演，让 AI 继续推进节奏拆章或后续自动执行。
-              </div>
+                {t("不用回到项目设定，直接在这里重新进入自动导演，让 AI 继续推进节奏拆章或后续自动执行。")}</div>
             </div>
             <div className="shrink-0">
               {directorTakeoverEntry}
@@ -250,25 +251,25 @@ export default function StructuredOutlineWorkspace(props: StructuredTabViewProps
 
         <div className="flex flex-wrap items-center gap-2 rounded-md border border-border/70 bg-muted/20 p-3 text-xs text-muted-foreground">
           <span>{generationNotice}</span>
-          {hasUnsavedVolumeDraft ? <Badge variant="secondary">含未保存草稿</Badge> : null}
-          <Badge variant="outline">当前：第{selectedVolume.sortOrder}卷</Badge>
-          <Badge variant="outline">{selectedVolumeChapters.length}章</Badge>
-          <Badge variant="outline">{refinedChapterCount}/{Math.max(selectedVolumeChapters.length, 1)} 已细化</Badge>
+          {hasUnsavedVolumeDraft ? <Badge variant="secondary">{t("含未保存草稿")}</Badge> : null}
+          <Badge variant="outline">{t("当前：第")}{selectedVolume.sortOrder}{t("卷")}</Badge>
+          <Badge variant="outline">{selectedVolumeChapters.length}{t("章")}</Badge>
+          <Badge variant="outline">{refinedChapterCount}/{Math.max(selectedVolumeChapters.length, 1)} {t("已细化")}</Badge>
         </div>
 
         <div className="rounded-xl border border-primary/15 bg-primary/5 p-3 text-sm text-foreground">
           {workspaceGuidance}
         </div>
 
-        {!strategyPlan ? <div className="rounded-md border border-amber-200 bg-amber-50 p-3 text-xs text-amber-800">请先在上一阶段生成卷战略建议，再继续当前卷节奏板和拆章。</div> : null}
+        {!strategyPlan ? <div className="rounded-md border border-amber-200 bg-amber-50 p-3 text-xs text-amber-800">{t("请先在上一阶段生成卷战略建议，再继续当前卷节奏板和拆章。")}</div> : null}
         {syncMessage ? <div className="text-xs text-muted-foreground">{syncMessage}</div> : null}
-        {locked ? <div className="rounded-md border border-amber-200 bg-amber-50 p-3 text-xs text-amber-800">当前卷还没有节奏板，章节列表生成已锁定。</div> : null}
+        {locked ? <div className="rounded-md border border-amber-200 bg-amber-50 p-3 text-xs text-amber-800">{t("当前卷还没有节奏板，章节列表生成已锁定。")}</div> : null}
 
         <Card>
           <CardHeader className="pb-3">
             <div className="flex flex-col gap-1">
-              <CardTitle className="text-base">当前处理卷</CardTitle>
-              <div className="text-sm text-muted-foreground">先切到要处理的卷，主工作区会跟着切换当前卷节奏和章节。</div>
+              <CardTitle className="text-base">{t("当前处理卷")}</CardTitle>
+              <div className="text-sm text-muted-foreground">{t("先切到要处理的卷，主工作区会跟着切换当前卷节奏和章节。")}</div>
             </div>
           </CardHeader>
           <CardContent>
@@ -294,14 +295,14 @@ export default function StructuredOutlineWorkspace(props: StructuredTabViewProps
                     )}
                   >
                     <div className="flex items-center justify-between gap-2">
-                      <Badge variant={isSelected ? "default" : "outline"}>第{volume.sortOrder}卷</Badge>
-                      {volumeBeatSheet ? <Badge variant="secondary">有节奏板</Badge> : <Badge variant="outline">未做节奏板</Badge>}
+                      <Badge variant={isSelected ? "default" : "outline"}>{t("第")}{volume.sortOrder}{t("卷")}</Badge>
+                      {volumeBeatSheet ? <Badge variant="secondary">{t("有节奏板")}</Badge> : <Badge variant="outline">{t("未做节奏板")}</Badge>}
                     </div>
-                    <div className="mt-2 line-clamp-1 text-sm font-medium">{volume.title || `第${volume.sortOrder}卷`}</div>
+                    <div className="mt-2 line-clamp-1 text-sm font-medium">{volume.title || t("第{{sortOrder}}卷", { sortOrder: volume.sortOrder })}</div>
                     <div className="mt-1 line-clamp-2 text-xs text-muted-foreground">
-                      {volume.mainPromise || volume.summary || "先补这卷的核心承诺。"}
+                      {volume.mainPromise || volume.summary || t("先补这卷的核心承诺。")}
                     </div>
-                    <div className="mt-2 text-[11px] text-muted-foreground">{volume.chapters.length}章 · {doneCount}章已细化</div>
+                    <div className="mt-2 text-[11px] text-muted-foreground">{volume.chapters.length}{t("章 ·")}{doneCount}{t("章已细化")}</div>
                   </button>
                 );
               })}
@@ -313,14 +314,13 @@ export default function StructuredOutlineWorkspace(props: StructuredTabViewProps
           <div className="space-y-3">
             <div className="flex flex-col gap-3 rounded-xl border border-border/70 bg-muted/20 p-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="text-sm">
-                检测到 {selectedRebalance.length} 条相邻卷再平衡建议。它们会影响跨卷衔接，但不属于当前主编辑动作。
-              </div>
+                {t("检测到")}{selectedRebalance.length} {t("条相邻卷再平衡建议。它们会影响跨卷衔接，但不属于当前主编辑动作。")}</div>
               <Button
                 size="sm"
                 variant="outline"
                 onClick={() => patchWorkspace(workspaceId, { showRebalancePanel: !showRebalancePanel })}
               >
-                {showRebalancePanel ? "收起建议" : "查看建议"}
+                {showRebalancePanel ? t("收起建议") : t("查看建议")}
               </Button>
             </div>
             {showRebalancePanel ? (
@@ -417,17 +417,17 @@ export default function StructuredOutlineWorkspace(props: StructuredTabViewProps
               <CardHeader className="pb-3">
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                   <div className="space-y-1">
-                    <CardTitle className="text-base">同步到章节执行</CardTitle>
-                    <div className="text-sm text-muted-foreground">批量设置、同步差异和 JSON 预览都收在这里，准备收尾时再展开。</div>
+                    <CardTitle className="text-base">{t("同步到章节执行")}</CardTitle>
+                    <div className="text-sm text-muted-foreground">{t("批量设置、同步差异和 JSON 预览都收在这里，准备收尾时再展开。")}</div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Badge variant="outline">{syncPreview.items.length} 项差异</Badge>
+                    <Badge variant="outline">{syncPreview.items.length} {t("项差异")}</Badge>
                     <Button
                       size="sm"
                       variant="outline"
                       onClick={() => patchWorkspace(workspaceId, { showSyncPanel: !showSyncPanel })}
                     >
-                      {showSyncPanel ? "收起同步工具" : "展开同步工具"}
+                      {showSyncPanel ? t("收起同步工具") : t("展开同步工具")}
                     </Button>
                   </div>
                 </div>
@@ -438,20 +438,18 @@ export default function StructuredOutlineWorkspace(props: StructuredTabViewProps
                     <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
                       <label className="flex items-center gap-2 rounded-full border border-border/70 px-3 py-1.5">
                         <input type="checkbox" checked={syncOptions.preserveContent} onChange={(event) => onSyncOptionsChange({ preserveContent: event.target.checked })} />
-                        保留已有正文
-                      </label>
+                        {t("保留已有正文")}</label>
                       <label className="flex items-center gap-2 rounded-full border border-border/70 px-3 py-1.5">
                         <input type="checkbox" checked={syncOptions.applyDeletes} onChange={(event) => onSyncOptionsChange({ applyDeletes: event.target.checked })} />
-                        同步时删除卷纲外章节
-                      </label>
+                        {t("同步时删除卷纲外章节")}</label>
                     </div>
 
                     <div className="flex flex-wrap gap-2">
-                      <Button size="sm" variant="outline" onClick={() => onApplyBatch({ conflictLevel: 60 })}>统一冲突等级 60</Button>
-                      <Button size="sm" variant="outline" onClick={() => onApplyBatch({ targetWordCount: 2500 })}>统一字数 2500</Button>
-                      <AiButton size="sm" onClick={() => onApplyBatch({ generateTaskSheet: true })}>批量补任务单</AiButton>
+                      <Button size="sm" variant="outline" onClick={() => onApplyBatch({ conflictLevel: 60 })}>{t("统一冲突等级 60")}</Button>
+                      <Button size="sm" variant="outline" onClick={() => onApplyBatch({ targetWordCount: 2500 })}>{t("统一字数 2500")}</Button>
+                      <AiButton size="sm" onClick={() => onApplyBatch({ generateTaskSheet: true })}>{t("批量补任务单")}</AiButton>
                       <Button onClick={() => onApplySync(syncOptions)} disabled={isApplyingSync}>
-                        {isApplyingSync ? "同步中..." : "同步到章节执行"}
+                        {isApplyingSync ? t("同步中...") : t("同步到章节执行")}
                       </Button>
                     </div>
 
@@ -460,13 +458,13 @@ export default function StructuredOutlineWorkspace(props: StructuredTabViewProps
                         variant="outline"
                         onClick={() => patchWorkspace(workspaceId, { showSyncPreview: !showSyncPreview })}
                       >
-                        {showSyncPreview ? "隐藏同步差异" : "查看同步差异"}
+                        {showSyncPreview ? t("隐藏同步差异") : t("查看同步差异")}
                       </Button>
                       <Button
                         variant="outline"
                         onClick={() => patchWorkspace(workspaceId, { showJsonPreview: !showJsonPreview })}
                       >
-                        {showJsonPreview ? "隐藏 JSON" : "查看 JSON"}
+                        {showJsonPreview ? t("隐藏 JSON") : t("查看 JSON")}
                       </Button>
                     </div>
 
@@ -477,8 +475,8 @@ export default function StructuredOutlineWorkspace(props: StructuredTabViewProps
                             key={`${item.action}-${item.chapterOrder}-${item.nextTitle}`}
                             className="rounded-lg border border-border/70 bg-background/80 p-2.5"
                           >
-                            <div className="font-medium">第{item.chapterOrder}章：{item.nextTitle}</div>
-                            <div className="text-muted-foreground">字段：{item.changedFields.join("、") || "无"}</div>
+                            <div className="font-medium">{t("第")}{item.chapterOrder}{t("章：")}{item.nextTitle}</div>
+                            <div className="text-muted-foreground">{t("字段：")}{item.changedFields.join("、") || t("无")}</div>
                             <Badge
                               className="mt-2"
                               variant={
@@ -502,8 +500,7 @@ export default function StructuredOutlineWorkspace(props: StructuredTabViewProps
                   </>
                 ) : (
                   <div className="rounded-xl border border-dashed p-4 text-sm text-muted-foreground">
-                    当前章节规划先以“选章 + 细化”为主。批量补任务单、同步差异和 JSON 预览都已经收起，避免打断主流程。
-                  </div>
+                    {t("当前章节规划先以“选章 + 细化”为主。批量补任务单、同步差异和 JSON 预览都已经收起，避免打断主流程。")}</div>
                 )}
               </CardContent>
             </Card>

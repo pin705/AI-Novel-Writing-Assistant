@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { APP_RUNTIME } from "./constants";
+import { t } from "@/i18n";
+
 
 export type DesktopBootstrapState = "launching" | "starting-server" | "loading-ui" | "ready" | "error";
 export type DesktopUpdaterStatus =
@@ -56,7 +58,7 @@ export interface DesktopDataImportResult {
 const DEFAULT_BOOTSTRAP_SNAPSHOT: DesktopBootstrapSnapshot = {
   state: "launching",
   stage: "launching",
-  title: "正在启动桌面工作区",
+  title: t("正在启动桌面工作区"),
   detail: "正在准备桌面本地运行时。",
   logDir: "",
   logFile: "",

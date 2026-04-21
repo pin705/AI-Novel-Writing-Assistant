@@ -24,6 +24,8 @@ import {
 import { toast } from "@/components/ui/toast";
 import { resolveWorkflowContinuationFeedback } from "@/lib/novelWorkflowContinuation";
 import NovelWorkflowRunningIndicator from "./components/NovelWorkflowRunningIndicator";
+import { t } from "@/i18n";
+
 
 type StatusFilter = "all" | "draft" | "published";
 type WritingModeFilter = "all" | "original" | "continuation";
@@ -43,18 +45,18 @@ function createDownload(blob: Blob, fileName: string): void {
 
 function formatProgressStatus(status?: ProjectProgressStatus | null): string {
   if (status === "completed") {
-    return "已完成";
+    return t("已完成");
   }
   if (status === "in_progress") {
-    return "进行中";
+    return t("进行中");
   }
   if (status === "rework") {
-    return "待返工";
+    return t("待返工");
   }
   if (status === "blocked") {
-    return "受阻";
+    return t("受阻");
   }
-  return "未开始";
+  return t("未开始");
 }
 
 function formatTokenCount(value?: number | null): string {
@@ -79,10 +81,10 @@ export default function NovelList() {
     mutationFn: (id: string) => deleteNovel(id),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: queryKeys.novels.all });
-      toast.success("小说已删除。");
+      toast.success(t("小说已删除。"));
     },
     onError: (error) => {
-      toast.error(error instanceof Error ? error.message : "删除小说失败。");
+      toast.error(error instanceof Error ? error.message : t("删除小说失败。"));
     },
   });
 
@@ -95,10 +97,10 @@ export default function NovelList() {
     ),
     onSuccess: ({ blob, fileName }) => {
       createDownload(blob, fileName);
-      toast.success("导出已开始。");
+      toast.success(t("导出已开始。"));
     },
     onError: (error) => {
-      toast.error(error instanceof Error ? error.message : "导出小说失败。");
+      toast.error(error instanceof Error ? error.message : t("导出小说失败。"));
     },
   });
 
@@ -126,8 +128,8 @@ export default function NovelList() {
         error instanceof Error
           ? error.message
           : input.mode === "auto_execute_range"
-            ? "继续自动执行当前章节范围失败。"
-            : "继续自动导演失败。",
+            ? t("继续自动执行当前章节范围失败。")
+            : t("继续自动导演失败。"),
       );
     },
   });
@@ -147,7 +149,7 @@ export default function NovelList() {
   }, [allNovels, status, writingMode]);
 
   const handleDelete = (novelId: string, title: string) => {
-    const confirmed = window.confirm(`确认删除《${title}》吗？该操作会直接删除当前小说。`);
+    const confirmed = window.confirm(t("确认删除《{{title}}》吗？该操作会直接删除当前小说。", { title: title }));
     if (!confirmed) {
       return;
     }
@@ -171,20 +173,17 @@ export default function NovelList() {
               variant={status === "all" ? "default" : "secondary"}
               onClick={() => setStatus("all")}
             >
-              全部
-            </Button>
+              {t("全部")}</Button>
             <Button
               variant={status === "draft" ? "default" : "secondary"}
               onClick={() => setStatus("draft")}
             >
-              草稿
-            </Button>
+              {t("草稿")}</Button>
             <Button
               variant={status === "published" ? "default" : "secondary"}
               onClick={() => setStatus("published")}
             >
-              已发布
-            </Button>
+              {t("已发布")}</Button>
           </div>
           <div className="flex items-center gap-2">
             <Button
@@ -192,31 +191,28 @@ export default function NovelList() {
               variant={writingMode === "all" ? "default" : "secondary"}
               onClick={() => setWritingMode("all")}
             >
-              创作类型: 全部
-            </Button>
+              {t("创作类型: 全部")}</Button>
             <Button
               size="sm"
               variant={writingMode === "original" ? "default" : "secondary"}
               onClick={() => setWritingMode("original")}
             >
-              原创
-            </Button>
+              {t("原创")}</Button>
             <Button
               size="sm"
               variant={writingMode === "continuation" ? "default" : "secondary"}
               onClick={() => setWritingMode("continuation")}
             >
-              续写
-            </Button>
+              {t("续写")}</Button>
           </div>
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
           <Button asChild>
-            <Link to={DIRECTOR_CREATE_LINK}>AI 自动导演开书</Link>
+            <Link to={DIRECTOR_CREATE_LINK}>{t("AI 自动导演开书")}</Link>
           </Button>
           <Button asChild variant="outline">
-            <Link to={MANUAL_CREATE_LINK}>手动创建小说</Link>
+            <Link to={MANUAL_CREATE_LINK}>{t("手动创建小说")}</Link>
           </Button>
         </div>
       </div>
@@ -244,30 +240,30 @@ export default function NovelList() {
       ) : novelListQuery.isError ? (
         <Card>
           <CardHeader>
-            <CardTitle>加载小说列表失败</CardTitle>
-            <CardDescription>当前无法读取项目列表，可以重试一次。</CardDescription>
+            <CardTitle>{t("加载小说列表失败")}</CardTitle>
+            <CardDescription>{t("当前无法读取项目列表，可以重试一次。")}</CardDescription>
           </CardHeader>
           <CardContent>
-            <Button onClick={() => void novelListQuery.refetch()}>重新加载</Button>
+            <Button onClick={() => void novelListQuery.refetch()}>{t("重新加载")}</Button>
           </CardContent>
         </Card>
       ) : novels.length === 0 ? (
         <Card>
           <CardHeader>
-            <CardTitle>{allNovels.length === 0 ? "暂无小说" : "暂无符合筛选条件的小说"}</CardTitle>
+            <CardTitle>{allNovels.length === 0 ? t("暂无小说") : t("暂无符合筛选条件的小说")}</CardTitle>
             <CardDescription>
               {allNovels.length === 0
-                ? "第一次使用时，推荐直接点右上角“AI 自动导演开书”，让系统先帮你搭好方向与开写准备。"
-                : "可以调整上方筛选条件，或直接创建新的小说项目。"}
+                ? t("第一次使用时，推荐直接点右上角“AI 自动导演开书”，让系统先帮你搭好方向与开写准备。")
+                : t("可以调整上方筛选条件，或直接创建新的小说项目。")}
             </CardDescription>
           </CardHeader>
           {allNovels.length === 0 ? (
             <CardContent className="flex flex-wrap gap-2">
               <Button asChild>
-                <Link to={DIRECTOR_CREATE_LINK}>AI 自动导演开书</Link>
+                <Link to={DIRECTOR_CREATE_LINK}>{t("AI 自动导演开书")}</Link>
               </Button>
               <Button asChild variant="outline">
-                <Link to={MANUAL_CREATE_LINK}>手动创建小说</Link>
+                <Link to={MANUAL_CREATE_LINK}>{t("手动创建小说")}</Link>
               </Button>
             </CardContent>
           ) : null}
@@ -307,22 +303,22 @@ export default function NovelList() {
                     </CardTitle>
                     <div className="flex flex-wrap items-center justify-end gap-2">
                       <Badge variant={novel.status === "published" ? "default" : "secondary"}>
-                        {novel.status === "published" ? "已发布" : "草稿"}
+                        {novel.status === "published" ? t("已发布") : t("草稿")}
                       </Badge>
                       {novel.writingMode === "continuation" ? (
-                        <Badge variant="outline">续写</Badge>
+                        <Badge variant="outline">{t("续写")}</Badge>
                       ) : (
-                        <Badge variant="outline">原创</Badge>
+                        <Badge variant="outline">{t("原创")}</Badge>
                       )}
                     </div>
                   </div>
                   <CardDescription className="line-clamp-2">
-                    {novel.description || "暂无简介"}
+                    {novel.description || t("暂无简介")}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div className="text-xs text-muted-foreground">
-                    章节数：{novel._count.chapters}，角色数：{novel._count.characters}，累计 Token：{formatTokenCount(
+                    {t("章节数：")}{novel._count.chapters}{t("，角色数：")}{novel._count.characters}{t("，累计 Token：")}{formatTokenCount(
                       novel.tokenUsage?.totalTokens,
                     )}
                   </div>
@@ -340,9 +336,9 @@ export default function NovelList() {
                         {workflowBadge ? (
                           <Badge variant={workflowBadge.variant}>{workflowBadge.label}</Badge>
                         ) : null}
-                        <Badge variant="outline">进度 {Math.round(workflowTask.progress * 100)}%</Badge>
+                        <Badge variant="outline">{t("进度")}{Math.round(workflowTask.progress * 100)}%</Badge>
                         {isWorkflowRunning ? (
-                          <Badge variant="outline">后台运行中</Badge>
+                          <Badge variant="outline">{t("后台运行中")}</Badge>
                         ) : null}
                       </div>
                       {workflowDescription ? (
@@ -352,39 +348,38 @@ export default function NovelList() {
                         <NovelWorkflowRunningIndicator
                           className="mt-3"
                           progress={workflowTask.progress}
-                          label={workflowTask.currentItemLabel?.trim() || "AI 正在后台持续推进"}
+                          label={workflowTask.currentItemLabel?.trim() || t("AI 正在后台持续推进")}
                         />
                       ) : null}
                       <div className="mt-2 text-xs text-muted-foreground">
-                        当前阶段：{workflowTask.currentStage ?? "自动导演"}{workflowTask.currentItemLabel ? ` · ${workflowTask.currentItemLabel}` : ""}
+                        {t("当前阶段：")}{workflowTask.currentStage ?? t("自动导演")}{workflowTask.currentItemLabel ? ` · ${workflowTask.currentItemLabel}` : ""}
                       </div>
                       {workflowTask.lastHealthyStage ? (
                         <div className="mt-1 text-xs text-muted-foreground">
-                          最近健康阶段：{workflowTask.lastHealthyStage}
+                          {t("最近健康阶段：")}{workflowTask.lastHealthyStage}
                         </div>
                       ) : null}
                       {workflowTask.resumeAction ? (
                         <div className="mt-1 text-xs text-muted-foreground">
-                          建议继续：{workflowTask.resumeAction}
+                          {t("建议继续：")}{workflowTask.resumeAction}
                         </div>
                       ) : null}
                     </div>
                   ) : (
                     <div className="rounded-xl border border-dashed bg-muted/10 p-3 text-xs text-muted-foreground">
-                      当前未检测到自动导演任务，列表按小说基础资产展示。
-                    </div>
+                      {t("当前未检测到自动导演任务，列表按小说基础资产展示。")}</div>
                   )}
 
                   <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
-                    <span>项目：{formatProgressStatus(novel.projectStatus)}</span>
-                    <span>主线：{formatProgressStatus(novel.storylineStatus)}</span>
-                    <span>大纲：{formatProgressStatus(novel.outlineStatus)}</span>
-                    <span>资源：{novel.resourceReadyScore ?? 0}/100</span>
+                    <span>{t("项目：")}{formatProgressStatus(novel.projectStatus)}</span>
+                    <span>{t("主线：")}{formatProgressStatus(novel.storylineStatus)}</span>
+                    <span>{t("大纲：")}{formatProgressStatus(novel.outlineStatus)}</span>
+                    <span>{t("资源：")}{novel.resourceReadyScore ?? 0}/100</span>
                   </div>
 
                   {novel.world ? (
                     <div className="text-xs text-muted-foreground">
-                      世界观：{novel.world.name}
+                      {t("世界观：")}{novel.world.name}
                     </div>
                   ) : null}
 
@@ -404,7 +399,7 @@ export default function NovelList() {
                         }}
                         disabled={isWorkflowPending}
                       >
-                        {isWorkflowPending ? "继续执行中..." : (workflowTask?.resumeAction ?? `继续自动执行${workflowTask?.executionScopeLabel ?? "当前章节范围"}`)}
+                        {isWorkflowPending ? t("继续执行中...") : (workflowTask?.resumeAction ?? t("继续自动执行{{value}}", { value: workflowTask?.executionScopeLabel ?? t("当前章节范围") }))}
                       </Button>
                     ) : canContinueDirector(workflowTask) ? (
                       <Button
@@ -420,27 +415,27 @@ export default function NovelList() {
                         }}
                         disabled={isWorkflowPending}
                       >
-                        {isWorkflowPending ? "继续中..." : (workflowTask?.resumeAction ?? "继续导演")}
+                        {isWorkflowPending ? t("继续中...") : (workflowTask?.resumeAction ?? t("继续导演"))}
                       </Button>
                     ) : requiresCandidateSelection(workflowTask) ? (
                       <Button asChild size="sm">
                         <Link to={getCandidateSelectionLink(workflowTask!.id)} onClick={stopCardClick}>
-                          {workflowTask!.resumeAction ?? "继续确认书级方向"}
+                          {workflowTask!.resumeAction ?? t("继续确认书级方向")}
                         </Link>
                       </Button>
                     ) : canEnterChapterExecution(workflowTask) ? (
                       <Button asChild size="sm">
-                        <Link to={`/novels/${novel.id}/edit`} onClick={stopCardClick}>进入章节执行</Link>
+                        <Link to={`/novels/${novel.id}/edit`} onClick={stopCardClick}>{t("进入章节执行")}</Link>
                       </Button>
                     ) : workflowTask ? (
                       <Button asChild size="sm">
-                        <Link to={getTaskCenterLink(workflowTask.id)} onClick={stopCardClick}>查看任务</Link>
+                        <Link to={getTaskCenterLink(workflowTask.id)} onClick={stopCardClick}>{t("查看任务")}</Link>
                       </Button>
                     ) : null}
 
                     {workflowTask ? (
                       <Button asChild size="sm" variant="outline">
-                        <Link to={getTaskCenterLink(workflowTask.id)} onClick={stopCardClick}>任务中心</Link>
+                        <Link to={getTaskCenterLink(workflowTask.id)} onClick={stopCardClick}>{t("任务中心")}</Link>
                       </Button>
                     ) : null}
 
@@ -456,7 +451,7 @@ export default function NovelList() {
                       }}
                       disabled={isDownloadPending}
                     >
-                      {isDownloadPending ? "导出中..." : "导出"}
+                      {isDownloadPending ? t("导出中...") : t("导出")}
                     </Button>
                     <Button
                       size="sm"
@@ -467,7 +462,7 @@ export default function NovelList() {
                       }}
                       disabled={isDeletePending}
                     >
-                      {isDeletePending ? "删除中..." : "删除"}
+                      {isDeletePending ? t("删除中...") : t("删除")}
                     </Button>
                   </div>
                 </CardContent>

@@ -4,6 +4,8 @@ import type { CreativeHubStreamFrame } from "@ai-novel/shared/types/api";
 import type { LangChainMessage } from "@assistant-ui/react-langgraph";
 import type { CreativeHubDebugTraceEntry } from "../components/CreativeHubDebugTraceCard";
 import { getIntentDisplayLabel, getPlannerSourceDisplayLabel } from "./plannerLabels";
+import { t } from "@/i18n";
+
 
 function compactArgs(record: Record<string, string | boolean | null | undefined>) {
   return Object.fromEntries(
@@ -14,19 +16,19 @@ function compactArgs(record: Record<string, string | boolean | null | undefined>
 function toStatusLabel(status: string): string {
   switch (status) {
     case "running":
-      return "运行中";
+      return t("运行中");
     case "queued":
-      return "排队中";
+      return t("排队中");
     case "waiting_approval":
-      return "等待审批";
+      return t("等待审批");
     case "succeeded":
-      return "已完成";
+      return t("已完成");
     case "failed":
-      return "失败";
+      return t("失败");
     case "cancelled":
-      return "已取消";
+      return t("已取消");
     case "interrupted":
-      return "待确认";
+      return t("待确认");
     default:
       return status;
   }
@@ -174,8 +176,8 @@ function buildDebugTraceEntry(
       entry: {
         id: `run_status_${sequence}`,
         kind: "运行状态",
-        title: "运行状态",
-        summary: frame.data.message || `当前状态：${toStatusLabel(frame.data.status)}`,
+        title: t("运行状态"),
+        summary: frame.data.message || t("当前状态：{{status}}", { status: toStatusLabel(frame.data.status) }),
         meta: [toStatusLabel(frame.data.status), `Run ${runId.slice(0, 8)}`],
         tone: frame.data.status === "failed" || frame.data.status === "cancelled"
           ? "destructive"
@@ -197,7 +199,7 @@ function buildDebugTraceEntry(
         id: `tool_call_${sequence}`,
         kind: "工具调用",
         title: frame.data.toolName,
-        summary: frame.data.inputSummary || "正在准备工具输入。",
+        summary: frame.data.inputSummary || t("正在准备工具输入。"),
         meta: [
           `Run ${runId.slice(0, 8)}`,
           frame.data.stepId ? `Step ${frame.data.stepId.slice(0, 8)}` : "",
@@ -215,11 +217,11 @@ function buildDebugTraceEntry(
       runId,
       entry: {
         id: `tool_result_${sequence}`,
-        kind: frame.data.success ? "工具完成" : "工具失败",
+        kind: frame.data.success ? t("工具完成") : t("工具失败"),
         title: frame.data.toolName,
-        summary: frame.data.outputSummary || "工具返回了空结果。",
+        summary: frame.data.outputSummary || t("工具返回了空结果。"),
         meta: [
-          frame.data.success ? "成功" : "失败",
+          frame.data.success ? t("成功") : t("失败"),
           `Run ${runId.slice(0, 8)}`,
         ],
         tone: frame.data.success ? "default" : "destructive",
@@ -237,8 +239,8 @@ function buildDebugTraceEntry(
       entry: {
         id: `approval_${sequence}`,
         kind: "审批结果",
-        title: frame.data.action === "approved" ? "审批通过" : "审批拒绝",
-        summary: frame.data.note?.trim() || "当前审批动作已记录。",
+        title: frame.data.action === "approved" ? t("审批通过") : t("审批拒绝"),
+        summary: frame.data.note?.trim() || t("当前审批动作已记录。"),
         meta: [
           `Approval ${frame.data.approvalId.slice(0, 8)}`,
         ],
@@ -257,7 +259,7 @@ function buildDebugTraceEntry(
       entry: {
         id: `error_${sequence}`,
         kind: "运行异常",
-        title: "运行异常",
+        title: t("运行异常"),
         summary: frame.data.message,
         meta: [`Run ${runId.slice(0, 8)}`],
         tone: "destructive",
@@ -275,7 +277,7 @@ function buildDebugTraceEntry(
       entry: {
         id: `reasoning_${sequence}`,
         kind: "推理更新",
-        title: "推理更新",
+        title: t("推理更新"),
         summary: frame.data.reasoning,
         meta: [`Run ${runId.slice(0, 8)}`],
       },
@@ -293,10 +295,10 @@ function buildDebugTraceEntry(
       entry: {
         id: `planner_${sequence}`,
         kind: "意图识别",
-        title: "意图识别",
-        summary: `来源：${getPlannerSourceDisplayLabel(planner.source)}；意图：${getIntentDisplayLabel(planner.intent)}`,
+        title: t("意图识别"),
+        summary: t("来源：{{source}}；意图：{{intent}}", { source: getPlannerSourceDisplayLabel(planner.source), intent: getIntentDisplayLabel(planner.intent) }),
         meta: [
-          "confidence" in planner ? `置信度 ${String(planner.confidence ?? "-")}` : "",
+          "confidence" in planner ? t("置信度 {{value}}", { value: String(planner.confidence ?? "-") }) : "",
           `Run ${runId.slice(0, 8)}`,
         ].filter(Boolean),
       },
@@ -315,8 +317,8 @@ function buildDebugTraceEntry(
       entry: {
         id: `checkpoint_${sequence}`,
         kind: "Checkpoint",
-        title: "检查点已写回",
-        summary: `Checkpoint ${frame.data.checkpointId.slice(0, 8)} 已写回线程历史。`,
+        title: t("检查点已写回"),
+        summary: t("Checkpoint {{slice}} 已写回线程历史。", { slice: frame.data.checkpointId.slice(0, 8) }),
         meta: [`Run ${runId.slice(0, 8)}`],
       },
     };

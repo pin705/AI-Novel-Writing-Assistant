@@ -23,6 +23,8 @@ import {
 } from "@/lib/directorTaskNotice";
 import { canContinueFront10AutoExecution, getCandidateSelectionLink, requiresCandidateSelection } from "@/lib/novelWorkflowTaskUi";
 import { useLLMStore } from "@/store/llmStore";
+import { t } from "@/i18n";
+
 
 const ACTIVE_STATUSES = new Set<TaskStatus>(["queued", "running", "waiting_approval"]);
 const ANOMALY_STATUSES = new Set<TaskStatus>(["failed", "cancelled"]);
@@ -43,11 +45,11 @@ function getTimestamp(value: string | null | undefined): number {
 
 function formatDate(value: string | null | undefined): string {
   if (!value) {
-    return "暂无";
+    return t("暂无");
   }
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) {
-    return "暂无";
+    return t("暂无");
   }
   return date.toLocaleString();
 }
@@ -58,97 +60,97 @@ function formatTokenCount(value: number | null | undefined): string {
 
 function formatKind(kind: TaskKind): string {
   if (kind === "book_analysis") {
-    return "拆书分析";
+    return t("拆书分析");
   }
   if (kind === "novel_workflow") {
-    return "小说创作";
+    return t("小说创作");
   }
   if (kind === "novel_pipeline") {
-    return "小说流水线";
+    return t("小说流水线");
   }
   if (kind === "knowledge_document") {
-    return "知识库索引";
+    return t("知识库索引");
   }
   if (kind === "agent_run") {
-    return "Agent 运行";
+    return t("Agent 运行");
   }
-  return "图片生成";
+  return t("图片生成");
 }
 
 function formatCheckpoint(checkpoint: NovelWorkflowCheckpoint | null | undefined, scopeLabel?: string | null): string {
-  const resolvedScopeLabel = scopeLabel?.trim() || "前 10 章";
+  const resolvedScopeLabel = scopeLabel?.trim() || t("前 10 章");
   if (checkpoint === "candidate_selection_required") {
-    return "等待确认书级方向";
+    return t("等待确认书级方向");
   }
   if (checkpoint === "book_contract_ready") {
-    return "Book Contract 已就绪";
+    return t("Book Contract 已就绪");
   }
   if (checkpoint === "character_setup_required") {
-    return "角色准备待审核";
+    return t("角色准备待审核");
   }
   if (checkpoint === "volume_strategy_ready") {
-    return "卷战略已就绪";
+    return t("卷战略已就绪");
   }
   if (checkpoint === "front10_ready") {
-    return `${resolvedScopeLabel}可开写`;
+    return t("{{resolvedScopeLabel}}可开写", { resolvedScopeLabel: resolvedScopeLabel });
   }
   if (checkpoint === "chapter_batch_ready") {
-    return `${resolvedScopeLabel}自动执行已暂停`;
+    return t("{{resolvedScopeLabel}}自动执行已暂停", { resolvedScopeLabel: resolvedScopeLabel });
   }
   if (checkpoint === "replan_required") {
-    return "需要重规划";
+    return t("需要重规划");
   }
   if (checkpoint === "workflow_completed") {
-    return "主流程完成";
+    return t("主流程完成");
   }
-  return "暂无";
+  return t("暂无");
 }
 
 function formatResumeTarget(target: NovelWorkflowResumeTarget | null | undefined): string {
   if (!target) {
-    return "暂无";
+    return t("暂无");
   }
   if (target.route === "/novels/create") {
-    return target.mode === "director" ? "创建页 / AI 自动导演" : "创建页";
+    return target.mode === "director" ? t("创建页 / AI 自动导演") : t("创建页");
   }
   if (target.stage === "story_macro") {
-    return "小说编辑页 / 故事宏观规划";
+    return t("小说编辑页 / 故事宏观规划");
   }
   if (target.stage === "character") {
-    return "小说编辑页 / 角色准备";
+    return t("小说编辑页 / 角色准备");
   }
   if (target.stage === "outline") {
-    return "小说编辑页 / 卷战略";
+    return t("小说编辑页 / 卷战略");
   }
   if (target.stage === "structured") {
-    return "小说编辑页 / 节奏拆章";
+    return t("小说编辑页 / 节奏拆章");
   }
   if (target.stage === "chapter") {
-    return "小说编辑页 / 章节执行";
+    return t("小说编辑页 / 章节执行");
   }
   if (target.stage === "pipeline") {
-    return "小说编辑页 / 质量修复";
+    return t("小说编辑页 / 质量修复");
   }
-  return "小说编辑页 / 项目设定";
+  return t("小说编辑页 / 项目设定");
 }
 
 function formatStatus(status: TaskStatus): string {
   if (status === "queued") {
-    return "排队中";
+    return t("排队中");
   }
   if (status === "running") {
-    return "运行中";
+    return t("运行中");
   }
   if (status === "waiting_approval") {
-    return "等待审批";
+    return t("等待审批");
   }
   if (status === "succeeded") {
-    return "已完成";
+    return t("已完成");
   }
   if (status === "failed") {
-    return "失败";
+    return t("失败");
   }
-  return "已取消";
+  return t("已取消");
 }
 
 function toStatusVariant(status: TaskStatus): "default" | "outline" | "secondary" | "destructive" {
@@ -327,8 +329,8 @@ export default function TaskCenterPage() {
       }
       toast.success(
         variables.llmOverride
-          ? `已切换到 ${variables.llmOverride.provider ?? "当前提供商"} / ${variables.llmOverride.model ?? "当前模型"} 并重试任务`
-          : "任务已重新入队",
+          ? t("已切换到 {{value}} / {{value1}} 并重试任务", { value: variables.llmOverride.provider ?? t("当前提供商"), value1: variables.llmOverride.model ?? t("当前模型") })
+          : t("任务已重新入队"),
       );
     },
   });
@@ -337,7 +339,7 @@ export default function TaskCenterPage() {
     mutationFn: (payload: { kind: TaskKind; id: string }) => cancelTask(payload.kind, payload.id),
     onSuccess: async () => {
       await invalidateTaskQueries();
-      toast.success("任务取消请求已提交");
+      toast.success(t("任务取消请求已提交"));
     },
   });
 
@@ -387,7 +389,7 @@ export default function TaskCenterPage() {
         return next;
       });
       await invalidateTaskQueries();
-      toast.success("任务已归档并从任务中心隐藏");
+      toast.success(t("任务已归档并从任务中心隐藏"));
     },
   });
 
@@ -447,7 +449,7 @@ export default function TaskCenterPage() {
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-base">运行中</CardTitle>
+            <CardTitle className="text-base">{t("运行中")}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-semibold">{runningCount}</div>
@@ -455,7 +457,7 @@ export default function TaskCenterPage() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-base">排队中</CardTitle>
+            <CardTitle className="text-base">{t("排队中")}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-semibold">{queuedCount}</div>
@@ -463,7 +465,7 @@ export default function TaskCenterPage() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-base">失败</CardTitle>
+            <CardTitle className="text-base">{t("失败")}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-semibold">{failedCount}</div>
@@ -471,7 +473,7 @@ export default function TaskCenterPage() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-base">24h 完成</CardTitle>
+            <CardTitle className="text-base">{t("24h 完成")}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-semibold">{completed24hCount}</div>
@@ -482,7 +484,7 @@ export default function TaskCenterPage() {
       <div className="grid gap-4 xl:grid-cols-[260px_minmax(0,1fr)_360px]">
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">筛选</CardTitle>
+            <CardTitle className="text-base">{t("筛选")}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             <select
@@ -490,42 +492,42 @@ export default function TaskCenterPage() {
               value={kind}
               onChange={(event) => setKind(event.target.value as TaskKind | "")}
             >
-              <option value="">全部类型</option>
-              <option value="book_analysis">拆书分析</option>
-              <option value="novel_workflow">小说创作</option>
-              <option value="novel_pipeline">小说流水线</option>
-              <option value="knowledge_document">知识库索引</option>
-              <option value="image_generation">图片生成</option>
-              <option value="agent_run">Agent 运行</option>
+              <option value="">{t("全部类型")}</option>
+              <option value="book_analysis">{t("拆书分析")}</option>
+              <option value="novel_workflow">{t("小说创作")}</option>
+              <option value="novel_pipeline">{t("小说流水线")}</option>
+              <option value="knowledge_document">{t("知识库索引")}</option>
+              <option value="image_generation">{t("图片生成")}</option>
+              <option value="agent_run">{t("Agent 运行")}</option>
             </select>
             <select
               className="w-full rounded-md border bg-background p-2 text-sm"
               value={status}
               onChange={(event) => setStatus(event.target.value as TaskStatus | "")}
             >
-              <option value="">全部状态</option>
-              <option value="queued">排队中</option>
-              <option value="running">运行中</option>
-              <option value="waiting_approval">等待审批</option>
-              <option value="failed">失败</option>
-              <option value="cancelled">已取消</option>
-              <option value="succeeded">已完成</option>
+              <option value="">{t("全部状态")}</option>
+              <option value="queued">{t("排队中")}</option>
+              <option value="running">{t("运行中")}</option>
+              <option value="waiting_approval">{t("等待审批")}</option>
+              <option value="failed">{t("失败")}</option>
+              <option value="cancelled">{t("已取消")}</option>
+              <option value="succeeded">{t("已完成")}</option>
             </select>
             <Input
               value={keyword}
               onChange={(event) => setKeyword(event.target.value)}
-              placeholder="标题或关联对象"
+              placeholder={t("标题或关联对象")}
             />
             <select
               className="w-full rounded-md border bg-background p-2 text-sm"
               value={sortMode}
               onChange={(event) => setSortMode(event.target.value as TaskSortMode)}
             >
-              <option value="updated_desc">按更新时间排序：最新优先</option>
-              <option value="updated_asc">按更新时间排序：最早优先</option>
-              <option value="heartbeat_desc">按最近心跳排序：最新优先</option>
-              <option value="heartbeat_asc">按最近心跳排序：最早优先</option>
-              <option value="default">默认排序：失败优先</option>
+              <option value="updated_desc">{t("按更新时间排序：最新优先")}</option>
+              <option value="updated_asc">{t("按更新时间排序：最早优先")}</option>
+              <option value="heartbeat_desc">{t("按最近心跳排序：最新优先")}</option>
+              <option value="heartbeat_asc">{t("按最近心跳排序：最早优先")}</option>
+              <option value="default">{t("默认排序：失败优先")}</option>
             </select>
             <label className="flex items-center gap-2 text-sm text-muted-foreground">
               <input
@@ -533,14 +535,13 @@ export default function TaskCenterPage() {
                 checked={onlyAnomaly}
                 onChange={(event) => setOnlyAnomaly(event.target.checked)}
               />
-              仅看异常任务
-            </label>
+              {t("仅看异常任务")}</label>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">任务列表</CardTitle>
+            <CardTitle className="text-base">{t("任务列表")}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             {visibleRows.map((task) => {
@@ -566,43 +567,42 @@ export default function TaskCenterPage() {
                   <Badge variant={toStatusVariant(task.status)}>{formatStatus(task.status)}</Badge>
                 </div>
                 <div className="mt-2 text-xs text-muted-foreground">
-                  {formatKind(task.kind)} | 进度 {Math.round(task.progress * 100)}%
+                  {formatKind(task.kind)} {t("| 进度")}{Math.round(task.progress * 100)}%
                 </div>
                 <div className="mt-1 text-xs text-muted-foreground">
-                  阶段：{task.currentStage ?? "暂无"} | 当前项：{task.currentItemLabel ?? "暂无"}
+                  {t("阶段：")}{task.currentStage ?? t("暂无")} {t("| 当前项：")}{task.currentItemLabel ?? t("暂无")}
                 </div>
                 {task.displayStatus || task.lastHealthyStage ? (
                   <div className="mt-1 text-xs text-muted-foreground">
-                    状态：{task.displayStatus ?? formatStatus(task.status)} | 最近健康阶段：{task.lastHealthyStage ?? "暂无"}
+                    {t("状态：")}{task.displayStatus ?? formatStatus(task.status)} {t("| 最近健康阶段：")}{task.lastHealthyStage ?? t("暂无")}
                   </div>
                 ) : null}
                 {task.kind === "novel_workflow" ? (
                   <div className="mt-1 text-xs text-muted-foreground">
-                    检查点：{formatCheckpoint(task.checkpointType, task.executionScopeLabel)} | 建议继续：{task.resumeAction ?? task.nextActionLabel ?? "继续主流程"}
+                    {t("检查点：")}{formatCheckpoint(task.checkpointType, task.executionScopeLabel)} {t("| 建议继续：")}{task.resumeAction ?? task.nextActionLabel ?? t("继续主流程")}
                   </div>
                 ) : null}
                 {task.blockingReason ? (
                   <div className="mt-1 text-xs text-muted-foreground line-clamp-2">
-                    原因：{task.blockingReason}
+                    {t("原因：")}{task.blockingReason}
                   </div>
                 ) : null}
                 <div className="mt-1 text-xs text-muted-foreground">
-                  最近心跳：{formatDate(task.heartbeatAt)} | 更新时间：{formatDate(task.updatedAt)}
+                  {t("最近心跳：")}{formatDate(task.heartbeatAt)} {t("| 更新时间：")}{formatDate(task.updatedAt)}
                 </div>
               </button>
               );
             })}
             {visibleRows.length === 0 ? (
               <div className="rounded-md border border-dashed p-6 text-sm text-muted-foreground">
-                当前没有符合条件的任务。
-              </div>
+                {t("当前没有符合条件的任务。")}</div>
             ) : null}
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">任务详情</CardTitle>
+            <CardTitle className="text-base">{t("任务详情")}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3 text-sm">
             {selectedTask ? (
@@ -610,52 +610,52 @@ export default function TaskCenterPage() {
                 <div className="space-y-1">
                   <div className="font-medium">{selectedTask.title}</div>
                   <div className="text-xs text-muted-foreground">
-                    {formatKind(selectedTask.kind)} | 归属：{selectedTask.ownerLabel}
+                    {formatKind(selectedTask.kind)} {t("| 归属：")}{selectedTask.ownerLabel}
                   </div>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   <Badge variant={toStatusVariant(selectedTask.status)}>{formatStatus(selectedTask.status)}</Badge>
-                  <Badge variant="outline">进度 {Math.round(selectedTask.progress * 100)}%</Badge>
+                  <Badge variant="outline">{t("进度")}{Math.round(selectedTask.progress * 100)}%</Badge>
                 </div>
                 <div className="space-y-1 text-muted-foreground">
-                  <div>展示状态：{selectedTask.displayStatus ?? formatStatus(selectedTask.status)}</div>
-                  <div>当前阶段：{selectedTask.currentStage ?? "暂无"}</div>
-                  <div>当前项：{selectedTask.currentItemLabel ?? "暂无"}</div>
+                  <div>{t("展示状态：")}{selectedTask.displayStatus ?? formatStatus(selectedTask.status)}</div>
+                  <div>{t("当前阶段：")}{selectedTask.currentStage ?? t("暂无")}</div>
+                  <div>{t("当前项：")}{selectedTask.currentItemLabel ?? t("暂无")}</div>
                   {selectedTask.kind === "novel_workflow" ? (
                     <>
-                      <div>最近检查点：{formatCheckpoint(selectedTask.checkpointType, selectedTask.executionScopeLabel)}</div>
-                      <div>恢复目标页：{formatResumeTarget(selectedTask.resumeTarget)}</div>
-                      <div>建议继续：{selectedTask.resumeAction ?? selectedTask.nextActionLabel ?? "继续小说主流程"}</div>
-                      <div>最近健康阶段：{selectedTask.lastHealthyStage ?? "暂无"}</div>
+                      <div>{t("最近检查点：")}{formatCheckpoint(selectedTask.checkpointType, selectedTask.executionScopeLabel)}</div>
+                      <div>{t("恢复目标页：")}{formatResumeTarget(selectedTask.resumeTarget)}</div>
+                      <div>{t("建议继续：")}{selectedTask.resumeAction ?? selectedTask.nextActionLabel ?? t("继续小说主流程")}</div>
+                      <div>{t("最近健康阶段：")}{selectedTask.lastHealthyStage ?? t("暂无")}</div>
                     </>
                   ) : null}
                   {selectedTask.blockingReason ? (
-                    <div>阻塞原因：{selectedTask.blockingReason}</div>
+                    <div>{t("阻塞原因：")}{selectedTask.blockingReason}</div>
                   ) : null}
-                  <div>最近心跳：{formatDate(selectedTask.heartbeatAt)}</div>
-                  <div>开始时间：{formatDate(selectedTask.startedAt)}</div>
-                  <div>结束时间：{formatDate(selectedTask.finishedAt)}</div>
-                  <div>重试计数：{selectedTask.retryCountLabel}</div>
+                  <div>{t("最近心跳：")}{formatDate(selectedTask.heartbeatAt)}</div>
+                  <div>{t("开始时间：")}{formatDate(selectedTask.startedAt)}</div>
+                  <div>{t("结束时间：")}{formatDate(selectedTask.finishedAt)}</div>
+                  <div>{t("重试计数：")}{selectedTask.retryCountLabel}</div>
                   {isAutoDirectorTask ? (
                     <>
-                      <div>任务绑定模型：{selectedTask.provider ?? "暂无"} / {selectedTask.model ?? "暂无"}</div>
-                      <div>当前界面模型：{llm.provider} / {llm.model}</div>
+                      <div>{t("任务绑定模型：")}{selectedTask.provider ?? t("暂无")} / {selectedTask.model ?? t("暂无")}</div>
+                      <div>{t("当前界面模型：")}{llm.provider} / {llm.model}</div>
                     </>
                   ) : null}
                   {selectedTask.tokenUsage ? (
                     <>
-                      <div>累计调用：{formatTokenCount(selectedTask.tokenUsage.llmCallCount)}</div>
-                      <div>输入 Tokens：{formatTokenCount(selectedTask.tokenUsage.promptTokens)}</div>
-                      <div>输出 Tokens：{formatTokenCount(selectedTask.tokenUsage.completionTokens)}</div>
-                      <div>累计总 Tokens：{formatTokenCount(selectedTask.tokenUsage.totalTokens)}</div>
-                      <div>最近记录：{formatDate(selectedTask.tokenUsage.lastRecordedAt)}</div>
+                      <div>{t("累计调用：")}{formatTokenCount(selectedTask.tokenUsage.llmCallCount)}</div>
+                      <div>{t("输入 Tokens：")}{formatTokenCount(selectedTask.tokenUsage.promptTokens)}</div>
+                      <div>{t("输出 Tokens：")}{formatTokenCount(selectedTask.tokenUsage.completionTokens)}</div>
+                      <div>{t("累计总 Tokens：")}{formatTokenCount(selectedTask.tokenUsage.totalTokens)}</div>
+                      <div>{t("最近记录：")}{formatDate(selectedTask.tokenUsage.lastRecordedAt)}</div>
                     </>
                   ) : null}
                 </div>
                 {selectedTask.noticeCode || selectedTask.noticeSummary ? (
                   <div className="rounded-md border border-amber-300/50 bg-amber-50/70 p-2 text-amber-900">
                     <div className="font-medium">
-                      {selectedTaskChapterTitleWarning ? "当前提醒" : (selectedTask.noticeCode ?? "结果提醒")}
+                      {selectedTaskChapterTitleWarning ? t("当前提醒") : (selectedTask.noticeCode ?? t("结果提醒"))}
                     </div>
                     {selectedTask.noticeSummary ? (
                       <div className="mt-1 text-sm">{selectedTask.noticeSummary}</div>
@@ -676,7 +676,7 @@ export default function TaskCenterPage() {
                           }}
                           disabled={chapterTitleRepairMutation.isPending}
                         >
-                          {selectedTaskChapterTitleWarning?.label ?? selectedTaskNotice?.action?.label ?? "打开当前卷拆章"}
+                          {selectedTaskChapterTitleWarning?.label ?? selectedTaskNotice?.action?.label ?? t("打开当前卷拆章")}
                         </Button>
                       </div>
                     ) : null}
@@ -685,7 +685,7 @@ export default function TaskCenterPage() {
                 {selectedTask.failureCode || selectedTask.failureSummary ? (
                   <div className="rounded-md border border-amber-300/50 bg-amber-50/70 p-2 text-amber-900">
                     <div className="font-medium">
-                      {selectedTaskHasChapterTitleFailure ? "当前提醒" : (selectedTask.failureCode ?? "任务异常")}
+                      {selectedTaskHasChapterTitleFailure ? t("当前提醒") : (selectedTask.failureCode ?? t("任务异常"))}
                     </div>
                     {selectedTask.failureSummary ? (
                       <div className="mt-1 text-sm">{selectedTask.failureSummary}</div>
@@ -706,7 +706,7 @@ export default function TaskCenterPage() {
                           }}
                           disabled={chapterTitleRepairMutation.isPending}
                         >
-                          {selectedTaskChapterTitleWarning?.label ?? "快速修复章节标题"}
+                          {selectedTaskChapterTitleWarning?.label ?? t("快速修复章节标题")}
                         </Button>
                       </div>
                     ) : null}
@@ -724,7 +724,7 @@ export default function TaskCenterPage() {
                 ) : null}
                 {(selectedTask.status === "failed" || selectedTask.status === "cancelled") && isAutoDirectorTask ? (
                   <div className="rounded-md border bg-muted/20 p-3">
-                    <div className="text-xs text-muted-foreground">使用其他模型重试</div>
+                    <div className="text-xs text-muted-foreground">{t("使用其他模型重试")}</div>
                     <div className="mt-2 flex flex-col gap-2">
                       <LLMSelector
                         value={retryOverride}
@@ -750,8 +750,7 @@ export default function TaskCenterPage() {
                           }
                           disabled={retryMutation.isPending || !canRetryWithSelectedModel}
                         >
-                          使用所选模型重试
-                        </Button>
+                          {t("使用所选模型重试")}</Button>
                       </div>
                     </div>
                   </div>
@@ -762,7 +761,7 @@ export default function TaskCenterPage() {
                       size="sm"
                       onClick={() => navigate(getCandidateSelectionLink(selectedTask.id))}
                     >
-                      {selectedTask.resumeAction ?? "继续确认书级方向"}
+                      {selectedTask.resumeAction ?? t("继续确认书级方向")}
                     </Button>
                   ) : null}
                   {canResumeFront10AutoExecution ? (
@@ -775,7 +774,7 @@ export default function TaskCenterPage() {
                         })}
                       disabled={continueWorkflowMutation.isPending}
                     >
-                      {selectedTask.resumeAction ?? `继续自动执行${selectedTask.executionScopeLabel ?? "当前章节范围"}`}
+                      {selectedTask.resumeAction ?? t("继续自动执行{{value}}", { value: selectedTask.executionScopeLabel ?? t("当前章节范围") })}
                     </Button>
                   ) : null}
                   {selectedTask.kind === "novel_workflow"
@@ -790,7 +789,7 @@ export default function TaskCenterPage() {
                         })}
                       disabled={continueWorkflowMutation.isPending}
                     >
-                      {selectedTask.resumeAction ?? (isActiveAutoDirectorTask ? "查看进度" : "继续")}
+                      {selectedTask.resumeAction ?? (isActiveAutoDirectorTask ? t("查看进度") : t("继续"))}
                     </Button>
                   ) : null}
                   {(selectedTask.status === "failed" || selectedTask.status === "cancelled") ? (
@@ -806,7 +805,7 @@ export default function TaskCenterPage() {
                         }
                         disabled={retryMutation.isPending}
                       >
-                        {isAutoDirectorTask ? "按任务原模型重试" : "重试"}
+                        {isAutoDirectorTask ? t("按任务原模型重试") : t("重试")}
                       </Button>
                     </>
                   ) : null}
@@ -821,8 +820,7 @@ export default function TaskCenterPage() {
                         })}
                       disabled={cancelMutation.isPending}
                       >
-                      取消
-                    </Button>
+                      {t("取消")}</Button>
                   ) : null}
                   {ARCHIVABLE_STATUSES.has(selectedTask.status) ? (
                     <Button
@@ -835,19 +833,18 @@ export default function TaskCenterPage() {
                         })}
                       disabled={archiveMutation.isPending}
                     >
-                      归档
-                    </Button>
+                      {t("归档")}</Button>
                   ) : null}
                   <Button asChild size="sm" variant="outline">
-                    <Link to={selectedTask.sourceRoute}>打开来源页面</Link>
+                    <Link to={selectedTask.sourceRoute}>{t("打开来源页面")}</Link>
                   </Button>
                   <OpenInCreativeHubButton
                     bindings={{ taskId: selectedTask.id }}
-                    label="在创作中枢诊断"
+                    label={t("在创作中枢诊断")}
                   />
                 </div>
                 <div className="space-y-2">
-                  <div className="font-medium">步骤状态</div>
+                  <div className="font-medium">{t("步骤状态")}</div>
                   {selectedTask.steps.map((step) => (
                     <div key={step.key} className="flex items-center justify-between rounded-md border p-2">
                       <div>{step.label}</div>
@@ -857,19 +854,19 @@ export default function TaskCenterPage() {
                 </div>
                 {selectedTask.kind === "novel_workflow" && Array.isArray(selectedTask.meta.milestones) && selectedTask.meta.milestones.length > 0 ? (
                   <div className="space-y-2">
-                    <div className="font-medium">里程碑历史</div>
+                    <div className="font-medium">{t("里程碑历史")}</div>
                     {(selectedTask.meta.milestones as Array<{ checkpointType: NovelWorkflowCheckpoint; summary: string; createdAt: string }>).map((item) => (
                       <div key={`${item.checkpointType}:${item.createdAt}`} className="rounded-md border p-2 text-muted-foreground">
                         <div className="font-medium text-foreground">{formatCheckpoint(item.checkpointType)}</div>
                         <div className="mt-1">{item.summary}</div>
-                        <div className="mt-1 text-xs">记录时间：{formatDate(item.createdAt)}</div>
+                        <div className="mt-1 text-xs">{t("记录时间：")}{formatDate(item.createdAt)}</div>
                       </div>
                     ))}
                   </div>
                 ) : null}
               </>
             ) : (
-              <div className="text-muted-foreground">请选择任务查看详情。</div>
+              <div className="text-muted-foreground">{t("请选择任务查看详情。")}</div>
             )}
           </CardContent>
         </Card>

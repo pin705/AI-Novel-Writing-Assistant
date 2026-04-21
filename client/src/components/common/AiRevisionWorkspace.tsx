@@ -3,6 +3,8 @@ import type { Descendant, Value } from "platejs";
 import { ParagraphPlugin, Plate, PlateContent, usePlateEditor } from "platejs/react";
 import { Group, Panel, Separator } from "react-resizable-panels";
 import { Button } from "@/components/ui/button";
+import { t } from "@/i18n";
+
 
 function toPlateValue(text: string): Value {
   const normalized = text.replace(/\r\n/g, "\n");
@@ -73,7 +75,7 @@ export default function AiRevisionWorkspace(props: AiRevisionWorkspaceProps) {
     onApplyPreview,
     onCancelPreview,
     leftLabel,
-    rightLabel = "AI 修正指令",
+    rightLabel = t("AI 修正指令"),
     minHeightClassName = "min-h-[320px]",
   } = props;
   const [editorSeed, setEditorSeed] = useState(0);
@@ -161,15 +163,15 @@ export default function AiRevisionWorkspace(props: AiRevisionWorkspaceProps) {
             className="min-h-[120px] w-full rounded-md border bg-background p-2 text-sm"
             value={instruction}
             onChange={(event) => onInstructionChange(event.target.value)}
-            placeholder="输入修正要求，例如：压缩冗余、加强冲突、保持既有设定不变。"
+            placeholder={t("输入修正要求，例如：压缩冗余、加强冲突、保持既有设定不变。")}
           />
           {selectedText ? (
             <div className="rounded-md border bg-muted/20 p-2 text-xs text-muted-foreground">
-              <div className="mb-1 font-medium">当前选中内容（将用于精准优化）</div>
+              <div className="mb-1 font-medium">{t("当前选中内容（将用于精准优化）")}</div>
               <div className="max-h-24 overflow-auto whitespace-pre-wrap">{selectedText}</div>
             </div>
           ) : (
-            <div className="text-xs text-muted-foreground">未选中内容时仅支持全文优化。</div>
+            <div className="text-xs text-muted-foreground">{t("未选中内容时仅支持全文优化。")}</div>
           )}
           <div className="flex flex-wrap gap-2">
             <Button
@@ -177,7 +179,7 @@ export default function AiRevisionWorkspace(props: AiRevisionWorkspaceProps) {
               onClick={onOptimizeFull}
               disabled={isOptimizing || instruction.trim().length === 0}
             >
-              {isOptimizing ? "优化中..." : "全文优化预览"}
+              {isOptimizing ? t("优化中...") : t("全文优化预览")}
             </Button>
             <Button
               size="sm"
@@ -186,18 +188,17 @@ export default function AiRevisionWorkspace(props: AiRevisionWorkspaceProps) {
               onClick={() => onOptimizeSelection(selectedText)}
               disabled={isOptimizing || instruction.trim().length === 0 || selectedText.length === 0}
             >
-              仅优化选中内容
-            </Button>
+              {t("仅优化选中内容")}</Button>
           </div>
           {preview.trim() ? (
             <div className="space-y-2">
-              <div className="text-xs font-medium text-muted-foreground">优化预览</div>
+              <div className="text-xs font-medium text-muted-foreground">{t("优化预览")}</div>
               <pre className="max-h-[280px] overflow-auto whitespace-pre-wrap rounded-md border bg-muted/20 p-2 text-xs">
                 {preview}
               </pre>
               <div className="flex flex-wrap gap-2">
-                <Button size="sm" onClick={onApplyPreview}>应用预览</Button>
-                <Button size="sm" variant="outline" onClick={onCancelPreview}>取消预览</Button>
+                <Button size="sm" onClick={onApplyPreview}>{t("应用预览")}</Button>
+                <Button size="sm" variant="outline" onClick={onCancelPreview}>{t("取消预览")}</Button>
               </div>
             </div>
           ) : null}

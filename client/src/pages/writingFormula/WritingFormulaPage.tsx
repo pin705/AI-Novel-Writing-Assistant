@@ -35,6 +35,8 @@ import {
   parseJsonInput,
   prettyJson,
 } from "./writingFormula.utils";
+import { t } from "@/i18n";
+
 
 export default function WritingFormulaPage() {
   const llm = useLLMStore();
@@ -155,7 +157,7 @@ export default function WritingFormulaPage() {
 
     setSelectedProfileId(incomingProfile.id);
     if (incomingSource === "book-analysis") {
-      setMessage(`已从拆书生成写法「${incomingProfile.name}」，可以继续编辑、绑定和试写。`);
+      setMessage(t("已从拆书生成写法「{{name}}」，可以继续编辑、绑定和试写。", { name: incomingProfile.name }));
     }
     setSearchParams(nextSearchParams, { replace: true });
   }, [incomingProfileId, incomingSource, profiles, searchParams, setSearchParams]);
@@ -205,7 +207,7 @@ export default function WritingFormulaPage() {
       if (response.data) {
         setSelectedProfileId(response.data.id);
         setCreateForm((prev) => ({ ...prev, manualName: "" }));
-        setMessage("已创建空白写法资产。");
+        setMessage(t("已创建空白写法资产。"));
       }
       await refreshStyleData();
     },
@@ -226,8 +228,8 @@ export default function WritingFormulaPage() {
         const featureCount = response.data.extractedFeatures?.length ?? 0;
         setMessage(
           featureCount > 0
-            ? `已提取 ${featureCount} 项特征，可在编辑页的“提取特征启用”区域逐项勾选。`
-            : "已创建写法资产，但这次还没有生成可选特征条目。编辑页里可以直接重新提取特征。",
+            ? t("已提取 {{featureCount}} 项特征，可在编辑页的“提取特征启用”区域逐项勾选。", { featureCount: featureCount })
+            : t("已创建写法资产，但这次还没有生成可选特征条目。编辑页里可以直接重新提取特征。"),
         );
       }
       await refreshStyleData();
@@ -239,7 +241,7 @@ export default function WritingFormulaPage() {
     onSuccess: async (response) => {
       if (response.data) {
         setSelectedProfileId(response.data.id);
-        setMessage("已基于模板创建写法资产。");
+        setMessage(t("已基于模板创建写法资产。"));
       }
       await refreshStyleData();
     },
@@ -263,7 +265,7 @@ export default function WritingFormulaPage() {
           briefCategory: "",
           briefPrompt: "",
         }));
-        setMessage("AI 已根据你的描述生成一套起步写法，可以直接继续微调。");
+        setMessage(t("AI 已根据你的描述生成一套起步写法，可以直接继续微调。"));
       }
       await refreshStyleData();
     },
@@ -272,10 +274,10 @@ export default function WritingFormulaPage() {
   const reextractFeaturesMutation = useMutation({
     mutationFn: async () => {
       if (!selectedProfileId || !editor.sourceContent.trim()) {
-        throw new Error("请先准备原文样本。");
+        throw new Error(t("请先准备原文样本。"));
       }
       return extractStyleFeaturesFromText({
-        name: editor.name.trim() || selectedProfile?.name || "文本提取写法",
+        name: editor.name.trim() || selectedProfile?.name || t("文本提取写法"),
         category: editor.category || undefined,
         sourceText: editor.sourceContent,
         provider: llm.provider,
@@ -301,8 +303,8 @@ export default function WritingFormulaPage() {
       }));
       setMessage(
         extractedFeatures.length > 0
-          ? `已重新提取 ${extractedFeatures.length} 项特征，勾选确认后记得保存。`
-          : "这次仍然没有生成可选特征条目，我已经把空状态保留在编辑页里了。",
+          ? t("已重新提取 {{length}} 项特征，勾选确认后记得保存。", { length: extractedFeatures.length })
+          : t("这次仍然没有生成可选特征条目，我已经把空状态保留在编辑页里了。"),
       );
     },
   });
@@ -329,7 +331,7 @@ export default function WritingFormulaPage() {
       });
     },
     onSuccess: async () => {
-      setMessage("写法资产已保存。");
+      setMessage(t("写法资产已保存。"));
       await refreshStyleData();
     },
   });
@@ -338,7 +340,7 @@ export default function WritingFormulaPage() {
     mutationFn: (id: string) => deleteStyleProfile(id),
     onSuccess: async () => {
       setSelectedProfileId("");
-      setMessage("写法资产已删除。");
+      setMessage(t("写法资产已删除。"));
       await refreshStyleData();
     },
   });
@@ -370,7 +372,7 @@ export default function WritingFormulaPage() {
       });
     },
     onSuccess: async () => {
-      setMessage("写法绑定已创建。");
+      setMessage(t("写法绑定已创建。"));
       await queryClient.invalidateQueries({ queryKey: queryKeys.styleEngine.bindings(selectedProfileId || "all") });
     },
   });
@@ -385,7 +387,7 @@ export default function WritingFormulaPage() {
   const testWriteMutation = useMutation({
     mutationFn: () => {
       if (!selectedProfileId) {
-        throw new Error("请先选择写法资产。");
+        throw new Error(t("请先选择写法资产。"));
       }
       return testWriteWithStyleProfile(selectedProfileId, {
         mode: testWriteForm.mode,
@@ -403,7 +405,7 @@ export default function WritingFormulaPage() {
   const detectionMutation = useMutation({
     mutationFn: () => {
       if (!selectedProfileId) {
-        throw new Error("请先选择写法资产。");
+        throw new Error(t("请先选择写法资产。"));
       }
       return detectStyleIssues({
         content: detectInput,
@@ -418,7 +420,7 @@ export default function WritingFormulaPage() {
   const rewriteMutation = useMutation({
     mutationFn: async () => {
       if (!selectedProfileId) {
-        throw new Error("请先选择写法资产。");
+        throw new Error(t("请先选择写法资产。"));
       }
       const report = detectionMutation.data?.data ?? (await detectStyleIssues({
         content: detectInput,
@@ -450,12 +452,11 @@ export default function WritingFormulaPage() {
     <div className="flex h-full min-h-0 flex-col gap-4">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-semibold">写法引擎</h1>
+          <h1 className="text-2xl font-semibold">{t("写法引擎")}</h1>
           <p className="text-sm text-muted-foreground">
-            先选一套预置写法或模板起步，再慢慢微调规则、绑定对象和试写结果。
-          </p>
+            {t("先选一套预置写法或模板起步，再慢慢微调规则、绑定对象和试写结果。")}</p>
         </div>
-        <OpenInCreativeHubButton bindings={{ styleProfileId: selectedProfileId || null }} label="写法资产发往创作中枢" />
+        <OpenInCreativeHubButton bindings={{ styleProfileId: selectedProfileId || null }} label={t("写法资产发往创作中枢")} />
       </div>
 
       {message ? <div className="rounded-md border bg-muted/30 px-3 py-2 text-sm">{message}</div> : null}

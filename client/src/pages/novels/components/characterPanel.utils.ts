@@ -1,9 +1,11 @@
 import type { Character, CharacterTimeline } from "@ai-novel/shared/types/novel";
+import { t } from "@/i18n";
 
-const RELATION_POSITIVE_KEYWORDS = ["伙伴", "盟友", "信任", "守护", "亲密", "喜欢", "合作"];
-const RELATION_NEGATIVE_KEYWORDS = ["敌对", "对立", "怀疑", "背叛", "利用", "冲突", "压制"];
-const TREND_UP_KEYWORDS = ["升温", "缓和", "靠近", "修复", "合作加深", "信任增加"];
-const TREND_DOWN_KEYWORDS = ["恶化", "破裂", "紧张", "决裂", "冲突升级", "敌意加深"];
+
+const RELATION_POSITIVE_KEYWORDS = [t("伙伴"), t("盟友"), t("信任"), t("守护"), t("亲密"), t("喜欢"), t("合作")];
+const RELATION_NEGATIVE_KEYWORDS = [t("敌对"), t("对立"), t("怀疑"), t("背叛"), t("利用"), t("冲突"), t("压制")];
+const TREND_UP_KEYWORDS = [t("升温"), t("缓和"), t("靠近"), t("修复"), t("合作加深"), t("信任增加")];
+const TREND_DOWN_KEYWORDS = [t("恶化"), t("破裂"), t("紧张"), t("决裂"), t("冲突升级"), t("敌意加深")];
 
 function compactText(input: string | null | undefined): string {
   return (input ?? "").trim();
@@ -55,57 +57,57 @@ export function buildCharacterProfileFromWizard(payload: QuickCharacterCreatePay
     .split(/[，,\s]+/g)
     .map((item) => item.trim())
     .filter((item) => item.length > 0);
-  const keywordText = keywordList.length > 0 ? keywordList.join("、") : "待补充";
+  const keywordText = keywordList.length > 0 ? keywordList.join("、") : t("待补充");
 
-  const personality = `核心特征：${keywordText}`;
+  const personality = t("核心特征：{{keywordText}}", { keywordText: keywordText });
   const background = joinSegments([
-    payload.relationToProtagonist ? `与主角关系：${payload.relationToProtagonist}` : "",
-    payload.storyFunction ? `故事作用：${payload.storyFunction}` : "",
+    payload.relationToProtagonist ? t("与主角关系：{{relationToProtagonist}}", { relationToProtagonist: payload.relationToProtagonist }) : "",
+    payload.storyFunction ? t("故事作用：{{storyFunction}}", { storyFunction: payload.storyFunction }) : "",
   ]);
   const development = joinSegments([
-    payload.storyFunction ? `角色成长主轴：围绕“${payload.storyFunction}”推进。` : "",
-    keywordList.length > 0 ? `潜在冲突点：${keywordList.slice(0, 3).join("、")}` : "",
-    keywordList.length > 0 ? `可埋伏笔点：${keywordList.slice(-2).join("、")}` : "",
-    keywordList.length > 0 ? `说话风格建议：偏向${keywordList[0]}语气。` : "",
+    payload.storyFunction ? t("角色成长主轴：围绕“{{storyFunction}}”推进。", { storyFunction: payload.storyFunction }) : "",
+    keywordList.length > 0 ? t("潜在冲突点：{{value}}", { value: keywordList.slice(0, 3).join("、") }) : "",
+    keywordList.length > 0 ? t("可埋伏笔点：{{value}}", { value: keywordList.slice(-2).join("、") }) : "",
+    keywordList.length > 0 ? t("说话风格建议：偏向{{keywordList}}语气。", { keywordList: keywordList[0] }) : "",
   ]);
 
   return {
     personality: personality || undefined,
     background: background || undefined,
     development: development || undefined,
-    currentState: payload.relationToProtagonist ? `关系推进中（${payload.relationToProtagonist}）` : "待上场",
-    currentGoal: payload.storyFunction || "推动主线关键节点",
+    currentState: payload.relationToProtagonist ? t("关系推进中（{{relationToProtagonist}}）", { relationToProtagonist: payload.relationToProtagonist }) : t("待上场"),
+    currentGoal: payload.storyFunction || t("推动主线关键节点"),
   };
 }
 
 function inferCurrentRelation(source: string): string {
   if (!source) {
-    return "待定义";
+    return t("待定义");
   }
   const positiveHits = countHits(source, RELATION_POSITIVE_KEYWORDS);
   const negativeHits = countHits(source, RELATION_NEGATIVE_KEYWORDS);
   if (positiveHits > negativeHits) {
-    return "合作 / 亲近";
+    return t("合作 / 亲近");
   }
   if (negativeHits > positiveHits) {
-    return "对立 / 紧张";
+    return t("对立 / 紧张");
   }
-  return "复杂 / 待观察";
+  return t("复杂 / 待观察");
 }
 
 function inferTrend(source: string): string {
   if (!source) {
-    return "待观察";
+    return t("待观察");
   }
   const upHits = countHits(source, TREND_UP_KEYWORDS);
   const downHits = countHits(source, TREND_DOWN_KEYWORDS);
   if (upHits > downHits) {
-    return "升温";
+    return t("升温");
   }
   if (downHits > upHits) {
-    return "恶化";
+    return t("恶化");
   }
-  return "平稳";
+  return t("平稳");
 }
 
 function includesCharacterName(source: string, characterName: string): boolean {
@@ -117,7 +119,7 @@ function includesCharacterName(source: string, characterName: string): boolean {
 
 function buildLatestEvidence(event?: CharacterTimeline): string {
   if (!event) {
-    return "暂无章节证据";
+    return t("暂无章节证据");
   }
   const excerpt = compactText(event.content).slice(0, 36);
   return excerpt.length > 0 ? excerpt : event.title;

@@ -13,6 +13,8 @@ import {
   type QueueFilterKey,
 } from "./chapterExecution.shared";
 import DirectorTakeoverEntryPanel from "./DirectorTakeoverEntryPanel";
+import { t } from "@/i18n";
+
 
 export default function ChapterManagementTab(props: ChapterTabViewProps) {
   const {
@@ -108,11 +110,11 @@ export default function ChapterManagementTab(props: ChapterTabViewProps) {
 
   const queueFilters = useMemo(
     () => ([
-      { key: "all", label: "全部" },
-      { key: "setup", label: "待准备" },
-      { key: "draft", label: "待写作" },
-      { key: "review", label: "待修整" },
-      { key: "completed", label: "已完成" },
+      { key: "all", label: t("全部") },
+      { key: "setup", label: t("待准备") },
+      { key: "draft", label: t("待写作") },
+      { key: "review", label: t("待修整") },
+      { key: "completed", label: t("已完成") },
     ] as const).map((item) => ({
       ...item,
       count: chapters.filter((chapter) => chapterMatchesQueueFilter(chapter, item.key)).length,
@@ -123,21 +125,20 @@ export default function ChapterManagementTab(props: ChapterTabViewProps) {
   return (
     <div className="space-y-4">
       <DirectorTakeoverEntryPanel
-        title="从章节执行接管"
-        description="AI 会先判断当前是否有活动批次、检查点或可执行章节范围，再决定恢复当前批次还是按你的选择新开批次。"
+        title={t("从章节执行接管")}
+        description={t("AI 会先判断当前是否有活动批次、检查点或可执行章节范围，再决定恢复当前批次还是按你的选择新开批次。")}
         entry={directorTakeoverEntry}
       />
       <Card className="overflow-hidden">
       <CardHeader className="gap-3 border-b bg-gradient-to-b from-muted/25 via-background to-background">
         <div className="flex flex-col gap-3 xl:flex-row xl:items-start xl:justify-between">
           <div className="space-y-1">
-            <CardTitle>章节执行</CardTitle>
+            <CardTitle>{t("章节执行")}</CardTitle>
             <div className="text-sm leading-6 text-muted-foreground">
-              把这里收成真正的主工作台：左侧只管切章，中间完整承接正文，右侧专心放 AI 动作和策略。
-            </div>
+              {t("把这里收成真正的主工作台：左侧只管切章，中间完整承接正文，右侧专心放 AI 动作和策略。")}</div>
           </div>
           <Button onClick={onCreateChapter} disabled={isCreatingChapter}>
-            {isCreatingChapter ? "创建中..." : "新建章节"}
+            {isCreatingChapter ? t("创建中...") : t("新建章节")}
           </Button>
         </div>
       </CardHeader>
@@ -153,8 +154,8 @@ export default function ChapterManagementTab(props: ChapterTabViewProps) {
 
         {!hasCharacters ? (
           <div className="flex flex-col gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900 md:flex-row md:items-center md:justify-between">
-            <span>请先添加至少 1 个角色，再生成章节内容。这样 AI 更容易识别出场者、关系变化和情节承接。</span>
-            <Button size="sm" variant="outline" onClick={onGoToCharacterTab}>去角色管理</Button>
+            <span>{t("请先添加至少 1 个角色，再生成章节内容。这样 AI 更容易识别出场者、关系变化和情节承接。")}</span>
+            <Button size="sm" variant="outline" onClick={onGoToCharacterTab}>{t("去角色管理")}</Button>
           </div>
         ) : null}
 

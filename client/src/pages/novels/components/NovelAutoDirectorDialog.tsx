@@ -52,6 +52,8 @@ import {
 import NovelAutoDirectorCandidateBatches from "./NovelAutoDirectorCandidateBatches";
 import NovelAutoDirectorProgressPanel from "./NovelAutoDirectorProgressPanel";
 import NovelAutoDirectorSetupPanel from "./NovelAutoDirectorSetupPanel";
+import { t } from "@/i18n";
+
 
 interface NovelAutoDirectorDialogProps {
   basicForm: NovelBasicFormState;
@@ -198,7 +200,7 @@ export default function NovelAutoDirectorDialog({
     && DIRECTOR_CANDIDATE_SETUP_STEP_KEYS.has(directorTask.currentItemKey ?? ""),
   );
   const hasActiveDirectorTask = Boolean(directorTask && ACTIVE_TASK_STATUSES.has(directorTask.status));
-  const triggerLabel = hasActiveDirectorTask ? "查看导演进度" : "AI 自动导演创建";
+  const triggerLabel = hasActiveDirectorTask ? t("查看导演进度") : t("AI 自动导演创建");
   const isBlockingExecutionView = dialogMode === "execution_progress" && hasActiveDirectorTask && !candidateSetupInProgress;
 
   useEffect(() => {
@@ -293,7 +295,7 @@ export default function NovelAutoDirectorDialog({
     },
     onSuccess: ({ batch, workflowTaskId: nextWorkflowTaskId }) => {
       if (!batch) {
-        toast.error("自动导演没有返回可用方案。");
+        toast.error(t("自动导演没有返回可用方案。"));
         return;
       }
       if (nextWorkflowTaskId && nextWorkflowTaskId !== workflowTaskId) {
@@ -306,11 +308,11 @@ export default function NovelAutoDirectorDialog({
       setDialogMode("candidate_selection");
       setExecutionRequested(false);
       setExecutionError("");
-      toast.success(`${batch.roundLabel} 已生成 ${batch.candidates.length} 套方案。`);
+      toast.success(t("{{roundLabel}} 已生成 {{length}} 套方案。", { roundLabel: batch.roundLabel, length: batch.candidates.length }));
     },
     onError: (error) => {
       setDialogMode("execution_failed");
-      setExecutionError(error instanceof Error ? error.message : "导演候选方案生成失败。");
+      setExecutionError(error instanceof Error ? error.message : t("导演候选方案生成失败。"));
     },
   });
 
@@ -336,17 +338,17 @@ export default function NovelAutoDirectorDialog({
     },
     onSuccess: ({ batch, workflowTaskId: nextWorkflowTaskId, candidateId }) => {
       if (!batch) {
-        toast.error("定向修正失败，未返回更新后的方案。");
+        toast.error(t("定向修正失败，未返回更新后的方案。"));
         return;
       }
       applyUpdatedBatch(batch, nextWorkflowTaskId);
       setCandidatePatchFeedbacks((prev) => ({ ...prev, [candidateId]: "" }));
       setDialogMode("candidate_selection");
-      toast.success("已按你的意见修正这套方案。");
+      toast.success(t("已按你的意见修正这套方案。"));
     },
     onError: (error) => {
       setDialogMode("execution_failed");
-      setExecutionError(error instanceof Error ? error.message : "定向修正方案失败。");
+      setExecutionError(error instanceof Error ? error.message : t("定向修正方案失败。"));
     },
   });
 
@@ -372,17 +374,17 @@ export default function NovelAutoDirectorDialog({
     },
     onSuccess: ({ batch, workflowTaskId: nextWorkflowTaskId, candidateId }) => {
       if (!batch) {
-        toast.error("标题组修正失败，未返回更新后的书名组。");
+        toast.error(t("标题组修正失败，未返回更新后的书名组。"));
         return;
       }
       applyUpdatedBatch(batch, nextWorkflowTaskId);
       setTitlePatchFeedbacks((prev) => ({ ...prev, [candidateId]: "" }));
       setDialogMode("candidate_selection");
-      toast.success("已重做这套方案的标题组。");
+      toast.success(t("已重做这套方案的标题组。"));
     },
     onError: (error) => {
       setDialogMode("execution_failed");
-      setExecutionError(error instanceof Error ? error.message : "标题组修正失败。");
+      setExecutionError(error instanceof Error ? error.message : t("标题组修正失败。"));
     },
   });
 
@@ -408,8 +410,8 @@ export default function NovelAutoDirectorDialog({
       const novelId = data?.novel?.id;
       if (!novelId) {
         setDialogMode("execution_failed");
-        setExecutionError("确认方案失败，未返回小说项目。");
-        toast.error("确认方案失败，未返回小说项目。");
+        setExecutionError(t("确认方案失败，未返回小说项目。"));
+        toast.error(t("确认方案失败，未返回小说项目。"));
         return;
       }
       if (nextWorkflowTaskId) {
@@ -420,8 +422,8 @@ export default function NovelAutoDirectorDialog({
       await queryClient.invalidateQueries({ queryKey: ["tasks"] });
       toast.success(
         data.directorSession?.runMode === "auto_to_execution"
-          ? `已创建《${data.novel.title}》，自动导演会继续自动执行${buildDirectorAutoExecutionPlanLabel(buildDirectorAutoExecutionPlanFromDraft(autoExecutionDraft))}。`
-          : `已创建《${data.novel.title}》，自动导演会继续在后台推进到可开写。`,
+          ? t("已创建《{{title}}》，自动导演会继续自动执行{{autoExecutionDraft}}。", { title: data.novel.title, autoExecutionDraft: buildDirectorAutoExecutionPlanLabel(buildDirectorAutoExecutionPlanFromDraft(autoExecutionDraft)) })
+          : t("已创建《{{title}}》，自动导演会继续在后台推进到可开写。", { title: data.novel.title }),
       );
       resetDialogState();
       onConfirmed({
@@ -432,7 +434,7 @@ export default function NovelAutoDirectorDialog({
     },
     onError: async (error, payload) => {
       setDialogMode("execution_failed");
-      setExecutionError(error instanceof Error ? error.message : "导演任务执行失败。");
+      setExecutionError(error instanceof Error ? error.message : t("导演任务执行失败。"));
       setExecutionRequested(false);
       if (payload.workflowTaskId) {
         await queryClient.invalidateQueries({
@@ -521,7 +523,7 @@ export default function NovelAutoDirectorDialog({
       });
     } catch (error) {
       confirmSubmitLockedRef.current = false;
-      const message = error instanceof Error ? error.message : "创建导演主任务失败。";
+      const message = error instanceof Error ? error.message : t("创建导演主任务失败。");
       setDialogMode("candidate_selection");
       setExecutionRequested(false);
       setExecutionError(message);
@@ -531,7 +533,7 @@ export default function NovelAutoDirectorDialog({
 
   const handleBackgroundContinue = () => {
     setOpen(false);
-    toast.success("导演任务会继续在后台运行，可在任务中心恢复查看。");
+    toast.success(t("导演任务会继续在后台运行，可在任务中心恢复查看。"));
   };
 
   const handleOpenTaskCenter = () => {
@@ -591,17 +593,17 @@ export default function NovelAutoDirectorDialog({
           <DialogHeader className="shrink-0 border-b px-6 pb-4 pr-12 pt-6">
             <DialogTitle>
               {dialogMode === "candidate_selection"
-                ? "AI 自动导演创建"
+                ? t("AI 自动导演创建")
                 : dialogMode === "execution_failed"
-                  ? "AI 自动导演执行失败"
-                  : "AI 自动导演执行中"}
+                  ? t("AI 自动导演执行失败")
+                  : t("AI 自动导演执行中")}
             </DialogTitle>
             <DialogDescription>
               {dialogMode === "candidate_selection"
-                ? "先补导演起始设置，再让 AI 给你 2 套整本书方向。你可以继续重生新批次，也可以只修某一套方案或它的标题组。"
+                ? t("先补导演起始设置，再让 AI 给你 2 套整本书方向。你可以继续重生新批次，也可以只修某一套方案或它的标题组。")
                 : dialogMode === "execution_failed"
-                  ? "导演长流程已中断，当前会优先显示失败摘要、最近里程碑和恢复入口。"
-                  : "当前会实时显示导演主流程进度、当前动作和里程碑历史。"}
+                  ? t("导演长流程已中断，当前会优先显示失败摘要、最近里程碑和恢复入口。")
+                  : t("当前会实时显示导演主流程进度、当前动作和里程碑历史。")}
             </DialogDescription>
           </DialogHeader>
 

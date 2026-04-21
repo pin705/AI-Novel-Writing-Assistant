@@ -21,6 +21,8 @@ import {
 import { queryKeys } from "@/api/queryKeys";
 import type { StoryMacroTabProps } from "../components/NovelEditView.types";
 import { syncNovelWorkflowStageSilently } from "../novelWorkflow.client";
+import { t } from "@/i18n";
+
 
 const EMPTY_CONFLICT_LAYERS: StoryConflictLayers = {
   external: "",
@@ -134,7 +136,7 @@ export function useNovelStoryMacro(input: UseNovelStoryMacroInput): {
       temperature: llm.temperature,
     }),
     onSuccess: async (response) => {
-      setMessage(response.message ?? "故事引擎原型已生成。");
+      setMessage(response.message ?? t("故事引擎原型已生成。"));
       setExpansion(normalizeExpansion(response.data?.expansion));
       setDecomposition(response.data?.decomposition ?? EMPTY_DECOMPOSITION);
       setConstraints(response.data?.constraints ?? []);
@@ -157,7 +159,7 @@ export function useNovelStoryMacro(input: UseNovelStoryMacroInput): {
       temperature: llm.temperature,
     }),
     onSuccess: async (response) => {
-      setMessage(response.message ?? "约束引擎已构建。");
+      setMessage(response.message ?? t("约束引擎已构建。"));
       await syncNovelWorkflowStageSilently({
         novelId,
         stage: "story_macro",
@@ -179,7 +181,7 @@ export function useNovelStoryMacro(input: UseNovelStoryMacroInput): {
       lockedFields,
     }),
     onSuccess: async (response) => {
-      setMessage(response.message ?? "故事宏观规划已保存。");
+      setMessage(response.message ?? t("故事宏观规划已保存。"));
       await syncNovelWorkflowStageSilently({
         novelId,
         stage: "story_macro",
@@ -193,7 +195,7 @@ export function useNovelStoryMacro(input: UseNovelStoryMacroInput): {
   const saveStateMutation = useMutation({
     mutationFn: () => updateNovelStoryMacroState(novelId, storyState),
     onSuccess: async () => {
-      setMessage("故事宏观状态已保存。");
+      setMessage(t("故事宏观状态已保存。"));
       await invalidatePlan();
     },
   });
@@ -208,7 +210,7 @@ export function useNovelStoryMacro(input: UseNovelStoryMacroInput): {
       });
     },
     onSuccess: async (response) => {
-      setMessage(response.message ?? "字段已重生成。");
+      setMessage(response.message ?? t("字段已重生成。"));
       await invalidatePlan();
     },
     onSettled: () => {

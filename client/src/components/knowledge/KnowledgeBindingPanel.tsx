@@ -9,6 +9,8 @@ import {
   updateWorldKnowledgeDocuments,
 } from "@/api/knowledge";
 import KnowledgeDocumentPicker from "./KnowledgeDocumentPicker";
+import { t } from "@/i18n";
+
 
 interface KnowledgeBindingPanelProps {
   targetType: "novel" | "world";
@@ -53,15 +55,15 @@ export default function KnowledgeBindingPanel(props: KnowledgeBindingPanelProps)
 
   return (
     <div className="space-y-3 rounded-md border p-3">
-      <div className="text-sm font-medium">{props.title ?? "参考知识"}</div>
+      <div className="text-sm font-medium">{props.title ?? t("参考知识")}</div>
       <KnowledgeDocumentPicker
         selectedIds={selectedIds}
         onChange={(next) => setSelectedIds(next ?? [])}
         queryStatus={undefined}
-        description="绑定后会成为该实体的默认知识文档来源。"
+        description={t("绑定后会成为该实体的默认知识文档来源。")}
       />
       <Button onClick={() => saveMutation.mutate()} disabled={saveMutation.isPending}>
-        {saveMutation.isPending ? "保存中..." : "保存绑定"}
+        {saveMutation.isPending ? t("保存中...") : t("保存绑定")}
       </Button>
     </div>
   );

@@ -6,6 +6,7 @@ import type {
   CreativeHubThreadHistoryItem,
   CreativeHubThreadState,
 } from "@ai-novel/shared/types/creativeHub";
+import { t } from "@/i18n";
 import { API_BASE_URL } from "@/lib/constants";
 import { apiClient } from "./client";
 
@@ -110,7 +111,7 @@ export async function* streamCreativeHubRun(
   });
 
   if (!response.ok || !response.body) {
-    throw new Error(`创作中枢请求失败，状态码 ${response.status}`);
+    throw new Error(t("创作中枢请求失败，状态码 {{status}}", { status: response.status }));
   }
 
   const reader = response.body.getReader();

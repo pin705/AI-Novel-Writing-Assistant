@@ -1,4 +1,6 @@
 import type { WorldConsistencyIssue, WorldConsistencyReport } from "@ai-novel/shared/types/world";
+import { t } from "@/i18n";
+
 
 const ISSUE_CODE_LABELS: Record<string, string> = {
   THEMATIC_INCOHERENCE: "主题框架不一致",
@@ -33,7 +35,7 @@ const ISSUE_DETAIL_LABELS: Record<string, string> = {
 };
 
 const FIELD_LABELS: Record<string, string> = {
-  description: "世界概述",
+  description: t("世界概述"),
   background: "背景设定",
   geography: "地理环境",
   cultures: "文化习俗",
@@ -57,17 +59,17 @@ function localizeSummary(summary: string, status: WorldConsistencyReport["status
     return summary;
   }
   if (/Consistency check passed/i.test(summary)) {
-    return "一致性检查通过，未发现明显硬冲突。";
+    return t("一致性检查通过，未发现明显硬冲突。");
   }
   const errorCount = issues.filter((item) => item.severity === "error").length;
   const warnCount = issues.filter((item) => item.severity === "warn").length;
   if (status === "error") {
-    return `检测到 ${errorCount} 个严重冲突，${warnCount} 个警告项。`;
+    return t("检测到 {{errorCount}} 个严重冲突，{{warnCount}} 个警告项。", { errorCount: errorCount, warnCount: warnCount });
   }
   if (status === "warn") {
-    return `检测到 ${warnCount} 个警告项，建议继续修正。`;
+    return t("检测到 {{warnCount}} 个警告项，建议继续修正。", { warnCount: warnCount });
   }
-  return "一致性检查已完成。";
+  return t("一致性检查已完成。");
 }
 
 export function parseConsistencyReport(raw: string | null | undefined, issues: WorldConsistencyIssue[]): WorldConsistencyReport | null {
@@ -98,11 +100,11 @@ export function parseConsistencyReport(raw: string | null | undefined, issues: W
 export function localizeConsistencySeverity(severity: WorldConsistencyIssue["severity"]): string {
   switch (severity) {
     case "error":
-      return "严重冲突";
+      return t("严重冲突");
     case "warn":
-      return "警告";
+      return t("警告");
     case "pass":
-      return "通过";
+      return t("通过");
     default:
       return severity;
   }
@@ -111,29 +113,29 @@ export function localizeConsistencySeverity(severity: WorldConsistencyIssue["sev
 export function localizeConsistencyStatus(status: WorldConsistencyIssue["status"] | WorldConsistencyReport["status"]): string {
   switch (status) {
     case "open":
-      return "待处理";
+      return t("待处理");
     case "resolved":
-      return "已解决";
+      return t("已解决");
     case "ignored":
-      return "已忽略";
+      return t("已忽略");
     case "error":
-      return "存在严重冲突";
+      return t("存在严重冲突");
     case "warn":
-      return "存在警告";
+      return t("存在警告");
     case "pass":
-      return "检查通过";
+      return t("检查通过");
     default:
       return status;
   }
 }
 
 export function localizeConsistencySource(source: WorldConsistencyIssue["source"]): string {
-  return source === "llm" ? "模型审校" : "规则检查";
+  return source === "llm" ? t("模型审校") : t("规则检查");
 }
 
 export function localizeConsistencyField(targetField?: string | null): string {
   if (!targetField) {
-    return "未指定";
+    return t("未指定");
   }
   return FIELD_LABELS[targetField] ?? targetField;
 }
@@ -147,7 +149,7 @@ export function localizeConsistencyIssueMessage(issue: WorldConsistencyIssue): s
     return issue.message;
   }
   return ISSUE_MESSAGE_LABELS[issue.code]
-    ?? `${localizeConsistencyField(issue.targetField)}存在一致性风险。`;
+    ?? t("{{targetField}}存在一致性风险。", { targetField: localizeConsistencyField(issue.targetField) });
 }
 
 export function localizeConsistencyIssueDetail(issue: WorldConsistencyIssue): string | null {
@@ -158,7 +160,7 @@ export function localizeConsistencyIssueDetail(issue: WorldConsistencyIssue): st
     return ISSUE_DETAIL_LABELS[issue.code];
   }
   if (issue.detail) {
-    return `系统检测到一条${localizeConsistencyField(issue.targetField)}相关问题，请结合当前世界观设定复核这项风险。`;
+    return t("系统检测到一条{{targetField}}相关问题，请结合当前世界观设定复核这项风险。", { targetField: localizeConsistencyField(issue.targetField) });
   }
   return null;
 }

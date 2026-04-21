@@ -3,6 +3,8 @@ import { ChevronDown, ChevronRight, Pencil, Plus, Trash2 } from "lucide-react";
 import type { StoryModeTreeNode } from "@/api/storyMode";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { t } from "@/i18n";
+
 
 function countNovelBindingsInSubtree(node: StoryModeTreeNode): number {
   return node.novelCount + node.children.reduce(
@@ -57,17 +59,17 @@ export default function StoryModeTreeCard({
             <div className="flex flex-wrap items-center gap-2">
               <div className="text-sm font-semibold text-foreground">{node.name}</div>
               <span className="rounded-full bg-muted px-2 py-0.5 text-[11px] text-muted-foreground">
-                小说 {node.novelCount}
+                {t("小说")}{node.novelCount}
               </span>
               <span className="rounded-full bg-muted px-2 py-0.5 text-[11px] text-muted-foreground">
-                子类 {node.childCount}
+                {t("子类")}{node.childCount}
               </span>
             </div>
             <div className="text-sm leading-6 text-muted-foreground">
               {node.description?.trim() || node.profile.coreDrive}
             </div>
             <div className="text-xs leading-5 text-muted-foreground">
-              核心驱动：{node.profile.coreDrive}
+              {t("核心驱动：")}{node.profile.coreDrive}
             </div>
           </div>
 
@@ -75,24 +77,22 @@ export default function StoryModeTreeCard({
             {depth === 0 ? (
               <Button type="button" variant="ghost" size="sm" onClick={() => onCreateChild(node.id)}>
                 <Plus className="mr-1 h-4 w-4" />
-                新增子类
-              </Button>
+                {t("新增子类")}</Button>
             ) : null}
             <Button type="button" variant="ghost" size="sm" onClick={() => onEdit(node.id)}>
               <Pencil className="mr-1 h-4 w-4" />
-              编辑
-            </Button>
+              {t("编辑")}</Button>
             <Button
               type="button"
               variant="ghost"
               size="sm"
               className="text-destructive hover:text-destructive"
               disabled={deleteDisabled || deletingId === node.id}
-              title={deleteDisabled ? "请先解绑当前推进模式或其子类下引用的小说后再删除。" : undefined}
+              title={deleteDisabled ? t("请先解绑当前推进模式或其子类下引用的小说后再删除。") : undefined}
               onClick={() => onDelete(node)}
             >
               <Trash2 className="mr-1 h-4 w-4" />
-              {deletingId === node.id ? "删除中..." : "删除"}
+              {deletingId === node.id ? t("删除中...") : t("删除")}
             </Button>
           </div>
         </div>

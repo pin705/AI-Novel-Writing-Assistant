@@ -25,6 +25,8 @@ import { getTaskOverview } from "@/api/tasks";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { t } from "@/i18n";
+
 
 interface NavItem {
   to: string;
@@ -39,32 +41,32 @@ interface NavGroup {
 
 const navGroups: NavGroup[] = [
   {
-    title: "创作",
+    title: t("创作"),
     items: [
-      { to: "/", label: "首页", icon: House },
-      { to: "/novels", label: "小说列表", icon: BookOpenText },
-      { to: "/creative-hub", label: "创作中枢", icon: LayoutDashboard },
-      { to: "/book-analysis", label: "拆书", icon: ScanSearch },
-      { to: "/tasks", label: "任务中心", icon: ListTodo },
+      { to: "/", label: t("首页"), icon: House },
+      { to: "/novels", label: t("小说列表"), icon: BookOpenText },
+      { to: "/creative-hub", label: t("创作中枢"), icon: LayoutDashboard },
+      { to: "/book-analysis", label: t("拆书"), icon: ScanSearch },
+      { to: "/tasks", label: t("任务中心"), icon: ListTodo },
     ],
   },
   {
-    title: "资产",
+    title: t("资产"),
     items: [
-      { to: "/genres", label: "题材基底库", icon: Tags },
-      { to: "/story-modes", label: "推进模式库", icon: Workflow },
-      { to: "/titles", label: "标题工坊", icon: SquarePen },
-      { to: "/knowledge", label: "知识库", icon: Database },
-      { to: "/worlds", label: "世界观", icon: Globe2 },
-      { to: "/style-engine", label: "写法引擎", icon: WandSparkles },
-      { to: "/base-characters", label: "基础角色库", icon: UsersRound },
+      { to: "/genres", label: t("题材基底库"), icon: Tags },
+      { to: "/story-modes", label: t("推进模式库"), icon: Workflow },
+      { to: "/titles", label: t("标题工坊"), icon: SquarePen },
+      { to: "/knowledge", label: t("知识库"), icon: Database },
+      { to: "/worlds", label: t("世界观"), icon: Globe2 },
+      { to: "/style-engine", label: t("写法引擎"), icon: WandSparkles },
+      { to: "/base-characters", label: t("基础角色库"), icon: UsersRound },
     ],
   },
   {
-    title: "系统",
+    title: t("系统"),
     items: [
-      { to: "/settings/model-routes", label: "模型路由", icon: Route },
-      { to: "/settings", label: "系统设置", icon: Settings2 },
+      { to: "/settings/model-routes", label: t("模型路由"), icon: Route },
+      { to: "/settings", label: t("系统设置"), icon: Settings2 },
     ],
   },
 ];
@@ -153,8 +155,8 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
           size="icon"
           className="h-8 w-8 text-muted-foreground"
           onClick={onToggle}
-          aria-label={collapsed ? "展开导航栏" : "收起导航栏"}
-          title={collapsed ? "展开导航栏" : "收起导航栏"}
+          aria-label={collapsed ? t("展开导航栏") : t("收起导航栏")}
+          title={collapsed ? t("展开导航栏") : t("收起导航栏")}
         >
           {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
         </Button>

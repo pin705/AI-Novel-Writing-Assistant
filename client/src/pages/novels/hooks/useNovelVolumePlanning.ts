@@ -65,6 +65,8 @@ import {
   serializeVolumeWorkspaceSnapshot,
 } from "./useNovelVolumePlanning.utils";
 import { syncNovelWorkflowStageSilently } from "../novelWorkflow.client";
+import { t } from "@/i18n";
+
 
 interface LlmSettings {
   provider?: LLMProvider;
@@ -293,7 +295,7 @@ export function useNovelVolumePlanning({
       });
       const nextDocument = generatedResponse.data;
       if (!nextDocument) {
-        throw new Error("AI 没有返回卷工作区结果。");
+        throw new Error(t("AI 没有返回卷工作区结果。"));
       }
 
       try {
@@ -304,7 +306,7 @@ export function useNovelVolumePlanning({
           nextDocument: persistedResponse.data ?? nextDocument,
         };
       } catch (error) {
-        const message = error instanceof Error ? error.message : "AI 生成已完成，但自动保存失败。";
+        const message = error instanceof Error ? error.message : t("AI 生成已完成，但自动保存失败。");
         throw new VolumeGenerationAutoSaveError(message, nextDocument);
       }
     },
@@ -320,31 +322,31 @@ export function useNovelVolumePlanning({
           ? "volume_strategy"
           : "structured_outline",
         itemLabel: payload.scope === "strategy"
-          ? "卷战略建议已更新"
+          ? t("卷战略建议已更新")
           : payload.scope === "strategy_critique"
-            ? "卷战略审稿已更新"
+            ? t("卷战略审稿已更新")
             : payload.scope === "skeleton" || payload.scope === "book"
-              ? "卷骨架已更新"
+              ? t("卷骨架已更新")
               : payload.scope === "beat_sheet"
-                ? "当前卷节奏板已更新"
+                ? t("当前卷节奏板已更新")
                 : payload.scope === "chapter_list" || payload.scope === "volume"
                   ? payload.generationMode === "single_beat"
-                    ? "当前卷节奏段章节已更新"
-                    : "当前卷章节列表已生成"
+                    ? t("当前卷节奏段章节已更新")
+                    : t("当前卷章节列表已生成")
                   : payload.scope === "rebalance"
-                    ? "相邻卷再平衡建议已更新"
-                    : "章节细化已更新",
+                    ? t("相邻卷再平衡建议已更新")
+                    : t("章节细化已更新"),
         checkpointType: payload.scope === "skeleton" || payload.scope === "book"
           ? "volume_strategy_ready"
           : payload.scope === "chapter_list" || payload.scope === "volume"
             ? "chapter_batch_ready"
             : null,
         checkpointSummary: payload.scope === "skeleton" || payload.scope === "book"
-          ? "卷战略与卷骨架已刷新，可以继续进入节奏拆章。"
+          ? t("卷战略与卷骨架已刷新，可以继续进入节奏拆章。")
           : payload.scope === "chapter_list" || payload.scope === "volume"
             ? payload.generationMode === "single_beat"
-              ? "当前卷节奏段章节已刷新，可继续细化并同步到章节执行。"
-              : "当前卷章节列表已准备完成，可继续细化并同步到章节执行。"
+              ? t("当前卷节奏段章节已刷新，可继续细化并同步到章节执行。")
+              : t("当前卷章节列表已准备完成，可继续细化并同步到章节执行。")
             : undefined,
         volumeId: payload.targetVolumeId,
         chapterId: payload.targetChapterId,
@@ -356,24 +358,24 @@ export function useNovelVolumePlanning({
       }
 
       if (payload.scope === "strategy") {
-        const message = "卷战略建议已生成并自动保存。下一步请先审查，再确认卷骨架。";
+        const message = t("卷战略建议已生成并自动保存。下一步请先审查，再确认卷骨架。");
         setVolumeGenerationMessage(message);
         setStructuredMessage(message);
         return;
       }
       if (payload.scope === "strategy_critique") {
-        const message = "卷战略审稿已完成，问题和建议已写入右侧审稿区。";
+        const message = t("卷战略审稿已完成，问题和建议已写入右侧审稿区。");
         setVolumeGenerationMessage(message);
         return;
       }
       if (payload.scope === "skeleton" || payload.scope === "book") {
-        const message = "卷骨架已生成并自动保存。系统已清空旧节奏板，下一步请为当前卷生成节奏板。";
+        const message = t("卷骨架已生成并自动保存。系统已清空旧节奏板，下一步请为当前卷生成节奏板。");
         setVolumeGenerationMessage(message);
         setStructuredMessage(message);
         return;
       }
       if (payload.scope === "beat_sheet") {
-        setStructuredMessage("当前卷节奏板已更新并自动保存。现在可以继续拆当前卷章节列表。");
+        setStructuredMessage(t("当前卷节奏板已更新并自动保存。现在可以继续拆当前卷章节列表。"));
         return;
       }
       if (payload.scope === "chapter_list" || payload.scope === "volume") {
@@ -386,22 +388,22 @@ export function useNovelVolumePlanning({
         return;
       }
       if (payload.scope === "rebalance") {
-        setStructuredMessage("相邻卷再平衡建议已更新。");
+        setStructuredMessage(t("相邻卷再平衡建议已更新。"));
         return;
       }
 
       const label = detailModeLabel(payload.detailMode ?? "purpose");
-      setStructuredMessage(`${label}已完成 AI 修正并自动保存。`);
+      setStructuredMessage(t("{{label}}已完成 AI 修正并自动保存。", { label: label }));
     },
     onError: async (error, payload, context) => {
       if (error instanceof VolumeGenerationAutoSaveError) {
         applyWorkspaceDocument(error.nextDocument);
       }
       const fallbackMessage = error instanceof VolumeGenerationAutoSaveError
-        ? `AI 生成已完成，但自动保存失败：${error.message}`
+        ? t("AI 生成已完成，但自动保存失败：{{message}}", { message: error.message })
         : error instanceof Error
           ? error.message
-          : "卷级方案生成失败。";
+          : t("卷级方案生成失败。");
       const shouldTryRecoverPersistedWorkspace = !(error instanceof VolumeGenerationAutoSaveError)
         && (payload.scope === "beat_sheet" || payload.scope === "chapter_list" || payload.scope === "volume");
       let recoveredMessage: string | null = null;
@@ -415,8 +417,8 @@ export function useNovelVolumePlanning({
             if (persistedWorkspaceSnapshotAfter !== context?.persistedWorkspaceSnapshotBefore) {
               hydratePersistedWorkspace(latestWorkspace);
               recoveredMessage = payload.scope === "chapter_list" || payload.scope === "volume"
-                ? "已恢复到最近自动保存进度，可继续从未完成节奏段推进。"
-                : "已恢复到最近自动保存进度，可继续当前卷生成。";
+                ? t("已恢复到最近自动保存进度，可继续从未完成节奏段推进。")
+                : t("已恢复到最近自动保存进度，可继续当前卷生成。");
             }
           }
         } catch {
@@ -436,7 +438,7 @@ export function useNovelVolumePlanning({
     if (hasCharacters) {
       return true;
     }
-    return window.confirm("当前小说还没有角色。继续生成会降低后续一致性，是否继续？");
+    return window.confirm(t("当前小说还没有角色。继续生成会降低后续一致性，是否继续？"));
   };
 
   const startStrategyGeneration = () => {
@@ -452,7 +454,7 @@ export function useNovelVolumePlanning({
 
   const startStrategyCritique = () => {
     if (!strategyPlan) {
-      setVolumeGenerationMessage("请先生成卷战略建议。");
+      setVolumeGenerationMessage(t("请先生成卷战略建议。"));
       return;
     }
     startStrategyCritiqueAction({
@@ -501,22 +503,22 @@ export function useNovelVolumePlanning({
     const targetVolume = normalizedVolumeDraft.find((volume) => volume.id === volumeId);
     const targetChapter = targetVolume?.chapters.find((chapter) => chapter.id === chapterId);
     if (!targetVolume || !targetChapter) {
-      setStructuredMessage("当前章节不存在，无法生成细化信息。");
+      setStructuredMessage(t("当前章节不存在，无法生成细化信息。"));
       return;
     }
     if (!findBeatSheet(beatSheets, volumeId)) {
-      setStructuredMessage("请先生成当前卷节奏板，再细化章节。");
+      setStructuredMessage(t("请先生成当前卷节奏板，再细化章节。"));
       return;
     }
     if (!ensureCharacterGuard()) {
       return;
     }
     const confirmed = window.confirm([
-      `将基于当前内容为第${targetChapter.chapterOrder}章《${targetChapter.title}》AI 修正${detailModeLabel(detailMode)}。`,
+      t("将基于当前内容为第{{chapterOrder}}章《{{title}}》AI 修正{{detailMode}}。", { chapterOrder: targetChapter.chapterOrder, title: targetChapter.title, detailMode: detailModeLabel(detailMode) }),
       hasChapterDetailDraft(targetChapter, detailMode)
-        ? "会优先沿用当前已填写结果，只修正空缺、模糊和不够可执行的部分。"
-        : "当前这块还是空白，AI 会先补出首版，再按现有标题和摘要收束。",
-      "不会改动本章标题和摘要，也不会影响其他章节。",
+        ? t("会优先沿用当前已填写结果，只修正空缺、模糊和不够可执行的部分。")
+        : t("当前这块还是空白，AI 会先补出首版，再按现有标题和摘要收束。"),
+      t("不会改动本章标题和摘要，也不会影响其他章节。"),
     ].join("\n\n"));
     if (!confirmed) {
       return;
@@ -536,15 +538,15 @@ export function useNovelVolumePlanning({
     const targetVolume = normalizedVolumeDraft.find((volume) => volume.id === volumeId);
     const batch = resolveChapterDetailBatch(targetVolume, request);
     if (!targetVolume) {
-      setStructuredMessage("当前卷不存在，无法生成章节细化。");
+      setStructuredMessage(t("当前卷不存在，无法生成章节细化。"));
       return;
     }
     if (batch.targets.length === 0) {
-      setStructuredMessage(typeof request === "string" ? "当前章节不存在，无法整套生成章节细化。" : "当前范围内没有可细化章节。");
+      setStructuredMessage(typeof request === "string" ? t("当前章节不存在，无法整套生成章节细化。") : t("当前范围内没有可细化章节。"));
       return;
     }
     if (!findBeatSheet(beatSheets, volumeId)) {
-      setStructuredMessage(batch.targets.length > 1 ? "请先生成当前卷节奏板，再做批量章节细化。" : "请先生成当前卷节奏板，再做单章整套细化。");
+      setStructuredMessage(batch.targets.length > 1 ? t("请先生成当前卷节奏板，再做批量章节细化。") : t("请先生成当前卷节奏板，再做单章整套细化。"));
       return;
     }
     if (!ensureCharacterGuard()) {
@@ -661,12 +663,12 @@ export function useNovelVolumePlanning({
   const applyCustomVolumeCount = () => {
     const resolved = resolveCustomVolumeCountInput(customVolumeCountInput, volumeCountGuidance);
     if (!resolved.value) {
-      setVolumeGenerationMessage(resolved.message ?? "请先输入有效的固定卷数。");
+      setVolumeGenerationMessage(resolved.message ?? t("请先输入有效的固定卷数。"));
       return;
     }
     setUserPreferredVolumeCount(resolved.value);
     setForceSystemRecommendedVolumeCount(false);
-    setVolumeGenerationMessage(`当前已固定为 ${resolved.value} 卷。下次生成卷战略时会严格采用这个卷数。`);
+    setVolumeGenerationMessage(t("当前已固定为 {{value}} 卷。下次生成卷战略时会严格采用这个卷数。", { value: resolved.value }));
   };
 
   const restoreSystemRecommendedVolumeCount = () => {
@@ -674,7 +676,7 @@ export function useNovelVolumePlanning({
     setCustomVolumeCountEnabled(false);
     setCustomVolumeCountInput(String(volumeCountGuidance.systemRecommendedVolumeCount));
     setForceSystemRecommendedVolumeCount(true);
-    setVolumeGenerationMessage(`已恢复系统建议卷数。下次生成卷战略时会优先采用系统建议 ${volumeCountGuidance.systemRecommendedVolumeCount} 卷。`);
+    setVolumeGenerationMessage(t("已恢复系统建议卷数。下次生成卷战略时会优先采用系统建议 {{systemRecommendedVolumeCount}} 卷。", { systemRecommendedVolumeCount: volumeCountGuidance.systemRecommendedVolumeCount }));
   };
 
   const generationNotice = buildGenerationNotice(strategyPlan);

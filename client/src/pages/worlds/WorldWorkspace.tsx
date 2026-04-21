@@ -55,6 +55,8 @@ import {
   type LayerKey,
   type RefineAttribute,
 } from "./components/workspace/worldWorkspaceShared";
+import { t } from "@/i18n";
+
 
 export default function WorldWorkspace() {
   const navigate = useNavigate();
@@ -270,11 +272,11 @@ export default function WorldWorkspace() {
     mutationFn: (worldId: string) => deleteWorld(worldId),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: queryKeys.worlds.all });
-      toast.success("世界观已删除。");
+      toast.success(t("世界观已删除。"));
       navigate("/worlds", { replace: true });
     },
     onError: (error) => {
-      toast.error(error instanceof Error ? error.message : "删除世界观失败。");
+      toast.error(error instanceof Error ? error.message : t("删除世界观失败。"));
     },
   });
 
@@ -291,7 +293,7 @@ export default function WorldWorkspace() {
     if (!id || !world) {
       return;
     }
-    const confirmed = window.confirm(`确认删除世界观「${world.name}」？此操作不可恢复。`);
+    const confirmed = window.confirm(t("确认删除世界观「{{name}}」？此操作不可恢复。", { name: world.name }));
     if (!confirmed) {
       return;
     }
@@ -302,7 +304,7 @@ export default function WorldWorkspace() {
     <div className="space-y-4">
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>世界工作台：{world?.name ?? "加载中..."} {world?.version ? `(v${world.version})` : ""}</CardTitle>
+          <CardTitle>{t("世界工作台：")}{world?.name ?? t("加载中...")} {world?.version ? `(v${world.version})` : ""}</CardTitle>
           <div className="flex flex-wrap items-center justify-end gap-2">
             <LLMSelector />
             <Button
@@ -311,7 +313,7 @@ export default function WorldWorkspace() {
               onClick={handleDelete}
               disabled={!id || !world || deleteWorldMutation.isPending}
             >
-              {deleteWorldMutation.isPending ? "删除中..." : "删除世界观"}
+              {deleteWorldMutation.isPending ? t("删除中...") : t("删除世界观")}
             </Button>
           </div>
         </CardHeader>
@@ -320,10 +322,10 @@ export default function WorldWorkspace() {
       {id ? (
         <Card>
           <CardHeader>
-            <CardTitle>参考资料</CardTitle>
+            <CardTitle>{t("参考资料")}</CardTitle>
           </CardHeader>
           <CardContent>
-            <KnowledgeBindingPanel targetType="world" targetId={id} title="已绑定的参考资料" />
+            <KnowledgeBindingPanel targetType="world" targetId={id} title={t("已绑定的参考资料")} />
           </CardContent>
         </Card>
       ) : null}
@@ -338,12 +340,12 @@ export default function WorldWorkspace() {
 
       <Tabs defaultValue="layers" className="space-y-4">
         <TabsList className="flex flex-wrap">
-          <TabsTrigger value="structure">结构化设定</TabsTrigger>
-          <TabsTrigger value="layers">分层构建</TabsTrigger>
-          <TabsTrigger value="deepening">问答深化</TabsTrigger>
-          <TabsTrigger value="consistency">一致性</TabsTrigger>
-          <TabsTrigger value="overview">总览{featureFlags.worldVisEnabled ? "/可视化" : ""}</TabsTrigger>
-          <TabsTrigger value="assets">素材/版本/导入导出</TabsTrigger>
+          <TabsTrigger value="structure">{t("结构化设定")}</TabsTrigger>
+          <TabsTrigger value="layers">{t("分层构建")}</TabsTrigger>
+          <TabsTrigger value="deepening">{t("问答深化")}</TabsTrigger>
+          <TabsTrigger value="consistency">{t("一致性")}</TabsTrigger>
+          <TabsTrigger value="overview">{t("总览")}{featureFlags.worldVisEnabled ? t("/可视化") : ""}</TabsTrigger>
+          <TabsTrigger value="assets">{t("素材/版本/导入导出")}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="structure">

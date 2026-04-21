@@ -3,6 +3,8 @@ import { createNovelSnapshot, listNovelSnapshots, restoreNovelSnapshot } from "@
 import { queryKeys } from "@/api/queryKeys";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { t } from "@/i18n";
+
 
 interface VersionHistoryTabProps {
   novelId: string;
@@ -10,15 +12,15 @@ interface VersionHistoryTabProps {
 
 function formatSnapshotTrigger(triggerType: string): string {
   if (triggerType === "manual") {
-    return "手动保存";
+    return t("手动保存");
   }
   if (triggerType === "auto_milestone") {
-    return "自动里程碑";
+    return t("自动里程碑");
   }
   if (triggerType === "before_pipeline") {
-    return "批量处理前";
+    return t("批量处理前");
   }
-  return "版本快照";
+  return t("版本快照");
 }
 
 function summarizeSnapshot(snapshotData: string): {
@@ -47,8 +49,8 @@ function summarizeSnapshot(snapshotData: string): {
       writtenChapterCount: writtenChapters.length,
       totalWordCount,
       latestChapterLabel: latestChapter
-        ? `第 ${latestChapter.order ?? "?"} 章 · ${latestChapter.title?.trim() || "未命名章节"}`
-        : "暂无章节",
+        ? t("第 {{value}} 章 · {{value1}}", { value: latestChapter.order ?? "?", value1: latestChapter.title?.trim() || t("未命名章节") })
+        : t("暂无章节"),
       hasOutline: Boolean(parsed.outline?.trim()),
       hasStructuredOutline: Boolean(parsed.structuredOutline?.trim()),
       recentChapterTitles: chapters
@@ -93,13 +95,12 @@ export default function VersionHistoryTab({ novelId }: VersionHistoryTabProps) {
     <div className="space-y-4">
       <div className="flex flex-col gap-3 rounded-2xl border border-border/70 bg-muted/15 p-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <div className="font-medium">版本历史</div>
+          <div className="font-medium">{t("版本历史")}</div>
           <div className="text-sm text-muted-foreground">
-            这里优先帮你找回最近的稳定版本。恢复前系统会自动再备份一次当前状态，不再默认展示原始快照数据。
-          </div>
+            {t("这里优先帮你找回最近的稳定版本。恢复前系统会自动再备份一次当前状态，不再默认展示原始快照数据。")}</div>
         </div>
         <Button onClick={() => createMutation.mutate()} disabled={createMutation.isPending}>
-          {createMutation.isPending ? "保存中..." : "保存当前版本"}
+          {createMutation.isPending ? t("保存中...") : t("保存当前版本")}
         </Button>
       </div>
 
@@ -113,29 +114,29 @@ export default function VersionHistoryTab({ novelId }: VersionHistoryTabProps) {
               <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                 <div className="space-y-3">
                   <div className="space-y-1">
-                    <div className="font-medium">{snapshot.label || "未命名版本"}</div>
+                    <div className="font-medium">{snapshot.label || t("未命名版本")}</div>
                     <div className="text-xs text-muted-foreground">
                       {formatSnapshotTrigger(snapshot.triggerType)} · {new Date(snapshot.createdAt).toLocaleString()}
                     </div>
                   </div>
 
                   <div className="flex flex-wrap gap-2">
-                    <Badge variant="outline">{summary?.chapterCount ?? 0} 章</Badge>
-                    <Badge variant="outline">{summary?.writtenChapterCount ?? 0} 章有正文</Badge>
-                    <Badge variant="outline">{summary?.totalWordCount ?? 0} 字</Badge>
-                    {summary?.hasOutline ? <Badge variant="secondary">含大纲</Badge> : null}
-                    {summary?.hasStructuredOutline ? <Badge variant="secondary">含拆章</Badge> : null}
+                    <Badge variant="outline">{summary?.chapterCount ?? 0} {t("章")}</Badge>
+                    <Badge variant="outline">{summary?.writtenChapterCount ?? 0} {t("章有正文")}</Badge>
+                    <Badge variant="outline">{summary?.totalWordCount ?? 0} {t("字")}</Badge>
+                    {summary?.hasOutline ? <Badge variant="secondary">{t("含大纲")}</Badge> : null}
+                    {summary?.hasStructuredOutline ? <Badge variant="secondary">{t("含拆章")}</Badge> : null}
                   </div>
 
                   <div className="text-sm leading-6 text-muted-foreground">
                     {summary
-                      ? `这个版本最近保存到了 ${summary.latestChapterLabel}，适合在你想退回到更稳定的章节推进状态时使用。`
-                      : "这个版本的数据摘要暂时无法解析，但仍然可以恢复。"}
+                      ? t("这个版本最近保存到了 {{latestChapterLabel}}，适合在你想退回到更稳定的章节推进状态时使用。", { latestChapterLabel: summary.latestChapterLabel })
+                      : t("这个版本的数据摘要暂时无法解析，但仍然可以恢复。")}
                   </div>
 
                   {summary?.recentChapterTitles.length ? (
                     <div className="text-xs text-muted-foreground">
-                      包含章节：{summary.recentChapterTitles.join(" / ")}
+                      {t("包含章节：")}{summary.recentChapterTitles.join(" / ")}
                     </div>
                   ) : null}
                 </div>
@@ -144,14 +145,14 @@ export default function VersionHistoryTab({ novelId }: VersionHistoryTabProps) {
                   variant="secondary"
                   size="sm"
                   onClick={() => {
-                    const confirmed = window.confirm("恢复前会自动备份当前状态。确认恢复这个版本吗？");
+                    const confirmed = window.confirm(t("恢复前会自动备份当前状态。确认恢复这个版本吗？"));
                     if (confirmed) {
                       restoreMutation.mutate(snapshot.id);
                     }
                   }}
                   disabled={restoreMutation.isPending}
                 >
-                  {isRestoringCurrent ? "恢复中..." : "恢复到这个版本"}
+                  {isRestoringCurrent ? t("恢复中...") : t("恢复到这个版本")}
                 </Button>
               </div>
             </div>
@@ -159,8 +160,7 @@ export default function VersionHistoryTab({ novelId }: VersionHistoryTabProps) {
         })}
         {snapshots.length === 0 ? (
           <div className="rounded-2xl border border-dashed p-6 text-sm text-muted-foreground">
-            当前还没有版本记录。建议在大改方向、批量生成或大段重写前，先手动保存一个版本。
-          </div>
+            {t("当前还没有版本记录。建议在大改方向、批量生成或大段重写前，先手动保存一个版本。")}</div>
         ) : null}
       </div>
     </div>

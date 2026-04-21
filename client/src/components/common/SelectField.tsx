@@ -7,6 +7,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
+import { t } from "@/i18n";
+
 
 const EMPTY_OPTION_VALUE = "__select_field_empty__";
 
@@ -37,14 +39,14 @@ export default function SelectField({
   value,
   onValueChange,
   options,
-  placeholder = "请选择",
+  placeholder = t("请选择"),
   label,
   description,
   helperText,
   error,
   required = false,
   disabled = false,
-  emptyText = "暂无可选项",
+  emptyText = t("暂无可选项"),
   className,
   triggerClassName,
   contentClassName,

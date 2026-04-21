@@ -4,6 +4,8 @@ import type { GenreTreeNode } from "@/api/genre";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { countGenreNovelBindingsInSubtree } from "../genreManagement.shared";
+import { t } from "@/i18n";
+
 
 interface GenreTreeItemProps {
   node: GenreTreeNode;
@@ -39,7 +41,7 @@ export default function GenreTreeItem({
                 setExpanded((value) => !value);
               }
             }}
-            aria-label={expanded ? "折叠" : "展开"}
+            aria-label={expanded ? t("折叠") : t("展开")}
           >
             {hasChildren ? (
               expanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />
@@ -52,37 +54,35 @@ export default function GenreTreeItem({
             <div className="flex flex-wrap items-center gap-2">
               <div className="text-sm font-semibold text-foreground">{node.name}</div>
               <span className="rounded-full bg-muted px-2 py-0.5 text-[11px] text-muted-foreground">
-                小说 {node.novelCount}
+                {t("小说")}{node.novelCount}
               </span>
               <span className="rounded-full bg-muted px-2 py-0.5 text-[11px] text-muted-foreground">
-                子类 {node.childCount}
+                {t("子类")}{node.childCount}
               </span>
             </div>
             <div className="text-sm leading-6 text-muted-foreground">
-              {node.description?.trim() || "暂无描述。"}
+              {node.description?.trim() || t("暂无描述。")}
             </div>
           </div>
 
           <div className="flex shrink-0 flex-wrap justify-end gap-1">
             <Button type="button" variant="ghost" size="sm" onClick={() => onCreateChild(node.id)}>
               <Plus className="mr-1 h-4 w-4" />
-              新增子类
-            </Button>
+              {t("新增子类")}</Button>
             <Button type="button" variant="ghost" size="sm" onClick={() => onEdit(node.id)}>
               <Pencil className="mr-1 h-4 w-4" />
-              编辑
-            </Button>
+              {t("编辑")}</Button>
             <Button
               type="button"
               variant="ghost"
               size="sm"
               className="text-destructive hover:text-destructive"
               disabled={deleteDisabled || deletingId === node.id}
-              title={deleteDisabled ? "请先解绑当前分类或其子分类下的小说后再删除。" : undefined}
+              title={deleteDisabled ? t("请先解绑当前分类或其子分类下的小说后再删除。") : undefined}
               onClick={() => onDelete(node)}
             >
               <Trash2 className="mr-1 h-4 w-4" />
-              {deletingId === node.id ? "删除中..." : "删除"}
+              {deletingId === node.id ? t("删除中...") : t("删除")}
             </Button>
           </div>
         </div>

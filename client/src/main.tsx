@@ -4,10 +4,12 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, HashRouter } from "react-router-dom";
 import "highlight.js/styles/github.css";
 import DesktopBootstrapBoundary from "./components/layout/DesktopBootstrapBoundary";
+import I18nRenderBoundary from "./i18n/I18nRenderBoundary";
 import { APP_RUNTIME } from "./lib/constants";
 import AppRouter from "./router";
 import { Toaster } from "./components/ui/toast";
 import "./index.css";
+import "./i18n";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -23,12 +25,14 @@ const AppRouterProvider = APP_RUNTIME === "desktop" ? HashRouter : BrowserRouter
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-      <AppRouterProvider>
-        <DesktopBootstrapBoundary>
-          <AppRouter />
-        </DesktopBootstrapBoundary>
-        <Toaster />
-      </AppRouterProvider>
+      <I18nRenderBoundary>
+        <AppRouterProvider>
+          <DesktopBootstrapBoundary>
+            <AppRouter />
+          </DesktopBootstrapBoundary>
+          <Toaster />
+        </AppRouterProvider>
+      </I18nRenderBoundary>
     </QueryClientProvider>
   </React.StrictMode>,
 );

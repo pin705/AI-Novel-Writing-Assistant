@@ -23,6 +23,8 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import DesktopLegacyDataImportCard from "@/components/layout/DesktopLegacyDataImportCard";
 import DesktopUpdateCard from "@/components/layout/DesktopUpdateCard";
+import { t } from "@/i18n";
+
 
 const MODEL_BADGE_COLLAPSE_COUNT = 8;
 
@@ -141,11 +143,11 @@ export default function SettingsPage() {
       }),
     onSuccess: async (response) => {
       resetDialogState();
-      setActionResult(response.message ?? "保存成功。");
+      setActionResult(response.message ?? t("保存成功。"));
       await invalidateProviderQueries();
     },
     onError: (error) => {
-      setActionResult(error instanceof Error ? error.message : "保存失败。");
+      setActionResult(error instanceof Error ? error.message : t("保存失败。"));
     },
   });
 
@@ -159,11 +161,11 @@ export default function SettingsPage() {
       createCustomProvider(payload),
     onSuccess: async (response) => {
       resetDialogState();
-      setActionResult(response.message ?? "自定义厂商创建成功。");
+      setActionResult(response.message ?? t("自定义厂商创建成功。"));
       await invalidateProviderQueries();
     },
     onError: (error) => {
-      setActionResult(error instanceof Error ? error.message : "创建自定义厂商失败。");
+      setActionResult(error instanceof Error ? error.message : t("创建自定义厂商失败。"));
     },
   });
 
@@ -171,11 +173,11 @@ export default function SettingsPage() {
     mutationFn: (provider: LLMProvider) => deleteCustomProvider(provider),
     onSuccess: async (response) => {
       resetDialogState();
-      setActionResult(response.message ?? "自定义厂商已删除。");
+      setActionResult(response.message ?? t("自定义厂商已删除。"));
       await invalidateProviderQueries();
     },
     onError: (error) => {
-      setActionResult(error instanceof Error ? error.message : "删除自定义厂商失败。");
+      setActionResult(error instanceof Error ? error.message : t("删除自定义厂商失败。"));
     },
   });
 
@@ -193,18 +195,24 @@ export default function SettingsPage() {
       const structured = response.data?.structured;
       const plainText = plain
         ? plain.ok
-          ? `普通连通正常${plain.latency != null ? ` (${plain.latency}ms)` : ""}`
-          : `普通连通失败${plain.error ? `：${plain.error}` : ""}`
-        : "普通连通未检测";
+          ? t("普通连通正常{{value}}", { value: plain.latency != null ? ` (${plain.latency}ms)` : "" })
+          : t("普通连通失败{{value}}", { value: plain.error ? `：${plain.error}` : "" })
+        : t("普通连通未检测");
       const structuredText = structured
         ? structured.ok
-          ? `结构化正常${structured.strategy ? `，策略 ${structured.strategy}` : ""}${structured.reasoningForcedOff ? "，已强制关闭 thinking" : ""}`
-          : `结构化失败${structured.errorCategory ? `，分类 ${structured.errorCategory}` : ""}${structured.error ? `：${structured.error}` : ""}`
-        : "结构化未检测";
-      setTestResult(`连接成功，总耗时 ${latency}ms · ${plainText} · ${structuredText}`);
+          ? t("结构化正常{{value}}{{value1}}", {
+              value: structured.strategy ? t("，策略 {{strategy}}", { strategy: structured.strategy }) : "",
+              value1: structured.reasoningForcedOff ? t("，已强制关闭 thinking") : "",
+            })
+          : t("结构化失败{{value}}{{value1}}", {
+              value: structured.errorCategory ? t("，分类 {{category}}", { category: structured.errorCategory }) : "",
+              value1: structured.error ? `：${structured.error}` : "",
+            })
+        : t("结构化未检测");
+      setTestResult(t("连接成功，总耗时 {{latency}}ms · {{plainText}} · {{structuredText}}", { latency: latency, plainText: plainText, structuredText: structuredText }));
     },
     onError: (error) => {
-      setTestResult(error instanceof Error ? error.message : "连接测试失败。");
+      setTestResult(error instanceof Error ? error.message : t("连接测试失败。"));
     },
   });
 
@@ -213,11 +221,11 @@ export default function SettingsPage() {
     onSuccess: async (response, provider) => {
       const count = response.data?.models?.length ?? 0;
       const providerName = providerConfigs.find((item) => item.provider === provider)?.name ?? provider;
-      setActionResult(`${providerName} 模型列表已刷新（${count} 个）。`);
+      setActionResult(t("{{providerName}} 模型列表已刷新（{{count}} 个）。", { providerName: providerName, count: count }));
       await invalidateProviderQueries();
     },
     onError: (error) => {
-      setActionResult(error instanceof Error ? error.message : "刷新模型列表失败。");
+      setActionResult(error instanceof Error ? error.message : t("刷新模型列表失败。"));
     },
   });
 
@@ -228,11 +236,11 @@ export default function SettingsPage() {
       }),
     onSuccess: async (_response, variables) => {
       const providerName = providerConfigs.find((item) => item.provider === variables.provider)?.name ?? variables.provider;
-      setActionResult(`${providerName} 思考功能已${variables.reasoningEnabled ? "开启" : "关闭"}。`);
+      setActionResult(t("{{providerName}} 思考功能已{{value}}。", { providerName: providerName, value: variables.reasoningEnabled ? t("开启") : t("关闭") }));
       await invalidateProviderQueries();
     },
     onError: (error) => {
-      setActionResult(error instanceof Error ? error.message : "更新思考开关失败。");
+      setActionResult(error instanceof Error ? error.message : t("更新思考开关失败。"));
     },
   });
 
@@ -240,11 +248,11 @@ export default function SettingsPage() {
     mutationFn: (provider: LLMProvider) => refreshProviderBalance(provider),
     onSuccess: async (response, provider) => {
       const providerName = providerConfigs.find((item) => item.provider === provider)?.name ?? provider;
-      setActionResult(response.message ?? `${providerName} 余额已刷新。`);
+      setActionResult(response.message ?? t("{{providerName}} 余额已刷新。", { providerName: providerName }));
       await queryClient.invalidateQueries({ queryKey: queryKeys.settings.apiKeyBalances });
     },
     onError: (error) => {
-      setActionResult(error instanceof Error ? error.message : "刷新余额失败。");
+      setActionResult(error instanceof Error ? error.message : t("刷新余额失败。"));
     },
   });
 
@@ -349,15 +357,14 @@ export default function SettingsPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>模型路由</CardTitle>
-          <CardDescription>把不同写作角色分配给不同模型，建议在独立页面集中管理。</CardDescription>
+          <CardTitle>{t("模型路由")}</CardTitle>
+          <CardDescription>{t("把不同写作角色分配给不同模型，建议在独立页面集中管理。")}</CardDescription>
         </CardHeader>
         <CardContent className="flex items-center justify-between gap-3">
           <div className="text-sm text-muted-foreground">
-            现在模型路由已经独立成管理页，支持按角色单独配置服务商和模型。
-          </div>
+            {t("现在模型路由已经独立成管理页，支持按角色单独配置服务商和模型。")}</div>
           <Button asChild>
-            <Link to="/settings/model-routes">进入模型路由管理</Link>
+            <Link to="/settings/model-routes">{t("进入模型路由管理")}</Link>
           </Button>
         </CardContent>
       </Card>
@@ -367,10 +374,9 @@ export default function SettingsPage() {
           <div className="space-y-1">
             <CardTitle>Model Providers</CardTitle>
             <CardDescription>
-              管理内置厂商连接，也可以新增 OpenAI-compatible 自定义厂商。
-            </CardDescription>
+              {t("管理内置厂商连接，也可以新增 OpenAI-compatible 自定义厂商。")}</CardDescription>
           </div>
-          <Button onClick={openCreateCustomDialog}>新增自定义厂商</Button>
+          <Button onClick={openCreateCustomDialog}>{t("新增自定义厂商")}</Button>
         </CardHeader>
         <CardContent className="grid gap-3 md:grid-cols-2">
           {providerConfigs.map((item) => {
@@ -392,7 +398,7 @@ export default function SettingsPage() {
                 <div className="mb-2 flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2">
                     <div className="font-medium">{item.name}</div>
-                    {item.kind === "custom" ? <Badge variant="outline">自定义</Badge> : null}
+                    {item.kind === "custom" ? <Badge variant="outline">{t("自定义")}</Badge> : null}
                   </div>
                   <Badge
                     variant={item.isConfigured ? "default" : "outline"}
@@ -410,15 +416,15 @@ export default function SettingsPage() {
                 <div className="mb-2 text-xs text-muted-foreground">API URL: {item.currentBaseURL || "-"}</div>
                 <div className="mb-3 flex items-center justify-between rounded-md border bg-background/60 px-3 py-2">
                   <div className="space-y-1">
-                    <div className="text-xs font-medium text-muted-foreground">思考功能</div>
+                    <div className="text-xs font-medium text-muted-foreground">{t("思考功能")}</div>
                     <div className="text-xs text-muted-foreground">
                       {item.reasoningEnabled
-                        ? "当前会返回并展示模型思考内容。"
-                        : "当前会隐藏思考内容；MiniMax 会自动启用分离与清洗，避免 <think> 泄漏到正文。"}
+                        ? t("当前会返回并展示模型思考内容。")
+                        : t("当前会隐藏思考内容；MiniMax 会自动启用分离与清洗，避免 <think> 泄漏到正文。")}
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-xs text-muted-foreground">{item.reasoningEnabled ? "已开启" : "已关闭"}</span>
+                    <span className="text-xs text-muted-foreground">{item.reasoningEnabled ? t("已开启") : t("已关闭")}</span>
                     <Switch
                       checked={item.reasoningEnabled}
                       disabled={isReasoningUpdating}
@@ -435,38 +441,37 @@ export default function SettingsPage() {
                 <div className="mb-3 rounded-md border border-dashed bg-background/60 p-3">
                   {item.kind === "custom" ? (
                     <div className="space-y-1">
-                      <div className="text-xs font-medium text-muted-foreground">余额</div>
+                      <div className="text-xs font-medium text-muted-foreground">{t("余额")}</div>
                       <div className="text-sm text-muted-foreground">
-                        自定义 OpenAI-compatible 厂商暂不接入余额查询。
-                      </div>
+                        {t("自定义 OpenAI-compatible 厂商暂不接入余额查询。")}</div>
                     </div>
                   ) : (
                     <>
                       <div className="mb-2 flex items-center justify-between gap-2">
-                        <div className="text-xs font-medium text-muted-foreground">余额</div>
+                        <div className="text-xs font-medium text-muted-foreground">{t("余额")}</div>
                         {balance?.status === "available" ? (
-                          <Badge variant="outline">最近刷新 {formatBalanceTime(balance.fetchedAt)}</Badge>
+                          <Badge variant="outline">{t("最近刷新")}{formatBalanceTime(balance.fetchedAt)}</Badge>
                         ) : null}
                       </div>
                       {isBalanceLoading ? (
-                        <div className="text-sm text-muted-foreground">正在查询余额...</div>
+                        <div className="text-sm text-muted-foreground">{t("正在查询余额...")}</div>
                       ) : balance?.status === "available" ? (
                         <div className="space-y-2">
                           <div className="text-lg font-semibold">
                             {formatBalanceAmount(balance.availableBalance, balance.currency)}
                           </div>
                           <div className="grid gap-2 text-xs text-muted-foreground sm:grid-cols-2">
-                            {balance.cashBalance !== null ? <div>现金余额：{formatBalanceAmount(balance.cashBalance, balance.currency)}</div> : null}
-                            {balance.voucherBalance !== null ? <div>代金券余额：{formatBalanceAmount(balance.voucherBalance, balance.currency)}</div> : null}
-                            {balance.chargeBalance !== null ? <div>充值余额：{formatBalanceAmount(balance.chargeBalance, balance.currency)}</div> : null}
-                            {balance.toppedUpBalance !== null ? <div>累计充值：{formatBalanceAmount(balance.toppedUpBalance, balance.currency)}</div> : null}
-                            {balance.grantedBalance !== null ? <div>赠送额度：{formatBalanceAmount(balance.grantedBalance, balance.currency)}</div> : null}
+                            {balance.cashBalance !== null ? <div>{t("现金余额：")}{formatBalanceAmount(balance.cashBalance, balance.currency)}</div> : null}
+                            {balance.voucherBalance !== null ? <div>{t("代金券余额：")}{formatBalanceAmount(balance.voucherBalance, balance.currency)}</div> : null}
+                            {balance.chargeBalance !== null ? <div>{t("充值余额：")}{formatBalanceAmount(balance.chargeBalance, balance.currency)}</div> : null}
+                            {balance.toppedUpBalance !== null ? <div>{t("累计充值：")}{formatBalanceAmount(balance.toppedUpBalance, balance.currency)}</div> : null}
+                            {balance.grantedBalance !== null ? <div>{t("赠送额度：")}{formatBalanceAmount(balance.grantedBalance, balance.currency)}</div> : null}
                           </div>
                         </div>
                       ) : (
                         <div className="space-y-1">
                           <div className="text-sm text-muted-foreground">
-                            {balance?.error ?? balance?.message ?? (item.isConfigured ? "当前暂未获取余额信息。" : "请先配置 API Key。")}
+                            {balance?.error ?? balance?.message ?? (item.isConfigured ? t("当前暂未获取余额信息。") : t("请先配置 API Key。"))}
                           </div>
                         </div>
                       )}
@@ -495,14 +500,14 @@ export default function SettingsPage() {
                       onClick={() => toggleProviderExpanded(item.provider)}
                     >
                       {isProviderExpanded(item.provider)
-                        ? "收起模型列表"
-                        : `展开全部 ${item.models.length} 个模型`}
+                        ? t("收起模型列表")
+                        : t("展开全部 {{length}} 个模型", { length: item.models.length })}
                     </button>
                   ) : null}
                 </div>
                 <div className="flex flex-wrap gap-2">
                   <Button size="sm" onClick={() => openBuiltInDialog(item.provider)}>
-                    {item.kind === "custom" ? "编辑" : "Configure"}
+                    {item.kind === "custom" ? t("编辑") : "Configure"}
                   </Button>
                   <Button
                     size="sm"
@@ -542,7 +547,7 @@ export default function SettingsPage() {
                       }}
                       disabled={!refreshBalanceEnabled || isBalanceRefreshing}
                     >
-                      {isBalanceRefreshing ? "Refreshing balance..." : "刷新余额"}
+                      {isBalanceRefreshing ? "Refreshing balance..." : t("刷新余额")}
                     </Button>
                   ) : null}
                 </div>
@@ -566,19 +571,19 @@ export default function SettingsPage() {
           <DialogHeader>
             <DialogTitle>
               {isCreatingCustomProvider
-                ? "新增自定义厂商"
+                ? t("新增自定义厂商")
                 : isCustomDialog
-                  ? "编辑自定义厂商"
+                  ? t("编辑自定义厂商")
                   : "Configure Model Provider"}
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-3">
             {isCustomDialog ? (
               <div className="space-y-1">
-                <div className="text-xs text-muted-foreground">厂商名称</div>
+                <div className="text-xs text-muted-foreground">{t("厂商名称")}</div>
                 <Input
                   value={form.displayName}
-                  placeholder="例如：My Gateway"
+                  placeholder={t("例如：My Gateway")}
                   onChange={(event) => setForm((prev) => ({ ...prev, displayName: event.target.value }))}
                 />
               </div>
@@ -586,14 +591,13 @@ export default function SettingsPage() {
 
             {(isCustomDialog || editingConfig?.requiresApiKey === false) ? (
               <div className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900">
-                这一项支持本地或免密接入，API Key 可以留空；重点配置模型名和 API URL。
-              </div>
+                {t("这一项支持本地或免密接入，API Key 可以留空；重点配置模型名和 API URL。")}</div>
             ) : null}
 
             <Input
               type="password"
               value={form.key}
-              placeholder={editingConfig?.isConfigured ? "留空则沿用当前已保存的 API Key" : "Enter API key"}
+              placeholder={editingConfig?.isConfigured ? t("留空则沿用当前已保存的 API Key") : "Enter API key"}
               onChange={(event) => setForm((prev) => ({ ...prev, key: event.target.value }))}
             />
 
@@ -631,7 +635,7 @@ export default function SettingsPage() {
             </div>
             <Input
               value={form.model}
-              placeholder="也可以直接手动输入模型名"
+              placeholder={t("也可以直接手动输入模型名")}
               onChange={(event) => setForm((prev) => ({ ...prev, model: event.target.value }))}
             />
 
@@ -667,8 +671,7 @@ export default function SettingsPage() {
                 onChange={(event) => setForm((prev) => ({ ...prev, baseURL: event.target.value }))}
               />
               <div className="text-xs text-muted-foreground">
-                本地 Ollama 常见地址是 `http://127.0.0.1:11434/v1`。留空会回退到当前默认地址。
-              </div>
+                {t("本地 Ollama 常见地址是 `http://127.0.0.1:11434/v1`。留空会回退到当前默认地址。")}</div>
             </div>
 
             <div className="flex flex-wrap gap-2">
@@ -736,7 +739,7 @@ export default function SettingsPage() {
                     if (!editingProvider) {
                       return;
                     }
-                    if (!window.confirm(`确认删除自定义厂商 ${editingConfig.name} 吗？`)) {
+                    if (!window.confirm(t("确认删除自定义厂商 {{name}} 吗？", { name: editingConfig.name }))) {
                       return;
                     }
                     deleteCustomProviderMutation.mutate(editingProvider);

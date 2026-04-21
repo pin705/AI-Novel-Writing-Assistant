@@ -41,6 +41,8 @@ import {
   type WorldGeneratorConceptCard,
 } from "./components/generator/worldGeneratorShared";
 import { useWorldGeneratorDerivedState } from "./components/generator/useWorldGeneratorDerivedState";
+import { t } from "@/i18n";
+
 export default function WorldGenerator() {
   const llm = useLLMStore();
   const navigate = useNavigate();
@@ -130,7 +132,7 @@ export default function WorldGenerator() {
         const defaultPropertySelection = buildDefaultPropertySelectionState(nextPropertyOptions);
 
         if (!nextConcept) {
-          throw new Error("世界观分析结果缺少概念卡。");
+          throw new Error(t("世界观分析结果缺少概念卡。"));
         }
 
         setConcept(nextConcept);
@@ -147,7 +149,7 @@ export default function WorldGenerator() {
         setAxioms([]);
         setStep(2);
       } catch (error) {
-        const message = error instanceof Error ? error.message : "世界观分析结果解析失败。";
+        const message = error instanceof Error ? error.message : t("世界观分析结果解析失败。");
         toast.error(message);
       }
     },
@@ -209,9 +211,9 @@ export default function WorldGenerator() {
         .filter((item): item is NonNullable<typeof item> => Boolean(item));
 
       const createResp = await createWorld({
-        name: worldName.trim() || "未命名世界",
+        name: worldName.trim() || t("未命名世界"),
         description: concept?.summary ?? inspirationText,
-        worldType: selectedGenre?.path || concept?.worldType || matchedTemplateWorldType || selectedTemplate?.worldType || "自定义",
+        worldType: selectedGenre?.path || concept?.worldType || matchedTemplateWorldType || selectedTemplate?.worldType || t("自定义"),
         templateKey: selectedTemplate?.key ?? "custom",
         selectedDimensions: JSON.stringify(selectedDimensions),
         selectedElements: serializeWorldGenerationBlueprint({
@@ -234,7 +236,7 @@ export default function WorldGenerator() {
       });
       const createdId = createResp.data?.id;
       if (!createdId) {
-        throw new Error("创建世界草稿失败。");
+        throw new Error(t("创建世界草稿失败。"));
       }
       const axiomResp = await suggestWorldAxioms(createdId, {
         provider: llm.provider,
@@ -255,7 +257,7 @@ export default function WorldGenerator() {
   const finalizeMutation = useMutation({
     mutationFn: async () => {
       if (!worldId) {
-        throw new Error("世界草稿不存在。");
+        throw new Error(t("世界草稿不存在。"));
       }
       return updateWorldAxioms(worldId, axioms.filter((item) => item.trim()));
     },
@@ -329,7 +331,7 @@ export default function WorldGenerator() {
         {
           id: item.id,
           name: item.name,
-          description: item.description?.trim() || `${item.name} 的素材库设定。`,
+          description: item.description?.trim() || t("{{name}} 的素材库设定。", { name: item.name }),
           targetLayer: mapWorldLibraryCategoryToLayer(item.category),
           reason: "来自素材库的可复用设定。",
           source: "library",
@@ -344,20 +346,17 @@ export default function WorldGenerator() {
     <div className="space-y-4">
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>世界观向导（阶段 1-3）</CardTitle>
+          <CardTitle>{t("世界观向导（阶段 1-3）")}</CardTitle>
           <LLMSelector />
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex gap-2">
             <Button variant={step === 1 ? "default" : "secondary"} onClick={() => setStep(1)}>
-              1. 灵感捕获
-            </Button>
+              {t("1. 灵感捕获")}</Button>
             <Button variant={step === 2 ? "default" : "secondary"} onClick={() => setStep(2)} disabled={!concept}>
-              2. 模板与蓝图
-            </Button>
+              {t("2. 模板与蓝图")}</Button>
             <Button variant={step === 3 ? "default" : "secondary"} onClick={() => setStep(3)} disabled={!worldId}>
-              3. 核心公理
-            </Button>
+              {t("3. 核心公理")}</Button>
           </div>
 
           {step === 1 ? (
@@ -380,8 +379,8 @@ export default function WorldGenerator() {
               analyzeStreaming={analyzeStream.isStreaming}
               analyzeButtonLabel={
                 analyzeStream.isStreaming
-                  ? (analyzeStream.latestRun?.message ?? "分析中...")
-                  : (isReferenceMode ? "提取原作锚点与架空方向" : "生成概念卡与属性选项")
+                  ? (analyzeStream.latestRun?.message ?? t("分析中..."))
+                  : (isReferenceMode ? t("提取原作锚点与架空方向") : t("生成概念卡与属性选项"))
               }
               analyzeProgressMessage={analyzeStream.latestRun?.message}
               inspirationSourceMeta={inspirationSourceMeta}

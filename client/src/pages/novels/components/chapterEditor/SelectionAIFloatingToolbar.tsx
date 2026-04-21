@@ -3,6 +3,8 @@ import type { ChapterEditorOperation } from "@ai-novel/shared/types/novel";
 import { Button } from "@/components/ui/button";
 import type { SelectionToolbarPosition } from "./chapterEditorTypes";
 import { CHAPTER_EDITOR_OPERATION_LABELS } from "./chapterEditorUtils";
+import { t } from "@/i18n";
+
 
 interface SelectionAIFloatingToolbarProps {
   visible: boolean;
@@ -41,8 +43,7 @@ export default function SelectionAIFloatingToolbar(props: SelectionAIFloatingToo
           onMouseDown={(event) => event.preventDefault()}
           onClick={() => onRunOperation("polish")}
         >
-          AI 优化这段
-        </Button>
+          {t("AI 优化这段")}</Button>
         {SECONDARY_OPERATIONS.map((operation) => (
           <Button
             key={operation}
@@ -62,15 +63,14 @@ export default function SelectionAIFloatingToolbar(props: SelectionAIFloatingToo
           onMouseDown={(event) => event.preventDefault()}
           onClick={() => setIsCustomOpen((current) => !current)}
         >
-          告诉 AI 怎么改
-        </Button>
+          {t("告诉 AI 怎么改")}</Button>
       </div>
 
       {isCustomOpen ? (
         <div className="mt-2 space-y-2 rounded-xl border border-border/70 bg-muted/20 p-2">
           <textarea
             className="min-h-[96px] w-full resize-none rounded-xl border border-border bg-background px-3 py-2 text-sm outline-none"
-            placeholder="例如：让这段更压抑一点，保留原信息，但把节奏压得更紧。"
+            placeholder={t("例如：让这段更压抑一点，保留原信息，但把节奏压得更紧。")}
             value={customInstruction}
             onChange={(event) => setCustomInstruction(event.target.value)}
           />
@@ -84,16 +84,14 @@ export default function SelectionAIFloatingToolbar(props: SelectionAIFloatingToo
                 setCustomInstruction("");
               }}
             >
-              取消
-            </Button>
+              {t("取消")}</Button>
             <Button
               size="sm"
               disabled={disabled || customInstruction.trim().length === 0}
               onMouseDown={(event) => event.preventDefault()}
               onClick={() => onRunOperation("custom", customInstruction.trim())}
             >
-              提交指令
-            </Button>
+              {t("提交指令")}</Button>
           </div>
         </div>
       ) : null}

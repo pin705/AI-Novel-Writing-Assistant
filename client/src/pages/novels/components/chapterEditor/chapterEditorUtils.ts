@@ -5,6 +5,8 @@ import type {
   ChapterEditorSelectionRange,
   SelectionToolbarPosition,
 } from "./chapterEditorTypes";
+import { t } from "@/i18n";
+
 
 export const CHAPTER_EDITOR_OPERATION_LABELS: Record<ChapterEditorOperation, string> = {
   polish: "优化表达",
@@ -333,13 +335,13 @@ export function buildAiRevisionRequest(input: ChapterEditorRequestBuilderInput) 
 
 export function getSaveStatusLabel(status: "idle" | "saving" | "saved" | "error", isDirty: boolean): string {
   if (status === "saving") {
-    return "保存中";
+    return t("保存中");
   }
   if (status === "saved") {
-    return "已保存";
+    return t("已保存");
   }
   if (status === "error") {
-    return "保存失败";
+    return t("保存失败");
   }
-  return isDirty ? "待保存" : "已同步";
+  return isDirty ? t("待保存") : t("已同步");
 }

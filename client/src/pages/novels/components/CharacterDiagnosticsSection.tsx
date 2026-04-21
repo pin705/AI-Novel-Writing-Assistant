@@ -4,6 +4,8 @@ import type { LLMProvider } from "@ai-novel/shared/types/llm";
 import CharacterCastOptionsSection from "./CharacterCastOptionsSection";
 import CharacterDynamicsSection from "./CharacterDynamicsSection";
 import CollapsibleSummary from "./CollapsibleSummary";
+import { t } from "@/i18n";
+
 
 interface CharacterDiagnosticsSectionProps {
   novelId: string;
@@ -42,8 +44,8 @@ export default function CharacterDiagnosticsSection(props: CharacterDiagnosticsS
     >
       <summary className="cursor-pointer list-none">
         <CollapsibleSummary
-          title="角色阵容与关系诊断"
-          description="这些内容更适合在需要补位、查缺口或梳理关系时再展开。日常编辑先看下方角色资产工作台。"
+          title={t("角色阵容与关系诊断")}
+          description={t("这些内容更适合在需要补位、查缺口或梳理关系时再展开。日常编辑先看下方角色资产工作台。")}
         />
       </summary>
 

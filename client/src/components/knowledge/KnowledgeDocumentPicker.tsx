@@ -4,6 +4,8 @@ import type { KnowledgeDocumentStatus } from "@ai-novel/shared/types/knowledge";
 import { listKnowledgeDocuments } from "@/api/knowledge";
 import { queryKeys } from "@/api/queryKeys";
 import { Input } from "@/components/ui/input";
+import { t } from "@/i18n";
+
 
 interface KnowledgeDocumentPickerProps {
   selectedIds: string[] | null;
@@ -47,35 +49,32 @@ export default function KnowledgeDocumentPicker(props: KnowledgeDocumentPickerPr
             className={`rounded-md border px-3 py-1 text-sm ${isAuto ? "bg-accent" : ""}`}
             onClick={() => props.onChange(null)}
           >
-            自动
-          </button>
+            {t("自动")}</button>
           <button
             type="button"
             className={`rounded-md border px-3 py-1 text-sm ${!isAuto ? "bg-accent" : ""}`}
             onClick={() => props.onChange(selectedIds)}
           >
-            自定义
-          </button>
+            {t("自定义")}</button>
         </div>
       ) : null}
 
       {isAuto ? (
         <div className="rounded-md border border-dashed p-3 text-sm text-muted-foreground">
-          当前使用自动规则：若有实体绑定文档则优先使用绑定文档，否则回退到全部启用文档。
-        </div>
+          {t("当前使用自动规则：若有实体绑定文档则优先使用绑定文档，否则回退到全部启用文档。")}</div>
       ) : (
         <>
           <Input
             value={keyword}
             onChange={(event) => setKeyword(event.target.value)}
-            placeholder="搜索知识文档"
+            placeholder={t("搜索知识文档")}
           />
           <div className="max-h-64 space-y-2 overflow-auto rounded-md border p-2">
             {documentsQuery.isLoading ? (
-              <div className="text-sm text-muted-foreground">加载中...</div>
+              <div className="text-sm text-muted-foreground">{t("加载中...")}</div>
             ) : null}
             {visibleDocuments.length === 0 && !documentsQuery.isLoading ? (
-              <div className="text-sm text-muted-foreground">没有可选文档。</div>
+              <div className="text-sm text-muted-foreground">{t("没有可选文档。")}</div>
             ) : null}
             {visibleDocuments.map((item) => {
               const checked = selectedIds.includes(item.id);
@@ -106,8 +105,7 @@ export default function KnowledgeDocumentPicker(props: KnowledgeDocumentPickerPr
             })}
           </div>
           <div className="text-xs text-muted-foreground">
-            已选择 {selectedIds.length} 个文档。保持为空会显式关闭知识库检索。
-          </div>
+            {t("已选择")}{selectedIds.length} {t("个文档。保持为空会显式关闭知识库检索。")}</div>
         </>
       )}
     </div>

@@ -29,6 +29,8 @@ import {
   type AssetTabKey,
   MetricBadge,
 } from "./chapterExecution.shared";
+import { t } from "@/i18n";
+
 
 interface ChapterExecutionResultPanelProps {
   novelId: string;
@@ -128,16 +130,15 @@ export default function ChapterExecutionResultPanel(props: ChapterExecutionResul
   if (!selectedChapter) {
     return (
       <div className="rounded-xl border border-dashed p-8 text-sm leading-7 text-muted-foreground">
-        先从左侧选中一个章节，这里会变成当前章节的主写作区，集中展示正文、任务单、质量反馈和修复记录。
-      </div>
+        {t("先从左侧选中一个章节，这里会变成当前章节的主写作区，集中展示正文、任务单、质量反馈和修复记录。")}</div>
     );
   }
 
-  const chapterLabel = `第${selectedChapter.order}章`;
-  const chapterTitle = selectedChapter.title || "未命名章节";
+  const chapterLabel = t("第{{order}}章", { order: selectedChapter.order });
+  const chapterTitle = selectedChapter.title || t("未命名章节");
   const runtimePackage = chapterRuntimePackage?.chapterId === selectedChapter.id ? chapterRuntimePackage : null;
   const lengthControl = runtimePackage?.lengthControl ?? null;
-  const chapterObjective = chapterPlan?.objective ?? selectedChapter.expectation ?? "这一章还没有明确目标，建议先补章节计划。";
+  const chapterObjective = chapterPlan?.objective ?? selectedChapter.expectation ?? t("这一章还没有明确目标，建议先补章节计划。");
   const scenePlan = parseChapterScenePlanForDisplay(selectedChapter);
   const savedChapterContent = selectedChapter.content?.trim() ?? "";
   const hasSavedChapterContent = hasText(savedChapterContent);
@@ -148,10 +149,10 @@ export default function ChapterExecutionResultPanel(props: ChapterExecutionResul
   const hasVisibleLiveWritingOutput = hasText(visibleLiveWritingOutput);
   const useLiveWritingPanel = isSelectedChapterStreaming || (!hasSavedChapterContent && hasVisibleLiveWritingOutput);
   const contentPanelTitle = isSelectedChapterFinalizing
-    ? "章节收尾中"
+    ? t("章节收尾中")
     : useLiveWritingPanel
-      ? "实时写作稿"
-      : "已保存正文";
+      ? t("实时写作稿")
+      : t("已保存正文");
   const contentPanelContent = useLiveWritingPanel
     ? visibleLiveWritingOutput
     : hasSavedChapterContent
@@ -228,57 +229,56 @@ export default function ChapterExecutionResultPanel(props: ChapterExecutionResul
                 <Badge variant="outline">{chapterLabel}</Badge>
                 <Badge variant={isSelectedChapterStreaming ? "default" : "secondary"}>
                   {isSelectedChapterFinalizing
-                    ? "正在收尾处理"
+                    ? t("正在收尾处理")
                     : isSelectedChapterStreaming
-                      ? "正在实时写作"
-                      : "章节结果工作台"}
+                      ? t("正在实时写作")
+                      : t("章节结果工作台")}
                 </Badge>
                 {typeof qualityOverall === "number" ? (
                   <Badge variant={qualityOverall >= 85 ? "default" : qualityOverall >= 70 ? "outline" : "secondary"}>
-                    质量 {qualityOverall}
+                    {t("质量")}{qualityOverall}
                   </Badge>
                 ) : null}
-                {targetWordCount ? <Badge variant="outline">目标 {targetWordCount} 字</Badge> : null}
+                {targetWordCount ? <Badge variant="outline">{t("目标")}{targetWordCount} {t("字")}</Badge> : null}
               </div>
               <div>
                 <CardTitle className="text-lg">{chapterTitle}</CardTitle>
                 <p className="mt-2 max-w-3xl text-sm leading-7 text-muted-foreground">
-                  这里是当前章节的主写作区，正文会稳定占据中心位置，任务单、质量报告和修复记录退到次级标签里，避免正文被操作区挤压。
-                </p>
+                  {t("这里是当前章节的主写作区，正文会稳定占据中心位置，任务单、质量报告和修复记录退到次级标签里，避免正文被操作区挤压。")}</p>
               </div>
             </div>
             <Button asChild size="sm" variant="outline">
-              <Link to={`/novels/${novelId}/chapters/${selectedChapter.id}`}>打开章节编辑器</Link>
+              <Link to={`/novels/${novelId}/chapters/${selectedChapter.id}`}>{t("打开章节编辑器")}</Link>
             </Button>
           </div>
 
           <div className={`grid gap-3 md:grid-cols-2 ${lengthControl ? "xl:grid-cols-5" : "xl:grid-cols-4"}`}>
-            <MetricBadge label="当前字数" value={String(contentPanelWordCount || selectedChapter.content?.length || 0)} hint="主面板正在展示的正文长度" />
-            <MetricBadge label="章节目标" value={targetWordCount ? `${targetWordCount} 字` : "未设定"} hint="用于判断当前篇幅是否足够" />
+            <MetricBadge label={t("当前字数")} value={String(contentPanelWordCount || selectedChapter.content?.length || 0)} hint="主面板正在展示的正文长度" />
+            <MetricBadge label={t("章节目标")} value={targetWordCount ? t("{{targetWordCount}} 字", { targetWordCount: targetWordCount }) : t("未设定")} hint="用于判断当前篇幅是否足够" />
             {lengthControl ? (
               <MetricBadge
-                label="预算区间"
+                label={t("预算区间")}
                 value={`${lengthControl.softMinWordCount}-${lengthControl.softMaxWordCount}`}
-                hint={`硬上限 ${lengthControl.hardMaxWordCount} 字`}
+                hint={t("硬上限 {{hardMaxWordCount}} 字", { hardMaxWordCount: lengthControl.hardMaxWordCount })}
               />
             ) : null}
-            <MetricBadge label="待处理问题" value={String(openAuditIssues.length || reviewResult?.issues?.length || 0)} hint="未修复的问题越少，越适合进入精修" />
+            <MetricBadge label={t("待处理问题")} value={String(openAuditIssues.length || reviewResult?.issues?.length || 0)} hint="未修复的问题越少，越适合进入精修" />
             {lengthControl ? (
               <MetricBadge
-                label="控字模式"
-                value={lengthControl.wordControlMode === "prompt_only" ? "自然优先" : lengthControl.wordControlMode === "balanced" ? "标准控字" : "混合控字"}
-                hint={`偏差 ${Math.round(lengthControl.variance * 100)}%`}
+                label={t("控字模式")}
+                value={lengthControl.wordControlMode === "prompt_only" ? t("自然优先") : lengthControl.wordControlMode === "balanced" ? t("标准控字") : t("混合控字")}
+                hint={t("偏差 {{value}}%", { value: Math.round(lengthControl.variance * 100) })}
               />
             ) : null}
-            <MetricBadge label="最近更新" value={selectedChapter.updatedAt ? new Date(selectedChapter.updatedAt).toLocaleString("zh-CN") : "暂无"} hint="帮助判断这一章是否需要重新检查" />
+            <MetricBadge label={t("最近更新")} value={selectedChapter.updatedAt ? new Date(selectedChapter.updatedAt).toLocaleString("zh-CN") : t("暂无")} hint="帮助判断这一章是否需要重新检查" />
           </div>
         </CardHeader>
 
         <CardContent className="space-y-5 pt-5">
           {writingInOtherChapter ? (
             <WorkspaceNotice
-              title="还有其他章节正在后台写作"
-              description={`${streamingChapterLabel ?? "另一章"} 仍在生成中。切到这一章后不会再把那一章的流式正文带过来，返回对应章节即可继续查看实时输出。`}
+              title={t("还有其他章节正在后台写作")}
+              description={t("{{value}} 仍在生成中。切到这一章后不会再把那一章的流式正文带过来，返回对应章节即可继续查看实时输出。", { value: streamingChapterLabel ?? t("另一章") })}
             />
           ) : null}
 
@@ -287,13 +287,13 @@ export default function ChapterExecutionResultPanel(props: ChapterExecutionResul
               <div className="flex flex-wrap items-center gap-2">
                 <Badge variant={isSelectedChapterStreaming ? "default" : "secondary"}>
                   {isSelectedChapterFinalizing
-                    ? "收尾处理中"
+                    ? t("收尾处理中")
                     : isSelectedChapterStreaming
-                      ? "实时写作中"
-                      : "已保存版本"}
+                      ? t("实时写作中")
+                      : t("已保存版本")}
                 </Badge>
                 <Badge variant="outline">{chapterLabel}</Badge>
-                <Badge variant="outline">当前展示 {contentPanelWordCount} 字</Badge>
+                <Badge variant="outline">{t("当前展示")}{contentPanelWordCount} {t("字")}</Badge>
               </div>
               <div>
                 <div className="text-xl font-semibold text-foreground">{chapterTitle}</div>
@@ -308,23 +308,22 @@ export default function ChapterExecutionResultPanel(props: ChapterExecutionResul
                 <div className="text-sm font-semibold text-foreground">{contentPanelTitle}</div>
                 <div className="mt-1 text-xs leading-6 text-muted-foreground">
                   {isSelectedChapterFinalizing
-                    ? (chapterRunStatus?.message ?? "正文已经输出完成，系统正在保存草稿、执行审计并同步章节状态。")
+                    ? (chapterRunStatus?.message ?? t("正文已经输出完成，系统正在保存草稿、执行审计并同步章节状态。"))
                     : isSelectedChapterStreaming
-                      ? "AI 正在持续输出这一章的正文，先在这里观察节奏和手感，不满意时可以随时停止。"
-                      : "正文固定显示在主区域，任务单、质量反馈和修复记录都收进下面的详情区。"}
+                      ? t("AI 正在持续输出这一章的正文，先在这里观察节奏和手感，不满意时可以随时停止。")
+                      : t("正文固定显示在主区域，任务单、质量反馈和修复记录都收进下面的详情区。")}
                 </div>
               </div>
               <div className="flex flex-wrap items-center gap-2">
-                <span className="text-xs text-muted-foreground">字数 {contentPanelWordCount}</span>
+                <span className="text-xs text-muted-foreground">{t("字数")}{contentPanelWordCount}</span>
                 {needsAuditPrompt ? (
                   <Button size="sm" onClick={onRunFullAudit} disabled={isRunningFullAudit}>
-                    {isRunningFullAudit ? "审校中..." : "去审校"}
+                    {isRunningFullAudit ? t("审校中...") : t("去审校")}
                   </Button>
                 ) : null}
                 {needsConfirmationPrompt ? (
                   <Button size="sm" variant="outline" onClick={openQualityPanel}>
-                    查看建议
-                  </Button>
+                    {t("查看建议")}</Button>
                 ) : null}
                 {(needsConfirmationPrompt || needsRepairPrompt) ? (
                   <Button
@@ -333,13 +332,12 @@ export default function ChapterExecutionResultPanel(props: ChapterExecutionResul
                     onClick={runAutoRepairFromWorkspace}
                     disabled={isSelectedChapterRepairStreaming}
                   >
-                    {isSelectedChapterRepairStreaming ? "修复中..." : "一键修复"}
+                    {isSelectedChapterRepairStreaming ? t("修复中...") : t("一键修复")}
                   </Button>
                 ) : null}
                 {isSelectedChapterStreaming && !isSelectedChapterFinalizing ? (
                   <Button size="sm" variant="secondary" onClick={onAbortStream}>
-                    停止生成
-                  </Button>
+                    {t("停止生成")}</Button>
                 ) : null}
               </div>
             </div>
@@ -351,8 +349,7 @@ export default function ChapterExecutionResultPanel(props: ChapterExecutionResul
                 </article>
               ) : (
                 <div className="mx-auto max-w-3xl rounded-3xl border border-dashed bg-muted/15 p-8 text-sm leading-7 text-muted-foreground">
-                  当前章节还没有正文。建议先补章节计划或任务单，然后从右侧直接执行“写本章”。
-                </div>
+                  {t("当前章节还没有正文。建议先补章节计划或任务单，然后从右侧直接执行“写本章”。")}</div>
               )}
             </div>
           </div>
@@ -361,14 +358,14 @@ export default function ChapterExecutionResultPanel(props: ChapterExecutionResul
             <div className="rounded-2xl border border-border/70 bg-muted/15 p-4 text-sm">
               <div className="flex flex-wrap items-center gap-2">
                 <Badge variant="outline">scene {lengthControl.generatedSceneCount}/{lengthControl.plannedSceneCount}</Badge>
-                <Badge variant="secondary">硬停 {lengthControl.hardStopsTriggered} 次</Badge>
-                {lengthControl.closingPhaseTriggered ? <Badge variant="default">已进入收尾区</Badge> : null}
-                {lengthControl.overlengthRepairApplied ? <Badge variant="outline">已触发超长修整</Badge> : null}
+                <Badge variant="secondary">{t("硬停")}{lengthControl.hardStopsTriggered} {t("次")}</Badge>
+                {lengthControl.closingPhaseTriggered ? <Badge variant="default">{t("已进入收尾区")}</Badge> : null}
+                {lengthControl.overlengthRepairApplied ? <Badge variant="outline">{t("已触发超长修整")}</Badge> : null}
               </div>
               <div className="mt-2 text-xs leading-6 text-muted-foreground">
                 {lengthControl.lengthRepairPath.length > 0
-                  ? `本次长度修整路径：${lengthControl.lengthRepairPath.join(" -> ")}`
-                  : "本次写作未触发额外长度修整。"}
+                  ? t("本次长度修整路径：{{value}}", { value: lengthControl.lengthRepairPath.join(" -> ") })
+                  : t("本次写作未触发额外长度修整。")}
               </div>
             </div>
           ) : null}
@@ -381,14 +378,14 @@ export default function ChapterExecutionResultPanel(props: ChapterExecutionResul
           >
             <summary className="cursor-pointer list-none">
               <CollapsibleSummary
-                title="章节详情区"
-                description="这里收纳任务单、场景拆解、质量报告和修复记录，默认收起，避免主写作区被次级信息挤满。"
+                title={t("章节详情区")}
+                description={t("这里收纳任务单、场景拆解、质量报告和修复记录，默认收起，避免主写作区被次级信息挤满。")}
                 meta={(
                   <>
-                    <span>任务单</span>
-                    <span>场景拆解</span>
-                    <span>质量报告</span>
-                    <span>修复记录</span>
+                    <span>{t("任务单")}</span>
+                    <span>{t("场景拆解")}</span>
+                    <span>{t("质量报告")}</span>
+                    <span>{t("修复记录")}</span>
                   </>
                 )}
               />
@@ -397,23 +394,23 @@ export default function ChapterExecutionResultPanel(props: ChapterExecutionResul
             <div className="mt-4">
               <Tabs value={detailTab} onValueChange={(value) => onAssetTabChange(value as AssetTabKey)}>
                 <TabsList className="h-auto w-full justify-start gap-1 overflow-x-auto rounded-2xl bg-muted/50 p-1.5">
-                  <TabsTrigger value="taskSheet" className="rounded-xl">任务单</TabsTrigger>
-                  <TabsTrigger value="sceneCards" className="rounded-xl">场景拆解</TabsTrigger>
-                  <TabsTrigger value="quality" className="rounded-xl">质量报告</TabsTrigger>
-                  <TabsTrigger value="repair" className="rounded-xl">修复记录</TabsTrigger>
+                  <TabsTrigger value="taskSheet" className="rounded-xl">{t("任务单")}</TabsTrigger>
+                  <TabsTrigger value="sceneCards" className="rounded-xl">{t("场景拆解")}</TabsTrigger>
+                  <TabsTrigger value="quality" className="rounded-xl">{t("质量报告")}</TabsTrigger>
+                  <TabsTrigger value="repair" className="rounded-xl">{t("修复记录")}</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="taskSheet" className="space-y-4">
                   <div className="grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
                     <div className="rounded-2xl border bg-muted/20 p-5">
-                      <div className="text-xs text-muted-foreground">本章任务单</div>
+                      <div className="text-xs text-muted-foreground">{t("本章任务单")}</div>
                       <div className="mt-3 whitespace-pre-wrap text-sm leading-7">
-                        {selectedChapter.taskSheet?.trim() || "暂无任务单。你可以先让 AI 生成任务单，再回来继续写这章。"}
+                        {selectedChapter.taskSheet?.trim() || t("暂无任务单。你可以先让 AI 生成任务单，再回来继续写这章。")}
                       </div>
                     </div>
                     <div className="space-y-4">
-                      <PanelHintCard title="章节目标" content={chapterObjective} />
-                      <PanelHintCard title="最新状态" content={latestStateSnapshot?.summary || "暂无状态摘要。"} />
+                      <PanelHintCard title={t("章节目标")} content={chapterObjective} />
+                      <PanelHintCard title={t("最新状态")} content={latestStateSnapshot?.summary || t("暂无状态摘要。")} />
                     </div>
                   </div>
                   <ChapterRuntimeContextCard
@@ -428,29 +425,29 @@ export default function ChapterExecutionResultPanel(props: ChapterExecutionResul
                   {scenePlan ? (
                     <div className="space-y-3">
                       <div className="rounded-2xl border bg-muted/20 p-5">
-                        <div className="text-xs text-muted-foreground">场景预算合同</div>
+                        <div className="text-xs text-muted-foreground">{t("场景预算合同")}</div>
                         <div className="mt-3 grid gap-3 md:grid-cols-2">
-                          <MetricBadge label="章节目标" value={`${scenePlan.targetWordCount} 字`} />
-                          <MetricBadge label="场景数" value={String(scenePlan.scenes.length)} />
+                          <MetricBadge label={t("章节目标")} value={t("{{targetWordCount}} 字", { targetWordCount: scenePlan.targetWordCount })} />
+                          <MetricBadge label={t("场景数")} value={String(scenePlan.scenes.length)} />
                         </div>
                       </div>
                       {scenePlan.scenes.map((scene, index) => (
                         <div key={scene.key} className="rounded-2xl border bg-background p-5">
                           <div className="flex flex-wrap items-center gap-2">
-                            <Badge variant="outline">场景 {index + 1}</Badge>
-                            <Badge variant="secondary">{scene.targetWordCount} 字</Badge>
+                            <Badge variant="outline">{t("场景")}{index + 1}</Badge>
+                            <Badge variant="secondary">{scene.targetWordCount} {t("字")}</Badge>
                           </div>
                           <div className="mt-3 text-base font-semibold text-foreground">{scene.title}</div>
                           <div className="mt-2 text-sm leading-7 text-muted-foreground">{scene.purpose}</div>
                           <div className="mt-4 grid gap-3 lg:grid-cols-2">
-                            <PanelHintCard title="必须推进" content={scene.mustAdvance.join("；") || "无"} />
-                            <PanelHintCard title="必须保留" content={scene.mustPreserve.join("；") || "无"} />
-                            <PanelHintCard title="起始状态" content={scene.entryState} />
-                            <PanelHintCard title="结束状态" content={scene.exitState} />
+                            <PanelHintCard title={t("必须推进")} content={scene.mustAdvance.join("；") || t("无")} />
+                            <PanelHintCard title={t("必须保留")} content={scene.mustPreserve.join("；") || t("无")} />
+                            <PanelHintCard title={t("起始状态")} content={scene.entryState} />
+                            <PanelHintCard title={t("结束状态")} content={scene.exitState} />
                           </div>
                           {scene.forbiddenExpansion.length > 0 ? (
                             <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50/70 p-4 text-sm leading-7 text-amber-900">
-                              禁止展开：{scene.forbiddenExpansion.join("；")}
+                              {t("禁止展开：")}{scene.forbiddenExpansion.join("；")}
                             </div>
                           ) : null}
                         </div>
@@ -458,29 +455,29 @@ export default function ChapterExecutionResultPanel(props: ChapterExecutionResul
                     </div>
                   ) : (
                     <div className="rounded-2xl border bg-muted/20 p-5">
-                      <div className="text-xs text-muted-foreground">场景拆解</div>
+                      <div className="text-xs text-muted-foreground">{t("场景拆解")}</div>
                       <div className="mt-3 whitespace-pre-wrap text-sm leading-7">
                         {selectedChapter.sceneCards?.trim()
-                          ? "当前是旧版场景拆解文本，建议重新生成章节执行合同。"
-                          : "暂无场景拆解。"}
+                          ? t("当前是旧版场景拆解文本，建议重新生成章节执行合同。")
+                          : t("暂无场景拆解。")}
                       </div>
                     </div>
                   )}
-                  <PanelHintCard title="本章目标" content={chapterObjective} />
+                  <PanelHintCard title={t("本章目标")} content={chapterObjective} />
                 </TabsContent>
 
                 <TabsContent value="quality" className="space-y-4">
                   <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-                    <MetricBadge label="总体" value={String(chapterQualityReport?.overall ?? selectedChapter.qualityScore ?? "-")} />
-                    <MetricBadge label="连贯性" value={String(chapterQualityReport?.coherence ?? "-")} />
-                    <MetricBadge label="重复度" value={String(chapterQualityReport?.repetition ?? "-")} />
-                    <MetricBadge label="节奏" value={String(chapterQualityReport?.pacing ?? selectedChapter.pacingScore ?? "-")} />
-                    <MetricBadge label="文风" value={String(chapterQualityReport?.voice ?? "-")} />
-                    <MetricBadge label="吸引力" value={String(chapterQualityReport?.engagement ?? "-")} />
+                    <MetricBadge label={t("总体")} value={String(chapterQualityReport?.overall ?? selectedChapter.qualityScore ?? "-")} />
+                    <MetricBadge label={t("连贯性")} value={String(chapterQualityReport?.coherence ?? "-")} />
+                    <MetricBadge label={t("重复度")} value={String(chapterQualityReport?.repetition ?? "-")} />
+                    <MetricBadge label={t("节奏")} value={String(chapterQualityReport?.pacing ?? selectedChapter.pacingScore ?? "-")} />
+                    <MetricBadge label={t("文风")} value={String(chapterQualityReport?.voice ?? "-")} />
+                    <MetricBadge label={t("吸引力")} value={String(chapterQualityReport?.engagement ?? "-")} />
                   </div>
 
                   <div className="rounded-2xl border p-5 text-sm">
-                    <div className="font-semibold text-foreground">最近审校问题</div>
+                    <div className="font-semibold text-foreground">{t("最近审校问题")}</div>
                     {reviewResult?.issues?.length ? (
                       <div className="mt-3 space-y-2 text-xs text-muted-foreground">
                         {reviewResult.issues.slice(0, 5).map((item, index) => (
@@ -491,12 +488,12 @@ export default function ChapterExecutionResultPanel(props: ChapterExecutionResul
                         ))}
                       </div>
                     ) : (
-                      <div className="mt-3 text-xs leading-6 text-muted-foreground">当前没有最近审校问题。</div>
+                      <div className="mt-3 text-xs leading-6 text-muted-foreground">{t("当前没有最近审校问题。")}</div>
                     )}
                   </div>
 
                   <div className="rounded-2xl border p-5 text-sm">
-                    <div className="font-semibold text-foreground">结构化审计问题</div>
+                    <div className="font-semibold text-foreground">{t("结构化审计问题")}</div>
                     {openAuditIssues.length > 0 ? (
                       <div className="mt-3 space-y-2 text-xs text-muted-foreground">
                         {openAuditIssues.slice(0, 6).map((item) => (
@@ -507,7 +504,7 @@ export default function ChapterExecutionResultPanel(props: ChapterExecutionResul
                         ))}
                       </div>
                     ) : (
-                      <div className="mt-3 text-xs leading-6 text-muted-foreground">当前没有结构化审计问题。</div>
+                      <div className="mt-3 text-xs leading-6 text-muted-foreground">{t("当前没有结构化审计问题。")}</div>
                     )}
                   </div>
 
@@ -531,17 +528,17 @@ export default function ChapterExecutionResultPanel(props: ChapterExecutionResul
                 <TabsContent value="repair" className="space-y-4">
                   {repairingOtherChapter ? (
                     <WorkspaceNotice
-                      title="还有其他章节正在后台修复"
-                      description={`${repairStreamingChapterLabel ?? "另一章"} 仍在修复中。当前章节不会再显示那一章的修复流，返回对应章节即可继续查看。`}
+                      title={t("还有其他章节正在后台修复")}
+                      description={t("{{value}} 仍在修复中。当前章节不会再显示那一章的修复流，返回对应章节即可继续查看。", { value: repairStreamingChapterLabel ?? t("另一章") })}
                     />
                   ) : null}
 
                   {(isSelectedChapterRepairStreaming || hasVisibleRepairOutput) ? (
                     <StreamOutput
-                      title="问题修复输出"
+                      title={t("问题修复输出")}
                       emptyText={isSelectedChapterRepairFinalizing
-                        ? (repairRunStatus?.message ?? "修复文本已经输出完成，系统正在保存并复审。")
-                        : "等待修复输出..."}
+                        ? (repairRunStatus?.message ?? t("修复文本已经输出完成，系统正在保存并复审。"))
+                        : t("等待修复输出...")}
                       content={visibleRepairStreamContent}
                       isStreaming={isSelectedChapterRepairStreaming}
                       onAbort={isSelectedChapterRepairFinalizing ? undefined : onAbortRepair}
@@ -549,9 +546,9 @@ export default function ChapterExecutionResultPanel(props: ChapterExecutionResul
                   ) : null}
 
                   <div className="rounded-2xl border bg-muted/20 p-5">
-                    <div className="text-xs text-muted-foreground">修复记录</div>
+                    <div className="text-xs text-muted-foreground">{t("修复记录")}</div>
                     <div className="mt-3 max-h-[420px] overflow-y-auto whitespace-pre-wrap text-sm leading-7">
-                      {selectedChapter.repairHistory?.trim() || "暂无修复记录。"}
+                      {selectedChapter.repairHistory?.trim() || t("暂无修复记录。")}
                     </div>
                   </div>
                 </TabsContent>
@@ -564,16 +561,16 @@ export default function ChapterExecutionResultPanel(props: ChapterExecutionResul
       <details className="group rounded-2xl border border-border/70 bg-background/95 p-4">
         <summary className="cursor-pointer list-none">
           <CollapsibleSummary
-            title="上下文与问题诊断"
-            description="只有在需要追查为什么写偏、为什么要重规划时，再展开这一层。"
-            meta={`${chapterAuditReports.length} 份审计报告`}
+            title={t("上下文与问题诊断")}
+            description={t("只有在需要追查为什么写偏、为什么要重规划时，再展开这一层。")}
+            meta={t("{{length}} 份审计报告", { length: chapterAuditReports.length })}
           />
         </summary>
 
         <Tabs defaultValue="context">
           <TabsList className="mt-4 h-auto w-full justify-start overflow-x-auto rounded-2xl bg-muted/50 p-1.5">
-            <TabsTrigger value="context" className="rounded-xl">本章目标与上下文</TabsTrigger>
-            <TabsTrigger value="audit" className="rounded-xl">当前问题与修复建议</TabsTrigger>
+            <TabsTrigger value="context" className="rounded-xl">{t("本章目标与上下文")}</TabsTrigger>
+            <TabsTrigger value="audit" className="rounded-xl">{t("当前问题与修复建议")}</TabsTrigger>
           </TabsList>
           <TabsContent value="context" className="pt-2">
             <ChapterRuntimeContextCard

@@ -7,6 +7,8 @@ import {
   getRagJobProgressPercent,
   getRagJobProgressWidth,
 } from "./knowledgeRagUi";
+import { t } from "@/i18n";
+
 
 interface KnowledgeOpsTabProps {
   visibleDocumentsCount: number;
@@ -31,16 +33,15 @@ export default function KnowledgeOpsTab({
     <div className="grid gap-4 lg:grid-cols-[360px_1fr]">
       <Card>
         <CardHeader>
-          <CardTitle>基础统计</CardTitle>
+          <CardTitle>{t("基础统计")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-2 text-sm">
-          <div>当前列表文档数：{visibleDocumentsCount}</div>
-          <div>启用文档数：{enabledCount}</div>
-          <div>停用文档数：{disabledCount}</div>
+          <div>{t("当前列表文档数：")}{visibleDocumentsCount}</div>
+          <div>{t("启用文档数：")}{enabledCount}</div>
+          <div>{t("停用文档数：")}{disabledCount}</div>
           <div>
-            RAG 健康：
-            <Badge variant="outline" className="ml-2">
-              {ragHealth?.ok ? "正常" : "异常"}
+            {t("RAG 健康：")}<Badge variant="outline" className="ml-2">
+              {ragHealth?.ok ? t("正常") : t("异常")}
             </Badge>
           </div>
         </CardContent>
@@ -49,7 +50,7 @@ export default function KnowledgeOpsTab({
       <div className="space-y-4">
         <Card>
           <CardHeader>
-            <CardTitle>健康状态</CardTitle>
+            <CardTitle>{t("健康状态")}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-sm">
             {ragHealthNotice ? (
@@ -73,11 +74,11 @@ export default function KnowledgeOpsTab({
 
         <Card>
           <CardHeader>
-            <CardTitle>最近任务</CardTitle>
+            <CardTitle>{t("最近任务")}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
             {jobs.length === 0 ? (
-              <div className="text-sm text-muted-foreground">当前还没有 RAG 任务。</div>
+              <div className="text-sm text-muted-foreground">{t("当前还没有 RAG 任务。")}</div>
             ) : null}
             {jobs.map((job) => (
               <div key={job.id} className="rounded-md border p-2 text-sm">
@@ -88,7 +89,7 @@ export default function KnowledgeOpsTab({
                   <Badge variant="outline">{formatStatus(job.status)}</Badge>
                 </div>
                 <div className="text-xs text-muted-foreground">
-                  {job.jobType} | 尝试 {job.attempts}/{job.maxAttempts}
+                  {job.jobType} {t("| 尝试")}{job.attempts}/{job.maxAttempts}
                 </div>
                 {job.progress ? (
                   <div className="mt-2 space-y-2">
@@ -116,11 +117,11 @@ export default function KnowledgeOpsTab({
 
         <Card>
           <CardHeader>
-            <CardTitle>最近失败任务</CardTitle>
+            <CardTitle>{t("最近失败任务")}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
             {failedJobs.length === 0 ? (
-              <div className="text-sm text-muted-foreground">没有失败任务。</div>
+              <div className="text-sm text-muted-foreground">{t("没有失败任务。")}</div>
             ) : null}
             {failedJobs.map((job) => (
               <div key={job.id} className="rounded-md border p-2 text-sm">

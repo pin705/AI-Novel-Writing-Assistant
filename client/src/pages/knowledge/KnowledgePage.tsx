@@ -26,6 +26,8 @@ import KnowledgeDocumentDetailDialog from "./components/KnowledgeDocumentDetailD
 import KnowledgeDocumentsTab from "./components/KnowledgeDocumentsTab";
 import KnowledgeEmbeddingSettingsCard, { type KnowledgeEmbeddingSettingsFormState } from "./components/KnowledgeEmbeddingSettingsCard";
 import KnowledgeOpsTab from "./components/KnowledgeOpsTab";
+import { t } from "@/i18n";
+
 
 const TAB_VALUES = new Set(["documents", "ops", "settings"]);
 
@@ -307,12 +309,12 @@ export default function KnowledgePage() {
   const failedJobs = (ragJobsQuery.data?.data ?? []).filter((item) => item.status === "failed").slice(0, 5);
   const selectedDocument = detailQuery.data?.data;
   const ragHealthNotice = ragHealthQuery.isError
-    ? (ragHealthQuery.error instanceof Error ? ragHealthQuery.error.message : "加载 RAG 健康状态失败。")
+    ? (ragHealthQuery.error instanceof Error ? ragHealthQuery.error.message : t("加载 RAG 健康状态失败。"))
     : (ragHealthQuery.data?.message && ragHealthQuery.data.message !== "RAG health check passed."
       ? ragHealthQuery.data.message
       : undefined);
   const recallErrorMessage = recallTestMutation.isError
-    ? (recallTestMutation.error instanceof Error ? recallTestMutation.error.message : "召回测试失败。")
+    ? (recallTestMutation.error instanceof Error ? recallTestMutation.error.message : t("召回测试失败。"))
     : null;
 
   useEffect(() => {
@@ -327,11 +329,11 @@ export default function KnowledgePage() {
 
   const handleUpload = async (file: File) => {
     if (!isTxtFile(file)) {
-      throw new Error("仅支持 .txt 文件。");
+      throw new Error(t("仅支持 .txt 文件。"));
     }
     const content = await readTextFile(file);
     if (!content) {
-      throw new Error("文件内容为空，或编码格式暂不支持。");
+      throw new Error(t("文件内容为空，或编码格式暂不支持。"));
     }
     await createKnowledgeDocument({
       title: uploadTitle.trim() || undefined,
@@ -345,11 +347,11 @@ export default function KnowledgePage() {
       return;
     }
     if (!isTxtFile(file)) {
-      throw new Error("仅支持 .txt 文件。");
+      throw new Error(t("仅支持 .txt 文件。"));
     }
     const content = await readTextFile(file);
     if (!content) {
-      throw new Error("文件内容为空，或编码格式暂不支持。");
+      throw new Error(t("文件内容为空，或编码格式暂不支持。"));
     }
     await createKnowledgeDocumentVersion(selectedDocumentId, {
       fileName: file.name,
@@ -427,7 +429,7 @@ export default function KnowledgePage() {
       <div className="flex justify-end">
         <OpenInCreativeHubButton
           bindings={{ knowledgeDocumentIds: selectedDocumentId ? [selectedDocumentId] : [] }}
-          label="发送到创作中枢"
+          label={t("发送到创作中枢")}
         />
       </div>
 
@@ -437,9 +439,9 @@ export default function KnowledgePage() {
         className="space-y-4"
       >
         <TabsList>
-          <TabsTrigger value="documents">文档</TabsTrigger>
-          <TabsTrigger value="ops">运行状态</TabsTrigger>
-          <TabsTrigger value="settings">检索设置</TabsTrigger>
+          <TabsTrigger value="documents">{t("文档")}</TabsTrigger>
+          <TabsTrigger value="ops">{t("运行状态")}</TabsTrigger>
+          <TabsTrigger value="settings">{t("检索设置")}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="documents">

@@ -1,3 +1,4 @@
+import { t } from "@/i18n";
 const INTENT_LABELS: Record<string, string> = {
   social_opening: "轻度开场",
   list_novels: "列出小说",
@@ -37,12 +38,12 @@ function formatBilingualLabel(label: string, rawValue: string) {
 
 export function getIntentDisplayLabel(intent: unknown): string {
   const rawValue = typeof intent === "string" && intent.trim() ? intent.trim() : "unknown";
-  const label = INTENT_LABELS[rawValue] ?? "未映射意图";
+  const label = INTENT_LABELS[rawValue] ?? t("未映射意图");
   return formatBilingualLabel(label, rawValue);
 }
 
 export function getPlannerSourceDisplayLabel(source: unknown): string {
   const rawValue = typeof source === "string" && source.trim() ? source.trim() : "unknown";
-  const label = PLANNER_SOURCE_LABELS[rawValue] ?? "未映射来源";
+  const label = PLANNER_SOURCE_LABELS[rawValue] ?? t("未映射来源");
   return formatBilingualLabel(label, rawValue);
 }

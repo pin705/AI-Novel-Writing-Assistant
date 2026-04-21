@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
 import type { BasicInfoOption } from "../../novelBasicInfo.shared";
+import { t } from "@/i18n";
+
 
 export function HelpHint({ text }: { text: string }) {
   return (
@@ -76,8 +78,7 @@ export function SelectionCard<T extends string>({
         <div className="text-sm font-medium text-foreground">{option.label}</div>
         {option.recommended ? (
           <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-medium text-emerald-700">
-            推荐
-          </span>
+            {t("推荐")}</span>
         ) : null}
       </div>
       <div className="mt-1 text-xs leading-5 text-muted-foreground">{option.summary}</div>

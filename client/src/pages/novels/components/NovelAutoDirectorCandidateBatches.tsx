@@ -8,6 +8,8 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { t } from "@/i18n";
+
 
 interface NovelAutoDirectorCandidateBatchesProps {
   batches: DirectorCandidateBatch[];
@@ -49,14 +51,14 @@ function resolveCandidateTitleOptions(candidate: DirectorCandidate): TitleFactor
 
 function renderCandidateDetails(candidate: DirectorCandidate) {
   return [
-    { label: "作品定位", value: candidate.positioning },
-    { label: "核心卖点", value: candidate.sellingPoint },
-    { label: "主线冲突", value: candidate.coreConflict },
-    { label: "主角路径", value: candidate.protagonistPath },
-    { label: "主钩子", value: candidate.hookStrategy },
-    { label: "推进循环", value: candidate.progressionLoop },
-    { label: "结局方向", value: candidate.endingDirection },
-    { label: "章节规模", value: `约 ${candidate.targetChapterCount} 章` },
+    { label: t("作品定位"), value: candidate.positioning },
+    { label: t("核心卖点"), value: candidate.sellingPoint },
+    { label: t("主线冲突"), value: candidate.coreConflict },
+    { label: t("主角路径"), value: candidate.protagonistPath },
+    { label: t("主钩子"), value: candidate.hookStrategy },
+    { label: t("推进循环"), value: candidate.progressionLoop },
+    { label: t("结局方向"), value: candidate.endingDirection },
+    { label: t("章节规模"), value: t("约 {{count}} 章", { count: candidate.targetChapterCount }) },
   ];
 }
 
@@ -85,8 +87,7 @@ export default function NovelAutoDirectorCandidateBatches(props: NovelAutoDirect
   if (batches.length === 0) {
     return (
       <div className="rounded-xl border border-dashed p-8 text-center text-sm text-muted-foreground">
-        先给 AI 一句灵感，它会先产出第一批整本书方向候选。
-      </div>
+        {t("先给 AI 一句灵感，它会先产出第一批整本书方向候选。")}</div>
     );
   }
 
@@ -98,7 +99,7 @@ export default function NovelAutoDirectorCandidateBatches(props: NovelAutoDirect
             <div>
               <div className="text-base font-semibold text-foreground">{batch.roundLabel}</div>
               <div className="text-sm text-muted-foreground">
-                {batch.refinementSummary?.trim() || "初始方案"}
+                {batch.refinementSummary?.trim() || t("初始方案")}
               </div>
             </div>
             <div className="flex flex-wrap gap-2">
@@ -118,7 +119,7 @@ export default function NovelAutoDirectorCandidateBatches(props: NovelAutoDirect
                     <div className="text-lg font-semibold text-foreground">{candidate.workingTitle}</div>
                     <div className="text-sm leading-6 text-muted-foreground">{candidate.logline}</div>
                     <div className="rounded-md border bg-muted/20 p-3">
-                      <div className="text-sm font-medium text-foreground">书名候选</div>
+                      <div className="text-sm font-medium text-foreground">{t("书名候选")}</div>
                       <div className="mt-2 flex flex-wrap gap-2">
                         {titleOptions.map((option) => {
                           const active = option.title === candidate.workingTitle;
@@ -134,24 +135,23 @@ export default function NovelAutoDirectorCandidateBatches(props: NovelAutoDirect
                               onClick={() => onApplyCandidateTitleOption(batch.id, candidate.id, option)}
                             >
                               <span className="font-medium">{option.title}</span>
-                              <span className="ml-2 text-muted-foreground">预估 {option.clickRate}</span>
+                              <span className="ml-2 text-muted-foreground">{t("预估")}{option.clickRate}</span>
                             </button>
                           );
                         })}
                       </div>
                       <div className="mt-2 text-xs leading-5 text-muted-foreground">
-                        {titleOptions[0]?.reason?.trim() || "书名由标题工坊增强生成，你可以在这里切换当前方案名。"}
+                        {titleOptions[0]?.reason?.trim() || t("书名由标题工坊增强生成，你可以在这里切换当前方案名。")}
                       </div>
                       <div className="mt-3 border-t pt-3">
-                        <div className="text-xs font-medium text-foreground">AI 修正这组书名</div>
+                        <div className="text-xs font-medium text-foreground">{t("AI 修正这组书名")}</div>
                         <div className="mt-1 text-xs leading-5 text-muted-foreground">
-                          适合“这组标题太土 / 太老派 / 不够都市 / 不够悬疑”这种定向修正。
-                        </div>
+                          {t("适合“这组标题太土 / 太老派 / 不够都市 / 不够悬疑”这种定向修正。")}</div>
                         <Input
                           className="mt-2"
                           value={titlePatchFeedbacks[candidate.id] ?? ""}
                           onChange={(event) => onTitlePatchFeedbackChange(candidate.id, event.target.value)}
-                          placeholder="例如：当前这组太土气了，想更偏都市冷感一点，别像旧式升级文。"
+                          placeholder={t("例如：当前这组太土气了，想更偏都市冷感一点，别像旧式升级文。")}
                         />
                         <div className="mt-2 flex justify-end">
                           <Button
@@ -161,13 +161,13 @@ export default function NovelAutoDirectorCandidateBatches(props: NovelAutoDirect
                             disabled={isRefiningTitle || !titlePatchFeedbacks[candidate.id]?.trim()}
                             onClick={() => onRefineTitle(batch.id, candidate, titlePatchFeedbacks[candidate.id] ?? "")}
                           >
-                            {isRefiningTitle ? "重做中..." : "AI 重做标题组"}
+                            {isRefiningTitle ? t("重做中...") : t("AI 重做标题组")}
                           </Button>
                         </div>
                       </div>
                     </div>
                     <div className="rounded-md bg-muted/30 p-3 text-sm leading-6 text-foreground">
-                      <div className="font-medium">为什么推荐这套</div>
+                      <div className="font-medium">{t("为什么推荐这套")}</div>
                       <div className="mt-1 text-muted-foreground">{candidate.whyItFits}</div>
                     </div>
                     <div className="grid gap-2 text-sm">
@@ -184,15 +184,14 @@ export default function NovelAutoDirectorCandidateBatches(props: NovelAutoDirect
                       ))}
                     </div>
                     <div className="rounded-md border border-dashed p-3">
-                      <div className="text-sm font-medium text-foreground">AI 微调这套方案</div>
+                      <div className="text-sm font-medium text-foreground">{t("AI 微调这套方案")}</div>
                       <div className="mt-1 text-xs leading-5 text-muted-foreground">
-                        适合“我就偏向这套，但还有点偏差”的情况。AI 会保留这套主方向，只定向修正不对味的部分。
-                      </div>
+                        {t("适合“我就偏向这套，但还有点偏差”的情况。AI 会保留这套主方向，只定向修正不对味的部分。")}</div>
                       <Input
                         className="mt-3"
                         value={candidatePatchFeedbacks[candidate.id] ?? ""}
                         onChange={(event) => onCandidatePatchFeedbackChange(candidate.id, event.target.value)}
-                        placeholder="例如：保留这套，但更偏都市异能，主角更主动一点，别太像传统热血升级。"
+                        placeholder={t("例如：保留这套，但更偏都市异能，主角更主动一点，别太像传统热血升级。")}
                       />
                       <div className="mt-2 flex justify-end">
                         <Button
@@ -202,7 +201,7 @@ export default function NovelAutoDirectorCandidateBatches(props: NovelAutoDirect
                           disabled={isPatchingCandidate || !candidatePatchFeedbacks[candidate.id]?.trim()}
                           onClick={() => onPatchCandidate(batch.id, candidate, candidatePatchFeedbacks[candidate.id] ?? "")}
                         >
-                          {isPatchingCandidate ? "修正中..." : "AI 修这套方案"}
+                          {isPatchingCandidate ? t("修正中...") : t("AI 修这套方案")}
                         </Button>
                       </div>
                     </div>
@@ -214,7 +213,7 @@ export default function NovelAutoDirectorCandidateBatches(props: NovelAutoDirect
                       onClick={() => void onConfirmCandidate(candidate)}
                       disabled={isConfirming}
                     >
-                      {isConfirming ? "正在进入导演流程..." : "选用这套并创建项目"}
+                      {isConfirming ? t("正在进入导演流程...") : t("选用这套并创建项目")}
                     </Button>
                   </div>
                 </article>
@@ -225,10 +224,9 @@ export default function NovelAutoDirectorCandidateBatches(props: NovelAutoDirect
       ))}
 
       <section className="rounded-xl border border-dashed p-4">
-        <div className="text-base font-semibold text-foreground">继续修正并生成下一轮</div>
+        <div className="text-base font-semibold text-foreground">{t("继续修正并生成下一轮")}</div>
         <div className="mt-1 text-sm text-muted-foreground">
-          如果这几套还不够对味，可以点几个方向，再补一句你真正想要的感觉。系统会保留上一轮，再给你一轮新的方案。
-        </div>
+          {t("如果这几套还不够对味，可以点几个方向，再补一句你真正想要的感觉。系统会保留上一轮，再给你一轮新的方案。")}</div>
 
         <div className="mt-4 flex flex-wrap gap-2">
           {DIRECTOR_CORRECTION_PRESETS.map((preset) => {
@@ -252,13 +250,12 @@ export default function NovelAutoDirectorCandidateBatches(props: NovelAutoDirect
 
         <div className="mt-4 space-y-2">
           <label htmlFor="director-refine-feedback" className="text-sm font-medium text-foreground">
-            再补一句修正建议
-          </label>
+            {t("再补一句修正建议")}</label>
           <Input
             id="director-refine-feedback"
             value={feedback}
             onChange={(event) => onFeedbackChange(event.target.value)}
-            placeholder="例如：我想要女频成长感更强一点，别太像纯爱文，也不要太黑。"
+            placeholder={t("例如：我想要女频成长感更强一点，别太像纯爱文，也不要太黑。")}
           />
         </div>
 
@@ -269,7 +266,7 @@ export default function NovelAutoDirectorCandidateBatches(props: NovelAutoDirect
             onClick={onGenerateNext}
             disabled={isGenerating}
           >
-            {isGenerating ? "生成中..." : "带修正建议继续生成"}
+            {isGenerating ? t("生成中...") : t("带修正建议继续生成")}
           </Button>
         </div>
       </section>

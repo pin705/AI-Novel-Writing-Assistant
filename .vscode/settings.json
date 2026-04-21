@@ -1,0 +1,13 @@
+{
+  "i18n-ally.localesPaths": [
+    "client/src/locales"
+  ],
+  "i18n-ally.keystyle": "flat",
+  "i18n-ally.namespace": true,
+  "i18n-ally.pathMatcher": "{locale}/{namespace}.json",
+  "i18n-ally.sourceLanguage": "zh-CN",
+  "i18n-ally.displayLanguage": "vi-VN",
+  "i18n-ally.enabledFrameworks": [
+    "react"
+  ]
+}
