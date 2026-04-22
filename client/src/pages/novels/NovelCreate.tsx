@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import type { UnifiedTaskDetail } from "@ai-novel/shared/types/task";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { BOOK_ANALYSIS_SECTIONS } from "@ai-novel/shared/types/bookAnalysis";
 import { flattenGenreTreeOptions, getGenreTree } from "@/api/genre";
 import { bootstrapNovelWorkflow } from "@/api/novelWorkflow";
 import { createNovel } from "@/api/novel";
@@ -22,6 +21,7 @@ import {
   patchNovelBasicForm,
 } from "./novelBasicInfo.shared";
 import { t } from "@/i18n";
+import { getBookAnalysisSectionOptions } from "@/lib/bookAnalysisUi";
 
 
 export default function NovelCreate() {
@@ -57,6 +57,7 @@ export default function NovelCreate() {
     sourceKnowledgeOptions,
     sourceNovelBookAnalysisOptions,
   } = useNovelContinuationSources("", basicForm);
+  const availableBookAnalysisSections = getBookAnalysisSectionOptions();
 
   useEffect(() => {
     if (
@@ -189,7 +190,7 @@ export default function NovelCreate() {
             sourceKnowledgeOptions={sourceKnowledgeOptions}
             sourceNovelBookAnalysisOptions={sourceNovelBookAnalysisOptions}
             isLoadingSourceNovelBookAnalyses={sourceBookAnalysesQuery.isLoading}
-            availableBookAnalysisSections={[...BOOK_ANALYSIS_SECTIONS]}
+            availableBookAnalysisSections={availableBookAnalysisSections}
             onFormChange={(patch) => setBasicForm((prev) => patchNovelBasicForm(prev, patch))}
             onSubmit={() => createNovelMutation.mutate()}
             isSubmitting={createNovelMutation.isPending}

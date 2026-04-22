@@ -5,15 +5,15 @@ import {
   bookAnalysisOptimizedDraftPrompt,
   bookAnalysisSectionPrompt,
 } from "../../prompting/prompts/bookAnalysis/bookAnalysis.prompts";
-import { SECTION_PROMPTS } from "./bookAnalysis.constants";
+import { getBookAnalysisPrompt } from "./bookAnalysis.constants";
 import type { SectionGenerationResult, SourceNote } from "./bookAnalysis.types";
 import {
-  getSectionTitle,
   normalizeMaxTokens,
   normalizeTemperature,
   renderNotesForPrompt,
   toEvidenceList,
 } from "./bookAnalysis.utils";
+import { getBookAnalysisSectionTitle } from "./bookAnalysis.i18n";
 
 export class BookAnalysisSectionWriter {
   async generateSection(
@@ -24,14 +24,14 @@ export class BookAnalysisSectionWriter {
     temperature?: number,
     maxTokens?: number,
   ): Promise<SectionGenerationResult> {
-    const prompt = SECTION_PROMPTS[sectionKey];
+    const prompt = getBookAnalysisPrompt(sectionKey);
     const notesText = renderNotesForPrompt(notes);
     try {
       const result = await runStructuredPrompt({
         asset: bookAnalysisSectionPrompt,
         promptInput: {
           sectionKey,
-          sectionTitle: getSectionTitle(sectionKey),
+          sectionTitle: getBookAnalysisSectionTitle(sectionKey),
           promptFocus: prompt,
           notesText,
         },
@@ -83,7 +83,7 @@ export class BookAnalysisSectionWriter {
         asset: bookAnalysisOptimizedDraftPrompt,
         promptInput: {
           sectionKey: input.sectionKey,
-          sectionTitle: getSectionTitle(input.sectionKey),
+          sectionTitle: getBookAnalysisSectionTitle(input.sectionKey),
           instruction: input.instruction,
           currentDraft: input.currentDraft,
           notesText,

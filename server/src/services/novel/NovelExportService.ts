@@ -1,6 +1,7 @@
 import type { PipelineJob } from "@ai-novel/shared/types/novel";
 import type { NovelExportFormat, NovelExportScope } from "@ai-novel/shared/types/novelExport";
 import { prisma } from "../../db/prisma";
+import { getBackendMessage } from "../../i18n";
 import { AppError } from "../../middleware/errorHandler";
 import { NovelService } from "./NovelService";
 import { StoryMacroPlanService } from "./storyMacro/StoryMacroPlanService";
@@ -69,26 +70,29 @@ function buildExportTimestamp(input: Date = new Date()): string {
 
 function buildTxtContent(novel: NovelRecord): string {
   const lines: string[] = [];
-  lines.push(`《${novel.title}》`);
+  lines.push(getBackendMessage("novel.export.txt.title_line", { title: novel.title }));
   lines.push("");
 
   const description = normalizeText(novel.description);
   if (description) {
-    lines.push("【简介】");
+    lines.push(getBackendMessage("novel.export.txt.description_heading"));
     lines.push(description);
     lines.push("");
   }
 
   if (novel.chapters.length === 0) {
-    lines.push("（暂无章节内容）");
+    lines.push(getBackendMessage("novel.export.txt.empty_chapters"));
     return lines.join("\n");
   }
 
   for (const chapter of novel.chapters) {
     lines.push("=".repeat(48));
-    lines.push(`第${chapter.order}章 ${chapter.title}`);
+    lines.push(getBackendMessage("novel.export.txt.chapter_heading", {
+      order: chapter.order,
+      title: chapter.title,
+    }));
     lines.push("-".repeat(48));
-    lines.push(normalizeText(chapter.content) || "（本章暂无内容）");
+    lines.push(normalizeText(chapter.content) || getBackendMessage("novel.export.txt.chapter_empty"));
     lines.push("");
   }
 
@@ -352,7 +356,7 @@ function mapExportPlotBeat(raw: {
 
 function mapExportNovelDetail(raw: Awaited<ReturnType<NovelService["getNovelById"]>>): ExportNovelDetail {
   if (!raw) {
-    throw new AppError("小说不存在。", 404);
+    throw new AppError("novel.export.error.novel_not_found", 404);
   }
   return ({
     ...raw,
@@ -574,7 +578,7 @@ export class NovelExportService {
     });
 
     if (!novel) {
-      throw new AppError("小说不存在。", 404);
+      throw new AppError("novel.export.error.novel_not_found", 404);
     }
 
     return novel;
@@ -742,7 +746,7 @@ export class NovelExportService {
   ): Promise<NovelExportResult> {
     if (format === "txt") {
       if (scope !== "full") {
-        throw new AppError("TXT 导出仅支持整本书正文导出。", 400);
+        throw new AppError("novel.export.error.txt_scope_full_only", 400);
       }
       const novel = await this.getTxtNovelRecord(novelId);
       return {

@@ -42,5 +42,4 @@ export interface BookAnalysisProgressUpdate {
   stage: BookAnalysisStage;
   progress: number;
   itemKey?: string | null;
-  itemLabel?: string | null;
 }

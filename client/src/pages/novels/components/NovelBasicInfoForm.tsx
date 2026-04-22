@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import type { BookAnalysisSectionKey } from "@ai-novel/shared/types/bookAnalysis";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -25,6 +24,7 @@ import { BookFramingSection } from "./basicInfoForm/BookFramingSection";
 import CollapsibleSummary from "./CollapsibleSummary";
 import { ContinuationSourceSection } from "./basicInfoForm/ContinuationSourceSection";
 import { t } from "@/i18n";
+import type { BookAnalysisSectionOption } from "@/lib/bookAnalysisUi";
 
 
 interface WorldOption {
@@ -64,7 +64,7 @@ interface NovelBasicInfoFormProps {
     documentVersionNumber: number;
   }>;
   isLoadingSourceNovelBookAnalyses: boolean;
-  availableBookAnalysisSections: Array<{ key: BookAnalysisSectionKey; title: string }>;
+  availableBookAnalysisSections: BookAnalysisSectionOption[];
   onFormChange: (patch: Partial<NovelBasicFormState>) => void;
   onSubmit: () => void;
   isSubmitting: boolean;

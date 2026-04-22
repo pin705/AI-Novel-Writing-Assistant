@@ -7,9 +7,11 @@ import { bookAnalysisSourceNotePrompt } from "../../prompting/prompts/bookAnalys
 import { getBookAnalysisCacheSegmentVersion, getBookAnalysisNotesConcurrency } from "./bookAnalysis.config";
 import { runWithConcurrency } from "./bookAnalysis.concurrent";
 import {
-  formatCacheHitLabel,
-  formatCacheLookupLabel,
-  formatSegmentProgressLabel,
+  buildBookAnalysisCacheHitItemKey,
+  buildBookAnalysisCacheLookupItemKey,
+  buildBookAnalysisSegmentItemKey,
+} from "./bookAnalysis.i18n";
+import {
   getCacheHitProgress,
   getLoadingCacheProgress,
   getNotesStageProgress,
@@ -46,8 +48,7 @@ export class BookAnalysisSourceCacheService {
     await input.onProgress?.({
       stage: "loading_cache",
       progress: getLoadingCacheProgress(),
-      itemKey: "source-notes-cache",
-      itemLabel: formatCacheLookupLabel(),
+      itemKey: buildBookAnalysisCacheLookupItemKey(),
     });
 
     const cached = await prisma.bookAnalysisSourceCache.findUnique({
@@ -68,8 +69,7 @@ export class BookAnalysisSourceCacheService {
       await input.onProgress?.({
         stage: "preparing_notes",
         progress: getCacheHitProgress(),
-        itemKey: "source-notes-cache-hit",
-        itemLabel: formatCacheHitLabel(cached.segmentCount),
+        itemKey: buildBookAnalysisCacheHitItemKey(cached.segmentCount),
       });
       return {
         notes: cachedNotes,
@@ -80,7 +80,7 @@ export class BookAnalysisSourceCacheService {
 
     const segments = buildSourceSegments(input.content);
     if (segments.length === 0) {
-      throw new AppError("Knowledge document version content is empty.", 400);
+      throw new AppError("bookAnalysis.error.document_version_content_empty", 400);
     }
 
     const notes = new Array<SourceNote>(segments.length);
@@ -91,8 +91,7 @@ export class BookAnalysisSourceCacheService {
       await input.onProgress?.({
         stage: "preparing_notes",
         progress: getNotesStageProgress(completedCount, segments.length),
-        itemKey: `segment-${index + 1}`,
-        itemLabel: formatSegmentProgressLabel(index + 1, segments.length, segment.label),
+        itemKey: buildBookAnalysisSegmentItemKey(index + 1, segments.length, segment.label),
       });
 
       notes[index] = await this.buildSingleSourceNote({
@@ -107,8 +106,7 @@ export class BookAnalysisSourceCacheService {
       await input.onProgress?.({
         stage: "preparing_notes",
         progress: getNotesStageProgress(completedCount, segments.length),
-        itemKey: `segment-${index + 1}`,
-        itemLabel: formatSegmentProgressLabel(index + 1, segments.length, segment.label),
+        itemKey: buildBookAnalysisSegmentItemKey(index + 1, segments.length, segment.label),
       });
     });
 
@@ -157,7 +155,7 @@ export class BookAnalysisSourceCacheService {
     const resolvedModel = requestedModel?.trim()
       || (isBuiltInProvider(provider) ? PROVIDERS[provider].defaultModel : "");
     if (!resolvedModel) {
-      throw new AppError("Custom provider requires an explicit model for book analysis.", 400);
+      throw new AppError("bookAnalysis.error.custom_provider_model_required", 400);
     }
     return {
       provider,

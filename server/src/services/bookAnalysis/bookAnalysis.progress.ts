@@ -3,6 +3,12 @@ import {
   NOTES_PROGRESS_SHARE,
   SECTION_PROGRESS_SHARE,
 } from "./bookAnalysis.config";
+import {
+  formatBookAnalysisCacheHitLabel,
+  formatBookAnalysisCacheLookupLabel,
+  formatBookAnalysisSectionProgressLabel,
+  formatBookAnalysisSegmentProgressLabel,
+} from "./bookAnalysis.i18n";
 
 export function getLoadingCacheProgress(): number {
   return LOADING_CACHE_PROGRESS;
@@ -27,17 +33,17 @@ export function getSectionStageProgress(completed: number, total: number): numbe
 }
 
 export function formatCacheLookupLabel(): string {
-  return "查找 source notes 缓存";
+  return formatBookAnalysisCacheLookupLabel();
 }
 
 export function formatCacheHitLabel(segmentCount: number): string {
-  return `片段缓存命中 · 共 ${segmentCount} 段`;
+  return formatBookAnalysisCacheHitLabel(segmentCount);
 }
 
 export function formatSegmentProgressLabel(index: number, total: number, label: string): string {
-  return `片段 ${index}/${total} · ${label}`;
+  return formatBookAnalysisSegmentProgressLabel(index, total, label);
 }
 
 export function formatSectionProgressLabel(index: number, total: number, label: string): string {
-  return `section ${index}/${total} · ${label}`;
+  return formatBookAnalysisSectionProgressLabel(index, total, label);
 }

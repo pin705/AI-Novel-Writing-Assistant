@@ -3,6 +3,8 @@ import type {
   DynamicCharacterOverview,
 } from "@ai-novel/shared/types/characterDynamics";
 import { prisma } from "../../../db/prisma";
+import { getBackendMessage } from "../../../i18n";
+import { AppError } from "../../../middleware/errorHandler";
 import type {
   ConfirmCandidateInput,
   MergeCandidateInput,
@@ -37,12 +39,12 @@ export class CharacterDynamicsMutationService {
       },
     });
     if (!candidate) {
-      throw new Error("角色候选不存在。");
+      throw new AppError("character_dynamics.error.candidate_not_found", 404);
     }
 
     const createdCharacter = await this.getNovelContextService().createCharacter(novelId, {
       name: candidate.proposedName,
-      role: input.role?.trim() || candidate.proposedRole?.trim() || "新角色",
+      role: input.role?.trim() || candidate.proposedRole?.trim() || getBackendMessage("character_dynamics.default_role.new_character"),
       castRole: input.castRole,
       relationToProtagonist: input.relationToProtagonist?.trim() || undefined,
       currentState: input.currentState?.trim() || undefined,
@@ -63,7 +65,11 @@ export class CharacterDynamicsMutationService {
           novelId,
           chapterId: candidate.sourceChapter?.id ?? null,
           category: "character_dynamic_confirm",
-          content: `确认新角色：${createdCharacter.name}。来源候选：${candidate.proposedName}。${candidate.summary ?? ""}`.trim(),
+          content: getBackendMessage("character_dynamics.decision.confirm_candidate", {
+            characterName: createdCharacter.name,
+            candidateName: candidate.proposedName,
+            summary: candidate.summary ?? "",
+          }).trim(),
           importance: "high",
           sourceType: "character_candidate",
           sourceRefId: candidate.id,
@@ -95,10 +101,10 @@ export class CharacterDynamicsMutationService {
       }),
     ]);
     if (!candidate) {
-      throw new Error("角色候选不存在。");
+      throw new AppError("character_dynamics.error.candidate_not_found", 404);
     }
     if (!character) {
-      throw new Error("要合并到的角色不存在。");
+      throw new AppError("character_dynamics.error.merge_target_character_not_found", 404);
     }
 
     await prisma.$transaction(async (tx) => {
@@ -114,7 +120,11 @@ export class CharacterDynamicsMutationService {
           novelId,
           chapterId: candidate.sourceChapter?.id ?? null,
           category: "character_dynamic_merge",
-          content: `候选角色 ${candidate.proposedName} 已并入 ${character.name}。${input.summary?.trim() || candidate.summary || ""}`.trim(),
+          content: getBackendMessage("character_dynamics.decision.merge_candidate", {
+            candidateName: candidate.proposedName,
+            characterName: character.name,
+            summary: input.summary?.trim() || candidate.summary || "",
+          }).trim(),
           importance: "normal",
           sourceType: "character_candidate",
           sourceRefId: candidate.id,
@@ -136,7 +146,7 @@ export class CharacterDynamicsMutationService {
       select: { id: true, name: true },
     });
     if (!character) {
-      throw new Error("角色不存在。");
+      throw new AppError("character_dynamics.error.character_not_found", 404);
     }
 
     const overview = await this.queryService.getOverview(novelId, {
@@ -214,11 +224,21 @@ export class CharacterDynamicsMutationService {
       }
 
       const decisionSegments = [
-        typeof input.currentState === "string" ? `状态=${input.currentState}` : "",
-        typeof input.currentGoal === "string" ? `目标=${input.currentGoal}` : "",
-        typeof input.factionLabel === "string" ? `阵营=${input.factionLabel}` : "",
-        typeof input.roleLabel === "string" ? `卷级身份=${input.roleLabel}` : "",
-        typeof input.responsibility === "string" ? `职责=${input.responsibility}` : "",
+        typeof input.currentState === "string"
+          ? getBackendMessage("character_dynamics.decision_segment.current_state", { value: input.currentState })
+          : "",
+        typeof input.currentGoal === "string"
+          ? getBackendMessage("character_dynamics.decision_segment.current_goal", { value: input.currentGoal })
+          : "",
+        typeof input.factionLabel === "string"
+          ? getBackendMessage("character_dynamics.decision_segment.faction_label", { value: input.factionLabel })
+          : "",
+        typeof input.roleLabel === "string"
+          ? getBackendMessage("character_dynamics.decision_segment.role_label", { value: input.roleLabel })
+          : "",
+        typeof input.responsibility === "string"
+          ? getBackendMessage("character_dynamics.decision_segment.responsibility", { value: input.responsibility })
+          : "",
         input.decisionNote?.trim() || "",
       ].filter(Boolean);
       if (decisionSegments.length > 0) {
@@ -227,7 +247,10 @@ export class CharacterDynamicsMutationService {
             novelId,
             chapterId: input.chapterId ?? null,
             category: "character_dynamic_manual_update",
-            content: `${character.name} 动态状态更新：${decisionSegments.join("；")}`,
+            content: getBackendMessage("character_dynamics.decision.manual_update", {
+              characterName: character.name,
+              segments: decisionSegments.join(getBackendMessage("character_dynamics.decision.segment_separator")),
+            }),
             importance: "normal",
             sourceType: "character_dynamic_state",
             sourceRefId: character.id,
@@ -251,7 +274,7 @@ export class CharacterDynamicsMutationService {
       },
     });
     if (!relation) {
-      throw new Error("角色关系不存在。");
+      throw new AppError("character_dynamics.error.relation_not_found", 404);
     }
 
     const created = await prisma.$transaction(async (tx) => {
@@ -293,7 +316,12 @@ export class CharacterDynamicsMutationService {
           novelId,
           chapterId: input.chapterId ?? null,
           category: "character_relation_stage_manual_update",
-          content: `${relation.sourceCharacter.name} -> ${relation.targetCharacter.name} 关系阶段更新为 ${input.stageLabel}。${input.decisionNote?.trim() || input.stageSummary}`.trim(),
+          content: getBackendMessage("character_dynamics.decision.relation_stage_updated", {
+            sourceName: relation.sourceCharacter.name,
+            targetName: relation.targetCharacter.name,
+            stageLabel: input.stageLabel,
+            summary: input.decisionNote?.trim() || input.stageSummary,
+          }).trim(),
           importance: "normal",
           sourceType: "character_relation_stage",
           sourceRefId: relation.id,

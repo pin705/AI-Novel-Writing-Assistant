@@ -1,5 +1,4 @@
 import type { BookAnalysisEvidenceItem, BookAnalysisSection, BookAnalysisSectionKey } from "@ai-novel/shared/types/bookAnalysis";
-import { BOOK_ANALYSIS_SECTIONS } from "@ai-novel/shared/types/bookAnalysis";
 import {
   CHAPTER_HEADING_REGEX,
   CHUNK_OVERLAP_CHARS,
@@ -14,6 +13,14 @@ import {
   TARGET_SEGMENT_CHARS,
   UNLIMITED_NOTES_MAX_TOKENS_CACHE_KEY,
 } from "./bookAnalysis.constants";
+import {
+  buildBookAnalysisSegmentLabel,
+  getBookAnalysisFragmentLabel,
+  getBookAnalysisPromptLabels,
+  getBookAnalysisSectionTitle,
+  getBookAnalysisSeparators,
+  getBookAnalysisSourceDocumentLabel,
+} from "./bookAnalysis.i18n";
 import type { SourceNote, SourceSegment } from "./bookAnalysis.types";
 
 export function isMissingTableError(error: unknown): boolean {
@@ -34,7 +41,7 @@ export function extractJSONObject(source: string): string {
   const first = text.indexOf("{");
   const last = text.lastIndexOf("}");
   if (first === -1 || last === -1 || first >= last) {
-    throw new Error("Invalid JSON object.");
+    throw new Error("bookAnalysis.error.invalid_json_object");
   }
   return text.slice(first, last + 1);
 }
@@ -114,9 +121,9 @@ export function toEvidenceList(value: unknown, sourceLabelFallback = ""): BookAn
       }
       const sourceLabel = typeof row.sourceLabel === "string" ? row.sourceLabel.trim() : sourceLabelFallback;
       return {
-        label: label || "片段",
+        label: label || getBookAnalysisFragmentLabel(),
         excerpt: excerpt || "",
-        sourceLabel: sourceLabel || "源文档",
+        sourceLabel: sourceLabel || getBookAnalysisSourceDocumentLabel(),
       };
     })
     .filter((item): item is BookAnalysisEvidenceItem => Boolean(item))
@@ -193,7 +200,7 @@ function splitIntoChunkSegments(content: string): SourceSegment[] {
     const chunk = normalized.slice(start, boundary).trim();
     if (chunk) {
       segments.push({
-        label: `片段 ${order}`,
+        label: buildBookAnalysisSegmentLabel(order),
         content: chunk,
       });
       order += 1;
@@ -215,25 +222,29 @@ export function buildSourceSegments(content: string): SourceSegment[] {
 }
 
 export function renderNotesForPrompt(notes: SourceNote[]): string {
+  const labels = getBookAnalysisPromptLabels();
+  const separators = getBookAnalysisSeparators();
+  const joinValues = (values: string[]) => values.join(separators.list) || labels.none;
+
   return notes
     .map((note) => {
       const readerSignals = note.readerSignals ?? [];
       const weaknessSignals = note.weaknessSignals ?? [];
       const sections = [
         `## ${note.sourceLabel}`,
-        `摘要：${note.summary}`,
-        `剧情要点：${note.plotPoints.join("；") || "无"}`,
-        `时间线节点：${note.timelineEvents.join("；") || "无"}`,
-        `人物信息：${note.characters.join("；") || "无"}`,
-        `设定信息：${note.worldbuilding.join("；") || "无"}`,
-        `主题信息：${note.themes.join("；") || "无"}`,
-        `文风技法：${note.styleTechniques.join("；") || "无"}`,
-        `商业卖点：${note.marketHighlights.join("；") || "无"}`,
-        `读者信号：${readerSignals.join("；") || "无"}`,
-        `短板信号：${weaknessSignals.join("；") || "无"}`,
+        `${labels.summary}${separators.value}${note.summary}`,
+        `${labels.plotPoints}${separators.value}${joinValues(note.plotPoints)}`,
+        `${labels.timelineEvents}${separators.value}${joinValues(note.timelineEvents)}`,
+        `${labels.characters}${separators.value}${joinValues(note.characters)}`,
+        `${labels.worldbuilding}${separators.value}${joinValues(note.worldbuilding)}`,
+        `${labels.themes}${separators.value}${joinValues(note.themes)}`,
+        `${labels.styleTechniques}${separators.value}${joinValues(note.styleTechniques)}`,
+        `${labels.marketHighlights}${separators.value}${joinValues(note.marketHighlights)}`,
+        `${labels.readerSignals}${separators.value}${joinValues(readerSignals)}`,
+        `${labels.weaknessSignals}${separators.value}${joinValues(weaknessSignals)}`,
         note.evidence.length > 0
-          ? `证据摘录：\n${note.evidence.map((item) => `- ${item.label}：${item.excerpt}`).join("\n")}`
-          : "证据摘录：无",
+          ? `${labels.evidence}${separators.value}\n${note.evidence.map((item) => `- ${item.label}${separators.value}${item.excerpt}`).join("\n")}`
+          : `${labels.evidence}${separators.value}${labels.none}`,
       ];
       return sections.join("\n");
     })
@@ -241,7 +252,7 @@ export function renderNotesForPrompt(notes: SourceNote[]): string {
 }
 
 export function getSectionTitle(sectionKey: BookAnalysisSectionKey): string {
-  return BOOK_ANALYSIS_SECTIONS.find((item) => item.key === sectionKey)?.title ?? sectionKey;
+  return getBookAnalysisSectionTitle(sectionKey);
 }
 
 export function getEffectiveContent(section: Pick<BookAnalysisSection, "editedContent" | "aiContent">): string {

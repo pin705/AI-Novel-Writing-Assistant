@@ -1,5 +1,7 @@
 import type { LLMProvider } from "@ai-novel/shared/types/llm";
 import { prisma } from "../../db/prisma";
+import { getBackendMessage, type BackendLocale } from "../../i18n";
+import { AppError } from "../../middleware/errorHandler";
 import { runTextPrompt } from "../../prompting/core/promptRunner";
 import {
   novelDraftOptimizeFullPrompt,
@@ -16,6 +18,8 @@ interface DraftOptimizeInput {
   selectedText?: string;
   target: "outline" | "structured_outline";
 }
+
+const NOVEL_DRAFT_OPTIMIZE_PROMPT_LOCALE: BackendLocale = "zh-CN";
 
 function toText(content: unknown): string {
   if (typeof content === "string") {
@@ -44,7 +48,7 @@ function extractJSONArray(source: string): string {
   const first = text.indexOf("[");
   const last = text.lastIndexOf("]");
   if (first < 0 || last < 0 || first >= last) {
-    throw new Error("未检测到有效 JSON 数组。");
+    throw new AppError("novel.draft_optimize.error.invalid_json_array", 400);
   }
   return text.slice(first, last + 1);
 }
@@ -62,7 +66,7 @@ function buildSelectionContext(currentDraft: string, selectedText: string): {
   const selection = normalizeLineBreaks(selectedText);
   const index = draft.indexOf(selection);
   if (index < 0) {
-    throw new Error("选中的文本未在当前草稿中找到，请重新选择后再试。");
+    throw new AppError("novel.draft_optimize.error.selected_text_not_found", 400);
   }
   const windowSize = 180;
   const before = draft.slice(Math.max(0, index - windowSize), index).trim();
@@ -88,12 +92,33 @@ function buildWorldContext(novel: {
     economy?: string | null;
     factions?: string | null;
   } | null;
-}): string {
+}, locale: BackendLocale = NOVEL_DRAFT_OPTIMIZE_PROMPT_LOCALE): string {
+  const labels = {
+    sectionTitle: getBackendMessage("novel.draft_optimize.world_context.section_title", undefined, locale),
+    empty: getBackendMessage("novel.draft_optimize.world_context.empty", undefined, locale),
+    name: getBackendMessage("novel.draft_optimize.world_context.name", undefined, locale),
+    type: getBackendMessage("novel.draft_optimize.world_context.type", undefined, locale),
+    summary: getBackendMessage("novel.draft_optimize.world_context.summary", undefined, locale),
+    axioms: getBackendMessage("novel.draft_optimize.world_context.axioms", undefined, locale),
+    background: getBackendMessage("novel.draft_optimize.world_context.background", undefined, locale),
+    geography: getBackendMessage("novel.draft_optimize.world_context.geography", undefined, locale),
+    powerSystem: getBackendMessage("novel.draft_optimize.world_context.power_system", undefined, locale),
+    politics: getBackendMessage("novel.draft_optimize.world_context.politics", undefined, locale),
+    races: getBackendMessage("novel.draft_optimize.world_context.races", undefined, locale),
+    religions: getBackendMessage("novel.draft_optimize.world_context.religions", undefined, locale),
+    technology: getBackendMessage("novel.draft_optimize.world_context.technology", undefined, locale),
+    history: getBackendMessage("novel.draft_optimize.world_context.history", undefined, locale),
+    economy: getBackendMessage("novel.draft_optimize.world_context.economy", undefined, locale),
+    factions: getBackendMessage("novel.draft_optimize.world_context.factions", undefined, locale),
+    conflicts: getBackendMessage("novel.draft_optimize.world_context.conflicts", undefined, locale),
+    unspecified: getBackendMessage("novel.draft_optimize.world_context.unspecified", undefined, locale),
+    none: getBackendMessage("novel.draft_optimize.world_context.none", undefined, locale),
+  };
   const world = novel.world;
   if (!world) {
-    return "世界上下文：暂无";
+    return labels.empty;
   }
-  let axiomsText = "无";
+  let axiomsText = labels.none;
   if (world.axioms) {
     try {
       const parsed = JSON.parse(world.axioms) as string[];
@@ -104,23 +129,23 @@ function buildWorldContext(novel: {
       axiomsText = world.axioms;
     }
   }
-  return `世界上下文：
-世界名称：${world.name}
-世界类型：${world.worldType ?? "未指定"}
-世界简介：${world.description ?? "无"}
-核心公理：
+  return `${labels.sectionTitle}:
+${labels.name}: ${world.name}
+${labels.type}: ${world.worldType ?? labels.unspecified}
+${labels.summary}: ${world.description ?? labels.none}
+${labels.axioms}:
 ${axiomsText}
-背景：${world.background ?? "无"}
-地理：${world.geography ?? "无"}
-力量体系：${world.magicSystem ?? "无"}
-社会政治：${world.politics ?? "无"}
-种族：${world.races ?? "无"}
-宗教：${world.religions ?? "无"}
-科技：${world.technology ?? "无"}
-历史：${world.history ?? "无"}
-经济：${world.economy ?? "无"}
-势力关系：${world.factions ?? "无"}
-核心冲突：${world.conflicts ?? "无"}`;
+${labels.background}: ${world.background ?? labels.none}
+${labels.geography}: ${world.geography ?? labels.none}
+${labels.powerSystem}: ${world.magicSystem ?? labels.none}
+${labels.politics}: ${world.politics ?? labels.none}
+${labels.races}: ${world.races ?? labels.none}
+${labels.religions}: ${world.religions ?? labels.none}
+${labels.technology}: ${world.technology ?? labels.none}
+${labels.history}: ${world.history ?? labels.none}
+${labels.economy}: ${world.economy ?? labels.none}
+${labels.factions}: ${world.factions ?? labels.none}
+${labels.conflicts}: ${world.conflicts ?? labels.none}`;
 }
 
 export class NovelDraftOptimizeService {
@@ -134,25 +159,25 @@ export class NovelDraftOptimizeService {
       include: { world: true, characters: true },
     });
     if (!novel) {
-      throw new Error("小说不存在。");
+      throw new AppError("novel.draft_optimize.error.novel_not_found", 404);
     }
 
     const currentDraft = input.currentDraft.trim();
     if (!currentDraft) {
-      throw new Error("当前草稿不能为空。");
+      throw new AppError("novel.draft_optimize.error.current_draft_required", 400);
     }
 
-    const worldContext = buildWorldContext(novel);
+    const worldContext = buildWorldContext(novel, NOVEL_DRAFT_OPTIMIZE_PROMPT_LOCALE);
     const charactersText = novel.characters.length > 0
       ? novel.characters
-          .map((c) => `- ${c.name}(${c.role})${c.personality ? `：${c.personality.slice(0, 80)}` : ""}`)
+          .map((c) => `- ${c.name} (${c.role})${c.personality ? `：${c.personality.slice(0, 80)}` : ""}`)
           .join("\n")
-      : "暂无";
+      : getBackendMessage("novel.draft_optimize.character_context.none", undefined, NOVEL_DRAFT_OPTIMIZE_PROMPT_LOCALE);
 
     if (input.mode === "selection") {
       const selectedText = input.selectedText?.trim();
       if (!selectedText) {
-        throw new Error("选区优化模式下必须提供 selectedText。");
+        throw new AppError("novel.draft_optimize.error.selected_text_required", 400);
       }
       const selectionContext = buildSelectionContext(currentDraft, selectedText);
       const rewrittenSelection = await runTextPrompt({

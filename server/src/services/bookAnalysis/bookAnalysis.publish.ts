@@ -16,19 +16,19 @@ export async function publishAnalysisToNovel(input: {
   ]);
 
   if (!detail) {
-    throw new AppError("Book analysis not found.", 404);
+    throw new AppError("bookAnalysis.error.not_found", 404);
   }
   if (detail.status === "archived") {
-    throw new AppError("Archived book analysis cannot be published.", 400);
+    throw new AppError("bookAnalysis.error.publish_archived_forbidden", 400);
   }
   if (!novel) {
-    throw new AppError("Novel not found.", 404);
+    throw new AppError("novel.error.not_found", 404);
   }
 
   const publishedAtISO = new Date().toISOString();
   const publishPayload = buildPublishMarkdown(detail, publishedAtISO);
   if (!publishPayload.hasPublishableContent) {
-    throw new AppError("Book analysis has no publishable content.", 400);
+    throw new AppError("bookAnalysis.error.publishable_content_required", 400);
   }
 
   const publishedDocument = await input.knowledgeService.createDocument({

@@ -9,6 +9,7 @@ import { prisma } from "../../db/prisma";
 import { AppError } from "../../middleware/errorHandler";
 import { getBookAnalysisMaxConcurrentTasks } from "./bookAnalysis.config";
 import { BookAnalysisGenerationService } from "./bookAnalysis.generation";
+import { buildBookAnalysisCopyTitle, getBookAnalysisSectionTitle } from "./bookAnalysis.i18n";
 import { BookAnalysisTaskQueue } from "./bookAnalysis.queue";
 import { buildAnalysisSummaryFromContent, normalizeMaxTokens, normalizeTemperature } from "./bookAnalysis.utils";
 import { BookAnalysisWatchdogService } from "./BookAnalysisWatchdogService";
@@ -53,10 +54,10 @@ export class BookAnalysisCommandService {
       },
     });
     if (!analysis) {
-      throw new AppError("Book analysis not found.", 404);
+      throw new AppError("bookAnalysis.error.not_found", 404);
     }
     if (analysis.status !== "queued" && analysis.status !== "running") {
-      throw new AppError("Only queued or running analyses can be resumed.", 400);
+      throw new AppError("bookAnalysis.error.resume_requires_queued_or_running", 400);
     }
 
     await prisma.bookAnalysis.update({
@@ -72,7 +73,7 @@ export class BookAnalysisCommandService {
 
     const detail = await this.queryService.getAnalysisById(analysisId);
     if (!detail) {
-      throw new AppError("Book analysis not found after resume.", 500);
+      throw new AppError("bookAnalysis.error.not_found_after_resume", 500);
     }
     return detail;
   }
@@ -102,16 +103,16 @@ export class BookAnalysisCommandService {
         },
       });
       if (!document) {
-        throw new AppError("Knowledge document not found.", 404);
+        throw new AppError("bookAnalysis.error.knowledge_document_not_found", 404);
       }
       if (document.status === "archived") {
-        throw new AppError("Archived knowledge documents cannot be analyzed.", 400);
+        throw new AppError("bookAnalysis.error.knowledge_document_archived_forbidden", 400);
       }
       const version = input.versionId
         ? document.versions.find((item) => item.id === input.versionId)
         : document.versions.find((item) => item.id === document.activeVersionId) ?? document.versions[0];
       if (!version) {
-        throw new AppError("Knowledge document version not found.", 400);
+        throw new AppError("bookAnalysis.error.knowledge_document_version_not_found", 400);
       }
       const analysis = await tx.bookAnalysis.create({
         data: {
@@ -133,7 +134,7 @@ export class BookAnalysisCommandService {
         data: BOOK_ANALYSIS_SECTIONS.map((section, index) => ({
           analysisId: analysis.id,
           sectionKey: section.key,
-          title: section.title,
+          title: getBookAnalysisSectionTitle(section.key),
           sortOrder: index,
           status: "idle",
           frozen: section.key === "timeline" ? !input.includeTimeline : false,
@@ -144,7 +145,7 @@ export class BookAnalysisCommandService {
     this.enqueueTask({ analysisId, kind: "full" });
     const detail = await this.queryService.getAnalysisById(analysisId);
     if (!detail) {
-      throw new AppError("Book analysis not found after creation.", 500);
+      throw new AppError("bookAnalysis.error.not_found_after_creation", 500);
     }
     return detail;
   }
@@ -159,17 +160,17 @@ export class BookAnalysisCommandService {
       },
     });
     if (!source) {
-      throw new AppError("Book analysis not found.", 404);
+      throw new AppError("bookAnalysis.error.not_found", 404);
     }
     if (source.status === "archived") {
-      throw new AppError("Archived book analysis cannot be copied.", 400);
+      throw new AppError("bookAnalysis.error.copy_archived_forbidden", 400);
     }
     const newAnalysisId = await prisma.$transaction(async (tx) => {
       const copied = await tx.bookAnalysis.create({
         data: {
           documentId: source.documentId,
           documentVersionId: source.documentVersionId,
-          title: `${source.title} - copy`,
+          title: buildBookAnalysisCopyTitle(source.title),
           status: "draft",
           summary: source.summary,
           provider: source.provider,
@@ -192,7 +193,7 @@ export class BookAnalysisCommandService {
         data: source.sections.map((section) => ({
           analysisId: copied.id,
           sectionKey: section.sectionKey,
-          title: section.title,
+          title: getBookAnalysisSectionTitle(section.sectionKey as BookAnalysisSectionKey),
           status: section.status,
           aiContent: section.aiContent,
           editedContent: section.editedContent,
@@ -207,7 +208,7 @@ export class BookAnalysisCommandService {
     });
     const detail = await this.queryService.getAnalysisById(newAnalysisId);
     if (!detail) {
-      throw new AppError("Book analysis not found after copy.", 500);
+      throw new AppError("bookAnalysis.error.not_found_after_copy", 500);
     }
     return detail;
   }
@@ -220,10 +221,10 @@ export class BookAnalysisCommandService {
       },
     });
     if (!analysis) {
-      throw new AppError("Book analysis not found.", 404);
+      throw new AppError("bookAnalysis.error.not_found", 404);
     }
     if (analysis.status === "archived") {
-      throw new AppError("Archived book analysis cannot be rebuilt.", 400);
+      throw new AppError("bookAnalysis.error.rebuild_archived_forbidden", 400);
     }
     await prisma.$transaction(async (tx) => {
       await tx.bookAnalysis.update({
@@ -254,7 +255,7 @@ export class BookAnalysisCommandService {
     this.enqueueTask({ analysisId, kind: "full" });
     const detail = await this.queryService.getAnalysisById(analysisId);
     if (!detail) {
-      throw new AppError("Book analysis not found after rebuild.", 500);
+      throw new AppError("bookAnalysis.error.not_found_after_rebuild", 500);
     }
     return detail;
   }
@@ -265,10 +266,10 @@ export class BookAnalysisCommandService {
       select: { status: true },
     });
     if (!analysis) {
-      throw new AppError("Book analysis not found.", 404);
+      throw new AppError("bookAnalysis.error.not_found", 404);
     }
     if (analysis.status !== "failed" && analysis.status !== "cancelled") {
-      throw new AppError("Only failed or cancelled analyses can be retried.", 400);
+      throw new AppError("bookAnalysis.error.retry_requires_failed_or_cancelled", 400);
     }
     return this.rebuildAnalysis(analysisId);
   }
@@ -282,13 +283,13 @@ export class BookAnalysisCommandService {
       },
     });
     if (!analysis) {
-      throw new AppError("Book analysis not found.", 404);
+      throw new AppError("bookAnalysis.error.not_found", 404);
     }
     if (analysis.status === "archived") {
-      throw new AppError("Archived book analysis cannot be cancelled.", 400);
+      throw new AppError("bookAnalysis.error.cancel_archived_forbidden", 400);
     }
     if (analysis.status === "succeeded" || analysis.status === "failed" || analysis.status === "cancelled") {
-      throw new AppError("Only queued or running analyses can be cancelled.", 400);
+      throw new AppError("bookAnalysis.error.cancel_requires_queued_or_running", 400);
     }
 
     if (analysis.status === "queued") {
@@ -317,7 +318,7 @@ export class BookAnalysisCommandService {
 
     const detail = await this.queryService.getAnalysisById(analysisId);
     if (!detail) {
-      throw new AppError("Book analysis not found after cancel.", 500);
+      throw new AppError("bookAnalysis.error.not_found_after_cancel", 500);
     }
     return detail;
   }
@@ -333,13 +334,13 @@ export class BookAnalysisCommandService {
       },
     });
     if (!section) {
-      throw new AppError("Book analysis section not found.", 404);
+      throw new AppError("bookAnalysis.error.section_not_found", 404);
     }
     if (section.analysis.status === "archived") {
-      throw new AppError("Archived book analysis cannot be regenerated.", 400);
+      throw new AppError("bookAnalysis.error.regenerate_archived_forbidden", 400);
     }
     if (section.frozen) {
-      throw new AppError("Frozen sections cannot be regenerated until unfrozen.", 400);
+      throw new AppError("bookAnalysis.error.regenerate_frozen_forbidden", 400);
     }
     await prisma.$transaction(async (tx) => {
       await tx.bookAnalysis.update({
@@ -370,7 +371,7 @@ export class BookAnalysisCommandService {
     this.enqueueTask({ analysisId, kind: "section", sectionKey });
     const detail = await this.queryService.getAnalysisById(analysisId);
     if (!detail) {
-      throw new AppError("Book analysis not found after section regeneration.", 500);
+      throw new AppError("bookAnalysis.error.not_found_after_section_regeneration", 500);
     }
     return detail;
   }
@@ -405,7 +406,7 @@ export class BookAnalysisCommandService {
       },
     });
     if (!section) {
-      throw new AppError("Book analysis section not found.", 404);
+      throw new AppError("bookAnalysis.error.section_not_found", 404);
     }
     const normalizedEditedContent = input.editedContent?.trim() || null;
     const normalizedAiContent = section.aiContent?.replace(/\r\n?/g, "\n").trim() || null;
@@ -435,7 +436,7 @@ export class BookAnalysisCommandService {
     }
     const detail = await this.queryService.getAnalysisById(analysisId);
     if (!detail) {
-      throw new AppError("Book analysis not found after section update.", 500);
+      throw new AppError("bookAnalysis.error.not_found_after_section_update", 500);
     }
     return detail;
   }
@@ -448,7 +449,7 @@ export class BookAnalysisCommandService {
       where: { id: analysisId },
     });
     if (!analysis) {
-      throw new AppError("Book analysis not found.", 404);
+      throw new AppError("bookAnalysis.error.not_found", 404);
     }
     await prisma.bookAnalysis.update({
       where: { id: analysisId },
@@ -456,7 +457,7 @@ export class BookAnalysisCommandService {
     });
     const detail = await this.queryService.getAnalysisById(analysisId);
     if (!detail) {
-      throw new AppError("Book analysis not found after status update.", 500);
+      throw new AppError("bookAnalysis.error.not_found_after_status_update", 500);
     }
     return detail;
   }

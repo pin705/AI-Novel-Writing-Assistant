@@ -8,6 +8,7 @@ import type {
   DirectorAutoExecutionPlan,
   DirectorAutoExecutionState,
 } from "@ai-novel/shared/types/novelDirector";
+import { getBackendMessage } from "../../../i18n";
 import {
   buildPipelineBackgroundActivityLabels,
   parsePipelinePayload,
@@ -70,15 +71,29 @@ export function buildDirectorAutoExecutionScopeLabel(
   const normalized = normalizeDirectorAutoExecutionPlan(plan);
   if (normalized.mode === "chapter_range") {
     if ((normalized.startOrder ?? 1) === (normalized.endOrder ?? 1)) {
-      return `第 ${normalized.startOrder} 章`;
+      return getBackendMessage("director.scope.chapter_single", {
+        chapterOrder: normalized.startOrder,
+      });
     }
-    return `第 ${normalized.startOrder}-${normalized.endOrder} 章`;
+    return getBackendMessage("director.scope.chapter_range", {
+      startOrder: normalized.startOrder,
+      endOrder: normalized.endOrder,
+    });
   }
   if (normalized.mode === "volume") {
     const volumeLabel = fallbackVolumeTitle?.trim() ? ` · ${fallbackVolumeTitle.trim()}` : "";
-    return `第 ${normalized.volumeOrder} 卷${volumeLabel}`;
+    return getBackendMessage("director.scope.volume", {
+      volumeOrder: normalized.volumeOrder,
+      volumeLabel,
+    });
   }
-  return `前 ${Math.max(1, fallbackTotalChapterCount ?? 10)} 章`;
+  const chapterCount = Math.max(1, fallbackTotalChapterCount ?? 10);
+  if (chapterCount === 10) {
+    return getBackendMessage("workflow.scope.front10");
+  }
+  return getBackendMessage("director.scope.front_chapters", {
+    chapterCount,
+  });
 }
 
 export function buildDirectorAutoExecutionScopeLabelFromState(
@@ -195,7 +210,9 @@ export function buildDirectorAutoExecutionState(input: {
 }
 
 export function buildDirectorAutoExecutionPausedLabel(state: DirectorAutoExecutionState): string {
-  return `${buildDirectorAutoExecutionScopeLabelFromState(state)}自动执行已暂停`;
+  return getBackendMessage("workflow.status.paused", {
+    scopeLabel: buildDirectorAutoExecutionScopeLabelFromState(state),
+  });
 }
 
 export function buildDirectorAutoExecutionPausedSummary(input: {
@@ -214,16 +231,25 @@ export function buildDirectorAutoExecutionPausedSummary(input: {
     });
   }
   const remainingSummary = input.remainingChapterCount > 0
-    ? `当前仍有 ${input.remainingChapterCount} 章待继续`
-    : "当前批次已无待继续章节";
+    ? getBackendMessage("director.auto_execution.remaining_count", {
+      remainingChapterCount: input.remainingChapterCount,
+    })
+    : getBackendMessage("director.auto_execution.remaining_none");
   const nextSummary = typeof input.nextChapterOrder === "number"
-    ? `，建议从第 ${input.nextChapterOrder} 章继续`
+    ? getBackendMessage("director.auto_execution.next_chapter", {
+      nextChapterOrder: input.nextChapterOrder,
+    })
     : "";
-  return `${input.scopeLabel}已进入自动执行，但当前批量任务未完全完成：${input.failureMessage} ${remainingSummary}${nextSummary}。`;
+  return getBackendMessage("director.auto_execution.paused_summary", {
+    scopeLabel: input.scopeLabel,
+    failureMessage: input.failureMessage,
+    remainingSummary,
+    nextSummary,
+  });
 }
 
 export function buildDirectorAutoExecutionCompletedLabel(scopeLabel: string): string {
-  return `${scopeLabel}自动执行完成`;
+  return getBackendMessage("director.auto_execution.completed", { scopeLabel });
 }
 
 export function buildDirectorAutoExecutionCompletedSummary(input: {
@@ -233,14 +259,23 @@ export function buildDirectorAutoExecutionCompletedSummary(input: {
   autoRepair?: boolean;
 }): string {
   const completedScope = input.scopeLabel;
-  const title = input.title.trim() || "当前项目";
+  const title = input.title.trim() || getBackendMessage("director.default.current_project");
   if (input.autoReview === false) {
-    return `《${title}》已自动完成${completedScope}的章节执行，正文生成后未额外执行自动审核或修复。`;
+    return getBackendMessage("director.auto_execution.completed_summary.no_review", {
+      title,
+      scopeLabel: completedScope,
+    });
   }
   if (input.autoRepair === false) {
-    return `《${title}》已自动完成${completedScope}的章节执行与自动审核，未开启自动修复。`;
+    return getBackendMessage("director.auto_execution.completed_summary.review_only", {
+      title,
+      scopeLabel: completedScope,
+    });
   }
-  return `《${title}》已自动完成${completedScope}的章节执行、自动审核与修复。`;
+  return getBackendMessage("director.auto_execution.completed_summary.review_and_repair", {
+    title,
+    scopeLabel: completedScope,
+  });
 }
 
 export function buildDirectorAutoExecutionPipelineOptions(input: {
@@ -300,7 +335,11 @@ export function resolveDirectorAutoExecutionWorkflowState(
     return {
       stage: "quality_repair",
       itemKey: "quality_repair",
-      itemLabel: `正在自动审校${scopeLabel}${chapterLabel}${activityLabel}`,
+      itemLabel: getBackendMessage("director.auto_execution.item.reviewing", {
+        scopeLabel,
+        chapterLabel,
+        activityLabel,
+      }),
       progress: Number((0.965 + ((job.progress ?? 0) * 0.02)).toFixed(4)),
     };
   }
@@ -308,14 +347,22 @@ export function resolveDirectorAutoExecutionWorkflowState(
     return {
       stage: "quality_repair",
       itemKey: "quality_repair",
-      itemLabel: `正在自动修复${scopeLabel}${chapterLabel}${activityLabel}`,
+      itemLabel: getBackendMessage("director.auto_execution.item.repairing", {
+        scopeLabel,
+        chapterLabel,
+        activityLabel,
+      }),
       progress: Number((0.975 + ((job.progress ?? 0) * 0.015)).toFixed(4)),
     };
   }
   return {
     stage: "chapter_execution",
     itemKey: "chapter_execution",
-    itemLabel: `正在自动执行${scopeLabel}${chapterLabel}${activityLabel}`,
+    itemLabel: getBackendMessage("director.auto_execution.item.executing", {
+      scopeLabel,
+      chapterLabel,
+      activityLabel,
+    }),
     progress: Number((0.93 + ((job.progress ?? 0) * 0.035)).toFixed(4)),
   };
 }

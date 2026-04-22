@@ -1,4 +1,6 @@
 import { prisma } from "../../db/prisma";
+import { getBackendMessage, translateBackendText } from "../../i18n";
+import { resolveBookAnalysisProgressLabel } from "../../services/bookAnalysis/bookAnalysis.i18n";
 import { AgentToolError, type AgentToolName } from "../types";
 import type { AgentToolDefinition } from "./toolTypes";
 import {
@@ -49,7 +51,7 @@ export const bookAnalysisToolDefinitions: Partial<
           status: row.status,
           progress: row.progress,
           currentStage: row.currentStage ?? null,
-          lastError: row.lastError ?? null,
+          lastError: row.lastError ? translateBackendText(row.lastError) : null,
           updatedAt: row.updatedAt.toISOString(),
         })),
         summary: `已读取 ${rows.length} 个拆书任务。`,
@@ -83,7 +85,7 @@ export const bookAnalysisToolDefinitions: Partial<
         },
       });
       if (!row) {
-        throw new AgentToolError("NOT_FOUND", "Book analysis not found.");
+        throw new AgentToolError("NOT_FOUND", getBackendMessage("bookAnalysis.error.not_found"));
       }
       return getBookAnalysisDetailOutputSchema.parse({
         id: row.id,
@@ -94,8 +96,12 @@ export const bookAnalysisToolDefinitions: Partial<
         summary: row.summary ?? null,
         progress: row.progress,
         currentStage: row.currentStage ?? null,
-        currentItemLabel: row.currentItemLabel ?? null,
-        lastError: row.lastError ?? null,
+        currentItemLabel: resolveBookAnalysisProgressLabel({
+          stage: row.currentStage,
+          itemKey: row.currentItemKey,
+          fallbackLabel: row.currentItemLabel ? translateBackendText(row.currentItemLabel) : row.currentItemLabel,
+        }),
+        lastError: row.lastError ? translateBackendText(row.lastError) : null,
         sectionCount: row.sections.length,
         updatedAt: row.updatedAt.toISOString(),
       });
@@ -117,29 +123,30 @@ export const bookAnalysisToolDefinitions: Partial<
         where: { id: input.analysisId },
       });
       if (!row) {
-        throw new AgentToolError("NOT_FOUND", "Book analysis not found.");
+        throw new AgentToolError("NOT_FOUND", getBackendMessage("bookAnalysis.error.not_found"));
       }
+      const translatedLastError = row.lastError ? translateBackendText(row.lastError) : null;
       const failureSummary = row.status === "failed"
-        ? (row.lastError?.trim() || "拆书任务失败，但没有记录明确错误。")
+        ? (translatedLastError?.trim() || getBackendMessage("task.bookAnalysis.failure.default"))
         : row.status === "cancelled"
-          ? "拆书任务已取消。"
+          ? getBackendMessage("task.recovery.cancelled.default")
           : row.status === "running"
-            ? "拆书任务仍在执行中，并未失败。"
+            ? getBackendMessage("task.recovery.running")
             : row.status === "queued"
-              ? "拆书任务仍在排队，尚未开始执行。"
-              : "当前拆书任务没有失败记录。";
+              ? getBackendMessage("task.recovery.queued.default")
+              : getBackendMessage("task.failureSummary.none");
       const recoveryHint = row.status === "failed"
-        ? "可检查文档内容完整性、模型配置和最近一次章节生成记录，再决定是否重试。"
+        ? getBackendMessage("task.recovery.failed.book_analysis")
         : row.status === "running"
-          ? "建议等待当前任务完成，或在任务中心查看实时进度。"
+          ? getBackendMessage("task.recovery.running")
           : row.status === "queued"
-            ? "建议检查队列压力和模型可用性，确认任务是否被调度。"
-            : "当前无需恢复操作。";
+            ? getBackendMessage("task.recovery.queued.default")
+            : getBackendMessage("task.recovery.none");
       return getBookAnalysisFailureReasonOutputSchema.parse({
         analysisId: row.id,
         status: row.status,
         failureSummary,
-        failureDetails: row.lastError ?? null,
+        failureDetails: translatedLastError,
         recoveryHint,
         summary: failureSummary,
       });

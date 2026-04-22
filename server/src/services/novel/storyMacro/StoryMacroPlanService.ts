@@ -10,6 +10,7 @@ import type {
   StoryMacroState,
 } from "@ai-novel/shared/types/storyMacro";
 import { prisma } from "../../../db/prisma";
+import { AppError } from "../../../middleware/errorHandler";
 import { runStructuredPrompt } from "../../../prompting/core/promptRunner";
 import {
   storyMacroDecompositionPrompt,
@@ -107,7 +108,7 @@ export class StoryMacroPlanService {
       },
     });
     if (!novel) {
-      throw new Error("小说不存在。");
+      throw new AppError("story_macro.error.novel_not_found", 404);
     }
     return {
       ...novel,
@@ -267,7 +268,7 @@ export class StoryMacroPlanService {
     const previousPlan = row ? mapRowToPlan(row) : null;
     const normalizedInput = storyInput.trim();
     if (!normalizedInput) {
-      throw new Error("故事想法不能为空。");
+      throw new AppError("story_macro.error.story_input_required", 400);
     }
     const worldSlice = await this.worldSliceService.ensureStoryWorldSlice(novelId, {
       storyInput: normalizedInput,
@@ -303,10 +304,10 @@ export class StoryMacroPlanService {
     const novel = await this.getNovelContext(novelId);
     const plan = await this.getPlan(novelId);
     if (!plan?.storyInput || !plan.decomposition) {
-      throw new Error("请先完成故事引擎拆解。");
+      throw new AppError("story_macro.error.decomposition_required", 400);
     }
     if (plan.lockedFields[field]) {
-      throw new Error("该字段已锁定，请先解锁后再重生成。");
+      throw new AppError("story_macro.error.field_locked", 400);
     }
     const worldSlice = await this.worldSliceService.ensureStoryWorldSlice(novelId, {
       storyInput: plan.storyInput ?? undefined,
@@ -341,7 +342,7 @@ export class StoryMacroPlanService {
     await this.getNovelContext(novelId);
     const plan = await this.getPlan(novelId);
     if (!plan?.decomposition || !isDecompositionComplete(plan.decomposition)) {
-      throw new Error("请先完成故事引擎拆解，再构建约束引擎。");
+      throw new AppError("story_macro.error.constraint_engine_requires_decomposition", 400);
     }
     const editablePlan = toEditablePlan(plan);
     return this.savePlan(novelId, {

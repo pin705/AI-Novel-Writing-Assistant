@@ -1,5 +1,10 @@
 import type { BookAnalysis, BookAnalysisSection, BookAnalysisSectionKey, BookAnalysisStatus } from "@ai-novel/shared/types/bookAnalysis";
 import type { LLMProvider } from "@ai-novel/shared/types/llm";
+import { translateBackendText } from "../../i18n/messages";
+import {
+  getBookAnalysisSectionTitle,
+  resolveBookAnalysisProgressLabel,
+} from "./bookAnalysis.i18n";
 import { resolveLiveBookAnalysisStatus } from "./bookAnalysis.status";
 import { decodeEvidence, decodeStructuredData } from "./bookAnalysis.utils";
 
@@ -57,6 +62,12 @@ export interface SectionRowForSerialize {
 }
 
 export function serializeAnalysisRow(row: AnalysisRowForSerialize): BookAnalysis {
+  const currentItemLabel = resolveBookAnalysisProgressLabel({
+    stage: row.currentStage,
+    itemKey: row.currentItemKey,
+    fallbackLabel: row.currentItemLabel ? translateBackendText(row.currentItemLabel) : row.currentItemLabel,
+  });
+
   return {
     id: row.id,
     documentId: row.documentId,
@@ -82,11 +93,11 @@ export function serializeAnalysisRow(row: AnalysisRowForSerialize): BookAnalysis
     heartbeatAt: row.heartbeatAt?.toISOString() ?? null,
     currentStage: row.currentStage,
     currentItemKey: row.currentItemKey,
-    currentItemLabel: row.currentItemLabel,
+    currentItemLabel,
     cancelRequestedAt: row.cancelRequestedAt?.toISOString() ?? null,
     attemptCount: row.attemptCount,
     maxAttempts: row.maxAttempts,
-    lastError: row.lastError,
+    lastError: row.lastError ? translateBackendText(row.lastError) : row.lastError,
     lastRunAt: row.lastRunAt?.toISOString() ?? null,
     publishedDocumentId: row.publishedDocumentId,
     createdAt: row.createdAt.toISOString(),
@@ -99,7 +110,7 @@ export function serializeSectionRow(row: SectionRowForSerialize): BookAnalysisSe
     id: row.id,
     analysisId: row.analysisId,
     sectionKey: row.sectionKey as BookAnalysisSectionKey,
-    title: row.title,
+    title: getBookAnalysisSectionTitle(row.sectionKey as BookAnalysisSectionKey),
     status: row.status,
     aiContent: row.aiContent,
     editedContent: row.editedContent,

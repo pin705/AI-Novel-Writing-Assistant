@@ -245,7 +245,7 @@ export class GenreService {
 
       const existing = rows.find((row) => row.id === id);
       if (!existing) {
-        throw new AppError("类型不存在。", 404);
+        throw new AppError("genre.error.not_found", 404);
       }
 
       const subtree = collectSubtreeRows(rows, id);

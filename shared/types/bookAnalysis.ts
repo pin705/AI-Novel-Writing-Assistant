@@ -12,18 +12,19 @@ export type BookAnalysisSectionKey =
   | "style_technique"
   | "market_highlights";
 
-export const BOOK_ANALYSIS_SECTIONS: ReadonlyArray<{
+export interface BookAnalysisSectionDefinition {
   key: BookAnalysisSectionKey;
-  title: string;
-}> = [
-  { key: "overview", title: "拆书总览" },
-  { key: "plot_structure", title: "剧情结构" },
-  { key: "timeline", title: "故事时间线" },
-  { key: "character_system", title: "人物系统" },
-  { key: "worldbuilding", title: "世界观与设定" },
-  { key: "themes", title: "主题表达" },
-  { key: "style_technique", title: "文风与技法" },
-  { key: "market_highlights", title: "商业化卖点" },
+}
+
+export const BOOK_ANALYSIS_SECTIONS: ReadonlyArray<BookAnalysisSectionDefinition> = [
+  { key: "overview" },
+  { key: "plot_structure" },
+  { key: "timeline" },
+  { key: "character_system" },
+  { key: "worldbuilding" },
+  { key: "themes" },
+  { key: "style_technique" },
+  { key: "market_highlights" },
 ];
 
 export interface BookAnalysisEvidenceItem {

@@ -39,7 +39,6 @@ import type {
   StoryMacroLocks,
   StoryMacroState,
 } from "@ai-novel/shared/types/storyMacro";
-import type { BookAnalysisSectionKey } from "@ai-novel/shared/types/bookAnalysis";
 import type { LLMProvider } from "@ai-novel/shared/types/llm";
 import type { NovelExportDownloadFormat } from "@ai-novel/shared/types/novelExport";
 import type { ChapterRuntimePackage } from "@ai-novel/shared/types/chapterRuntime";
@@ -55,6 +54,7 @@ import type { ExistingOutlineChapter } from "../volumePlan.utils";
 import type { AITakeoverAction } from "@/components/workflow/AITakeoverContainer";
 import type { SSEFrame } from "@ai-novel/shared/types/api";
 import type { ReactNode } from "react";
+import type { BookAnalysisSectionOption } from "@/lib/bookAnalysisUi";
 
 export interface StructuredChapterListGenerationRequest {
   generationMode?: VolumeChapterListGenerationMode;
@@ -86,7 +86,7 @@ export interface BasicTabProps {
     documentVersionNumber: number;
   }>;
   isLoadingSourceNovelBookAnalyses: boolean;
-  availableBookAnalysisSections: Array<{ key: BookAnalysisSectionKey; title: string }>;
+  availableBookAnalysisSections: BookAnalysisSectionOption[];
   worldSliceView?: StoryWorldSliceView | null;
   worldSliceMessage: string;
   isRefreshingWorldSlice: boolean;

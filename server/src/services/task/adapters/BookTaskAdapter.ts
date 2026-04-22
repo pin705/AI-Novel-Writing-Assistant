@@ -3,10 +3,11 @@ import type {
   UnifiedTaskDetail,
   UnifiedTaskSummary,
 } from "@ai-novel/shared/types/task";
-import { getBackendMessage } from "../../../i18n";
+import { getBackendMessage, translateBackendText } from "../../../i18n";
 import { prisma } from "../../../db/prisma";
 import { AppError } from "../../../middleware/errorHandler";
 import { bookAnalysisService } from "../../bookAnalysis/BookAnalysisService";
+import { resolveBookAnalysisProgressLabel } from "../../bookAnalysis/bookAnalysis.i18n";
 import { resolveLiveBookAnalysisStatus } from "../../bookAnalysis/bookAnalysis.status";
 import {
   buildTaskRecoveryHint,
@@ -84,8 +85,14 @@ export class BookTaskAdapter {
       if (!mappedStatus) {
         continue;
       }
+      const localizedLastError = row.lastError ? translateBackendText(row.lastError) : row.lastError;
       const structuredFailure = resolveStructuredFailureSummary(row.lastError);
       const stepDefinitions = this.getStepDefinitions();
+      const currentItemLabel = resolveBookAnalysisProgressLabel({
+        stage: row.currentStage,
+        itemKey: row.currentItemKey,
+        fallbackLabel: row.currentItemLabel ? translateBackendText(row.currentItemLabel) : row.currentItemLabel,
+      });
       summaries.push({
         id: row.id,
         kind: "book_analysis",
@@ -93,10 +100,10 @@ export class BookTaskAdapter {
         status: mappedStatus,
         progress: row.progress,
         currentStage: localizeTaskStageLabel(stepDefinitions, row.currentStage),
-        currentItemLabel: row.currentItemLabel,
+        currentItemLabel,
         attemptCount: row.attemptCount,
         maxAttempts: row.maxAttempts,
-        lastError: row.lastError,
+        lastError: localizedLastError,
         createdAt: row.createdAt.toISOString(),
         updatedAt: row.updatedAt.toISOString(),
         heartbeatAt: row.heartbeatAt?.toISOString() ?? null,
@@ -107,8 +114,8 @@ export class BookTaskAdapter {
           ? (structuredFailure.failureCode ?? "BOOK_ANALYSIS_FAILED")
           : null,
         failureSummary: normalizedStatus === "failed"
-          ? (structuredFailure.failureSummary ?? normalizeFailureSummary(row.lastError, getBackendMessage("task.bookAnalysis.failure.default")))
-          : row.lastError,
+          ? (structuredFailure.failureSummary ?? normalizeFailureSummary(localizedLastError, getBackendMessage("task.bookAnalysis.failure.default")))
+          : localizedLastError,
         recoveryHint: buildTaskRecoveryHint("book_analysis", mappedStatus),
         sourceResource: {
           type: "knowledge_document",
@@ -155,8 +162,14 @@ export class BookTaskAdapter {
     if (!status) {
       return null;
     }
+    const localizedLastError = row.lastError ? translateBackendText(row.lastError) : row.lastError;
     const structuredFailure = resolveStructuredFailureSummary(row.lastError);
     const stepDefinitions = this.getStepDefinitions();
+    const currentItemLabel = resolveBookAnalysisProgressLabel({
+      stage: row.currentStage,
+      itemKey: row.currentItemKey,
+      fallbackLabel: row.currentItemLabel ? translateBackendText(row.currentItemLabel) : row.currentItemLabel,
+    });
     const summary: UnifiedTaskSummary = {
       id: row.id,
       kind: "book_analysis",
@@ -164,10 +177,10 @@ export class BookTaskAdapter {
       status,
       progress: row.progress,
       currentStage: localizeTaskStageLabel(stepDefinitions, row.currentStage),
-      currentItemLabel: row.currentItemLabel,
+      currentItemLabel,
       attemptCount: row.attemptCount,
       maxAttempts: row.maxAttempts,
-      lastError: row.lastError,
+      lastError: localizedLastError,
       createdAt: row.createdAt.toISOString(),
       updatedAt: row.updatedAt.toISOString(),
       heartbeatAt: row.heartbeatAt?.toISOString() ?? null,
@@ -178,8 +191,8 @@ export class BookTaskAdapter {
         ? (structuredFailure.failureCode ?? "BOOK_ANALYSIS_FAILED")
         : null,
       failureSummary: normalizedStatus === "failed"
-        ? (structuredFailure.failureSummary ?? normalizeFailureSummary(row.lastError, getBackendMessage("task.bookAnalysis.failure.default")))
-        : row.lastError,
+        ? (structuredFailure.failureSummary ?? normalizeFailureSummary(localizedLastError, getBackendMessage("task.bookAnalysis.failure.default")))
+        : localizedLastError,
       recoveryHint: buildTaskRecoveryHint("book_analysis", status),
       sourceResource: {
         type: "knowledge_document",
@@ -213,7 +226,7 @@ export class BookTaskAdapter {
         summary.createdAt,
         summary.updatedAt,
       ),
-      failureDetails: row.lastError,
+      failureDetails: localizedLastError,
     };
   }
 

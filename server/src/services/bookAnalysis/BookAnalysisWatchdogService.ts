@@ -43,7 +43,7 @@ export class BookAnalysisWatchdogService {
           data: {
             status: "queued",
             pendingManualRecovery: true,
-            lastError: "服务重启后任务已暂停，等待手动恢复。",
+            lastError: "bookAnalysis.watchdog.manual_recovery_required",
             heartbeatAt: null,
             currentStage: null,
             currentItemKey: null,
@@ -60,7 +60,7 @@ export class BookAnalysisWatchdogService {
           },
           data: {
             pendingManualRecovery: true,
-            lastError: "服务重启后任务已暂停，等待手动恢复。",
+            lastError: "bookAnalysis.watchdog.manual_recovery_required",
             heartbeatAt: null,
             cancelRequestedAt: null,
           },
@@ -127,7 +127,7 @@ export class BookAnalysisWatchdogService {
         data: {
           status: "failed",
           progress: 1,
-          lastError: "任务心跳超时",
+          lastError: "bookAnalysis.watchdog.heartbeat_timeout",
           heartbeatAt: null,
           currentStage: null,
           currentItemKey: null,

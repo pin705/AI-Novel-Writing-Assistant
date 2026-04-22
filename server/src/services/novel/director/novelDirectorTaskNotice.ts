@@ -1,4 +1,5 @@
 import type { DirectorTaskNotice } from "@ai-novel/shared/types/novelDirector";
+import { getBackendMessage } from "../../../i18n";
 
 export function buildChapterTitleDiversityTaskNotice(input: {
   issue: string;
@@ -9,7 +10,7 @@ export function buildChapterTitleDiversityTaskNotice(input: {
     summary: input.issue.trim(),
     action: {
       type: "open_structured_outline",
-      label: "快速修复章节标题",
+      label: getBackendMessage("workflow.notice.action.quick_fix_chapter_titles"),
       volumeId: input.volumeId?.trim() || null,
     },
   };

@@ -2,11 +2,13 @@ import type { BookAnalysisSectionKey } from "@ai-novel/shared/types/bookAnalysis
 import type { LLMProvider } from "@ai-novel/shared/types/llm";
 import { prisma } from "../../db/prisma";
 import { AppError } from "../../middleware/errorHandler";
+import {
+  buildBookAnalysisSectionItemKey,
+} from "./bookAnalysis.i18n";
 import { BookAnalysisSourceCacheService } from "./bookAnalysis.cache";
 import { getBookAnalysisSectionConcurrency } from "./bookAnalysis.config";
 import { runWithConcurrency } from "./bookAnalysis.concurrent";
 import {
-  formatSectionProgressLabel,
   getSectionStageProgress,
 } from "./bookAnalysis.progress";
 import { BookAnalysisSectionWriter } from "./bookAnalysis.sectionWriter";
@@ -90,7 +92,7 @@ export class BookAnalysisGenerationService {
         });
 
         let completedSections = 0;
-        const errors: string[] = [];
+        let hasSectionFailures = false;
         let summary = analysis.summary;
 
         await runWithConcurrency(activeSections, getBookAnalysisSectionConcurrency(), async (section, index) => {
@@ -98,8 +100,11 @@ export class BookAnalysisGenerationService {
           await this.updateAnalysisProgress(analysisId, {
             stage: "generating_sections",
             progress: getSectionStageProgress(completedSections, activeSections.length),
-            itemKey: section.sectionKey,
-            itemLabel: formatSectionProgressLabel(index + 1, activeSections.length, section.title),
+            itemKey: buildBookAnalysisSectionItemKey(
+              index + 1,
+              activeSections.length,
+              section.sectionKey as BookAnalysisSectionKey,
+            ),
           });
 
           await prisma.bookAnalysisSection.update({
@@ -146,7 +151,7 @@ export class BookAnalysisGenerationService {
             if (error instanceof AnalysisCancelledError) {
               throw error;
             }
-            errors.push(`${section.title}: ${error instanceof Error ? error.message : "Unknown error"}`);
+            hasSectionFailures = true;
             await prisma.bookAnalysisSection.update({
               where: {
                 analysisId_sectionKey: {
@@ -163,8 +168,11 @@ export class BookAnalysisGenerationService {
             await this.updateAnalysisProgress(analysisId, {
               stage: "generating_sections",
               progress: getSectionStageProgress(completedSections, activeSections.length),
-              itemKey: section.sectionKey,
-              itemLabel: formatSectionProgressLabel(index + 1, activeSections.length, section.title),
+              itemKey: buildBookAnalysisSectionItemKey(
+                index + 1,
+                activeSections.length,
+                section.sectionKey as BookAnalysisSectionKey,
+              ),
             });
           }
         });
@@ -173,10 +181,10 @@ export class BookAnalysisGenerationService {
         await prisma.bookAnalysis.update({
           where: { id: analysisId },
           data: {
-            status: errors.length > 0 ? "failed" : "succeeded",
+            status: hasSectionFailures ? "failed" : "succeeded",
             progress: 1,
             summary,
-            lastError: errors.length > 0 ? errors.join(" | ") : null,
+            lastError: hasSectionFailures ? "bookAnalysis.error.section_generation_failed" : null,
             heartbeatAt: null,
             currentStage: null,
             currentItemKey: null,
@@ -189,7 +197,7 @@ export class BookAnalysisGenerationService {
           await this.markCancelled(analysisId);
           return;
         }
-        await this.markFailed(analysisId, error instanceof Error ? error.message : "Book analysis failed.");
+        await this.markFailed(analysisId, error instanceof Error ? error.message : "bookAnalysis.error.run_failed");
       }
     });
   }
@@ -249,8 +257,7 @@ export class BookAnalysisGenerationService {
         await this.updateAnalysisProgress(analysisId, {
           stage: "generating_sections",
           progress: getSectionStageProgress(0, 1),
-          itemKey: sectionKey,
-          itemLabel: formatSectionProgressLabel(1, 1, section.title),
+          itemKey: buildBookAnalysisSectionItemKey(1, 1, sectionKey),
         });
 
         await prisma.bookAnalysisSection.update({
@@ -332,7 +339,10 @@ export class BookAnalysisGenerationService {
             status: "failed",
           },
         });
-        await this.markFailed(analysisId, error instanceof Error ? error.message : "Section regeneration failed.");
+        await this.markFailed(
+          analysisId,
+          error instanceof Error ? error.message : "bookAnalysis.error.section_regeneration_failed",
+        );
       }
     });
   }
@@ -357,13 +367,13 @@ export class BookAnalysisGenerationService {
       },
     });
     if (!section) {
-      throw new AppError("Book analysis section not found.", 404);
+      throw new AppError("bookAnalysis.error.section_not_found", 404);
     }
     if (section.analysis.status === "archived") {
-      throw new AppError("Archived book analysis cannot be optimized.", 400);
+      throw new AppError("bookAnalysis.error.optimize_archived_forbidden", 400);
     }
     if (section.frozen) {
-      throw new AppError("Frozen sections cannot be optimized until unfrozen.", 400);
+      throw new AppError("bookAnalysis.error.optimize_frozen_forbidden", 400);
     }
     const provider = (section.analysis.provider as LLMProvider | null) ?? "deepseek";
     const model = section.analysis.model ?? undefined;
@@ -421,7 +431,7 @@ export class BookAnalysisGenerationService {
         heartbeatAt: new Date(),
         currentStage: update.stage,
         currentItemKey: update.itemKey ?? null,
-        currentItemLabel: update.itemLabel ?? null,
+        currentItemLabel: null,
       },
     });
   }

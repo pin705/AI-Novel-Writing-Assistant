@@ -1,5 +1,6 @@
 import { z } from "zod";
 import type { NovelStoryMode, StoryModeConflictCeiling, StoryModeProfile } from "@ai-novel/shared/types/storyMode";
+import { getBackendLanguage } from "../../i18n";
 
 export const storyModeConflictCeilingSchema = z.enum(["low", "medium", "high"]);
 
@@ -115,18 +116,36 @@ export function buildStoryModePromptBlock(input: {
   primary?: (Pick<NovelStoryMode, "id" | "name" | "description" | "template" | "profile">) | null;
   secondary?: (Pick<NovelStoryMode, "id" | "name" | "description" | "template" | "profile">) | null;
 }): string {
+  const language = getBackendLanguage();
+  const labels = language === "en"
+    ? {
+        primary: "Primary story mode",
+        secondary: "Secondary story mode",
+        preface: "Story-mode constraints: the primary mode is the hard constraint; the secondary mode can only add flavor and cannot override the primary mode's conflict ceiling or forbidden signals.",
+      }
+    : language === "zh"
+      ? {
+          primary: "主流派模式",
+          secondary: "副流派模式",
+          preface: "流派模式约束：主流派模式是硬约束，副流派模式只能补充风味，不能覆盖主模式的冲突上限和禁止信号。",
+        }
+      : {
+          primary: "Chế độ truyện chính",
+          secondary: "Chế độ truyện phụ",
+          preface: "Ràng buộc chế độ truyện: chế độ chính là ràng buộc cứng; chế độ phụ chỉ được bổ sung sắc thái, không được lấn át trần xung đột hay tín hiệu cấm của chế độ chính.",
+        };
   const sections: string[] = [];
   if (input.primary) {
-    sections.push(formatSingleStoryModeBlock("主流派模式", input.primary, true));
+    sections.push(formatSingleStoryModeBlock(labels.primary, input.primary, true, language));
   }
   if (input.secondary) {
-    sections.push(formatSingleStoryModeBlock("副流派模式", input.secondary, false));
+    sections.push(formatSingleStoryModeBlock(labels.secondary, input.secondary, false, language));
   }
   if (sections.length === 0) {
     return "";
   }
   return [
-    "流派模式约束：主流派模式是硬约束，副流派模式只能补充风味，不能覆盖主模式的冲突上限和禁止信号。",
+    labels.preface,
     ...sections,
   ].join("\n\n");
 }
@@ -135,25 +154,79 @@ function formatSingleStoryModeBlock(
   label: string,
   storyMode: Pick<NovelStoryMode, "name" | "description" | "template" | "profile">,
   isPrimary: boolean,
+  language: "vi" | "en" | "zh",
 ): string {
   const profile = storyMode.profile;
+  const labels = language === "en"
+    ? {
+        description: "Description",
+        template: "Supplemental template",
+        coreDrive: "Core drive",
+        readerReward: "Reader reward",
+        chapterUnit: "Chapter progression unit",
+        volumeReward: "Volume-end payoff",
+        allowed: "Allowed conflict forms",
+        forbidden: "Forbidden conflict forms",
+        ceiling: "Conflict ceiling",
+        resolution: "Resolution style",
+        mandatory: "Signals that must recur",
+        anti: "Signals that must be avoided",
+        progression: "Main progression units",
+        requirementPrimary: "Usage requirement: all downstream planning and generation must prioritize this mode.",
+        requirementSecondary: "Usage requirement: this may only add flavor and must not break the primary mode boundaries.",
+      }
+    : language === "zh"
+      ? {
+          description: "说明",
+          template: "补充模板",
+          coreDrive: "核心驱动",
+          readerReward: "读者奖励",
+          chapterUnit: "章节推进单位",
+          volumeReward: "卷末兑现",
+          allowed: "允许的冲突形式",
+          forbidden: "禁止的冲突形式",
+          ceiling: "冲突上限",
+          resolution: "化解方式",
+          mandatory: "必须反复出现的信号",
+          anti: "必须避免的跑偏信号",
+          progression: "剧情主要推进单位",
+          requirementPrimary: "使用要求：后续规划与生成必须优先服从这一模式。",
+          requirementSecondary: "使用要求：只能作为补充风味，不得破坏主模式的边界。",
+        }
+      : {
+          description: "Mô tả",
+          template: "Mẫu bổ sung",
+          coreDrive: "Động lực cốt lõi",
+          readerReward: "Phần thưởng cho độc giả",
+          chapterUnit: "Đơn vị tiến triển của chương",
+          volumeReward: "Điểm trả thưởng cuối tập",
+          allowed: "Dạng xung đột được phép",
+          forbidden: "Dạng xung đột bị cấm",
+          ceiling: "Trần xung đột",
+          resolution: "Cách hóa giải",
+          mandatory: "Tín hiệu phải lặp lại",
+          anti: "Tín hiệu lệch hướng phải tránh",
+          progression: "Đơn vị tiến triển chính của cốt truyện",
+          requirementPrimary: "Yêu cầu sử dụng: mọi bước lập kế hoạch và sinh nội dung phía sau phải ưu tiên tuân theo chế độ này.",
+          requirementSecondary: "Yêu cầu sử dụng: chỉ được bổ sung sắc thái, không được phá vỡ biên của chế độ chính.",
+        };
   return [
-    `${label}：${storyMode.name}`,
-    storyMode.description ? `说明：${storyMode.description}` : "",
-    storyMode.template ? `补充模板：${storyMode.template}` : "",
-    `核心驱动：${profile.coreDrive}`,
-    `读者奖励：${profile.readerReward}`,
-    `章节推进单位：${profile.chapterUnit}`,
-    `卷末兑现：${profile.volumeReward}`,
-    `允许的冲突形式：${profile.allowedConflictForms.join("、")}`,
-    `禁止的冲突形式：${profile.forbiddenConflictForms.join("、")}`,
-    `冲突上限：${profile.conflictCeiling}`,
-    `化解方式：${profile.resolutionStyle}`,
-    `必须反复出现的信号：${profile.mandatorySignals.join("、")}`,
-    `必须避免的跑偏信号：${profile.antiSignals.join("、")}`,
-    `剧情主要推进单位：${profile.progressionUnits.join("、")}`,
+    `${label}: ${storyMode.name}`,
+    storyMode.description ? `${labels.description}: ${storyMode.description}` : "",
+    storyMode.template ? `${labels.template}: ${storyMode.template}` : "",
+    `${labels.coreDrive}: ${profile.coreDrive}`,
+    `${labels.readerReward}: ${profile.readerReward}`,
+    `${labels.chapterUnit}: ${profile.chapterUnit}`,
+    `${labels.volumeReward}: ${profile.volumeReward}`,
+    `${labels.allowed}: ${profile.allowedConflictForms.join(language === "zh" ? "、" : ", ")}`,
+    `${labels.forbidden}: ${profile.forbiddenConflictForms.join(language === "zh" ? "、" : ", ")}`,
+    `${labels.ceiling}: ${profile.conflictCeiling}`,
+    `${labels.resolution}: ${profile.resolutionStyle}`,
+    `${labels.mandatory}: ${profile.mandatorySignals.join(language === "zh" ? "、" : ", ")}`,
+    `${labels.anti}: ${profile.antiSignals.join(language === "zh" ? "、" : ", ")}`,
+    `${labels.progression}: ${profile.progressionUnits.join(language === "zh" ? "、" : ", ")}`,
     isPrimary
-      ? "使用要求：后续规划与生成必须优先服从这一模式。"
-      : "使用要求：只能作为补充风味，不得破坏主模式的边界。",
+      ? labels.requirementPrimary
+      : labels.requirementSecondary,
   ].filter(Boolean).join("\n");
 }

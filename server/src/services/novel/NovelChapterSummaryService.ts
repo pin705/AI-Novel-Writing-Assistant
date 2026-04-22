@@ -1,5 +1,7 @@
 import type { LLMProvider } from "@ai-novel/shared/types/llm";
 import { prisma } from "../../db/prisma";
+import { getBackendMessage } from "../../i18n";
+import { AppError } from "../../middleware/errorHandler";
 import { ragServices } from "../rag";
 import type { RagOwnerType } from "../rag/types";
 import { runStructuredPrompt } from "../../prompting/core/promptRunner";
@@ -57,7 +59,7 @@ export class NovelChapterSummaryService {
       include: { novel: { select: { title: true } } },
     });
     if (!chapter) {
-      throw new Error("章节不存在。");
+      throw new AppError("novel.chapter_summary.error.chapter_not_found", 404);
     }
 
     const content = (chapter.content ?? "").trim();
@@ -93,7 +95,7 @@ export class NovelChapterSummaryService {
       } else if (existingExpectation) {
         summary = existingExpectation;
       } else {
-        summary = "暂无可总结正文";
+        summary = getBackendMessage("novel.chapter_summary.fallback.empty_content");
       }
     }
 

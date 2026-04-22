@@ -9,6 +9,7 @@ import { prisma } from "../../db/prisma";
 import { AppError } from "../../middleware/errorHandler";
 import { KnowledgeService } from "../knowledge/KnowledgeService";
 import { buildAnalysisExportContent } from "./bookAnalysis.export";
+import { getBookAnalysisSectionTitle } from "./bookAnalysis.i18n";
 import { publishAnalysisToNovel } from "./bookAnalysis.publish";
 import { serializeAnalysisRow, serializeSectionRow } from "./bookAnalysis.serialization";
 
@@ -110,7 +111,7 @@ export class BookAnalysisQueryService {
   }> {
     const detail = await this.getAnalysisById(analysisId);
     if (!detail) {
-      throw new AppError("Book analysis not found.", 404);
+      throw new AppError("bookAnalysis.error.not_found", 404);
     }
     return buildAnalysisExportContent(detail, format);
   }
@@ -138,7 +139,7 @@ export class BookAnalysisQueryService {
         data: missing.map((section) => ({
           analysisId,
           sectionKey: section.key,
-          title: section.title,
+          title: getBookAnalysisSectionTitle(section.key),
           sortOrder: BOOK_ANALYSIS_SECTIONS.findIndex((item) => item.key === section.key),
           status: "idle",
         })),

@@ -471,6 +471,131 @@ const BACKEND_MESSAGE_CATALOG = {
     en: "Quick-fix chapter title diversity",
     zh: "快速修复章节标题",
   },
+  "director.error.recovery_not_needed": {
+    vi: "Sản phẩm director hiện tại đã đầy đủ, không cần tiếp tục tự động director nữa.",
+    en: "The current director output is already complete, so auto-director does not need to continue.",
+    zh: "当前导演产物已经完整，无需继续自动导演。",
+  },
+  "director.error.task_cancelled": {
+    vi: "Tác vụ auto-director hiện tại đã bị hủy.",
+    en: "The current auto-director task has been cancelled.",
+    zh: "当前自动导演任务已取消。",
+  },
+  "director.default.current_project": {
+    vi: "dự án hiện tại",
+    en: "current project",
+    zh: "当前项目",
+  },
+  "director.scope.chapter_single": {
+    vi: "chương {{chapterOrder}}",
+    en: "chapter {{chapterOrder}}",
+    zh: "第 {{chapterOrder}} 章",
+  },
+  "director.scope.chapter_range": {
+    vi: "chương {{startOrder}}-{{endOrder}}",
+    en: "chapters {{startOrder}}-{{endOrder}}",
+    zh: "第 {{startOrder}}-{{endOrder}} 章",
+  },
+  "director.scope.volume": {
+    vi: "tập {{volumeOrder}}{{volumeLabel}}",
+    en: "volume {{volumeOrder}}{{volumeLabel}}",
+    zh: "第 {{volumeOrder}} 卷{{volumeLabel}}",
+  },
+  "director.scope.front_chapters": {
+    vi: "{{chapterCount}} chương đầu",
+    en: "the first {{chapterCount}} chapters",
+    zh: "前 {{chapterCount}} 章",
+  },
+  "director.auto_execution.remaining_count": {
+    vi: "Hiện vẫn còn {{remainingChapterCount}} chương chờ tiếp tục",
+    en: "{{remainingChapterCount}} chapters are still waiting to continue",
+    zh: "当前仍有 {{remainingChapterCount}} 章待继续",
+  },
+  "director.auto_execution.remaining_none": {
+    vi: "Lô hiện tại không còn chương nào chờ tiếp tục",
+    en: "There are no chapters left to continue in the current batch",
+    zh: "当前批次已无待继续章节",
+  },
+  "director.auto_execution.next_chapter": {
+    vi: ", nên tiếp tục từ chương {{nextChapterOrder}}",
+    en: ", and it should continue from chapter {{nextChapterOrder}}",
+    zh: "，建议从第 {{nextChapterOrder}} 章继续",
+  },
+  "director.auto_execution.paused_summary": {
+    vi: "{{scopeLabel}} đã vào chế độ tự động thực thi, nhưng batch hiện tại chưa hoàn tất: {{failureMessage}} {{remainingSummary}}{{nextSummary}}.",
+    en: "{{scopeLabel}} entered auto-execution, but the current batch did not complete: {{failureMessage}} {{remainingSummary}}{{nextSummary}}.",
+    zh: "{{scopeLabel}}已进入自动执行，但当前批量任务未完全完成：{{failureMessage}} {{remainingSummary}}{{nextSummary}}。",
+  },
+  "director.auto_execution.completed": {
+    vi: "{{scopeLabel}} đã hoàn tất tự động thực thi",
+    en: "{{scopeLabel}} auto-execution is complete",
+    zh: "{{scopeLabel}}自动执行完成",
+  },
+  "director.auto_execution.completed_summary.no_review": {
+    vi: "\"{{title}}\" đã tự động hoàn tất phần thực thi chương cho {{scopeLabel}}, và sau khi tạo nội dung không chạy thêm bước duyệt hay sửa tự động.",
+    en: "\"{{title}}\" automatically completed chapter execution for {{scopeLabel}}, without running automatic review or auto-repair afterward.",
+    zh: "《{{title}}》已自动完成{{scopeLabel}}的章节执行，正文生成后未额外执行自动审核或修复。",
+  },
+  "director.auto_execution.completed_summary.review_only": {
+    vi: "\"{{title}}\" đã tự động hoàn tất phần thực thi chương và tự duyệt cho {{scopeLabel}}, nhưng chưa bật tự sửa.",
+    en: "\"{{title}}\" automatically completed chapter execution and review for {{scopeLabel}}, without auto-repair enabled.",
+    zh: "《{{title}}》已自动完成{{scopeLabel}}的章节执行与自动审核，未开启自动修复。",
+  },
+  "director.auto_execution.completed_summary.review_and_repair": {
+    vi: "\"{{title}}\" đã tự động hoàn tất thực thi chương, tự duyệt và tự sửa cho {{scopeLabel}}.",
+    en: "\"{{title}}\" automatically completed chapter execution, review, and repair for {{scopeLabel}}.",
+    zh: "《{{title}}》已自动完成{{scopeLabel}}的章节执行、自动审核与修复。",
+  },
+  "director.auto_execution.item.reviewing": {
+    vi: "Đang tự duyệt {{scopeLabel}}{{chapterLabel}}{{activityLabel}}",
+    en: "Auto-reviewing {{scopeLabel}}{{chapterLabel}}{{activityLabel}}",
+    zh: "正在自动审校{{scopeLabel}}{{chapterLabel}}{{activityLabel}}",
+  },
+  "director.auto_execution.item.repairing": {
+    vi: "Đang tự sửa {{scopeLabel}}{{chapterLabel}}{{activityLabel}}",
+    en: "Auto-repairing {{scopeLabel}}{{chapterLabel}}{{activityLabel}}",
+    zh: "正在自动修复{{scopeLabel}}{{chapterLabel}}{{activityLabel}}",
+  },
+  "director.auto_execution.item.executing": {
+    vi: "Đang tự thực thi {{scopeLabel}}{{chapterLabel}}{{activityLabel}}",
+    en: "Auto-executing {{scopeLabel}}{{chapterLabel}}{{activityLabel}}",
+    zh: "正在自动执行{{scopeLabel}}{{chapterLabel}}{{activityLabel}}",
+  },
+  "director.chapter_title_repair.error.target_volume_not_found": {
+    vi: "Không tìm thấy tập mục tiêu của tác vụ hiện tại, nên không thể tiếp tục AI sửa tiêu đề chương.",
+    en: "The target volume for the current task is missing, so AI chapter-title repair cannot continue.",
+    zh: "当前任务对应的目标卷不存在，无法继续 AI 修复章节标题。",
+  },
+  "director.chapter_title_repair.error.repaired_volume_missing": {
+    vi: "AI đã trả về kết quả tiêu đề chương mới, nhưng sau khi lưu thì tập hiện tại bị mất nên không thể hoàn tất việc sửa.",
+    en: "The AI returned repaired chapter titles, but the current volume disappeared after saving, so the repair cannot be completed.",
+    zh: "AI 已返回新的章节标题结果，但保存后的当前卷丢失，无法完成修复。",
+  },
+  "director.chapter_title_repair.item.load_context": {
+    vi: "Đang gom ngữ cảnh tách chương cho tập {{volumeOrder}}",
+    en: "Preparing chapter-breakdown context for volume {{volumeOrder}}",
+    zh: "正在整理第 {{volumeOrder}} 卷拆章上下文",
+  },
+  "director.chapter_title_repair.item.repairing": {
+    vi: "Đang dùng AI sửa tiêu đề chương của tập {{volumeOrder}}",
+    en: "AI is repairing chapter titles for volume {{volumeOrder}}",
+    zh: "正在 AI 修复第 {{volumeOrder}} 卷章节标题",
+  },
+  "director.chapter_title_repair.item.backfill_beat_sheet": {
+    vi: "Đang bổ sung beat sheet cho tập {{volumeOrder}}",
+    en: "Backfilling the beat sheet for volume {{volumeOrder}}",
+    zh: "正在补齐第 {{volumeOrder}} 卷节奏板",
+  },
+  "director.chapter_title_repair.item.diversity_still_needed": {
+    vi: "Tiêu đề chương của tập {{volumeOrder}} đã được viết lại, nhưng cấu trúc vẫn nên phân tán hơn nữa",
+    en: "Volume {{volumeOrder}} chapter titles were rewritten, but the title structure still needs more diversity",
+    zh: "第 {{volumeOrder}} 卷章节标题已重写，但结构仍建议继续分散",
+  },
+  "director.chapter_title_repair.item.repaired": {
+    vi: "AI đã sửa xong tiêu đề chương của tập {{volumeOrder}}",
+    en: "AI chapter-title repair is complete for volume {{volumeOrder}}",
+    zh: "第 {{volumeOrder}} 卷章节标题已完成 AI 修复",
+  },
   "workflow.target.pipeline": {
     vi: "Pipeline chương",
     en: "Chapter pipeline",
@@ -3359,7 +3484,7 @@ const BACKEND_MESSAGE_CATALOG = {
   "bookAnalysis.route.not_found": {
     vi: "Không tìm thấy bản phân tích sách.",
     en: "Book analysis not found.",
-    zh: "Book analysis not found.",
+    zh: "未找到拆书分析。",
   },
   "bookAnalysis.route.loaded": {
     vi: "Đã tải bản phân tích sách.",
@@ -3401,10 +3526,185 @@ const BACKEND_MESSAGE_CATALOG = {
     en: "Book analysis updated.",
     zh: "拆书分析已更新。",
   },
+  "bookAnalysis.error.not_found": {
+    vi: "Không tìm thấy bản phân tích sách.",
+    en: "Book analysis not found.",
+    zh: "未找到拆书分析。",
+  },
+  "bookAnalysis.error.section_not_found": {
+    vi: "Không tìm thấy mục phân tích sách.",
+    en: "Book analysis section not found.",
+    zh: "未找到拆书分析分节。",
+  },
+  "bookAnalysis.error.not_found_after_resume": {
+    vi: "Không tìm thấy bản phân tích sách sau khi tiếp tục.",
+    en: "Book analysis not found after resume.",
+    zh: "恢复后仍未找到拆书分析。",
+  },
+  "bookAnalysis.error.not_found_after_creation": {
+    vi: "Không tìm thấy bản phân tích sách sau khi tạo.",
+    en: "Book analysis not found after creation.",
+    zh: "创建后仍未找到拆书分析。",
+  },
+  "bookAnalysis.error.not_found_after_copy": {
+    vi: "Không tìm thấy bản phân tích sách sau khi sao chép.",
+    en: "Book analysis not found after copy.",
+    zh: "复制后仍未找到拆书分析。",
+  },
+  "bookAnalysis.error.not_found_after_rebuild": {
+    vi: "Không tìm thấy bản phân tích sách sau khi dựng lại.",
+    en: "Book analysis not found after rebuild.",
+    zh: "重建后仍未找到拆书分析。",
+  },
+  "bookAnalysis.error.not_found_after_cancel": {
+    vi: "Không tìm thấy bản phân tích sách sau khi hủy.",
+    en: "Book analysis not found after cancel.",
+    zh: "取消后仍未找到拆书分析。",
+  },
+  "bookAnalysis.error.not_found_after_section_regeneration": {
+    vi: "Không tìm thấy bản phân tích sách sau khi tạo lại mục.",
+    en: "Book analysis not found after section regeneration.",
+    zh: "分节重生成后仍未找到拆书分析。",
+  },
+  "bookAnalysis.error.not_found_after_section_update": {
+    vi: "Không tìm thấy bản phân tích sách sau khi cập nhật mục.",
+    en: "Book analysis not found after section update.",
+    zh: "分节更新后仍未找到拆书分析。",
+  },
+  "bookAnalysis.error.not_found_after_status_update": {
+    vi: "Không tìm thấy bản phân tích sách sau khi cập nhật trạng thái.",
+    en: "Book analysis not found after status update.",
+    zh: "状态更新后仍未找到拆书分析。",
+  },
+  "bookAnalysis.error.resume_requires_queued_or_running": {
+    vi: "Chỉ có thể tiếp tục các bản phân tích sách đang chờ hoặc đang chạy.",
+    en: "Only queued or running analyses can be resumed.",
+    zh: "只有排队中或运行中的拆书分析才能继续。",
+  },
+  "bookAnalysis.error.retry_requires_failed_or_cancelled": {
+    vi: "Chỉ có thể thử lại các bản phân tích sách đã thất bại hoặc đã hủy.",
+    en: "Only failed or cancelled analyses can be retried.",
+    zh: "只有失败或已取消的拆书分析才能重试。",
+  },
+  "bookAnalysis.error.cancel_archived_forbidden": {
+    vi: "Không thể hủy bản phân tích sách đã lưu trữ.",
+    en: "Archived book analysis cannot be cancelled.",
+    zh: "已归档的拆书分析不能取消。",
+  },
+  "bookAnalysis.error.cancel_requires_queued_or_running": {
+    vi: "Chỉ có thể hủy các bản phân tích sách đang chờ hoặc đang chạy.",
+    en: "Only queued or running analyses can be cancelled.",
+    zh: "只有排队中或运行中的拆书分析才能取消。",
+  },
+  "bookAnalysis.error.copy_archived_forbidden": {
+    vi: "Không thể sao chép bản phân tích sách đã lưu trữ.",
+    en: "Archived book analysis cannot be copied.",
+    zh: "已归档的拆书分析不能复制。",
+  },
+  "bookAnalysis.error.rebuild_archived_forbidden": {
+    vi: "Không thể dựng lại bản phân tích sách đã lưu trữ.",
+    en: "Archived book analysis cannot be rebuilt.",
+    zh: "已归档的拆书分析不能重建。",
+  },
+  "bookAnalysis.error.regenerate_archived_forbidden": {
+    vi: "Không thể tạo lại mục của bản phân tích sách đã lưu trữ.",
+    en: "Archived book analysis cannot be regenerated.",
+    zh: "已归档的拆书分析分节不能重生成。",
+  },
+  "bookAnalysis.error.regenerate_frozen_forbidden": {
+    vi: "Hãy bỏ khóa mục này trước khi tạo lại.",
+    en: "Frozen sections cannot be regenerated until unfrozen.",
+    zh: "冻结分节需先解冻后才能重生成。",
+  },
+  "bookAnalysis.error.optimize_archived_forbidden": {
+    vi: "Không thể tối ưu mục của bản phân tích sách đã lưu trữ.",
+    en: "Archived book analysis cannot be optimized.",
+    zh: "已归档的拆书分析分节不能优化。",
+  },
+  "bookAnalysis.error.optimize_frozen_forbidden": {
+    vi: "Hãy bỏ khóa mục này trước khi tối ưu.",
+    en: "Frozen sections cannot be optimized until unfrozen.",
+    zh: "冻结分节需先解冻后才能优化。",
+  },
+  "bookAnalysis.error.publish_archived_forbidden": {
+    vi: "Không thể phát hành bản phân tích sách đã lưu trữ.",
+    en: "Archived book analysis cannot be published.",
+    zh: "已归档的拆书分析不能发布。",
+  },
+  "bookAnalysis.error.publishable_content_required": {
+    vi: "Bản phân tích sách hiện chưa có nội dung có thể phát hành.",
+    en: "Book analysis has no publishable content.",
+    zh: "当前拆书分析没有可发布内容。",
+  },
+  "bookAnalysis.error.knowledge_document_not_found": {
+    vi: "Không tìm thấy tài liệu tri thức nguồn cho bản phân tích sách.",
+    en: "Knowledge document not found.",
+    zh: "未找到知识文档。",
+  },
+  "bookAnalysis.error.knowledge_document_archived_forbidden": {
+    vi: "Không thể phân tích tài liệu tri thức đã lưu trữ.",
+    en: "Archived knowledge documents cannot be analyzed.",
+    zh: "已归档的知识文档不能用于拆书分析。",
+  },
+  "bookAnalysis.error.knowledge_document_version_not_found": {
+    vi: "Không tìm thấy phiên bản tài liệu tri thức cho bản phân tích sách.",
+    en: "Knowledge document version not found.",
+    zh: "未找到知识文档版本。",
+  },
+  "bookAnalysis.error.document_version_content_empty": {
+    vi: "Phiên bản tài liệu tri thức hiện chưa có nội dung để phân tích.",
+    en: "Knowledge document version content is empty.",
+    zh: "知识文档版本内容为空。",
+  },
+  "bookAnalysis.error.custom_provider_model_required": {
+    vi: "Nhà cung cấp tùy chỉnh cần chỉ rõ model cho phân tích sách.",
+    en: "Custom provider requires an explicit model for book analysis.",
+    zh: "自定义提供商在拆书分析中必须显式指定模型。",
+  },
+  "bookAnalysis.error.invalid_json_object": {
+    vi: "Không phát hiện được đối tượng JSON hợp lệ.",
+    en: "No valid JSON object was detected.",
+    zh: "未检测到有效的 JSON 对象。",
+  },
+  "bookAnalysis.error.section_generation_failed": {
+    vi: "Ít nhất một mục phân tích sách đã tạo thất bại.",
+    en: "At least one book analysis section failed.",
+    zh: "至少有一个拆书分析分节生成失败。",
+  },
+  "bookAnalysis.error.run_failed": {
+    vi: "Bản phân tích sách đã thất bại khi chạy.",
+    en: "Book analysis failed.",
+    zh: "拆书分析执行失败。",
+  },
+  "bookAnalysis.error.section_regeneration_failed": {
+    vi: "Tạo lại mục phân tích sách thất bại.",
+    en: "Section regeneration failed.",
+    zh: "拆书分析分节重生成失败。",
+  },
+  "bookAnalysis.watchdog.manual_recovery_required": {
+    vi: "Tác vụ đã tạm dừng sau khi dịch vụ khởi động lại, hãy tiếp tục thủ công nếu vẫn muốn chạy tiếp.",
+    en: "The task paused after the service restarted. Resume it manually if you still want to continue.",
+    zh: "服务重启后任务已暂停，如仍需继续，请手动恢复。",
+  },
+  "bookAnalysis.watchdog.heartbeat_timeout": {
+    vi: "Tác vụ phân tích sách đã quá thời gian heartbeat.",
+    en: "The book analysis task timed out on heartbeat.",
+    zh: "拆书分析任务心跳超时。",
+  },
   "novel.chapter_summary.route.generated": {
     vi: "Đã tạo tóm tắt chương.",
     en: "Chapter summary generated.",
     zh: "章节摘要生成成功。",
+  },
+  "novel.chapter_summary.error.chapter_not_found": {
+    vi: "Không tìm thấy chương.",
+    en: "Chapter not found.",
+    zh: "章节不存在。",
+  },
+  "novel.chapter_summary.fallback.empty_content": {
+    vi: "Hiện chưa có nội dung để tóm tắt.",
+    en: "There is no content to summarize yet.",
+    zh: "暂无可总结正文。",
   },
   "novel.framing.route.suggestion.generated": {
     vi: "Đã tạo gợi ý framing cấp sách.",
@@ -3470,6 +3770,326 @@ const BACKEND_MESSAGE_CATALOG = {
     vi: "AI đã tạo nhân vật xong, nhưng đã dùng cơ chế tự phục hồi vì đầu ra mô hình có lỗi.",
     en: "AI character generation completed with automatic fallback due to malformed model output.",
     zh: "AI 角色生成完成（模型输出异常，已自动回退）。",
+  },
+  "character.error.constraint_story_function_category_conflict": {
+    vi: "Ràng buộc bị xung đột: loại vai trò \"{{category}}\" không khớp với chức năng cốt truyện \"{{storyFunction}}\".",
+    en: "Constraint conflict: role category \"{{category}}\" does not match story function \"{{storyFunction}}\".",
+    zh: "约束冲突：角色类别“{{category}}”与故事功能位“{{storyFunction}}”不一致。",
+  },
+  "character.generate.default_genre": {
+    vi: "chung",
+    en: "general",
+    zh: "通用",
+  },
+  "character.generate.story_function.protagonist": {
+    vi: "Nhân vật chính",
+    en: "Protagonist",
+    zh: "主角",
+  },
+  "character.generate.story_function.antagonist": {
+    vi: "Phản diện",
+    en: "Antagonist",
+    zh: "反派",
+  },
+  "character.generate.story_function.mentor": {
+    vi: "Người dẫn dắt",
+    en: "Mentor",
+    zh: "导师",
+  },
+  "character.generate.story_function.foil": {
+    vi: "Nhóm đối chiếu",
+    en: "Foil",
+    zh: "对照组",
+  },
+  "character.generate.story_function.supporting": {
+    vi: "Nhân vật phụ",
+    en: "Supporting character",
+    zh: "配角",
+  },
+  "character.generate.growth_stage.start": {
+    vi: "Khởi điểm",
+    en: "Starting point",
+    zh: "起点",
+  },
+  "character.generate.growth_stage.setback": {
+    vi: "Giai đoạn vấp ngã",
+    en: "Setback",
+    zh: "受挫",
+  },
+  "character.generate.growth_stage.turning_point": {
+    vi: "Bước ngoặt",
+    en: "Turning point",
+    zh: "转折",
+  },
+  "character.generate.growth_stage.awakening": {
+    vi: "Thức tỉnh",
+    en: "Awakening",
+    zh: "觉醒",
+  },
+  "character.generate.growth_stage.resolution": {
+    vi: "Khép lại",
+    en: "Resolution",
+    zh: "收束",
+  },
+  "character.generate.stage.skeleton": {
+    vi: "khung nhân vật",
+    en: "character skeleton",
+    zh: "角色骨架",
+  },
+  "character.generate.stage.final": {
+    vi: "nhân vật hoàn chỉnh",
+    en: "final character",
+    zh: "最终角色",
+  },
+  "character.generate.error.parse_failed": {
+    vi: "Đầu ra mô hình có lỗi: không thể phân tích ở bước {{stageLabel}}.",
+    en: "Model output was malformed: unable to parse the {{stageLabel}} step.",
+    zh: "模型输出异常：无法解析 {{stageLabel}} 阶段。",
+  },
+  "character.generate.constraints.none": {
+    vi: "Chưa có",
+    en: "None",
+    zh: "无",
+  },
+  "character.generate.constraints.label.story_function": {
+    vi: "Chức năng cốt truyện",
+    en: "Story function",
+    zh: "角色功能位",
+  },
+  "character.generate.constraints.label.external_goal": {
+    vi: "Mục tiêu bề mặt",
+    en: "External goal",
+    zh: "外显目标",
+  },
+  "character.generate.constraints.label.internal_need": {
+    vi: "Nhu cầu bên trong",
+    en: "Internal need",
+    zh: "内在需求",
+  },
+  "character.generate.constraints.label.core_fear": {
+    vi: "Nỗi sợ cốt lõi",
+    en: "Core fear",
+    zh: "核心恐惧",
+  },
+  "character.generate.constraints.label.moral_bottom_line": {
+    vi: "Giới hạn đạo đức",
+    en: "Moral bottom line",
+    zh: "道德底线",
+  },
+  "character.generate.constraints.label.secret": {
+    vi: "Bí mật",
+    en: "Secret",
+    zh: "秘密",
+  },
+  "character.generate.constraints.label.core_flaw": {
+    vi: "Khuyết điểm cốt lõi",
+    en: "Core flaw",
+    zh: "核心缺陷",
+  },
+  "character.generate.constraints.label.relationship_hooks": {
+    vi: "Móc nối quan hệ",
+    en: "Relationship hooks",
+    zh: "关系钩子",
+  },
+  "character.generate.constraints.label.growth_stage": {
+    vi: "Chặng phát triển",
+    en: "Growth stage",
+    zh: "成长阶段",
+  },
+  "character.generate.constraints.label.tone_style": {
+    vi: "Tông giọng",
+    en: "Tone style",
+    zh: "风格语气",
+  },
+  "character.generate.final.label.core_persona": {
+    vi: "Hạt nhân tính cách",
+    en: "Core persona",
+    zh: "核心人格",
+  },
+  "character.generate.final.label.surface_temperament": {
+    vi: "Khí chất bề mặt",
+    en: "Surface temperament",
+    zh: "外显气质",
+  },
+  "character.generate.final.label.core_drive": {
+    vi: "Động lực cốt lõi",
+    en: "Core drive",
+    zh: "核心驱动力",
+  },
+  "character.generate.final.label.behavior_patterns": {
+    vi: "Mẫu hành vi",
+    en: "Behavior patterns",
+    zh: "行为模式",
+  },
+  "character.generate.final.label.emotional_triggers": {
+    vi: "Điểm kích hoạt cảm xúc",
+    en: "Emotional triggers",
+    zh: "情绪触发点",
+  },
+  "character.generate.final.label.social_mask": {
+    vi: "Mặt nạ xã hội",
+    en: "Social mask",
+    zh: "社会伪装",
+  },
+  "character.generate.final.label.origin": {
+    vi: "Xuất phát điểm",
+    en: "Origin",
+    zh: "出身起点",
+  },
+  "character.generate.final.label.relationship_network": {
+    vi: "Mạng lưới quan hệ",
+    en: "Relationship network",
+    zh: "关系网络",
+  },
+  "character.generate.final.label.secret": {
+    vi: "Bí mật",
+    en: "Secret",
+    zh: "秘密",
+  },
+  "character.generate.final.label.core_flaw": {
+    vi: "Khuyết điểm cốt lõi",
+    en: "Core flaw",
+    zh: "核心缺陷",
+  },
+  "character.generate.final.label.cost": {
+    vi: "Cái giá phải trả",
+    en: "Cost",
+    zh: "代价",
+  },
+  "character.generate.final.label.body": {
+    vi: "Thể hình",
+    en: "Body",
+    zh: "体态",
+  },
+  "character.generate.final.label.facial_features": {
+    vi: "Nét nhận diện",
+    en: "Facial features",
+    zh: "面部识别点",
+  },
+  "character.generate.final.label.style_signature": {
+    vi: "Dấu ấn phong cách",
+    en: "Style signature",
+    zh: "风格标记",
+  },
+  "character.generate.final.label.aura_voice": {
+    vi: "Khí chất và giọng điệu",
+    en: "Aura and voice",
+    zh: "气场与声音",
+  },
+  "character.generate.final.label.daily_anchors": {
+    vi: "Neo sinh hoạt",
+    en: "Daily anchors",
+    zh: "日常锚点",
+  },
+  "character.generate.final.label.habitual_actions": {
+    vi: "Thói quen hành động",
+    en: "Habitual actions",
+    zh: "习惯动作",
+  },
+  "character.generate.final.label.speech_style": {
+    vi: "Cách nói chuyện",
+    en: "Speech style",
+    zh: "说话风格",
+  },
+  "character.generate.final.label.talents": {
+    vi: "Năng lực nổi bật",
+    en: "Talents",
+    zh: "能力优势",
+  },
+  "character.generate.final.default_name": {
+    vi: "Nhân vật chưa đặt tên",
+    en: "Unnamed character",
+    zh: "未命名角色",
+  },
+  "character.generate.final.default.core_persona": {
+    vi: "phức hợp nhưng biết kiềm chế",
+    en: "complex yet restrained",
+    zh: "复杂但克制",
+  },
+  "character.generate.final.default.surface_temperament": {
+    vi: "điềm tĩnh và biết kiểm soát",
+    en: "calm and controlled",
+    zh: "冷静克制",
+  },
+  "character.generate.final.default.core_drive": {
+    vi: "mong được thấu hiểu và có chỗ thuộc về",
+    en: "needs understanding and belonging",
+    zh: "渴望被理解与被接纳",
+  },
+  "character.generate.final.default.social_mask": {
+    vi: "giữ vẻ ổn định trước người khác nhưng tự siết mình khi ở một mình",
+    en: "appears steady in public but tightens inward when alone",
+    zh: "在人前保持稳定，在独处时不断自我收紧",
+  },
+  "character.generate.final.default.origin_from_description": {
+    vi: "được rút ra từ mô tả ban đầu: {{description}}",
+    en: "derived from the original description: {{description}}",
+    zh: "基于原始描述推导：{{description}}",
+  },
+  "character.generate.final.default.relationship_network": {
+    vi: "gắn chặt với tuyến nhân vật nòng cốt và dễ bị quan hệ chi phối",
+    en: "tied closely to the core cast and strongly shaped by relationships",
+    zh: "与核心角色群绑定紧密，容易被关系牵动",
+  },
+  "character.generate.final.default.secret": {
+    vi: "giấu một sự thật đủ sức làm thay đổi thế cân bằng hiện tại",
+    en: "hides a truth capable of reshaping the current balance",
+    zh: "藏着足以改写现有平衡的一段真相",
+  },
+  "character.generate.final.default.development": {
+    vi: "trục trưởng thành còn cần tiếp tục mở rộng",
+    en: "the growth arc still needs to be expanded",
+    zh: "成长弧线仍需继续展开",
+  },
+  "character.generate.final.default.core_flaw": {
+    vi: "càng bị ép càng dễ tự siết mình và đưa ra quyết định quá tay",
+    en: "tends to over-tighten and overreact under pressure",
+    zh: "越被压迫越容易把自己逼得过紧并做出过度决策",
+  },
+  "character.generate.final.default.cost": {
+    vi: "nếu đi sai một bước có thể đánh mất người quan trọng hoặc vị thế đang giữ",
+    en: "one wrong step could cost them key relationships or their current footing",
+    zh: "一步走错就可能失去重要之人或当前立足点",
+  },
+  "character.generate.final.default.body": {
+    vi: "thân hình gọn nhưng luôn căng như đang sẵn sàng phản ứng",
+    en: "a compact build that always looks ready to react",
+    zh: "身形利落，始终带着随时应变的紧绷感",
+  },
+  "character.generate.final.default.facial_features": {
+    vi: "ánh mắt sắc và đường nét đủ rõ để người khác khó quên",
+    en: "sharp eyes and memorable facial definition",
+    zh: "目光锐利，五官辨识度高",
+  },
+  "character.generate.final.default.style_signature": {
+    vi: "ăn mặc thiên về công năng nhưng luôn giữ một dấu ấn nhận diện cố định",
+    en: "dresses for utility while keeping one recurring signature detail",
+    zh: "穿着偏功能化，但始终保留一个固定识别标记",
+  },
+  "character.generate.final.default.aura_voice": {
+    vi: "giọng trầm, tiết chế và tạo cảm giác áp lực ngay khi xuất hiện",
+    en: "a restrained low voice with immediate pressure on arrival",
+    zh: "声音偏低而克制，出场就带压迫感",
+  },
+  "character.generate.final.default.interests": {
+    vi: "Giữ nhịp sống bằng những thói quen cố định, phản ứng có tính kỷ luật và ưu tiên các kỹ năng thực dụng có thể dùng ngay khi tình hình căng lên.",
+    en: "Maintains rhythm through fixed routines, disciplined reactions, and practical skills that can be applied the moment pressure rises.",
+    zh: "靠固定习惯维持生活节奏，反应有纪律性，并优先依赖一上压力就能立刻调用的实用能力。",
+  },
+  "character.generate.final.default.key_events": {
+    vi: "bị kéo vào áp lực chính; một bí mật hoặc quan hệ trọng yếu bị lật ra; buộc phải đưa ra lựa chọn mang tính bước ngoặt",
+    en: "pulled into the main pressure; a secret or key relationship is exposed; forced into a decisive turning choice",
+    zh: "被卷入主压力场；秘密或关键关系被掀开；被迫做出决定性选择",
+  },
+  "character.generate.final.default.tag.inner_tension": {
+    vi: "căng thẳng nội tại",
+    en: "inner tension",
+    zh: "内在张力",
+  },
+  "character.generate.final.default.tag.relationship_pressure": {
+    vi: "áp lực quan hệ",
+    en: "relationship pressure",
+    zh: "关系压力",
   },
   "genre.route.tree.loaded": {
     vi: "Đã tải cây thể loại.",
@@ -4266,6 +4886,46 @@ const BACKEND_MESSAGE_CATALOG = {
     en: "Story macro planning status updated.",
     zh: "故事宏观规划状态已更新。",
   },
+  "story_macro.prompt.project_context.title": {
+    vi: "Tên dự án",
+    en: "Project title",
+    zh: "项目标题",
+  },
+  "story_macro.prompt.project_context.genre": {
+    vi: "Thể loại định trước",
+    en: "Preset genre",
+    zh: "预设题材",
+  },
+  "story_macro.prompt.project_context.framing": {
+    vi: "Framing cấp sách",
+    en: "Book framing",
+    zh: "书级 framing",
+  },
+  "story_macro.prompt.project_context.style": {
+    vi: "Xu hướng văn phong",
+    en: "Style tendency",
+    zh: "风格倾向",
+  },
+  "story_macro.prompt.project_context.pov": {
+    vi: "Điểm nhìn trần thuật",
+    en: "Narrative POV",
+    zh: "叙事人称",
+  },
+  "story_macro.prompt.project_context.pace": {
+    vi: "Ưu tiên nhịp độ",
+    en: "Pacing preference",
+    zh: "节奏偏好",
+  },
+  "story_macro.prompt.project_context.emotion": {
+    vi: "Cường độ cảm xúc",
+    en: "Emotional intensity",
+    zh: "情绪强度",
+  },
+  "story_macro.prompt.project_context.chapter_count": {
+    vi: "Số chương ước tính",
+    en: "Estimated chapter count",
+    zh: "预计章节数",
+  },
   "chat.route.agent.goal_fallback": {
     vi: "Hãy đưa ra gợi ý sáng tác dựa trên ngữ cảnh hiện tại.",
     en: "Give writing guidance based on the current context.",
@@ -4440,6 +5100,621 @@ const BACKEND_MESSAGE_CATALOG = {
     vi: "Không tìm thấy chương để tạo hook.",
     en: "No chapter is available for hook generation.",
     zh: "未找到可生成钩子的章节。",
+  },
+  "novel.export.error.novel_not_found": {
+    vi: "Không tìm thấy tiểu thuyết.",
+    en: "Novel not found.",
+    zh: "小说不存在。",
+  },
+  "novel.export.error.txt_scope_full_only": {
+    vi: "Xuất `TXT` chỉ hỗ trợ xuất toàn bộ nội dung của cả tiểu thuyết.",
+    en: "`TXT` export only supports exporting the full novel text.",
+    zh: "TXT 导出仅支持整本书正文导出。",
+  },
+  "novel.export.scope.full": {
+    vi: "Toàn bộ tiểu thuyết",
+    en: "Full novel",
+    zh: "整本书",
+  },
+  "novel.export.scope.basic": {
+    vi: "Thiết lập dự án",
+    en: "Project setup",
+    zh: "项目设定",
+  },
+  "novel.export.scope.story_macro": {
+    vi: "Quy hoạch vĩ mô câu chuyện",
+    en: "Story macro plan",
+    zh: "故事宏观规划",
+  },
+  "novel.export.scope.character": {
+    vi: "Chuẩn bị nhân vật",
+    en: "Character setup",
+    zh: "角色准备",
+  },
+  "novel.export.scope.outline": {
+    vi: "Chiến lược tập / khung tập",
+    en: "Volume strategy / skeleton",
+    zh: "卷战略 / 卷骨架",
+  },
+  "novel.export.scope.structured": {
+    vi: "Nhịp truyện / tách chương",
+    en: "Beat sheets / chapter breakdown",
+    zh: "节奏 / 拆章",
+  },
+  "novel.export.scope.chapter": {
+    vi: "Thực thi chương",
+    en: "Chapter execution",
+    zh: "章节执行",
+  },
+  "novel.export.scope.pipeline": {
+    vi: "Sửa chất lượng",
+    en: "Quality repair",
+    zh: "质量修复",
+  },
+  "novel.export.txt.title_line": {
+    vi: "{{title}}",
+    en: "{{title}}",
+    zh: "《{{title}}》",
+  },
+  "novel.export.txt.description_heading": {
+    vi: "Tóm tắt",
+    en: "Summary",
+    zh: "【简介】",
+  },
+  "novel.export.txt.empty_chapters": {
+    vi: "(Chưa có nội dung chương)",
+    en: "(No chapter content yet)",
+    zh: "（暂无章节内容）",
+  },
+  "novel.export.txt.chapter_heading": {
+    vi: "Chương {{order}}: {{title}}",
+    en: "Chapter {{order}}: {{title}}",
+    zh: "第{{order}}章 {{title}}",
+  },
+  "novel.export.txt.chapter_empty": {
+    vi: "(Chương này hiện chưa có nội dung)",
+    en: "(This chapter has no content yet)",
+    zh: "（本章暂无内容）",
+  },
+  "novel.export.markdown.title": {
+    vi: "Bản xuất: {{title}}",
+    en: "Export: {{title}}",
+    zh: "{{title}} 导出",
+  },
+  "novel.export.markdown.scope": {
+    vi: "Phạm vi xuất",
+    en: "Export scope",
+    zh: "导出范围",
+  },
+  "novel.export.markdown.exported_at": {
+    vi: "Thời gian xuất",
+    en: "Exported at",
+    zh: "导出时间",
+  },
+  "novel.export.markdown.novel_id": {
+    vi: "ID tiểu thuyết",
+    en: "Novel ID",
+    zh: "小说 ID",
+  },
+  "novel.export.markdown.empty_summary": {
+    vi: "(Hiện chưa có nội dung cấu trúc để tóm tắt)",
+    en: "(There is no structured content to summarize yet)",
+    zh: "（当前没有可总结的结构化内容）",
+  },
+  "novel.export.markdown.full_data": {
+    vi: "Dữ liệu đầy đủ",
+    en: "Full data",
+    zh: "完整数据",
+  },
+  "novel.export.summary.basic.title": {
+    vi: "Tiêu đề",
+    en: "Title",
+    zh: "标题",
+  },
+  "novel.export.summary.basic.writing_mode": {
+    vi: "Chế độ viết",
+    en: "Writing mode",
+    zh: "写作模式",
+  },
+  "novel.export.summary.basic.project_mode": {
+    vi: "Chế độ dự án",
+    en: "Project mode",
+    zh: "项目模式",
+  },
+  "novel.export.summary.basic.genre": {
+    vi: "Thể loại",
+    en: "Genre",
+    zh: "题材",
+  },
+  "novel.export.summary.basic.primary_story_mode": {
+    vi: "Luồng truyện chính",
+    en: "Primary story mode",
+    zh: "主流派",
+  },
+  "novel.export.summary.basic.secondary_story_mode": {
+    vi: "Luồng truyện phụ",
+    en: "Secondary story mode",
+    zh: "副流派",
+  },
+  "novel.export.summary.basic.bound_world": {
+    vi: "Thế giới liên kết",
+    en: "Bound world",
+    zh: "绑定世界",
+  },
+  "novel.export.summary.basic.estimated_chapter_count": {
+    vi: "Số chương dự kiến",
+    en: "Estimated chapter count",
+    zh: "预计章节数",
+  },
+  "novel.export.summary.basic.commercial_tags": {
+    vi: "Nhãn thương mại",
+    en: "Commercial tags",
+    zh: "商业标签",
+  },
+  "novel.export.summary.basic.one_line_description": {
+    vi: "Giới thiệu một câu",
+    en: "One-line summary",
+    zh: "一句话简介",
+  },
+  "novel.export.summary.basic.target_audience": {
+    vi: "Độc giả mục tiêu",
+    en: "Target audience",
+    zh: "目标读者",
+  },
+  "novel.export.summary.basic.core_selling_point": {
+    vi: "Điểm bán cốt lõi",
+    en: "Core selling point",
+    zh: "核心卖点",
+  },
+  "novel.export.summary.basic.competing_feel": {
+    vi: "Cảm giác đối sánh",
+    en: "Comparable feel",
+    zh: "对标感受",
+  },
+  "novel.export.summary.basic.first30_chapter_promise": {
+    vi: "Cam kết 30 chương đầu",
+    en: "First 30-chapter promise",
+    zh: "前 30 章承诺",
+  },
+  "novel.export.summary.basic.world_slice_core_frame": {
+    vi: "Khung lõi lát cắt thế giới",
+    en: "Core world-slice frame",
+    zh: "世界切片核心框架",
+  },
+  "novel.export.summary.story_macro.story_input": {
+    vi: "Đầu vào ý tưởng truyện",
+    en: "Story input",
+    zh: "故事输入",
+  },
+  "novel.export.summary.story_macro.expanded_premise": {
+    vi: "Tiền đề mở rộng",
+    en: "Expanded premise",
+    zh: "展开前提",
+  },
+  "novel.export.summary.story_macro.protagonist_core": {
+    vi: "Lõi nhân vật chính",
+    en: "Protagonist core",
+    zh: "主角核心",
+  },
+  "novel.export.summary.story_macro.conflict_engine": {
+    vi: "Động cơ xung đột",
+    en: "Conflict engine",
+    zh: "冲突引擎",
+  },
+  "novel.export.summary.story_macro.core_conflict": {
+    vi: "Xung đột cốt lõi",
+    en: "Core conflict",
+    zh: "核心冲突",
+  },
+  "novel.export.summary.story_macro.main_hook": {
+    vi: "Hook chính",
+    en: "Main hook",
+    zh: "主钩子",
+  },
+  "novel.export.summary.story_macro.progression_loop": {
+    vi: "Vòng lặp phát triển",
+    en: "Progression loop",
+    zh: "推进循环",
+  },
+  "novel.export.summary.story_macro.reading_promise": {
+    vi: "Cam kết trải nghiệm đọc cấp sách",
+    en: "Book-level reading promise",
+    zh: "书级阅读承诺",
+  },
+  "novel.export.summary.story_macro.core_selling_point": {
+    vi: "Điểm bán cốt lõi",
+    en: "Core selling point",
+    zh: "核心售卖点",
+  },
+  "novel.export.summary.story_macro.escalation_ladder": {
+    vi: "Thang leo thang",
+    en: "Escalation ladder",
+    zh: "升级阶梯",
+  },
+  "novel.export.summary.story_macro.absolute_red_lines": {
+    vi: "Ranh giới cấm tuyệt đối",
+    en: "Absolute red lines",
+    zh: "绝对红线",
+  },
+  "novel.export.summary.character.character_count": {
+    vi: "Số nhân vật",
+    en: "Character count",
+    zh: "角色数",
+  },
+  "novel.export.summary.character.relation_count": {
+    vi: "Số quan hệ",
+    en: "Relation count",
+    zh: "关系数",
+  },
+  "novel.export.summary.character.cast_option_count": {
+    vi: "Số phương án dàn nhân vật",
+    en: "Cast option count",
+    zh: "候选阵容数",
+  },
+  "novel.export.summary.character.current_characters": {
+    vi: "Nhân vật hiện có",
+    en: "Current characters",
+    zh: "当前角色",
+  },
+  "novel.export.summary.outline.source": {
+    vi: "Nguồn khung tập",
+    en: "Outline source",
+    zh: "卷来源",
+  },
+  "novel.export.summary.outline.volume_count": {
+    vi: "Số tập",
+    en: "Volume count",
+    zh: "卷数",
+  },
+  "novel.export.summary.outline.recommended_volume_count": {
+    vi: "Số tập đề xuất",
+    en: "Recommended volume count",
+    zh: "推荐卷数",
+  },
+  "novel.export.summary.outline.derived_outline": {
+    vi: "Dàn ý xuất theo tập",
+    en: "Derived volume outline",
+    zh: "卷级导出大纲",
+  },
+  "novel.export.summary.outline.reader_reward_ladder": {
+    vi: "Thang phần thưởng độc giả",
+    en: "Reader reward ladder",
+    zh: "读者奖励阶梯",
+  },
+  "novel.export.summary.outline.escalation_ladder": {
+    vi: "Thang leo thang",
+    en: "Escalation ladder",
+    zh: "升级阶梯",
+  },
+  "novel.export.summary.outline.strategy_notes": {
+    vi: "Ghi chú chiến lược",
+    en: "Strategy notes",
+    zh: "策略备注",
+  },
+  "novel.export.summary.outline.critique_summary": {
+    vi: "Tóm tắt phản biện",
+    en: "Critique summary",
+    zh: "批判总结",
+  },
+  "novel.export.summary.structured.beat_sheet_count": {
+    vi: "Số phiếu nhịp truyện",
+    en: "Beat sheet count",
+    zh: "节拍卡数量",
+  },
+  "novel.export.summary.structured.chapter_plan_count": {
+    vi: "Số kế hoạch chương",
+    en: "Chapter plan count",
+    zh: "章节规划数",
+  },
+  "novel.export.summary.structured.rebalance_decision_count": {
+    vi: "Số quyết định tái cân bằng",
+    en: "Rebalance decision count",
+    zh: "重平衡决策数",
+  },
+  "novel.export.summary.structured.structured_outline": {
+    vi: "Dàn ý có cấu trúc",
+    en: "Structured outline",
+    zh: "结构化大纲",
+  },
+  "novel.export.summary.chapter.chapter_count": {
+    vi: "Tổng số chương",
+    en: "Chapter count",
+    zh: "章节总数",
+  },
+  "novel.export.summary.chapter.generated_chapter_count": {
+    vi: "Số chương đã có nội dung",
+    en: "Generated chapter count",
+    zh: "已有正文章节",
+  },
+  "novel.export.summary.chapter.chapter_plan_count": {
+    vi: "Số kế hoạch chương",
+    en: "Chapter plan count",
+    zh: "章节计划数",
+  },
+  "novel.export.summary.chapter.chapter_list": {
+    vi: "Danh sách chương",
+    en: "Chapter list",
+    zh: "章节列表",
+  },
+  "novel.export.summary.chapter.chapter_list_item": {
+    vi: "Chương {{order}}: {{title}}",
+    en: "Chapter {{order}}: {{title}}",
+    zh: "第 {{order}} 章：{{title}}",
+  },
+  "novel.export.summary.pipeline.overall_quality_score": {
+    vi: "Điểm chất lượng tổng thể",
+    en: "Overall quality score",
+    zh: "总体质量分",
+  },
+  "novel.export.summary.pipeline.quality_report_count": {
+    vi: "Số báo cáo chất lượng",
+    en: "Quality report count",
+    zh: "质量报告数",
+  },
+  "novel.export.summary.pipeline.audit_report_count": {
+    vi: "Số báo cáo kiểm toán",
+    en: "Audit report count",
+    zh: "审计报告数",
+  },
+  "novel.export.summary.pipeline.plot_beat_count": {
+    vi: "Số nhịp cốt truyện",
+    en: "Plot beat count",
+    zh: "情节点数",
+  },
+  "novel.export.summary.pipeline.payoff_ledger_item_count": {
+    vi: "Số mục sổ payoff",
+    en: "Payoff ledger item count",
+    zh: "伏笔账本项数",
+  },
+  "novel.export.summary.pipeline.latest_pipeline_status": {
+    vi: "Trạng thái pipeline gần nhất",
+    en: "Latest pipeline status",
+    zh: "最近流水线状态",
+  },
+  "novel.export.summary.pipeline.bible_raw_content": {
+    vi: "Nội dung thô của Bible truyện",
+    en: "Raw story bible content",
+    zh: "小说圣经原始内容",
+  },
+  "story_macro.error.novel_not_found": {
+    vi: "Không tìm thấy tiểu thuyết.",
+    en: "Novel not found.",
+    zh: "小说不存在。",
+  },
+  "story_macro.error.story_input_required": {
+    vi: "Ý tưởng truyện không được để trống.",
+    en: "Story idea cannot be empty.",
+    zh: "故事想法不能为空。",
+  },
+  "story_macro.error.decomposition_required": {
+    vi: "Hãy hoàn tất bước tách rã động cơ truyện trước.",
+    en: "Complete the story-engine decomposition first.",
+    zh: "请先完成故事引擎拆解。",
+  },
+  "story_macro.error.field_locked": {
+    vi: "Trường này đang bị khóa. Hãy mở khóa trước khi tạo lại.",
+    en: "This field is locked. Unlock it before regenerating.",
+    zh: "该字段已锁定，请先解锁后再重生成。",
+  },
+  "story_macro.error.constraint_engine_requires_decomposition": {
+    vi: "Hãy hoàn tất bước tách rã động cơ truyện trước khi dựng bộ ràng buộc.",
+    en: "Complete the story-engine decomposition before building the constraint engine.",
+    zh: "请先完成故事引擎拆解，再构建约束引擎。",
+  },
+  "story_macro.error.invalid_conflict_layers": {
+    vi: "AI chưa trả về đủ các lớp xung đột.",
+    en: "The AI did not return a complete set of conflict layers.",
+    zh: "AI 未返回完整的冲突层。",
+  },
+  "story_macro.error.invalid_field_list": {
+    vi: "AI chưa trả về danh sách hợp lệ cho trường `{{field}}`.",
+    en: "The AI did not return a valid list for `{{field}}`.",
+    zh: "AI 未返回有效的 `{{field}}` 列表。",
+  },
+  "story_macro.error.invalid_field_value": {
+    vi: "AI chưa trả về giá trị hợp lệ cho trường `{{field}}`.",
+    en: "The AI did not return a valid value for `{{field}}`.",
+    zh: "AI 未返回有效的 `{{field}}`。",
+  },
+  "novel.draft_optimize.error.invalid_json_array": {
+    vi: "Không phát hiện được mảng JSON hợp lệ.",
+    en: "No valid JSON array was detected.",
+    zh: "未检测到有效 JSON 数组。",
+  },
+  "novel.draft_optimize.error.selected_text_not_found": {
+    vi: "Không tìm thấy đoạn đã chọn trong bản nháp hiện tại. Hãy chọn lại rồi thử lại.",
+    en: "The selected text could not be found in the current draft. Reselect it and try again.",
+    zh: "选中的文本未在当前草稿中找到，请重新选择后再试。",
+  },
+  "novel.draft_optimize.error.novel_not_found": {
+    vi: "Không tìm thấy tiểu thuyết.",
+    en: "Novel not found.",
+    zh: "小说不存在。",
+  },
+  "novel.draft_optimize.error.current_draft_required": {
+    vi: "Bản nháp hiện tại không được để trống.",
+    en: "The current draft cannot be empty.",
+    zh: "当前草稿不能为空。",
+  },
+  "novel.draft_optimize.error.selected_text_required": {
+    vi: "Ở chế độ tối ưu theo vùng chọn, bắt buộc phải có `selectedText`.",
+    en: "Selection optimization mode requires `selectedText`.",
+    zh: "选区优化模式下必须提供 selectedText。",
+  },
+  "novel.draft_optimize.world_context.section_title": {
+    vi: "Ngữ cảnh thế giới",
+    en: "World context",
+    zh: "世界上下文",
+  },
+  "novel.draft_optimize.world_context.empty": {
+    vi: "Ngữ cảnh thế giới: chưa có",
+    en: "World context: none",
+    zh: "世界上下文：暂无",
+  },
+  "novel.draft_optimize.world_context.name": {
+    vi: "Tên thế giới",
+    en: "World name",
+    zh: "世界名称",
+  },
+  "novel.draft_optimize.world_context.type": {
+    vi: "Loại thế giới",
+    en: "World type",
+    zh: "世界类型",
+  },
+  "novel.draft_optimize.world_context.summary": {
+    vi: "Tóm tắt thế giới",
+    en: "World summary",
+    zh: "世界简介",
+  },
+  "novel.draft_optimize.world_context.axioms": {
+    vi: "Tiên đề cốt lõi",
+    en: "Core axioms",
+    zh: "核心公理",
+  },
+  "novel.draft_optimize.world_context.background": {
+    vi: "Bối cảnh",
+    en: "Background",
+    zh: "背景",
+  },
+  "novel.draft_optimize.world_context.geography": {
+    vi: "Địa lý",
+    en: "Geography",
+    zh: "地理",
+  },
+  "novel.draft_optimize.world_context.power_system": {
+    vi: "Hệ thống sức mạnh",
+    en: "Power system",
+    zh: "力量体系",
+  },
+  "novel.draft_optimize.world_context.politics": {
+    vi: "Xã hội và chính trị",
+    en: "Society and politics",
+    zh: "社会政治",
+  },
+  "novel.draft_optimize.world_context.races": {
+    vi: "Chủng tộc",
+    en: "Races",
+    zh: "种族",
+  },
+  "novel.draft_optimize.world_context.religions": {
+    vi: "Tôn giáo",
+    en: "Religions",
+    zh: "宗教",
+  },
+  "novel.draft_optimize.world_context.technology": {
+    vi: "Công nghệ",
+    en: "Technology",
+    zh: "科技",
+  },
+  "novel.draft_optimize.world_context.history": {
+    vi: "Lịch sử",
+    en: "History",
+    zh: "历史",
+  },
+  "novel.draft_optimize.world_context.economy": {
+    vi: "Kinh tế",
+    en: "Economy",
+    zh: "经济",
+  },
+  "novel.draft_optimize.world_context.factions": {
+    vi: "Quan hệ phe phái",
+    en: "Faction relations",
+    zh: "势力关系",
+  },
+  "novel.draft_optimize.world_context.conflicts": {
+    vi: "Xung đột cốt lõi",
+    en: "Core conflicts",
+    zh: "核心冲突",
+  },
+  "novel.draft_optimize.world_context.unspecified": {
+    vi: "Chưa chỉ định",
+    en: "Not specified",
+    zh: "未指定",
+  },
+  "novel.draft_optimize.world_context.none": {
+    vi: "Không có",
+    en: "None",
+    zh: "无",
+  },
+  "novel.draft_optimize.character_context.none": {
+    vi: "Chưa có",
+    en: "None yet",
+    zh: "暂无",
+  },
+  "character_dynamics.error.candidate_not_found": {
+    vi: "Không tìm thấy ứng viên nhân vật.",
+    en: "Character candidate not found.",
+    zh: "角色候选不存在。",
+  },
+  "character_dynamics.error.merge_target_character_not_found": {
+    vi: "Không tìm thấy nhân vật đích để gộp vào.",
+    en: "The target character to merge into was not found.",
+    zh: "要合并到的角色不存在。",
+  },
+  "character_dynamics.error.character_not_found": {
+    vi: "Không tìm thấy nhân vật.",
+    en: "Character not found.",
+    zh: "角色不存在。",
+  },
+  "character_dynamics.error.relation_not_found": {
+    vi: "Không tìm thấy quan hệ nhân vật.",
+    en: "Character relation not found.",
+    zh: "角色关系不存在。",
+  },
+  "character_dynamics.default_role.new_character": {
+    vi: "Nhân vật mới",
+    en: "New character",
+    zh: "新角色",
+  },
+  "character_dynamics.decision.confirm_candidate": {
+    vi: "Đã xác nhận nhân vật mới: {{characterName}}. Ứng viên nguồn: {{candidateName}}. {{summary}}",
+    en: "Confirmed new character: {{characterName}}. Source candidate: {{candidateName}}. {{summary}}",
+    zh: "确认新角色：{{characterName}}。来源候选：{{candidateName}}。{{summary}}",
+  },
+  "character_dynamics.decision.merge_candidate": {
+    vi: "Đã gộp ứng viên {{candidateName}} vào {{characterName}}. {{summary}}",
+    en: "Merged candidate {{candidateName}} into {{characterName}}. {{summary}}",
+    zh: "候选角色 {{candidateName}} 已并入 {{characterName}}。{{summary}}",
+  },
+  "character_dynamics.decision_segment.current_state": {
+    vi: "trạng thái={{value}}",
+    en: "state={{value}}",
+    zh: "状态={{value}}",
+  },
+  "character_dynamics.decision_segment.current_goal": {
+    vi: "mục tiêu={{value}}",
+    en: "goal={{value}}",
+    zh: "目标={{value}}",
+  },
+  "character_dynamics.decision_segment.faction_label": {
+    vi: "phe={{value}}",
+    en: "faction={{value}}",
+    zh: "阵营={{value}}",
+  },
+  "character_dynamics.decision_segment.role_label": {
+    vi: "vai trò theo tập={{value}}",
+    en: "volume role={{value}}",
+    zh: "卷级身份={{value}}",
+  },
+  "character_dynamics.decision_segment.responsibility": {
+    vi: "trách nhiệm={{value}}",
+    en: "responsibility={{value}}",
+    zh: "职责={{value}}",
+  },
+  "character_dynamics.decision.segment_separator": {
+    vi: " | ",
+    en: " | ",
+    zh: "；",
+  },
+  "character_dynamics.decision.manual_update": {
+    vi: "Cập nhật trạng thái động của {{characterName}}: {{segments}}",
+    en: "Dynamic state updated for {{characterName}}: {{segments}}",
+    zh: "{{characterName}} 动态状态更新：{{segments}}",
+  },
+  "character_dynamics.decision.relation_stage_updated": {
+    vi: "Đã cập nhật giai đoạn quan hệ từ {{sourceName}} sang {{targetName}} thành {{stageLabel}}. {{summary}}",
+    en: "Updated the relation stage from {{sourceName}} to {{targetName}} to {{stageLabel}}. {{summary}}",
+    zh: "{{sourceName}} -> {{targetName}} 关系阶段更新为 {{stageLabel}}。{{summary}}",
   },
   "world.route.wizard_disabled": {
     vi: "Tính năng world wizard hiện đang tắt.",
@@ -5284,6 +6559,36 @@ const EXACT_TRANSLATIONS = new Map<string, LocalizedText>([
   ["Knowledge document not found.", { vi: "Không tìm thấy tài liệu tri thức.", en: "Knowledge document not found.", zh: "未找到知识文档。" }],
   ["Book analysis not found.", { vi: "Không tìm thấy bản phân tích sách.", en: "Book analysis not found.", zh: "未找到拆书分析。" }],
   ["Book analysis section not found.", { vi: "Không tìm thấy mục phân tích sách.", en: "Book analysis section not found.", zh: "未找到拆书分析章节。" }],
+  ["服务重启后任务已暂停，等待手动恢复。", {
+    vi: "Tác vụ đã tạm dừng sau khi dịch vụ khởi động lại, hãy tiếp tục thủ công nếu vẫn muốn chạy tiếp.",
+    en: "The task paused after the service restarted. Resume it manually if you still want to continue.",
+    zh: "服务重启后任务已暂停，等待手动恢复。",
+  }],
+  ["任务心跳超时", {
+    vi: "Tác vụ phân tích sách đã quá thời gian heartbeat.",
+    en: "The book analysis task timed out on heartbeat.",
+    zh: "任务心跳超时",
+  }],
+  ["Book analysis failed.", {
+    vi: "Bản phân tích sách đã thất bại khi chạy.",
+    en: "Book analysis failed.",
+    zh: "拆书分析执行失败。",
+  }],
+  ["Section regeneration failed.", {
+    vi: "Tạo lại mục phân tích sách thất bại.",
+    en: "Section regeneration failed.",
+    zh: "拆书分析分节重生成失败。",
+  }],
+  ["Custom provider requires an explicit model for book analysis.", {
+    vi: "Nhà cung cấp tùy chỉnh cần chỉ rõ model cho phân tích sách.",
+    en: "Custom provider requires an explicit model for book analysis.",
+    zh: "自定义提供商在拆书分析中必须显式指定模型。",
+  }],
+  ["Invalid JSON object.", {
+    vi: "Không phát hiện được đối tượng JSON hợp lệ.",
+    en: "No valid JSON object was detected.",
+    zh: "未检测到有效的 JSON 对象。",
+  }],
   ["World not found.", { vi: "Không tìm thấy thế giới.", en: "World not found.", zh: "未找到世界设定。" }],
   ["Novel not found.", { vi: "Không tìm thấy tiểu thuyết.", en: "Novel not found.", zh: "未找到小说。" }],
   ["Agent run not found.", { vi: "Không tìm thấy lượt chạy tác tử.", en: "Agent run not found.", zh: "未找到代理运行记录。" }],

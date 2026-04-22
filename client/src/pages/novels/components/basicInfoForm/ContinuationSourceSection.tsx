@@ -1,4 +1,3 @@
-import type { BookAnalysisSectionKey } from "@ai-novel/shared/types/bookAnalysis";
 import { Button } from "@/components/ui/button";
 import {
   BASIC_INFO_FIELD_HINTS,
@@ -11,6 +10,7 @@ import {
   SelectionCard,
 } from "./BasicInfoFormPrimitives";
 import { t } from "@/i18n";
+import type { BookAnalysisSectionOption } from "@/lib/bookAnalysisUi";
 
 
 interface ContinuationSourceSectionProps {
@@ -24,7 +24,7 @@ interface ContinuationSourceSectionProps {
     documentVersionNumber: number;
   }>;
   isLoadingSourceNovelBookAnalyses: boolean;
-  availableBookAnalysisSections: Array<{ key: BookAnalysisSectionKey; title: string }>;
+  availableBookAnalysisSections: BookAnalysisSectionOption[];
   hasSelectedContinuationSource: boolean;
   onFormChange: (patch: Partial<NovelBasicFormState>) => void;
 }

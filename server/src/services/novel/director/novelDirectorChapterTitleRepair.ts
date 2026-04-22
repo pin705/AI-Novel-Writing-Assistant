@@ -1,4 +1,6 @@
 import type { DirectorConfirmRequest } from "@ai-novel/shared/types/novelDirector";
+import { getBackendMessage } from "../../../i18n";
+import { AppError } from "../../../middleware/errorHandler";
 import { buildNovelEditResumeTarget } from "../workflow/novelWorkflow.shared";
 import { getChapterTitleDiversityIssue } from "../volume/chapterTitleDiversity";
 import type { NovelVolumeService } from "../volume/NovelVolumeService";
@@ -17,9 +19,13 @@ function buildRepairStatusLabel(input: {
     return normalizedLabel;
   }
   if (input.phase === "load_context") {
-    return `正在整理第 ${input.volumeOrder} 卷拆章上下文`;
+    return getBackendMessage("director.chapter_title_repair.item.load_context", {
+      volumeOrder: input.volumeOrder,
+    });
   }
-  return `正在 AI 修复第 ${input.volumeOrder} 卷章节标题`;
+  return getBackendMessage("director.chapter_title_repair.item.repairing", {
+    volumeOrder: input.volumeOrder,
+  });
 }
 
 function hasTargetBeatSheet(workspace: Awaited<ReturnType<NovelVolumeService["getVolumes"]>>, volumeId: string): boolean {
@@ -42,7 +48,7 @@ export async function repairDirectorChapterTitles(input: {
   const currentWorkspace = await input.volumeService.getVolumes(input.novelId);
   const targetVolume = currentWorkspace.volumes.find((volume) => volume.id === input.targetVolumeId);
   if (!targetVolume) {
-    throw new Error("当前任务对应的目标卷不存在，无法继续 AI 修复章节标题。");
+    throw new AppError("director.chapter_title_repair.error.target_volume_not_found", 404);
   }
 
   const resumeTarget = buildNovelEditResumeTarget({
@@ -64,7 +70,9 @@ export async function repairDirectorChapterTitles(input: {
         await input.workflowService.markTaskRunning(input.taskId, {
           stage: "structured_outline",
           itemKey: "beat_sheet",
-          itemLabel: event.label.trim() || `正在补齐第 ${targetVolume.sortOrder} 卷节奏板`,
+          itemLabel: event.label.trim() || getBackendMessage("director.chapter_title_repair.item.backfill_beat_sheet", {
+            volumeOrder: targetVolume.sortOrder,
+          }),
           progress: DIRECTOR_PROGRESS.beatSheet,
         });
       },
@@ -94,7 +102,7 @@ export async function repairDirectorChapterTitles(input: {
   const persistedWorkspace = await input.volumeService.updateVolumes(input.novelId, repairedWorkspace);
   const repairedVolume = persistedWorkspace.volumes.find((volume) => volume.id === targetVolume.id);
   if (!repairedVolume) {
-    throw new Error("AI 已返回新的章节标题结果，但保存后的当前卷丢失，无法完成修复。");
+    throw new AppError("director.chapter_title_repair.error.repaired_volume_missing", 500);
   }
 
   const titleDiversityIssue = getChapterTitleDiversityIssue(
@@ -109,8 +117,12 @@ export async function repairDirectorChapterTitles(input: {
     stage: "structured_outline",
     itemKey: "chapter_list",
     itemLabel: titleDiversityIssue
-      ? `第 ${repairedVolume.sortOrder} 卷章节标题已重写，但结构仍建议继续分散`
-      : `第 ${repairedVolume.sortOrder} 卷章节标题已完成 AI 修复`,
+      ? getBackendMessage("director.chapter_title_repair.item.diversity_still_needed", {
+        volumeOrder: repairedVolume.sortOrder,
+      })
+      : getBackendMessage("director.chapter_title_repair.item.repaired", {
+        volumeOrder: repairedVolume.sortOrder,
+      }),
     progress: DIRECTOR_PROGRESS.chapterList,
     volumeId: repairedVolume.id,
     clearCheckpoint: true,

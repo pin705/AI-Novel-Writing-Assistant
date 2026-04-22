@@ -1,6 +1,8 @@
 import type { LLMProvider } from "@ai-novel/shared/types/llm";
 import { z } from "zod";
 import { prisma } from "../../db/prisma";
+import { getBackendLanguage, getBackendMessage, type BackendLocale } from "../../i18n";
+import { AppError } from "../../middleware/errorHandler";
 import { runStructuredPrompt } from "../../prompting/core/promptRunner";
 import {
   baseCharacterFinalPrompt,
@@ -66,6 +68,86 @@ export interface GenerateBaseCharacterResult {
   outputAnomaly: boolean;
 }
 
+const CHARACTER_PROMPT_LOCALE: BackendLocale = "zh-CN";
+
+function getCharacterGenerateStageLabel(stageLabel: "skeleton" | "final"): string {
+  return stageLabel === "skeleton"
+    ? getBackendMessage("character.generate.stage.skeleton")
+    : getBackendMessage("character.generate.stage.final");
+}
+
+function getCharacterStoryFunctionLabel(
+  value: string | null | undefined,
+  locale?: BackendLocale,
+): string {
+  const normalized = value?.trim();
+  switch (normalized) {
+    case "主角":
+      return getBackendMessage("character.generate.story_function.protagonist", undefined, locale);
+    case "反派":
+      return getBackendMessage("character.generate.story_function.antagonist", undefined, locale);
+    case "导师":
+      return getBackendMessage("character.generate.story_function.mentor", undefined, locale);
+    case "对照组":
+      return getBackendMessage("character.generate.story_function.foil", undefined, locale);
+    case "配角":
+      return getBackendMessage("character.generate.story_function.supporting", undefined, locale);
+    default:
+      return normalized ?? "";
+  }
+}
+
+function getCharacterGrowthStageLabel(
+  value: string | null | undefined,
+  locale?: BackendLocale,
+): string {
+  const normalized = value?.trim();
+  switch (normalized) {
+    case "起点":
+    case "start":
+      return getBackendMessage("character.generate.growth_stage.start", undefined, locale);
+    case "受挫":
+    case "setback":
+      return getBackendMessage("character.generate.growth_stage.setback", undefined, locale);
+    case "转折":
+    case "turning_point":
+      return getBackendMessage("character.generate.growth_stage.turning_point", undefined, locale);
+    case "觉醒":
+    case "awakening":
+      return getBackendMessage("character.generate.growth_stage.awakening", undefined, locale);
+    case "收束":
+    case "resolution":
+      return getBackendMessage("character.generate.growth_stage.resolution", undefined, locale);
+    default:
+      return normalized ?? "";
+  }
+}
+
+function formatCharacterField(label: string, value: string, locale?: BackendLocale): string {
+  if (getBackendLanguage(locale) === "zh") {
+    return `${label}：${value}`;
+  }
+  return `${label}: ${value}`;
+}
+
+function joinCharacterSentences(parts: Array<string | undefined>, locale?: BackendLocale): string {
+  const filtered = parts.map((part) => part?.trim() ?? "").filter(Boolean);
+  if (filtered.length === 0) {
+    return "";
+  }
+  const separator = getBackendLanguage(locale) === "zh" ? "。" : ". ";
+  return filtered.join(separator);
+}
+
+function joinCharacterInline(parts: Array<string | undefined>, locale?: BackendLocale): string {
+  const filtered = parts.map((part) => part?.trim() ?? "").filter(Boolean);
+  if (filtered.length === 0) {
+    return "";
+  }
+  const separator = getBackendLanguage(locale) === "zh" ? "；" : "; ";
+  return filtered.join(separator);
+}
+
 function toTrimmedText(value: unknown): string {
   return typeof value === "string" ? value.trim() : "";
 }
@@ -106,27 +188,45 @@ function assertConstraintConsistency(category: string, constraints: CharacterGen
   const normalizedCategory = category.trim();
   const categoryInSet = STORY_FUNCTION_VALUES.includes(normalizedCategory as (typeof STORY_FUNCTION_VALUES)[number]);
   if (categoryInSet && normalizedCategory !== constraints.storyFunction) {
-    throw new Error(`约束冲突：角色类别“${normalizedCategory}”与故事功能位“${constraints.storyFunction}”不一致，请统一后再试。`);
+    throw new AppError("character.error.constraint_story_function_category_conflict", 400, {
+      category: getCharacterStoryFunctionLabel(normalizedCategory),
+      storyFunction: getCharacterStoryFunctionLabel(constraints.storyFunction),
+    });
   }
 }
 
-function buildConstraintsText(constraints: CharacterGenerateConstraints | null): string {
+function buildConstraintsText(
+  constraints: CharacterGenerateConstraints | null,
+  locale: BackendLocale = CHARACTER_PROMPT_LOCALE,
+): string {
   if (!constraints) {
-    return "无";
+    return getBackendMessage("character.generate.constraints.none", undefined, locale);
   }
   const lines = [
-    constraints.storyFunction ? `角色功能位：${constraints.storyFunction}` : "",
-    constraints.externalGoal ? `外显目标：${constraints.externalGoal}` : "",
-    constraints.internalNeed ? `内在需求：${constraints.internalNeed}` : "",
-    constraints.coreFear ? `核心恐惧：${constraints.coreFear}` : "",
-    constraints.moralBottomLine ? `道德底线：${constraints.moralBottomLine}` : "",
-    constraints.secret ? `秘密：${constraints.secret}` : "",
-    constraints.coreFlaw ? `核心缺陷：${constraints.coreFlaw}` : "",
-    constraints.relationshipHooks ? `关系钩子：${constraints.relationshipHooks}` : "",
-    constraints.growthStage ? `成长阶段：${constraints.growthStage}` : "",
-    constraints.toneStyle ? `风格语气：${constraints.toneStyle}` : "",
+    constraints.storyFunction
+      ? formatCharacterField(
+        getBackendMessage("character.generate.constraints.label.story_function", undefined, locale),
+        getCharacterStoryFunctionLabel(constraints.storyFunction, locale),
+        locale,
+      )
+      : "",
+    constraints.externalGoal ? formatCharacterField(getBackendMessage("character.generate.constraints.label.external_goal", undefined, locale), constraints.externalGoal, locale) : "",
+    constraints.internalNeed ? formatCharacterField(getBackendMessage("character.generate.constraints.label.internal_need", undefined, locale), constraints.internalNeed, locale) : "",
+    constraints.coreFear ? formatCharacterField(getBackendMessage("character.generate.constraints.label.core_fear", undefined, locale), constraints.coreFear, locale) : "",
+    constraints.moralBottomLine ? formatCharacterField(getBackendMessage("character.generate.constraints.label.moral_bottom_line", undefined, locale), constraints.moralBottomLine, locale) : "",
+    constraints.secret ? formatCharacterField(getBackendMessage("character.generate.constraints.label.secret", undefined, locale), constraints.secret, locale) : "",
+    constraints.coreFlaw ? formatCharacterField(getBackendMessage("character.generate.constraints.label.core_flaw", undefined, locale), constraints.coreFlaw, locale) : "",
+    constraints.relationshipHooks ? formatCharacterField(getBackendMessage("character.generate.constraints.label.relationship_hooks", undefined, locale), constraints.relationshipHooks, locale) : "",
+    constraints.growthStage
+      ? formatCharacterField(
+        getBackendMessage("character.generate.constraints.label.growth_stage", undefined, locale),
+        getCharacterGrowthStageLabel(constraints.growthStage, locale),
+        locale,
+      )
+      : "",
+    constraints.toneStyle ? formatCharacterField(getBackendMessage("character.generate.constraints.label.tone_style", undefined, locale), constraints.toneStyle, locale) : "",
   ].filter(Boolean);
-  return lines.length > 0 ? lines.join("\n") : "无";
+  return lines.length > 0 ? lines.join("\n") : getBackendMessage("character.generate.constraints.none", undefined, locale);
 }
 
 async function invokeJsonWithRetry(
@@ -180,7 +280,11 @@ async function invokeJsonWithRetry(
       });
     return { parsed: result.output as Record<string, unknown>, retried: false, rawText: "" };
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : `模型输出异常：${stageLabel}阶段无法解析。`;
+    const errorMessage = error instanceof Error
+      ? error.message
+      : getBackendMessage("character.generate.error.parse_failed", {
+        stageLabel: getCharacterGenerateStageLabel(stageLabel),
+      });
     return { parsed: null, retried: false, rawText: "", errorMessage };
   }
 }
@@ -239,8 +343,69 @@ function buildFallbackFinalPayload(
   input: CharacterGenerateInput,
   constraints: CharacterGenerateConstraints | null,
   skeleton: Record<string, unknown>,
+  options: {
+    usedFallbackSkeleton: boolean;
+  },
 ): FinalCharacterPayload {
-  const role = constraints?.storyFunction || toTrimmedText(skeleton.role) || input.category.trim();
+  const role = getCharacterStoryFunctionLabel(
+    constraints?.storyFunction || toTrimmedText(skeleton.role) || input.category.trim(),
+  ) || input.category.trim();
+
+  if (options.usedFallbackSkeleton) {
+    return {
+      name: input.description.trim().slice(0, 12) || getBackendMessage("character.generate.final.default_name"),
+      role,
+      personality: joinCharacterSentences([
+        formatCharacterField(getBackendMessage("character.generate.final.label.core_persona"), constraints?.toneStyle || getBackendMessage("character.generate.final.default.core_persona")),
+        formatCharacterField(getBackendMessage("character.generate.final.label.surface_temperament"), constraints?.toneStyle || getBackendMessage("character.generate.final.default.surface_temperament")),
+        formatCharacterField(getBackendMessage("character.generate.final.label.core_drive"), constraints?.internalNeed || getBackendMessage("character.generate.final.default.core_drive")),
+        formatCharacterField(getBackendMessage("character.generate.final.label.social_mask"), getBackendMessage("character.generate.final.default.social_mask")),
+      ]),
+      background: joinCharacterSentences([
+        formatCharacterField(
+          getBackendMessage("character.generate.final.label.origin"),
+          getBackendMessage("character.generate.final.default.origin_from_description", {
+            description: input.description.trim(),
+          }),
+        ),
+        formatCharacterField(
+          getBackendMessage("character.generate.final.label.relationship_network"),
+          constraints?.relationshipHooks || getBackendMessage("character.generate.final.default.relationship_network"),
+        ),
+        formatCharacterField(
+          getBackendMessage("character.generate.final.label.secret"),
+          constraints?.secret || getBackendMessage("character.generate.final.default.secret"),
+        ),
+      ]),
+      development: joinCharacterInline([
+        getCharacterGrowthStageLabel(constraints?.growthStage || "start"),
+        getCharacterGrowthStageLabel("setback"),
+        getCharacterGrowthStageLabel("resolution"),
+      ]),
+      appearance: joinCharacterSentences([
+        formatCharacterField(getBackendMessage("character.generate.final.label.body"), getBackendMessage("character.generate.final.default.body")),
+        formatCharacterField(getBackendMessage("character.generate.final.label.facial_features"), getBackendMessage("character.generate.final.default.facial_features")),
+        formatCharacterField(getBackendMessage("character.generate.final.label.style_signature"), getBackendMessage("character.generate.final.default.style_signature")),
+        formatCharacterField(getBackendMessage("character.generate.final.label.aura_voice"), getBackendMessage("character.generate.final.default.aura_voice")),
+      ]),
+      weaknesses: joinCharacterInline([
+        formatCharacterField(getBackendMessage("character.generate.final.label.core_flaw"), constraints?.coreFlaw || getBackendMessage("character.generate.final.default.core_flaw")),
+        formatCharacterField(getBackendMessage("character.generate.final.label.cost"), constraints?.coreFear || getBackendMessage("character.generate.final.default.cost")),
+      ]),
+      interests: getBackendMessage("character.generate.final.default.interests"),
+      keyEvents: getBackendMessage("character.generate.final.default.key_events"),
+      tags: Array.from(new Set([
+        role,
+        constraints?.toneStyle?.trim(),
+        constraints?.coreFlaw?.trim(),
+        constraints?.coreFear?.trim(),
+        getBackendMessage("character.generate.final.default.tag.inner_tension"),
+        getBackendMessage("character.generate.final.default.tag.relationship_pressure"),
+      ].filter(Boolean))).slice(0, 10).join(","),
+      category: input.category.trim(),
+    };
+  }
+
   const behaviorPatterns = toStringList(skeleton.behaviorPatterns, 4);
   const triggerPoints = toStringList(skeleton.triggerPoints, 3);
   const relationHooks = toStringList(skeleton.relationshipNetwork, 3);
@@ -252,43 +417,77 @@ function buildFallbackFinalPayload(
   const conflictKeywords = toStringList(skeleton.conflictKeywords, 4);
   const themeKeywords = toStringList(skeleton.themeKeywords, 4);
 
-  const personality = [
-    `Core Persona: ${toTrimmedText(skeleton.corePersona) || "complex and restrained"}` ,
-    `Surface Temperament: ${toTrimmedText(skeleton.surfaceTemperament) || constraints?.toneStyle || "calm and controlled"}`,
-    `Core Drive: ${toTrimmedText(skeleton.coreDrive) || constraints?.internalNeed || "needs understanding and belonging"}` ,
-    behaviorPatterns.length > 0 ? `Behavior Patterns: ${behaviorPatterns.join("; ")}` : "",
-    triggerPoints.length > 0 ? `Emotional Triggers: ${triggerPoints.join("; ")}` : "",
-    toTrimmedText(skeleton.socialMask) ? `Social Mask: ${toTrimmedText(skeleton.socialMask)}` : "",
-  ].filter(Boolean).join(". ");
+  const personality = joinCharacterSentences([
+    formatCharacterField(getBackendMessage("character.generate.final.label.core_persona"), toTrimmedText(skeleton.corePersona) || getBackendMessage("character.generate.final.default.core_persona")),
+    formatCharacterField(getBackendMessage("character.generate.final.label.surface_temperament"), toTrimmedText(skeleton.surfaceTemperament) || constraints?.toneStyle || getBackendMessage("character.generate.final.default.surface_temperament")),
+    formatCharacterField(getBackendMessage("character.generate.final.label.core_drive"), toTrimmedText(skeleton.coreDrive) || constraints?.internalNeed || getBackendMessage("character.generate.final.default.core_drive")),
+    behaviorPatterns.length > 0
+      ? formatCharacterField(getBackendMessage("character.generate.final.label.behavior_patterns"), joinCharacterInline(behaviorPatterns))
+      : "",
+    triggerPoints.length > 0
+      ? formatCharacterField(getBackendMessage("character.generate.final.label.emotional_triggers"), joinCharacterInline(triggerPoints))
+      : "",
+    toTrimmedText(skeleton.socialMask)
+      ? formatCharacterField(getBackendMessage("character.generate.final.label.social_mask"), toTrimmedText(skeleton.socialMask))
+      : "",
+  ]);
 
-  const background = [
-    `Origin: ${toTrimmedText(skeleton.lifeOrigin) || `derived from description: ${input.description.trim()}`}` ,
-    relationHooks.length > 0 ? `Relationship Network: ${relationHooks.join("; ")}` : "",
-    `Secret: ${toTrimmedText(skeleton.secret) || constraints?.secret || "to be revealed by plot"}` ,
-  ].filter(Boolean).join(". ");
+  const background = joinCharacterSentences([
+    formatCharacterField(
+      getBackendMessage("character.generate.final.label.origin"),
+      toTrimmedText(skeleton.lifeOrigin) || getBackendMessage("character.generate.final.default.origin_from_description", {
+        description: input.description.trim(),
+      }),
+    ),
+    relationHooks.length > 0
+      ? formatCharacterField(getBackendMessage("character.generate.final.label.relationship_network"), joinCharacterInline(relationHooks))
+      : "",
+    formatCharacterField(
+      getBackendMessage("character.generate.final.label.secret"),
+      toTrimmedText(skeleton.secret) || constraints?.secret || getBackendMessage("character.generate.final.default.secret"),
+    ),
+  ]);
 
   const development = growthArc.length > 0
-    ? growthArc.join(" -> ")
-    : `${constraints?.growthStage || "start"} -> setback -> resolution`;
+    ? joinCharacterInline(growthArc)
+    : joinCharacterInline([
+      getCharacterGrowthStageLabel(constraints?.growthStage || "start"),
+      getCharacterGrowthStageLabel("setback"),
+      getCharacterGrowthStageLabel("resolution"),
+    ]);
 
-  const weaknesses = [
-    `Core Flaw: ${toTrimmedText(skeleton.coreFlaw) || constraints?.coreFlaw || "decision instability under pressure"}` ,
-    `Cost: ${toTrimmedText(skeleton.coreFear) || constraints?.coreFear || "loss of key relationships"}` ,
-  ].join("; ");
+  const weaknesses = joinCharacterInline([
+    formatCharacterField(
+      getBackendMessage("character.generate.final.label.core_flaw"),
+      toTrimmedText(skeleton.coreFlaw) || constraints?.coreFlaw || getBackendMessage("character.generate.final.default.core_flaw"),
+    ),
+    formatCharacterField(
+      getBackendMessage("character.generate.final.label.cost"),
+      toTrimmedText(skeleton.coreFear) || constraints?.coreFear || getBackendMessage("character.generate.final.default.cost"),
+    ),
+  ]);
 
-  const appearance = [
-    `Body: ${toTrimmedText(skeleton.bodyType) || "fit but tense posture"}` ,
-    `Facial Features: ${toTrimmedText(skeleton.facialFeatures) || toTrimmedText(skeleton.appearance) || "recognizable sharp gaze"}` ,
-    `Style Signature: ${toTrimmedText(skeleton.styleSignature) || "practical outfit with recurring marker"}` ,
-    `Aura/Voice: ${toTrimmedText(skeleton.auraAndVoice) || "steady cool voice with pressure aura"}` ,
-  ].filter(Boolean).join(". ");
+  const appearance = joinCharacterSentences([
+    formatCharacterField(getBackendMessage("character.generate.final.label.body"), toTrimmedText(skeleton.bodyType) || getBackendMessage("character.generate.final.default.body")),
+    formatCharacterField(getBackendMessage("character.generate.final.label.facial_features"), toTrimmedText(skeleton.facialFeatures) || toTrimmedText(skeleton.appearance) || getBackendMessage("character.generate.final.default.facial_features")),
+    formatCharacterField(getBackendMessage("character.generate.final.label.style_signature"), toTrimmedText(skeleton.styleSignature) || getBackendMessage("character.generate.final.default.style_signature")),
+    formatCharacterField(getBackendMessage("character.generate.final.label.aura_voice"), toTrimmedText(skeleton.auraAndVoice) || getBackendMessage("character.generate.final.default.aura_voice")),
+  ]);
 
-  const interests = [
-    dailyAnchors.length > 0 ? `Daily Anchors: ${dailyAnchors.join("; ")}` : "",
-    habitualActions.length > 0 ? `Habitual Actions: ${habitualActions.join("; ")}` : "",
-    toTrimmedText(skeleton.speechStyle) ? `Speech Style: ${toTrimmedText(skeleton.speechStyle)}` : "",
-    talents.length > 0 ? `Talents: ${talents.join("; ")}` : "",
-  ].filter(Boolean).join(". ");
+  const interests = joinCharacterSentences([
+    dailyAnchors.length > 0
+      ? formatCharacterField(getBackendMessage("character.generate.final.label.daily_anchors"), joinCharacterInline(dailyAnchors))
+      : "",
+    habitualActions.length > 0
+      ? formatCharacterField(getBackendMessage("character.generate.final.label.habitual_actions"), joinCharacterInline(habitualActions))
+      : "",
+    toTrimmedText(skeleton.speechStyle)
+      ? formatCharacterField(getBackendMessage("character.generate.final.label.speech_style"), toTrimmedText(skeleton.speechStyle))
+      : "",
+    talents.length > 0
+      ? formatCharacterField(getBackendMessage("character.generate.final.label.talents"), joinCharacterInline(talents))
+      : "",
+  ]);
 
   const tagSet = new Set<string>([
     role,
@@ -299,15 +498,17 @@ function buildFallbackFinalPayload(
   ].filter(Boolean));
 
   return {
-    name: toTrimmedText(skeleton.nameSuggestion) || input.description.trim().slice(0, 12) || "Unnamed Character",
+    name: toTrimmedText(skeleton.nameSuggestion) || input.description.trim().slice(0, 12) || getBackendMessage("agent.character.unnamed"),
     role,
     personality: personality || input.description.trim(),
-    background: background || `derived from user description: ${input.description.trim()}` ,
-    development: development || "growth arc pending",
+    background: background || getBackendMessage("character.generate.final.default.origin_from_description", {
+      description: input.description.trim(),
+    }),
+    development: development || getBackendMessage("character.generate.final.default.development"),
     appearance: appearance || toTrimmedText(skeleton.appearance),
     weaknesses,
-    interests: interests || "maintains stability through repeated daily rituals",
-    keyEvents: keyEvents.join("; ") || "trigger event; breakthrough event; resolution event",
+    interests: interests || getBackendMessage("character.generate.final.default.interests"),
+    keyEvents: joinCharacterInline(keyEvents) || getBackendMessage("character.generate.final.default.key_events"),
     tags: Array.from(tagSet).slice(0, 10).join(","),
     category: input.category.trim(),
   };
@@ -355,11 +556,11 @@ export async function generateBaseCharacterFromAI(input: CharacterGenerateInput)
   const model = input.model;
   const temperature = 0.6;
 
-  const constraintsText = buildConstraintsText(constraints);
+  const constraintsText = buildConstraintsText(constraints, CHARACTER_PROMPT_LOCALE);
   const stageOne = await invokeJsonWithRetry(provider, model, temperature, {
     description: input.description,
     category: input.category,
-    genre: input.genre ?? "general",
+    genre: input.genre ?? getBackendMessage("character.generate.default_genre"),
     constraintsText,
     referenceContext,
   }, "skeleton");
@@ -385,7 +586,9 @@ export async function generateBaseCharacterFromAI(input: CharacterGenerateInput)
     });
   }
 
-  const fallbackPayload = buildFallbackFinalPayload(input, constraints, skeleton);
+  const fallbackPayload = buildFallbackFinalPayload(input, constraints, skeleton, {
+    usedFallbackSkeleton: !stageOne.parsed,
+  });
   const finalPayload = mergeFinalPayload(stageTwo.parsed, fallbackPayload, constraints);
   const outputAnomaly = !stageOne.parsed || !stageTwo.parsed;
 

@@ -1,7 +1,9 @@
+import { getBackendMessage } from "../../../i18n";
+
 export class DirectorRecoveryNotNeededError extends Error {
   readonly code = "director_recovery_not_needed";
 
-  constructor(message = "当前导演产物已经完整，无需继续自动导演。") {
+  constructor(message = getBackendMessage("director.error.recovery_not_needed")) {
     super(message);
     this.name = "DirectorRecoveryNotNeededError";
   }
@@ -20,7 +22,7 @@ export function isDirectorRecoveryNotNeededError(error: unknown): error is Direc
 export class DirectorTaskCancelledError extends Error {
   readonly code = "director_task_cancelled";
 
-  constructor(message = "当前自动导演任务已取消。") {
+  constructor(message = getBackendMessage("director.error.task_cancelled")) {
     super(message);
     this.name = "DirectorTaskCancelledError";
   }

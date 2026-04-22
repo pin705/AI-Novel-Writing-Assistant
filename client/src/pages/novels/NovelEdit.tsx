@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { BOOK_ANALYSIS_SECTIONS } from "@ai-novel/shared/types/bookAnalysis";
 import type { DirectorLockScope, DirectorSessionState } from "@ai-novel/shared/types/novelDirector";
 import type { NovelExportDownloadFormat, NovelExportScope } from "@ai-novel/shared/types/novelExport";
 import type {
@@ -62,6 +61,7 @@ import type { NovelEditTakeoverState, NovelTaskDrawerState } from "./components/
 import NovelExistingProjectTakeoverDialog from "./components/NovelExistingProjectTakeoverDialog";
 import { syncNovelWorkflowStageSilently, workflowStageFromTab } from "./novelWorkflow.client";
 import { isNovelWorkspaceFlowTab, scopeFromWorkspaceTab, tabFromDirectorProgress, tabFromScope } from "./novelWorkspaceNavigation";
+import { getBookAnalysisSectionOptions } from "@/lib/bookAnalysisUi";
 import { resolveChapterTitleWarning } from "@/lib/directorTaskNotice";
 import { resolveWorkflowContinuationFeedback } from "@/lib/novelWorkflowContinuation";
 import { getCandidateSelectionLink } from "@/lib/novelWorkflowTaskUi";
@@ -183,6 +183,7 @@ export default function NovelEdit() {
   const navigate = useNavigate();
   const llm = useLLMStore();
   const queryClient = useQueryClient();
+  const availableBookAnalysisSections = getBookAnalysisSectionOptions();
   const {
     activeTab,
     setActiveTab,
@@ -1560,7 +1561,7 @@ export default function NovelEdit() {
     sourceKnowledgeOptions,
     sourceNovelBookAnalysisOptions,
     isLoadingSourceNovelBookAnalyses: sourceBookAnalysesQuery.isLoading,
-    availableBookAnalysisSections: [...BOOK_ANALYSIS_SECTIONS],
+    availableBookAnalysisSections,
     worldSliceView,
     worldSliceMessage,
     isRefreshingWorldSlice,

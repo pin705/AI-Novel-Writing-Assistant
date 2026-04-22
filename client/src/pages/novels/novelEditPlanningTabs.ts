@@ -19,8 +19,8 @@ import type {
   VolumeSyncPreview,
 } from "@ai-novel/shared/types/novel";
 import type { StoryWorldSliceOverrides, StoryWorldSliceView } from "@ai-novel/shared/types/storyWorldSlice";
-import type { BookAnalysisSectionKey } from "@ai-novel/shared/types/bookAnalysis";
 import type { ExistingOutlineChapter } from "./volumePlan.utils";
+import type { BookAnalysisSectionOption } from "@/lib/bookAnalysisUi";
 
 interface BuildNovelEditPlanningTabsInput {
   id: string;
@@ -32,7 +32,7 @@ interface BuildNovelEditPlanningTabsInput {
   sourceKnowledgeOptions: BasicTabProps["sourceKnowledgeOptions"];
   sourceNovelBookAnalysisOptions: BasicTabProps["sourceNovelBookAnalysisOptions"];
   isLoadingSourceNovelBookAnalyses: boolean;
-  availableBookAnalysisSections: Array<{ key: BookAnalysisSectionKey; title: string }>;
+  availableBookAnalysisSections: BookAnalysisSectionOption[];
   worldSliceView?: StoryWorldSliceView | null;
   worldSliceMessage: string;
   isRefreshingWorldSlice: boolean;
