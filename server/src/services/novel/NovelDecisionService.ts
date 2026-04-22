@@ -1,4 +1,5 @@
 import { prisma } from "../../db/prisma";
+import { AppError } from "../../middleware/errorHandler";
 
 export interface CreativeDecisionInput {
   chapterId?: string | null;
@@ -40,7 +41,7 @@ export class NovelDecisionService {
       select: { id: true },
     });
     if (!existing) {
-      throw new Error("Creative decision not found.");
+      throw new AppError("novel.decision.error.not_found", 404);
     }
     return prisma.creativeDecision.update({
       where: { id: decisionId },
@@ -62,7 +63,7 @@ export class NovelDecisionService {
       select: { id: true },
     });
     if (!row) {
-      throw new Error("Creative decision not found.");
+      throw new AppError("novel.decision.error.not_found", 404);
     }
     await prisma.creativeDecision.delete({
       where: { id: decisionId },

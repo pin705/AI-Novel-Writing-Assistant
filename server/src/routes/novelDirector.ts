@@ -17,6 +17,7 @@ import {
   BOOK_FRAMING_COMMERCIAL_TAG_MAX_LENGTH,
   BOOK_FRAMING_MAX_COMMERCIAL_TAGS,
 } from "@ai-novel/shared/types/novelFraming";
+import { getBackendMessage } from "../i18n";
 import { validate } from "../middleware/validate";
 import { llmProviderSchema } from "../llm/providerSchema";
 import { NovelDirectorService } from "../services/novel/director/NovelDirectorService";
@@ -159,7 +160,7 @@ router.post("/candidates", validate({ body: candidatesSchema }), async (req, res
     res.status(200).json({
       success: true,
       data,
-      message: "Director candidates generated.",
+      message: getBackendMessage("novel.director.route.candidates.generated"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -172,7 +173,7 @@ router.post("/refine", validate({ body: refineSchema }), async (req, res, next) 
     res.status(200).json({
       success: true,
       data,
-      message: "Director candidates regenerated.",
+      message: getBackendMessage("novel.director.route.candidates.regenerated"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -185,7 +186,7 @@ router.post("/patch-candidate", validate({ body: patchCandidateSchema }), async 
     res.status(200).json({
       success: true,
       data,
-      message: "Director candidate patched.",
+      message: getBackendMessage("novel.director.route.candidate.patched"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -198,7 +199,7 @@ router.post("/refine-titles", validate({ body: refineTitleSchema }), async (req,
     res.status(200).json({
       success: true,
       data,
-      message: "Director title options regenerated.",
+      message: getBackendMessage("novel.director.route.title_options.regenerated"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -211,7 +212,7 @@ router.post("/confirm", validate({ body: confirmSchema }), async (req, res, next
     res.status(200).json({
       success: true,
       data,
-      message: "Director candidate confirmed.",
+      message: getBackendMessage("novel.director.route.candidate.confirmed"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -225,7 +226,7 @@ router.get("/takeover-readiness/:novelId", validate({ params: takeoverParamsSche
     res.status(200).json({
       success: true,
       data,
-      message: "Director takeover readiness loaded.",
+      message: getBackendMessage("novel.director.route.takeover_readiness.loaded"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -238,7 +239,7 @@ router.post("/takeover", validate({ body: takeoverSchema }), async (req, res, ne
     res.status(200).json({
       success: true,
       data,
-      message: "Director takeover started.",
+      message: getBackendMessage("novel.director.route.takeover.started"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);

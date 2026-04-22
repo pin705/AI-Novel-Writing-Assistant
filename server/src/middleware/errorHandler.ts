@@ -1,7 +1,8 @@
 import type { NextFunction, Request, Response } from "express";
 import type { ApiResponse } from "@ai-novel/shared/types/api";
 import { ZodError } from "zod";
-import { formatValidationIssue, getBackendLanguage, translateBackendText } from "../i18n";
+import type { BackendMessageParams } from "../i18n";
+import { formatValidationIssue, getBackendLanguage, resolveBackendMessageKey, translateBackendText } from "../i18n";
 
 export class AppError extends Error {
   readonly statusCode: number;
@@ -106,6 +107,24 @@ function formatUpstreamConnectionError(error: unknown): string | null {
   return `Kết nối tới dịch vụ mô hình phía trên thất bại: máy chủ hiện không thể kết nối tới ${target}${code}. Hãy kiểm tra kết nối mạng của nhà cung cấp này hoặc chuyển sang nhà cung cấp mô hình khác đang khả dụng.`;
 }
 
+function toBackendMessageParams(value: unknown): BackendMessageParams | undefined {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return undefined;
+  }
+  const params: BackendMessageParams = {};
+  for (const [key, item] of Object.entries(value as Record<string, unknown>)) {
+    if (
+      item == null
+      || typeof item === "string"
+      || typeof item === "number"
+      || typeof item === "boolean"
+    ) {
+      params[key] = item as string | number | boolean | null | undefined;
+    }
+  }
+  return Object.keys(params).length > 0 ? params : undefined;
+}
+
 export function errorHandler(
   error: unknown,
   req: Request,
@@ -140,7 +159,8 @@ export function errorHandler(
   }
 
   if (error instanceof AppError) {
-    const localizedError = translateBackendText(error.message);
+    const localizedError = resolveBackendMessageKey(error.message, toBackendMessageParams(error.details))
+      ?? translateBackendText(error.message);
     const detail = typeof error.details === "string" ? translateBackendText(error.details) : undefined;
     setRequestErrorMessage(res, localizedError, detail);
     if (error.statusCode >= 500) {

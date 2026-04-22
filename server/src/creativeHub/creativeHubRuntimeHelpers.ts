@@ -6,6 +6,7 @@ import type {
   CreativeHubThread,
 } from "@ai-novel/shared/types/creativeHub";
 import type { AgentRunStatus } from "@ai-novel/shared/types/agent";
+import { getBackendLanguage, getBackendMessage, getRequestLocale } from "../i18n";
 
 export function toBindings(bindings?: CreativeHubResourceBinding): CreativeHubResourceBinding {
   return {
@@ -22,19 +23,65 @@ export function toBindings(bindings?: CreativeHubResourceBinding): CreativeHubRe
 }
 
 export function describeBindings(bindings: CreativeHubResourceBinding): string | null {
+  const separator = getBackendLanguage(getRequestLocale()) === "zh" ? "，" : ", ";
   const parts = [
-    bindings.novelId ? `小说ID=${bindings.novelId}` : null,
-    bindings.chapterId ? `章节ID=${bindings.chapterId}` : null,
-    bindings.worldId ? `世界观ID=${bindings.worldId}` : null,
-    bindings.taskId ? `任务ID=${bindings.taskId}` : null,
-    bindings.bookAnalysisId ? `拆书分析ID=${bindings.bookAnalysisId}` : null,
-    bindings.formulaId ? `写作公式ID=${bindings.formulaId}` : null,
-    bindings.styleProfileId ? `写法资产ID=${bindings.styleProfileId}` : null,
-    bindings.baseCharacterId ? `基础角色ID=${bindings.baseCharacterId}` : null,
-    bindings.knowledgeDocumentIds?.length ? `知识文档ID=${bindings.knowledgeDocumentIds.join(",")}` : null,
+    bindings.novelId
+      ? getBackendMessage("creativeHub.runtime.binding.entry", {
+        label: getBackendMessage("creativeHub.runtime.binding.label.novel_id"),
+        value: bindings.novelId,
+      })
+      : null,
+    bindings.chapterId
+      ? getBackendMessage("creativeHub.runtime.binding.entry", {
+        label: getBackendMessage("creativeHub.runtime.binding.label.chapter_id"),
+        value: bindings.chapterId,
+      })
+      : null,
+    bindings.worldId
+      ? getBackendMessage("creativeHub.runtime.binding.entry", {
+        label: getBackendMessage("creativeHub.runtime.binding.label.world_id"),
+        value: bindings.worldId,
+      })
+      : null,
+    bindings.taskId
+      ? getBackendMessage("creativeHub.runtime.binding.entry", {
+        label: getBackendMessage("creativeHub.runtime.binding.label.task_id"),
+        value: bindings.taskId,
+      })
+      : null,
+    bindings.bookAnalysisId
+      ? getBackendMessage("creativeHub.runtime.binding.entry", {
+        label: getBackendMessage("creativeHub.runtime.binding.label.book_analysis_id"),
+        value: bindings.bookAnalysisId,
+      })
+      : null,
+    bindings.formulaId
+      ? getBackendMessage("creativeHub.runtime.binding.entry", {
+        label: getBackendMessage("creativeHub.runtime.binding.label.formula_id"),
+        value: bindings.formulaId,
+      })
+      : null,
+    bindings.styleProfileId
+      ? getBackendMessage("creativeHub.runtime.binding.entry", {
+        label: getBackendMessage("creativeHub.runtime.binding.label.style_profile_id"),
+        value: bindings.styleProfileId,
+      })
+      : null,
+    bindings.baseCharacterId
+      ? getBackendMessage("creativeHub.runtime.binding.entry", {
+        label: getBackendMessage("creativeHub.runtime.binding.label.base_character_id"),
+        value: bindings.baseCharacterId,
+      })
+      : null,
+    bindings.knowledgeDocumentIds?.length
+      ? getBackendMessage("creativeHub.runtime.binding.entry", {
+        label: getBackendMessage("creativeHub.runtime.binding.label.knowledge_document_ids"),
+        value: bindings.knowledgeDocumentIds.join(","),
+      })
+      : null,
   ].filter((item): item is string => Boolean(item));
 
-  return parts.length > 0 ? parts.join("，") : null;
+  return parts.length > 0 ? parts.join(separator) : null;
 }
 
 export function prependBindingMessage(
@@ -50,7 +97,7 @@ export function prependBindingMessage(
     {
       id: "creative_hub_binding_context",
       type: "system",
-      content: `当前创作中枢绑定的工作区资源如下：${summary}。如需查询、诊断或控制，请优先围绕这些资源理解用户意图。`,
+      content: getBackendMessage("creativeHub.runtime.binding.system_message", { summary }),
       additional_kwargs: {
         source: "creative_hub_binding",
         bindings,
@@ -202,7 +249,7 @@ export function buildInterrupt(payload: {
     id: payload.approvalId,
     approvalId: payload.approvalId,
     runId: payload.runId,
-    title: "审批确认",
+    title: getBackendMessage("creativeHub.runtime.interrupt.title.approval"),
     summary: payload.summary,
     targetType: payload.targetType,
     targetId: payload.targetId,

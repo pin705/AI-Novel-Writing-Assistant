@@ -1,6 +1,7 @@
 import { Router } from "express";
 import type { ApiResponse } from "@ai-novel/shared/types/api";
 import { z } from "zod";
+import { getBackendMessage } from "../i18n";
 import { llmProviderSchema } from "../llm/providerSchema";
 import { authMiddleware } from "../middleware/auth";
 import { validate } from "../middleware/validate";
@@ -72,7 +73,7 @@ router.post("/generate", validate({ body: generateSchema }), async (req, res, ne
     res.status(202).json({
       success: true,
       data: task,
-      message: "Image generation task queued.",
+      message: getBackendMessage("image.route.generation_task.queued"),
     } satisfies ApiResponse<typeof task>);
   } catch (error) {
     next(error);
@@ -91,7 +92,7 @@ router.post("/optimize-prompt", validate({ body: optimizePromptSchema }), async 
     res.status(200).json({
       success: true,
       data,
-      message: "Image prompt optimized.",
+      message: getBackendMessage("image.route.prompt.optimized"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -105,7 +106,7 @@ router.get("/tasks/:taskId", validate({ params: taskParamsSchema }), async (req,
     res.status(200).json({
       success: true,
       data,
-      message: "Task fetched.",
+      message: getBackendMessage("image.route.task.loaded"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -119,7 +120,7 @@ router.get("/assets", validate({ query: assetQuerySchema }), async (req, res, ne
     res.status(200).json({
       success: true,
       data,
-      message: "Assets fetched.",
+      message: getBackendMessage("image.route.assets.loaded"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -147,7 +148,7 @@ router.delete("/assets/:assetId", validate({ params: assetParamsSchema }), async
     res.status(200).json({
       success: true,
       data,
-      message: "Image asset deleted.",
+      message: getBackendMessage("image.route.asset.deleted"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -161,7 +162,7 @@ router.post("/assets/:assetId/set-primary", validate({ params: assetParamsSchema
     res.status(200).json({
       success: true,
       data,
-      message: "Primary image updated.",
+      message: getBackendMessage("image.route.asset.primary_updated"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);

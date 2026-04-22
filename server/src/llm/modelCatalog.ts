@@ -20,6 +20,21 @@ interface GetProviderModelsOptions {
   fallbackModels?: string[];
 }
 
+export type ModelCatalogErrorCode =
+  | "MISSING_BASE_URL"
+  | "FETCH_FAILED"
+  | "EMPTY_MODEL_LIST";
+
+export class ModelCatalogError extends Error {
+  readonly code: ModelCatalogErrorCode;
+
+  constructor(code: ModelCatalogErrorCode, message: string) {
+    super(message);
+    this.name = "ModelCatalogError";
+    this.code = code;
+  }
+}
+
 const MODEL_CACHE_TTL_MS = 30 * 60 * 1000;
 const modelCache = new Map<string, ModelCacheItem>();
 
@@ -96,8 +111,7 @@ async function fetchJson(url: string, init: RequestInit): Promise<unknown> {
     });
 
     if (!response.ok) {
-      const detail = await response.text();
-      throw new Error(`拉取模型列表失败（${response.status}）：${detail || "未知错误"}`);
+      throw new ModelCatalogError("FETCH_FAILED", "settings.error.provider_models_fetch_failed");
     }
 
     return response.json();
@@ -151,7 +165,7 @@ async function fetchOllamaModels(baseURL: string): Promise<string[]> {
   });
   const models = parseModelIds(payload);
   if (models.length === 0) {
-    throw new Error("模型列表为空。");
+    throw new ModelCatalogError("EMPTY_MODEL_LIST", "settings.error.provider_models_empty");
   }
   return models;
 }
@@ -163,7 +177,7 @@ async function fetchProviderModels(
 ): Promise<string[]> {
   const baseURL = resolveProviderBaseUrl(provider, customBaseURL, customBaseURL);
   if (!baseURL) {
-    throw new Error("未配置可用的 API URL。");
+    throw new ModelCatalogError("MISSING_BASE_URL", "settings.error.provider_base_url_required");
   }
   if (provider === "ollama") {
     return fetchOllamaModels(baseURL);
@@ -176,7 +190,7 @@ async function fetchProviderModels(
 
   const models = parseModelIds(payload);
   if (models.length === 0) {
-    throw new Error("模型列表为空。");
+    throw new ModelCatalogError("EMPTY_MODEL_LIST", "settings.error.provider_models_empty");
   }
   return models;
 }

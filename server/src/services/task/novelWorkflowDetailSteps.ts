@@ -3,7 +3,8 @@ import type {
   NovelWorkflowStage,
 } from "@ai-novel/shared/types/novelWorkflow";
 import type { TaskStatus, UnifiedTaskStep } from "@ai-novel/shared/types/task";
-import { NOVEL_WORKFLOW_STAGE_STEPS, buildSteps } from "./taskCenter.shared";
+import { getNovelWorkflowStageSteps } from "../novel/workflow/novelWorkflow.shared";
+import { buildSteps } from "./taskCenter.shared";
 
 const WORKFLOW_ITEM_STAGE_MAP: Partial<Record<string, NovelWorkflowStage>> = {
   project_setup: "project_setup",
@@ -87,7 +88,7 @@ export function buildNovelWorkflowDetailSteps(input: {
 }): UnifiedTaskStep[] {
   const currentStage = resolveWorkflowDisplayStage(input);
   const steps = buildSteps(
-    NOVEL_WORKFLOW_STAGE_STEPS,
+    getNovelWorkflowStageSteps(),
     input.status,
     currentStage,
     input.createdAt,

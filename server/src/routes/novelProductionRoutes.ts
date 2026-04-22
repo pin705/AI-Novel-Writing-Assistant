@@ -1,6 +1,7 @@
 import type { Router } from "express";
 import type { ApiResponse } from "@ai-novel/shared/types/api";
 import { z } from "zod";
+import { getBackendMessage } from "../i18n";
 import { streamToSSE } from "../llm/streaming";
 import { validate } from "../middleware/validate";
 import type { NovelDraftOptimizeService } from "../services/novel/NovelDraftOptimizeService";
@@ -69,7 +70,7 @@ export function registerNovelProductionRoutes(input: RegisterNovelProductionRout
         res.status(202).json({
           success: true,
           data,
-          message: "Pipeline job created.",
+          message: getBackendMessage("novel.production.route.pipeline_job.created"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         if (forwardBusinessError(error, next)) {
@@ -90,14 +91,14 @@ export function registerNovelProductionRoutes(input: RegisterNovelProductionRout
         if (!data) {
           res.status(404).json({
             success: false,
-            error: "Pipeline job not found.",
+            error: getBackendMessage("novel.production.route.pipeline_job.not_found"),
           } satisfies ApiResponse<null>);
           return;
         }
         res.status(200).json({
           success: true,
           data,
-          message: "Pipeline job loaded.",
+          message: getBackendMessage("novel.production.route.pipeline_job.loaded"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);
@@ -115,7 +116,7 @@ export function registerNovelProductionRoutes(input: RegisterNovelProductionRout
         res.status(200).json({
           success: true,
           data,
-          message: "Chapter hook generated.",
+          message: getBackendMessage("novel.production.route.chapter_hook.generated"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);
@@ -153,7 +154,7 @@ export function registerNovelProductionRoutes(input: RegisterNovelProductionRout
         res.status(200).json({
           success: true,
           data,
-          message: "Outline optimization preview generated.",
+          message: getBackendMessage("novel.production.route.outline.optimize_preview.generated"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);
@@ -194,7 +195,7 @@ export function registerNovelProductionRoutes(input: RegisterNovelProductionRout
         res.status(200).json({
           success: true,
           data,
-          message: "Structured outline optimization preview generated.",
+          message: getBackendMessage("novel.production.route.structured_outline.optimize_preview.generated"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);
@@ -212,7 +213,7 @@ export function registerNovelProductionRoutes(input: RegisterNovelProductionRout
         res.status(200).json({
           success: true,
           data,
-          message: "Titles generated.",
+          message: getBackendMessage("novel.production.route.titles.generated"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);

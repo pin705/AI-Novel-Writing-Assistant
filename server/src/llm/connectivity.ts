@@ -2,16 +2,18 @@ import { HumanMessage, SystemMessage } from "@langchain/core/messages";
 import { z } from "zod";
 import type { LLMProvider } from "@ai-novel/shared/types/llm";
 import type { ModelRouteTaskType } from "@ai-novel/shared/types/novel";
-import { getLLM, resolveLLMClientOptions } from "./factory";
+import { getLLM, LLMClientConfigError, type LLMClientConfigErrorCode, resolveLLMClientOptions } from "./factory";
 import { MODEL_ROUTE_TASK_TYPES, resolveModel } from "./modelRouter";
 import { invokeStructuredLlmDetailed, summarizeStructuredOutputFailure } from "./structuredInvoke";
 
 export type ConnectivityProbeMode = "plain" | "structured" | "both";
+export type ConnectivityProbeErrorCode = LLMClientConfigErrorCode | "PROBE_FAILED";
 
 export interface ConnectivityProbeStatus {
   ok: boolean;
   latency: number | null;
   error: string | null;
+  errorCode: ConnectivityProbeErrorCode | null;
 }
 
 export interface StructuredConnectivityProbeStatus extends ConnectivityProbeStatus {
@@ -40,7 +42,14 @@ function toErrorMessage(error: unknown): string {
   if (error instanceof Error && error.message.trim()) {
     return error.message.trim();
   }
-  return "连接测试失败。";
+  return "llm.error.connectivity_test_failed";
+}
+
+function toErrorCode(error: unknown): ConnectivityProbeErrorCode {
+  if (error instanceof LLMClientConfigError) {
+    return error.code;
+  }
+  return "PROBE_FAILED";
 }
 
 async function testPlainConnection(input: {
@@ -70,6 +79,7 @@ async function testPlainConnection(input: {
       ok: true,
       latency: Date.now() - start,
       error: null,
+      errorCode: null,
     };
     return {
       provider: resolved.provider,
@@ -77,6 +87,7 @@ async function testPlainConnection(input: {
       ok: plain.ok,
       latency: plain.latency,
       error: plain.error,
+      errorCode: plain.errorCode,
       plain,
       structured: null,
     };
@@ -85,6 +96,7 @@ async function testPlainConnection(input: {
       ok: false,
       latency: null,
       error: toErrorMessage(error),
+      errorCode: toErrorCode(error),
     };
     return {
       provider: input.provider,
@@ -92,6 +104,7 @@ async function testPlainConnection(input: {
       ok: plain.ok,
       latency: plain.latency,
       error: plain.error,
+      errorCode: plain.errorCode,
       plain,
       structured: null,
     };
@@ -104,15 +117,19 @@ async function testStructuredConnection(input: {
   apiKey?: string;
   baseURL?: string;
 }): Promise<LLMConnectivityStatus> {
-  const resolved = await resolveLLMClientOptions(input.provider, {
-    apiKey: input.apiKey,
-    baseURL: input.baseURL,
-    model: input.model,
-    temperature: 0.2,
-    maxTokens: 256,
-    executionMode: "plain",
-  });
+  let resolvedProvider = input.provider;
+  let resolvedModel = input.model?.trim() || "";
   try {
+    const resolved = await resolveLLMClientOptions(input.provider, {
+      apiKey: input.apiKey,
+      baseURL: input.baseURL,
+      model: input.model,
+      temperature: 0.2,
+      maxTokens: 256,
+      executionMode: "plain",
+    });
+    resolvedProvider = resolved.provider;
+    resolvedModel = resolved.model;
     const startedAt = Date.now();
     const result = await invokeStructuredLlmDetailed({
       provider: resolved.provider,
@@ -137,6 +154,7 @@ async function testStructuredConnection(input: {
       ok: true,
       latency: Date.now() - startedAt,
       error: null,
+      errorCode: null,
       strategy: result.diagnostics.strategy,
       reasoningForcedOff: result.diagnostics.reasoningForcedOff,
       fallbackAvailable: result.diagnostics.fallbackAvailable,
@@ -152,33 +170,38 @@ async function testStructuredConnection(input: {
       ok: structured.ok,
       latency: structured.latency,
       error: structured.error,
+      errorCode: structured.errorCode,
       plain: null,
       structured,
     };
   } catch (error) {
-    const summary = summarizeStructuredOutputFailure({
-      error,
-      fallbackAvailable: false,
-    });
+    const summary = error instanceof LLMClientConfigError
+      ? null
+      : summarizeStructuredOutputFailure({
+        error,
+        fallbackAvailable: false,
+      });
     const structured: StructuredConnectivityProbeStatus = {
       ok: false,
       latency: null,
       error: toErrorMessage(error),
+      errorCode: toErrorCode(error),
       strategy: null,
       reasoningForcedOff: false,
       fallbackAvailable: false,
       fallbackUsed: false,
-      errorCategory: summary.category,
+      errorCategory: summary?.category ?? null,
       nativeJsonObject: false,
       nativeJsonSchema: false,
       profileFamily: null,
     };
     return {
-      provider: resolved.provider,
-      model: resolved.model,
+      provider: resolvedProvider,
+      model: resolvedModel,
       ok: structured.ok,
       latency: structured.latency,
       error: structured.error,
+      errorCode: structured.errorCode,
       plain: null,
       structured,
     };
@@ -196,7 +219,8 @@ async function mergeProbeStatuses(input: {
   const top = input.plain?.plain ?? input.structured?.structured ?? {
     ok: false,
     latency: null,
-    error: "连接测试失败。",
+    error: "llm.error.connectivity_test_failed",
+    errorCode: "PROBE_FAILED" as const,
   };
   return {
     provider,
@@ -204,6 +228,7 @@ async function mergeProbeStatuses(input: {
     ok: top.ok,
     latency: top.latency,
     error: top.error,
+    errorCode: top.errorCode,
     plain: input.plain?.plain ?? null,
     structured: input.structured?.structured ?? null,
   };
@@ -262,6 +287,7 @@ async function testModelRoutes(taskTypes: readonly ModelRouteTaskType[] = MODEL_
       ok: result.ok,
       latency: result.latency,
       error: result.error,
+      errorCode: result.errorCode,
       plain: result.plain,
       structured: result.structured,
     };

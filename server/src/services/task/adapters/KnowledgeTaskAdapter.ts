@@ -1,4 +1,5 @@
 import type { TaskStatus, UnifiedTaskDetail, UnifiedTaskSummary } from "@ai-novel/shared/types/task";
+import { getBackendMessage } from "../../../i18n";
 import { prisma } from "../../../db/prisma";
 import { AppError } from "../../../middleware/errorHandler";
 import { ragServices } from "../../rag";
@@ -14,8 +15,9 @@ import {
   isTaskArchived,
 } from "../taskArchive";
 import {
-  KNOWLEDGE_DOCUMENT_STEPS,
   buildSteps,
+  getKnowledgeDocumentSteps,
+  localizeTaskStageLabel,
   toLegacyTaskStatus,
 } from "../taskCenter.shared";
 
@@ -56,12 +58,12 @@ function parseJobProgress(payloadJson: string | null): KnowledgeJobProgressPaylo
 
 function getJobTitle(jobType: RagJobType, documentTitle: string): string {
   if (jobType === "delete") {
-    return `知识库删除：${documentTitle}`;
+    return getBackendMessage("task.knowledge.title.delete", { documentTitle });
   }
   if (jobType === "upsert") {
-    return `知识库更新：${documentTitle}`;
+    return getBackendMessage("task.knowledge.title.update", { documentTitle });
   }
-  return `知识库重建：${documentTitle}`;
+  return getBackendMessage("task.knowledge.title.rebuild", { documentTitle });
 }
 
 function matchesKeyword(
@@ -87,6 +89,10 @@ function matchesKeyword(
 }
 
 export class KnowledgeTaskAdapter {
+  private getStepDefinitions() {
+    return getKnowledgeDocumentSteps();
+  }
+
   async list(input: {
     status?: TaskStatus;
     keyword?: string;
@@ -137,10 +143,12 @@ export class KnowledgeTaskAdapter {
       .filter((row) => !input.keyword || matchesKeyword(row, documentMap.get(row.ownerId), input.keyword))
       .slice(0, input.take)
       .map((row) => {
+        const stepDefinitions = this.getStepDefinitions();
         const progress = parseJobProgress(row.payloadJson);
         const document = documentMap.get(row.ownerId);
-        const documentTitle = document?.title ?? "未命名知识文档";
+        const documentTitle = document?.title ?? getBackendMessage("task.knowledge.document.untitled");
         const statusValue = row.status as TaskStatus;
+        const currentStage = progress?.stage ?? (statusValue === "queued" ? "queued" : statusValue === "running" ? "loading_source" : null);
         const sourceRoute = `/knowledge?id=${row.ownerId}`;
         const updatedAt = row.updatedAt.toISOString();
         const createdAt = row.createdAt.toISOString();
@@ -152,7 +160,7 @@ export class KnowledgeTaskAdapter {
           title: getJobTitle(row.jobType as RagJobType, documentTitle),
           status: statusValue,
           progress: progressPercent,
-          currentStage: progress?.stage ?? (statusValue === "queued" ? "queued" : statusValue === "running" ? "loading_source" : null),
+          currentStage: localizeTaskStageLabel(stepDefinitions, currentStage),
           currentItemLabel: progress?.label ?? null,
           attemptCount: row.attempts,
           maxAttempts: row.maxAttempts,
@@ -165,9 +173,9 @@ export class KnowledgeTaskAdapter {
           sourceRoute,
           failureCode: row.status === "failed" ? "KNOWLEDGE_INDEX_FAILED" : null,
           failureSummary: row.status === "failed"
-            ? normalizeFailureSummary(row.lastError, "知识库索引失败，但没有记录明确错误。")
+            ? normalizeFailureSummary(row.lastError, getBackendMessage("task.knowledge.failure.default"))
             : row.status === "cancelled"
-              ? "知识库索引已取消。"
+              ? getBackendMessage("task.knowledge.failure.cancelled")
               : row.lastError,
           recoveryHint: buildTaskRecoveryHint("knowledge_document", statusValue),
           sourceResource: {
@@ -208,9 +216,11 @@ export class KnowledgeTaskAdapter {
         lastIndexedAt: true,
       },
     });
+    const stepDefinitions = this.getStepDefinitions();
     const progress = parseJobProgress(row.payloadJson);
-    const documentTitle = document?.title ?? "未命名知识文档";
+    const documentTitle = document?.title ?? getBackendMessage("task.knowledge.document.untitled");
     const statusValue = row.status as TaskStatus;
+    const currentStage = progress?.stage ?? (statusValue === "queued" ? "queued" : statusValue === "running" ? "loading_source" : null);
     const sourceRoute = `/knowledge?id=${row.ownerId}`;
     const updatedAt = row.updatedAt.toISOString();
     const createdAt = row.createdAt.toISOString();
@@ -222,7 +232,7 @@ export class KnowledgeTaskAdapter {
       title: getJobTitle(row.jobType as RagJobType, documentTitle),
       status: statusValue,
       progress: progressPercent,
-      currentStage: progress?.stage ?? (statusValue === "queued" ? "queued" : statusValue === "running" ? "loading_source" : null),
+      currentStage: localizeTaskStageLabel(stepDefinitions, currentStage),
       currentItemLabel: progress?.label ?? null,
       attemptCount: row.attempts,
       maxAttempts: row.maxAttempts,
@@ -235,9 +245,9 @@ export class KnowledgeTaskAdapter {
       sourceRoute,
       failureCode: row.status === "failed" ? "KNOWLEDGE_INDEX_FAILED" : null,
       failureSummary: row.status === "failed"
-        ? normalizeFailureSummary(row.lastError, "知识库索引失败，但没有记录明确错误。")
+        ? normalizeFailureSummary(row.lastError, getBackendMessage("task.knowledge.failure.default"))
         : row.status === "cancelled"
-          ? "知识库索引已取消。"
+          ? getBackendMessage("task.knowledge.failure.cancelled")
           : row.lastError,
       recoveryHint: buildTaskRecoveryHint("knowledge_document", statusValue),
       sourceResource: {
@@ -281,9 +291,9 @@ export class KnowledgeTaskAdapter {
           : null,
       },
       steps: buildSteps(
-        KNOWLEDGE_DOCUMENT_STEPS,
+        stepDefinitions,
         summary.status,
-        summary.currentStage,
+        currentStage,
         summary.createdAt,
         summary.updatedAt,
       ),
@@ -293,17 +303,17 @@ export class KnowledgeTaskAdapter {
 
   async retry(id: string): Promise<UnifiedTaskDetail> {
     if (await isTaskArchived("knowledge_document", id)) {
-      throw new AppError("Task not found.", 404);
+      throw new AppError(getBackendMessage("task.error.not_found"), 404);
     }
 
     const job = await prisma.ragIndexJob.findUnique({
       where: { id },
     });
     if (!job || job.ownerType !== "knowledge_document") {
-      throw new AppError("Task not found.", 404);
+      throw new AppError(getBackendMessage("task.error.not_found"), 404);
     }
     if (job.status !== "failed" && job.status !== "cancelled") {
-      throw new AppError("Only failed or cancelled knowledge index jobs can be retried.", 400);
+      throw new AppError(getBackendMessage("task.error.knowledge.retry_requires_terminal_status"), 400);
     }
 
     if (job.jobType !== "delete") {
@@ -312,7 +322,7 @@ export class KnowledgeTaskAdapter {
         select: { id: true },
       });
       if (!document) {
-        throw new AppError("Knowledge document not found.", 404);
+        throw new AppError(getBackendMessage("task.error.knowledge.document_not_found"), 404);
       }
       await prisma.knowledgeDocument.update({
         where: { id: document.id },
@@ -328,24 +338,24 @@ export class KnowledgeTaskAdapter {
     });
     const detail = await this.detail(nextJob.id);
     if (!detail) {
-      throw new AppError("Task not found after retry.", 404);
+      throw new AppError(getBackendMessage("task.error.not_found_after_retry"), 404);
     }
     return detail;
   }
 
   async cancel(id: string): Promise<UnifiedTaskDetail> {
     if (await isTaskArchived("knowledge_document", id)) {
-      throw new AppError("Task not found.", 404);
+      throw new AppError(getBackendMessage("task.error.not_found"), 404);
     }
 
     const job = await prisma.ragIndexJob.findUnique({
       where: { id },
     });
     if (!job || job.ownerType !== "knowledge_document") {
-      throw new AppError("Task not found.", 404);
+      throw new AppError(getBackendMessage("task.error.not_found"), 404);
     }
     if (job.status !== "queued" && job.status !== "running") {
-      throw new AppError("Only queued or running knowledge index jobs can be cancelled.", 400);
+      throw new AppError(getBackendMessage("task.error.knowledge.cancel_requires_active_status"), 400);
     }
 
     await ragServices.ragIndexService.updateJobStatus(id, {
@@ -354,7 +364,7 @@ export class KnowledgeTaskAdapter {
     });
     const detail = await this.detail(id);
     if (!detail) {
-      throw new AppError("Task not found after cancellation.", 404);
+      throw new AppError(getBackendMessage("task.error.not_found_after_cancellation"), 404);
     }
     return detail;
   }
@@ -368,10 +378,10 @@ export class KnowledgeTaskAdapter {
       where: { id },
     });
     if (!job || job.ownerType !== "knowledge_document") {
-      throw new AppError("Task not found.", 404);
+      throw new AppError(getBackendMessage("task.error.not_found"), 404);
     }
     if (!isArchivableTaskStatus(job.status as TaskStatus)) {
-      throw new AppError("Only completed, failed, or cancelled tasks can be archived.", 400);
+      throw new AppError(getBackendMessage("task.error.archive_requires_terminal_status"), 400);
     }
 
     await recordTaskArchive("knowledge_document", id);

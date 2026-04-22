@@ -1,5 +1,6 @@
 import type { BaseMessageChunk } from "@langchain/core/messages";
 import { prisma } from "../../db/prisma";
+import { AppError } from "../../middleware/errorHandler";
 import {
   runStructuredPrompt,
   runTextPrompt,
@@ -50,7 +51,7 @@ export class NovelCoreGenerationService {
       include: { world: true, characters: true },
     });
     if (!novel) {
-      throw new Error("小说不存在");
+      throw new AppError("novel.error.not_found", 404);
     }
 
     const [storyWorldSlice, referenceContext] = await Promise.all([
@@ -106,12 +107,12 @@ export class NovelCoreGenerationService {
       include: { world: true, characters: true },
     });
     if (!novel) {
-      throw new Error("小说不存在");
+      throw new AppError("novel.error.not_found", 404);
     }
 
-    await ensureNovelCharacters(novelId, "生成结构化大纲");
+    await ensureNovelCharacters(novelId, "generate_structured_outline");
     if (!novel.outline) {
-      throw new Error("请先生成小说发展走向");
+      throw new AppError("novel.error.outline_required_before_structured_outline", 400);
     }
 
     const [storyWorldSlice, referenceContext] = await Promise.all([
@@ -250,10 +251,10 @@ export class NovelCoreGenerationService {
       include: { characters: true, genre: true, world: true },
     });
     if (!novel) {
-      throw new Error("小说不存在");
+      throw new AppError("novel.error.not_found", 404);
     }
 
-    await ensureNovelCharacters(novelId, "生成作品圣经");
+    await ensureNovelCharacters(novelId, "generate_novel_bible");
     const [storyWorldSlice, referenceContext] = await Promise.all([
       this.storyWorldSliceService.ensureStoryWorldSlice(novelId, {
         storyInput: novel.outline ?? novel.description ?? "",
@@ -318,10 +319,10 @@ export class NovelCoreGenerationService {
       include: { bible: true, chapters: true, world: true },
     });
     if (!novel) {
-      throw new Error("小说不存在");
+      throw new AppError("novel.error.not_found", 404);
     }
 
-    await ensureNovelCharacters(novelId, "生成剧情拍点");
+    await ensureNovelCharacters(novelId, "generate_story_beats");
     const [storyWorldSlice, referenceContext] = await Promise.all([
       this.storyWorldSliceService.ensureStoryWorldSlice(novelId, {
         storyInput: novel.outline ?? novel.description ?? "",
@@ -385,7 +386,7 @@ export class NovelCoreGenerationService {
       ? await prisma.chapter.findFirst({ where: { id: options.chapterId, novelId } })
       : await prisma.chapter.findFirst({ where: { novelId }, orderBy: { order: "desc" } });
     if (!chapter) {
-      throw new Error("未找到可生成钩子的章节");
+      throw new AppError("novel.error.chapter_for_hook_not_found", 404);
     }
 
     const result = await runStructuredPrompt({

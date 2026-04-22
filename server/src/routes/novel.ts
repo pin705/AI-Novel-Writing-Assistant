@@ -28,14 +28,13 @@ const novelService = new NovelService();
 const novelDraftOptimizeService = new NovelDraftOptimizeService();
 
 function forwardBusinessError(error: unknown, next: (err?: unknown) => void): boolean {
-  if (!(error instanceof Error)) {
+  if (!(error instanceof AppError)) {
     return false;
   }
-  const isBusiness = /请先在本小说中至少添加|基础角色不存在|请先生成小说发展走向|指定区间内没有可生成的章节|当前小说还没有章节/.test(error.message);
-  if (!isBusiness) {
+  if (error.statusCode >= 500) {
     return false;
   }
-  next(new AppError(error.message, 400));
+  next(error);
   return true;
 }
 
@@ -231,7 +230,7 @@ const volumeSyncSchema = z.object({
 });
 
 const chapterSchema = z.object({
-  title: z.string().trim().min(1, "章节标题不能为空。"),
+  title: z.string().trim().min(1, "validation.chapter_title_required"),
   order: z.number().int().nonnegative(),
   content: z.string().optional(),
   expectation: z.string().optional(),
@@ -271,8 +270,8 @@ const updateChapterSchema = z.object({
 });
 
 const characterSchema = z.object({
-  name: z.string().trim().min(1, "角色名称不能为空。"),
-  role: z.string().trim().min(1, "角色定位不能为空。"),
+  name: z.string().trim().min(1, "validation.character_name_required"),
+  role: z.string().trim().min(1, "validation.character_role_required"),
   gender: z.enum(["male", "female", "other", "unknown"]).optional(),
   castRole: z.enum(["protagonist", "antagonist", "ally", "foil", "mentor", "love_interest", "pressure_source", "catalyst"]).optional(),
   storyFunction: z.string().optional(),
@@ -333,7 +332,7 @@ const characterTimelineSyncSchema = z.object({
   }
   return true;
 }, {
-  message: "起始章节必须小于或等于结束章节。",
+  message: "validation.chapter_range_invalid",
 });
 
 const llmGenerateSchema = z.object({
@@ -359,35 +358,35 @@ const volumeGenerateSchema = llmGenerateSchema.extend({
   if ((value.scope === "volume" || value.scope === "beat_sheet" || value.scope === "chapter_list" || value.scope === "rebalance") && !value.targetVolumeId) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
-      message: "按卷生成时必须提供目标卷。",
+      message: "validation.volume_generation_requires_target_volume",
       path: ["targetVolumeId"],
     });
   }
   if (value.scope === "chapter_list" && value.generationMode === "single_beat" && !value.targetBeatKey) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
-      message: "按节奏段重生章节标题时必须提供目标节奏段。",
+      message: "validation.single_beat_requires_target_beat_key",
       path: ["targetBeatKey"],
     });
   }
   if (value.scope === "chapter_detail" && !value.targetVolumeId) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
-      message: "生成章节细化时必须提供目标卷。",
+      message: "validation.chapter_detail_requires_target_volume",
       path: ["targetVolumeId"],
     });
   }
   if (value.scope === "chapter_detail" && !value.targetChapterId) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
-      message: "生成章节细化时必须提供目标章节。",
+      message: "validation.chapter_detail_requires_target_chapter",
       path: ["targetChapterId"],
     });
   }
   if (value.scope === "chapter_detail" && !value.detailMode) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
-      message: "生成章节细化时必须提供生成类型。",
+      message: "validation.chapter_detail_requires_detail_mode",
       path: ["detailMode"],
     });
   }
@@ -416,7 +415,7 @@ const pipelineRunSchema = llmGenerateSchema.extend({
   qualityThreshold: z.number().int().min(0).max(100).optional(),
   repairMode: z.enum(["detect_only", "light_repair", "heavy_repair", "continuity_only", "character_only", "ending_only"]).optional(),
 }).refine((value) => value.startOrder <= value.endOrder, {
-  message: "起始章节必须小于或等于结束章节。",
+  message: "validation.chapter_range_invalid",
 });
 
 const reviewIssueSchema = z.object({
@@ -468,7 +467,7 @@ const rewritePreviewSchema = z.object({
     to: z.number().int().min(1),
     text: z.string().trim().min(1),
   }).refine((value) => value.to > value.from, {
-    message: "选区结束位置必须大于开始位置。",
+    message: "validation.selection_range_invalid",
     path: ["to"],
   }),
   context: z.object({
@@ -504,7 +503,7 @@ const aiRevisionPreviewSchema = z.object({
     to: z.number().int().min(1),
     text: z.string().trim().min(1),
   }).refine((value) => value.to > value.from, {
-    message: "选区结束位置必须大于开始位置。",
+    message: "validation.selection_range_invalid",
     path: ["to"],
   }).optional(),
   context: z.object({
@@ -525,28 +524,28 @@ const aiRevisionPreviewSchema = z.object({
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       path: ["presetOperation"],
-      message: "预设操作模式必须提供 presetOperation。",
+      message: "validation.ai_revision_preset_requires_operation",
     });
   }
   if (value.source === "freeform" && !value.instruction?.trim()) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       path: ["instruction"],
-      message: "自然语言修正模式必须提供 instruction。",
+      message: "validation.ai_revision_freeform_requires_instruction",
     });
   }
   if (value.scope === "selection" && !value.selection) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       path: ["selection"],
-      message: "片段修正必须提供 selection。",
+      message: "validation.ai_revision_selection_required",
     });
   }
   if (value.scope === "selection" && !value.context) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       path: ["context"],
-      message: "片段修正必须提供上下文窗口。",
+      message: "validation.ai_revision_context_required",
     });
   }
 });

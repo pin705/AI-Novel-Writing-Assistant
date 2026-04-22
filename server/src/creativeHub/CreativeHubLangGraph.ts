@@ -5,6 +5,7 @@ import { createStructuredPlan } from "../agents/orchestrator";
 import { AgentTraceStore } from "../agents/traceStore";
 import { RunExecutionService } from "../agents/runtime/RunExecutionService";
 import { safeJson } from "../agents/runtime/runtimeHelpers";
+import { getBackendMessage } from "../i18n";
 import { novelProductionService } from "../services/novel/NovelProductionService";
 import type { ProductionStatusResult } from "../services/novel/NovelProductionStatusService";
 import { sanitizeCreativeHubToolOutput } from "./toolEventPayloads";
@@ -70,7 +71,7 @@ export class CreativeHubLangGraph {
   private getInvocation(state: CreativeHubGraphStateValue): CreativeHubGraphInvocation {
     const invocation = this.invocations.get(state.invocationId);
     if (!invocation) {
-      throw new Error("创作中枢图调用上下文不存在。");
+      throw new Error(getBackendMessage("creativeHub.runtime.graph.error.invocation_missing"));
     }
     return invocation;
   }
@@ -151,7 +152,7 @@ export class CreativeHubLangGraph {
       data: {
         runId: run.id,
         status: "running",
-        message: "开始规划",
+        message: getBackendMessage("agent.runtime.status.planning_started"),
       },
     });
 
@@ -187,7 +188,7 @@ export class CreativeHubLangGraph {
     try {
       plannerResult = await createStructuredPlan(plannerInput);
     } catch (error) {
-      const message = error instanceof Error ? error.message : "LLM 意图识别失败。";
+      const message = error instanceof Error ? error.message : getBackendMessage("agent.runtime.error.plan_failed");
       await this.store.addStep({
         runId: run.id,
         agentName: "Planner",
@@ -268,7 +269,7 @@ export class CreativeHubLangGraph {
 
   private async toolExecuteNode(state: CreativeHubGraphStateValue) {
     if (!state.runId || !state.plannerResult) {
-      throw new Error("创作中枢图缺少 runId 或 plannerResult。");
+      throw new Error(getBackendMessage("creativeHub.runtime.graph.error.missing_run_or_planner"));
     }
 
     const interrupts: CreativeHubInterrupt[] = [];
@@ -318,7 +319,7 @@ export class CreativeHubLangGraph {
       },
       onRunStatus: (payload) => {
         threadStatus = deriveThreadStatusFromRunStatus(payload.status);
-        latestError = payload.status === "failed" ? payload.message ?? "创作中枢运行失败。" : null;
+        latestError = payload.status === "failed" ? payload.message ?? getBackendMessage("creativeHub.runtime.graph.error.run_failed") : null;
         this.emitFrame(state, {
           event: "creative_hub/run_status",
           data: payload,
@@ -353,7 +354,7 @@ export class CreativeHubLangGraph {
 
   private async approvalGateNode(state: CreativeHubGraphStateValue) {
     if (!state.executionResult) {
-      throw new Error("创作中枢图缺少 executionResult。");
+      throw new Error(getBackendMessage("creativeHub.runtime.graph.error.missing_execution_result"));
     }
     return {
       interrupts: state.interrupts,
@@ -366,7 +367,7 @@ export class CreativeHubLangGraph {
 
   private async answerFinalizeNode(state: CreativeHubGraphStateValue) {
     if (!state.executionResult) {
-      throw new Error("创作中枢图缺少 executionResult。");
+      throw new Error(getBackendMessage("creativeHub.runtime.graph.error.missing_execution_result"));
     }
     const finalMessages = appendAssistantMessage(
       state.messages,
@@ -478,8 +479,8 @@ export class CreativeHubLangGraph {
     if (blockingRun) {
       throw new Error(
         blockingRun.status === "waiting_approval"
-          ? "当前已有运行在等待审批，请先处理审批。"
-          : "当前已有运行仍在执行中。",
+          ? getBackendMessage("agent.runtime.error.blocking_run_waiting_approval")
+          : getBackendMessage("agent.runtime.error.blocking_run_running"),
       );
     }
 

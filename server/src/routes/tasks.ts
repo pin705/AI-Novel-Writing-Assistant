@@ -2,6 +2,7 @@ import { Router } from "express";
 import type { ApiResponse } from "@ai-novel/shared/types/api";
 import type { TaskKind, TaskStatus } from "@ai-novel/shared/types/task";
 import { z } from "zod";
+import { getBackendMessage } from "../i18n";
 import { llmProviderSchema } from "../llm/providerSchema";
 import { authMiddleware } from "../middleware/auth";
 import { validate } from "../middleware/validate";
@@ -50,7 +51,7 @@ router.get("/overview", async (_req, res, next) => {
     res.status(200).json({
       success: true,
       data,
-      message: "Task overview loaded.",
+      message: getBackendMessage("task.route.overview.loaded"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -63,7 +64,7 @@ router.get("/recovery-candidates", async (_req, res, next) => {
     res.status(200).json({
       success: true,
       data,
-      message: "Recovery candidates loaded.",
+      message: getBackendMessage("task.route.recovery_candidates.loaded"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -76,7 +77,7 @@ router.post("/recovery-candidates/resume-all", async (_req, res, next) => {
     res.status(200).json({
       success: true,
       data: { resumed },
-      message: "Recovery candidates resumed.",
+      message: getBackendMessage("task.route.recovery_candidates.resumed"),
     } satisfies ApiResponse<{ resumed: typeof resumed }>);
   } catch (error) {
     next(error);
@@ -90,7 +91,7 @@ router.post("/recovery-candidates/:kind/:id/resume", validate({ params: recovery
     res.status(200).json({
       success: true,
       data: { kind, id },
-      message: "Recovery candidate resumed.",
+      message: getBackendMessage("task.route.recovery_candidate.resumed"),
     } satisfies ApiResponse<{ kind: typeof kind; id: string }>);
   } catch (error) {
     next(error);
@@ -110,7 +111,7 @@ router.get("/", validate({ query: listQuerySchema }), async (req, res, next) => 
     res.status(200).json({
       success: true,
       data,
-      message: "Tasks loaded.",
+      message: getBackendMessage("task.route.list.loaded"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -124,14 +125,14 @@ router.get("/:kind/:id", validate({ params: taskParamsSchema }), async (req, res
     if (!data) {
       res.status(404).json({
         success: false,
-        error: "Task not found.",
+        error: getBackendMessage("task.error.not_found"),
       } satisfies ApiResponse<null>);
       return;
     }
     res.status(200).json({
       success: true,
       data,
-      message: "Task loaded.",
+      message: getBackendMessage("task.route.detail.loaded"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -149,7 +150,7 @@ router.post("/:kind/:id/retry", validate({ params: taskParamsSchema, body: retry
     res.status(200).json({
       success: true,
       data,
-      message: "Task retried.",
+      message: getBackendMessage("task.route.retried"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -163,7 +164,7 @@ router.post("/:kind/:id/cancel", validate({ params: taskParamsSchema }), async (
     res.status(200).json({
       success: true,
       data,
-      message: "Task cancelled.",
+      message: getBackendMessage("task.route.cancelled"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -177,7 +178,7 @@ router.post("/:kind/:id/archive", validate({ params: taskParamsSchema }), async 
     res.status(200).json({
       success: true,
       data,
-      message: "Task archived.",
+      message: getBackendMessage("task.route.archived"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);

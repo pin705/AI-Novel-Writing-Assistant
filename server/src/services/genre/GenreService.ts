@@ -1,6 +1,6 @@
 import type { Prisma } from "@prisma/client";
 import { prisma } from "../../db/prisma";
-import { compareLocalizedText } from "../../i18n";
+import { compareLocalizedText, getBackendMessage } from "../../i18n";
 import { AppError } from "../../middleware/errorHandler";
 import type { GenreTreeDraft } from "./genreGenerate";
 
@@ -47,21 +47,21 @@ function normalizeOptionalText(value: string | null | undefined): string | null 
 function normalizeRequiredName(value: string): string {
   const trimmed = value.trim();
   if (!trimmed) {
-    throw new AppError("类型名称不能为空。", 400);
+    throw new AppError("genre.error.name_required", 400);
   }
   return trimmed;
 }
 
 function validateDraftSubtree(draft: GenreTreeDraft, depth = 1): void {
   if (depth > 3) {
-    throw new AppError("类型树最多支持 3 级结构。", 400);
+    throw new AppError("genre.error.max_depth_exceeded", 400);
   }
 
   const seen = new Set<string>();
   for (const child of draft.children) {
     const key = child.name.trim().toLocaleLowerCase("zh-CN");
     if (seen.has(key)) {
-      throw new AppError(`同一级下存在重复的类型名称：${child.name}。`, 400);
+      throw new AppError(getBackendMessage("genre.error.duplicate_name_same_level", { name: child.name }), 400);
     }
     seen.add(key);
     validateDraftSubtree(child, depth + 1);
@@ -195,7 +195,7 @@ export class GenreService {
         where: { id },
       });
       if (!existing) {
-        throw new AppError("类型不存在。", 404);
+        throw new AppError("genre.error.not_found", 404);
       }
 
       const nextParentId = input.parentId === undefined
@@ -251,7 +251,7 @@ export class GenreService {
       const subtree = collectSubtreeRows(rows, id);
       const boundNovelCount = subtree.reduce((total, row) => total + row._count.novels, 0);
       if (boundNovelCount > 0) {
-        throw new AppError("当前题材基底树已绑定小说，请先解绑相关小说后再删除。", 400);
+        throw new AppError("genre.error.bound_novels_prevent_delete", 400);
       }
 
       for (const row of subtree) {
@@ -289,7 +289,7 @@ export class GenreService {
       select: { id: true },
     });
     if (!existing) {
-      throw new AppError("父级类型不存在。", 400);
+      throw new AppError("genre.error.parent_not_found", 400);
     }
   }
 
@@ -308,7 +308,7 @@ export class GenreService {
       select: { id: true },
     });
     if (existing) {
-      throw new AppError("同一父级下已存在相同名称的类型。", 400);
+      throw new AppError("genre.error.duplicate_name_same_parent", 400);
     }
   }
 
@@ -320,7 +320,7 @@ export class GenreService {
     let cursorId: string | null = parentId;
     while (cursorId) {
       if (cursorId === id) {
-        throw new AppError("不能把类型移动到自己的子树下。", 400);
+        throw new AppError("genre.error.cannot_move_to_descendant", 400);
       }
       const current: { parentId: string | null } | null = await tx.novelGenre.findUnique({
         where: { id: cursorId },

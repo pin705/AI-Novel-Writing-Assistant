@@ -20,7 +20,7 @@ export class ImagePromptOptimizationService {
       where: { id: input.baseCharacterId },
     });
     if (!character) {
-      throw new AppError("Base character not found.", 404);
+      throw new AppError("image.error.base_character_not_found", 404);
     }
 
     const result = await runTextPrompt({

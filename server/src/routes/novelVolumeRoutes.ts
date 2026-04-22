@@ -1,6 +1,7 @@
 import type { Router } from "express";
 import type { ApiResponse } from "@ai-novel/shared/types/api";
 import { z } from "zod";
+import { getBackendMessage } from "../i18n";
 import { validate } from "../middleware/validate";
 import type { NovelService } from "../services/novel/NovelService";
 
@@ -41,7 +42,7 @@ export function registerNovelVolumeRoutes(input: RegisterNovelVolumeRoutesInput)
         res.status(200).json({
           success: true,
           data,
-          message: "Volume workspace loaded.",
+          message: getBackendMessage("novel.volume.route.workspace.loaded"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);
@@ -59,7 +60,7 @@ export function registerNovelVolumeRoutes(input: RegisterNovelVolumeRoutesInput)
         res.status(200).json({
           success: true,
           data,
-          message: "Volume workspace updated.",
+          message: getBackendMessage("novel.volume.route.workspace.updated"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);
@@ -77,7 +78,7 @@ export function registerNovelVolumeRoutes(input: RegisterNovelVolumeRoutesInput)
         res.status(200).json({
           success: true,
           data,
-          message: "Volume workspace generated.",
+          message: getBackendMessage("novel.volume.route.workspace.generated"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);
@@ -95,7 +96,7 @@ export function registerNovelVolumeRoutes(input: RegisterNovelVolumeRoutesInput)
         res.status(201).json({
           success: true,
           data,
-          message: "Volume draft version created.",
+          message: getBackendMessage("novel.volume.route.draft_version.created"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);
@@ -113,7 +114,7 @@ export function registerNovelVolumeRoutes(input: RegisterNovelVolumeRoutesInput)
         res.status(200).json({
           success: true,
           data,
-          message: "Volume version activated.",
+          message: getBackendMessage("novel.volume.route.version.activated"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);
@@ -131,7 +132,7 @@ export function registerNovelVolumeRoutes(input: RegisterNovelVolumeRoutesInput)
         res.status(200).json({
           success: true,
           data,
-          message: "Volume version frozen.",
+          message: getBackendMessage("novel.volume.route.version.frozen"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);
@@ -149,7 +150,7 @@ export function registerNovelVolumeRoutes(input: RegisterNovelVolumeRoutesInput)
         res.status(200).json({
           success: true,
           data,
-          message: "Volume versions loaded.",
+          message: getBackendMessage("novel.volume.route.versions.loaded"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);
@@ -168,7 +169,7 @@ export function registerNovelVolumeRoutes(input: RegisterNovelVolumeRoutesInput)
         res.status(200).json({
           success: true,
           data,
-          message: "Volume diff loaded.",
+          message: getBackendMessage("novel.volume.route.diff.loaded"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);
@@ -186,7 +187,7 @@ export function registerNovelVolumeRoutes(input: RegisterNovelVolumeRoutesInput)
         res.status(200).json({
           success: true,
           data,
-          message: "Volume impact analysis completed.",
+          message: getBackendMessage("novel.volume.route.impact_analysis.completed"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);
@@ -204,7 +205,7 @@ export function registerNovelVolumeRoutes(input: RegisterNovelVolumeRoutesInput)
         res.status(200).json({
           success: true,
           data,
-          message: "Volume chapters synchronized.",
+          message: getBackendMessage("novel.volume.route.chapters.synchronized"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);
@@ -222,7 +223,7 @@ export function registerNovelVolumeRoutes(input: RegisterNovelVolumeRoutesInput)
         res.status(200).json({
           success: true,
           data,
-          message: "Legacy outline migrated to volume workspace.",
+          message: getBackendMessage("novel.volume.route.legacy_outline.migrated"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);

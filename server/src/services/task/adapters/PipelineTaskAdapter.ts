@@ -1,4 +1,5 @@
 import type { TaskStatus, UnifiedTaskDetail, UnifiedTaskSummary } from "@ai-novel/shared/types/task";
+import { getBackendMessage } from "../../../i18n";
 import { prisma } from "../../../db/prisma";
 import { AppError } from "../../../middleware/errorHandler";
 import { NovelService } from "../../novel/NovelService";
@@ -19,8 +20,9 @@ import {
   isTaskArchived,
 } from "../taskArchive";
 import {
-  NOVEL_PIPELINE_STEPS,
   buildSteps,
+  getNovelPipelineSteps,
+  localizeTaskStageLabel,
   toLegacyTaskStatus,
 } from "../taskCenter.shared";
 
@@ -62,7 +64,12 @@ export class PipelineTaskAdapter {
 
   constructor(private readonly novelService: NovelService) {}
 
+  private getStepDefinitions() {
+    return getNovelPipelineSteps();
+  }
+
   private toSummary(row: PipelineRow): UnifiedTaskSummary {
+    const stepDefinitions = this.getStepDefinitions();
     const payload = parsePipelinePayload(row.payload);
     const notice = row.status === "succeeded"
       ? getPipelineQualityNotice(payload.qualityAlertDetails)
@@ -71,10 +78,14 @@ export class PipelineTaskAdapter {
     return {
       id: row.id,
       kind: "novel_pipeline",
-      title: `${row.novel.title} (${row.startOrder}-${row.endOrder}章)`,
+      title: getBackendMessage("task.pipeline.title.range", {
+        title: row.novel.title,
+        startOrder: row.startOrder,
+        endOrder: row.endOrder,
+      }),
       status: row.status as TaskStatus,
       progress: row.progress,
-      currentStage: row.currentStage,
+      currentStage: localizeTaskStageLabel(stepDefinitions, row.currentStage),
       currentItemLabel: row.currentItemLabel,
       displayStatus: notice.displayStatus,
       attemptCount: row.retryCount,
@@ -90,7 +101,7 @@ export class PipelineTaskAdapter {
       noticeSummary: notice.noticeSummary,
       failureCode: row.lastErrorType ?? (row.status === "failed" ? "PIPELINE_FAILED" : null),
       failureSummary: row.status === "failed"
-        ? normalizeFailureSummary(row.error, "章节流水线失败，但没有记录明确错误。")
+        ? normalizeFailureSummary(row.error, getBackendMessage("task.pipeline.failure.default"))
         : null,
       recoveryHint: buildTaskRecoveryHint("novel_pipeline", row.status as TaskStatus),
       tokenUsage: toTaskTokenUsageSummary({
@@ -109,7 +120,10 @@ export class PipelineTaskAdapter {
       targetResources: [{
         type: "generation_job",
         id: row.id,
-        label: `${row.startOrder}-${row.endOrder}章流水线`,
+        label: getBackendMessage("task.pipeline.target.range", {
+          startOrder: row.startOrder,
+          endOrder: row.endOrder,
+        }),
         route: `/novels/${row.novelId}/edit`,
       }],
     };
@@ -180,6 +194,7 @@ export class PipelineTaskAdapter {
     }
 
     const summary = this.toSummary(row);
+    const stepDefinitions = this.getStepDefinitions();
     const payload = parsePipelinePayload(row.payload);
 
     return {
@@ -199,9 +214,9 @@ export class PipelineTaskAdapter {
         payload,
       },
       steps: buildSteps(
-        NOVEL_PIPELINE_STEPS,
+        stepDefinitions,
         summary.status,
-        summary.currentStage,
+        row.currentStage,
         summary.createdAt,
         summary.updatedAt,
       ),
@@ -211,27 +226,27 @@ export class PipelineTaskAdapter {
 
   async retry(id: string): Promise<UnifiedTaskDetail> {
     if (await isTaskArchived("novel_pipeline", id)) {
-      throw new AppError("Task not found.", 404);
+      throw new AppError(getBackendMessage("task.error.not_found"), 404);
     }
 
     const job = await this.novelService.retryPipelineJob(id);
     const detail = await this.detail(job.id);
     if (!detail) {
-      throw new AppError("Task not found after retry.", 404);
+      throw new AppError(getBackendMessage("task.error.not_found_after_retry"), 404);
     }
     return detail;
   }
 
   async cancel(id: string): Promise<UnifiedTaskDetail> {
     if (await isTaskArchived("novel_pipeline", id)) {
-      throw new AppError("Task not found.", 404);
+      throw new AppError(getBackendMessage("task.error.not_found"), 404);
     }
 
     const job = await this.novelService.cancelPipelineJob(id);
     await this.cancelLinkedAutoDirectorTask(job.id, job.novelId).catch(() => null);
     const detail = await this.detail(job.id);
     if (!detail) {
-      throw new AppError("Task not found after cancellation.", 404);
+      throw new AppError(getBackendMessage("task.error.not_found_after_cancellation"), 404);
     }
     return detail;
   }
@@ -262,10 +277,10 @@ export class PipelineTaskAdapter {
       where: { id },
     });
     if (!job) {
-      throw new AppError("Task not found.", 404);
+      throw new AppError(getBackendMessage("task.error.not_found"), 404);
     }
     if (!isArchivableTaskStatus(job.status as TaskStatus)) {
-      throw new AppError("Only completed, failed, or cancelled tasks can be archived.", 400);
+      throw new AppError(getBackendMessage("task.error.archive_requires_terminal_status"), 400);
     }
 
     await recordTaskArchive("novel_pipeline", id);

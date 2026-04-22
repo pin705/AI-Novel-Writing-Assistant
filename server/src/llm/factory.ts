@@ -64,6 +64,21 @@ export interface ResolvedLLMClientOptions {
   promptMeta?: PromptInvocationMeta;
 }
 
+export type LLMClientConfigErrorCode =
+  | "MISSING_API_KEY"
+  | "MISSING_MODEL"
+  | "MISSING_BASE_URL";
+
+export class LLMClientConfigError extends Error {
+  readonly code: LLMClientConfigErrorCode;
+
+  constructor(code: LLMClientConfigErrorCode, message: string) {
+    super(message);
+    this.name = "LLMClientConfigError";
+    this.code = code;
+  }
+}
+
 const providerSecrets = new Map<LLMProvider, ProviderSecret>();
 const RESOLVED_LLM_OPTIONS = Symbol("RESOLVED_LLM_OPTIONS");
 
@@ -200,7 +215,7 @@ export async function resolveLLMClientOptions(
     ?? getProviderEnvApiKey(resolvedProvider);
 
   if (!apiKey && providerRequiresApiKey(resolvedProvider)) {
-    throw new Error(`未配置 ${providerName} 的 API Key。`);
+    throw new LLMClientConfigError("MISSING_API_KEY", "llm.error.provider_api_key_missing");
   }
 
   const model = resolvedModel
@@ -208,7 +223,7 @@ export async function resolveLLMClientOptions(
     ?? getProviderEnvModel(resolvedProvider)
     ?? (isBuiltInProvider(resolvedProvider) ? PROVIDERS[resolvedProvider].defaultModel : undefined);
   if (!model) {
-    throw new Error(`未配置 ${providerName} 的默认模型。`);
+    throw new LLMClientConfigError("MISSING_MODEL", "llm.error.provider_model_missing");
   }
 
   const baseURL = resolveProviderBaseUrl(
@@ -217,7 +232,7 @@ export async function resolveLLMClientOptions(
     dbSecret?.baseURL,
   );
   if (!baseURL) {
-    throw new Error(`未配置 ${providerName} 的 API URL。`);
+    throw new LLMClientConfigError("MISSING_BASE_URL", "llm.error.provider_base_url_missing");
   }
 
   const temperature = resolveModelTemperature(resolvedProvider, model, resolvedTemperature);

@@ -4,6 +4,7 @@ import type {
   NovelWorkflowResumeTarget,
   NovelWorkflowStage,
 } from "@ai-novel/shared/types/novelWorkflow";
+import { getBackendMessage, type BackendMessageKey } from "../../../i18n";
 import { prisma } from "../../../db/prisma";
 import type { TaskStatus } from "@ai-novel/shared/types/task";
 import { AppError } from "../../../middleware/errorHandler";
@@ -33,8 +34,8 @@ import {
   buildNovelEditResumeTarget,
   defaultWorkflowTitle,
   mergeSeedPayload,
-  NOVEL_WORKFLOW_STAGE_LABELS,
   NOVEL_WORKFLOW_STAGE_PROGRESS,
+  normalizeNovelWorkflowStage,
   parseSeedPayload,
   parseResumeTarget,
   stringifyResumeTarget,
@@ -87,16 +88,20 @@ const CHECKPOINT_STAGE_MAP: Record<NovelWorkflowCheckpoint, NovelWorkflowStage> 
   workflow_completed: "quality_repair",
 };
 
-const CHECKPOINT_ITEM_LABELS: Record<NovelWorkflowCheckpoint, string> = {
-  candidate_selection_required: "等待确认书级方向",
-  book_contract_ready: "Book Contract 已就绪",
-  character_setup_required: "等待审核角色准备",
-  volume_strategy_ready: "卷战略已就绪",
-  front10_ready: "已准备章节可进入执行",
-  chapter_batch_ready: "自动执行已暂停",
-  replan_required: "等待处理重规划建议",
-  workflow_completed: "小说主流程已完成",
+const CHECKPOINT_ITEM_LABEL_KEYS: Record<NovelWorkflowCheckpoint, BackendMessageKey> = {
+  candidate_selection_required: "workflow.display.candidate_selection_required",
+  book_contract_ready: "workflow.display.book_contract_ready",
+  character_setup_required: "workflow.display.character_setup_required",
+  volume_strategy_ready: "workflow.display.volume_strategy_ready",
+  front10_ready: "workflow.display.front10_ready",
+  chapter_batch_ready: "workflow.display.chapter_batch_ready",
+  replan_required: "workflow.display.replan_required",
+  workflow_completed: "workflow.display.workflow_completed",
 };
+
+function getCheckpointItemLabel(checkpointType: NovelWorkflowCheckpoint): string {
+  return getBackendMessage(CHECKPOINT_ITEM_LABEL_KEYS[checkpointType]);
+}
 
 function buildChapterTitleDiversityTaskNotice(input: {
   issue: string;
@@ -107,7 +112,7 @@ function buildChapterTitleDiversityTaskNotice(input: {
     summary: input.issue.trim(),
     action: {
       type: "open_structured_outline" as const,
-      label: "快速修复章节标题",
+      label: getBackendMessage("workflow.notice.action.quick_fix_chapter_titles"),
       volumeId: input.volumeId?.trim() || null,
     },
   };
@@ -238,10 +243,6 @@ function mapStageToTab(stage: NovelWorkflowStage): NovelWorkflowResumeTarget["st
 
 function defaultProgressForStage(stage: NovelWorkflowStage): number {
   return NOVEL_WORKFLOW_STAGE_PROGRESS[stage] ?? 0.08;
-}
-
-function stageLabel(stage: NovelWorkflowStage): string {
-  return NOVEL_WORKFLOW_STAGE_LABELS[stage] ?? stage;
 }
 
 function isTaskCancellationRequested(row: {
@@ -382,7 +383,9 @@ export class NovelWorkflowService {
       return {
         step: "beat_sheet",
         currentItemKey: "beat_sheet",
-        currentItemLabel: `正在生成第 ${recoveryCursor.volumeOrder} 卷节奏板`,
+        currentItemLabel: getBackendMessage("workflow.recovery.cursor.volume_beat_sheet", {
+          volumeOrder: recoveryCursor.volumeOrder,
+        }),
         progress: DIRECTOR_PROGRESS.beatSheet,
         scopeLabel: recoveryCursor.scopeLabel,
         volumeId: recoveryCursor.volumeId,
@@ -392,8 +395,13 @@ export class NovelWorkflowService {
 
     if (recoveryCursor.step === "chapter_list") {
       const targetLabel = recoveryCursor.beatLabel?.trim()
-        ? `正在生成第 ${recoveryCursor.volumeOrder} 卷节奏段：${recoveryCursor.beatLabel.trim()}`
-        : `正在生成第 ${recoveryCursor.volumeOrder} 卷章节列表`;
+        ? getBackendMessage("workflow.recovery.cursor.volume_beat", {
+          volumeOrder: recoveryCursor.volumeOrder,
+          beatLabel: recoveryCursor.beatLabel.trim(),
+        })
+        : getBackendMessage("workflow.recovery.cursor.chapter_list", {
+          volumeOrder: recoveryCursor.volumeOrder,
+        });
       return {
         step: "chapter_list",
         currentItemKey: "chapter_list",
@@ -409,7 +417,9 @@ export class NovelWorkflowService {
       return {
         step: "chapter_sync",
         currentItemKey: "chapter_sync",
-        currentItemLabel: `${recoveryCursor.scopeLabel}细化已完成，正在同步章节执行资源`,
+        currentItemLabel: getBackendMessage("workflow.recovery.front10_sync", {
+          scopeLabel: recoveryCursor.scopeLabel,
+        }),
         progress: DIRECTOR_PROGRESS.chapterDetailDone,
         scopeLabel: recoveryCursor.scopeLabel,
         volumeId: recoveryCursor.selectedChapters[0]?.volumeId ?? null,
@@ -466,14 +476,14 @@ export class NovelWorkflowService {
         seedPayloadJson: repaired.seedPayloadJson,
         heartbeatAt: new Date(),
         status: shouldRestoreCandidateSelection ? "waiting_approval" : undefined,
-        currentStage: shouldRestoreCandidateSelection ? stageLabel("auto_director") : undefined,
+        currentStage: shouldRestoreCandidateSelection ? "auto_director" : undefined,
         currentItemKey: shouldRestoreCandidateSelection ? "auto_director" : undefined,
         currentItemLabel: shouldRestoreCandidateSelection
-          ? CHECKPOINT_ITEM_LABELS.candidate_selection_required
+          ? getCheckpointItemLabel("candidate_selection_required")
           : undefined,
         checkpointType: shouldRestoreCandidateSelection ? "candidate_selection_required" : undefined,
         checkpointSummary: shouldRestoreCandidateSelection
-          ? (candidate.checkpointSummary ?? "候选方案已恢复，请重新确认或继续微调。")
+          ? (candidate.checkpointSummary ?? getBackendMessage("workflow.checkpoint.restored_candidate"))
           : undefined,
         resumeTargetJson: shouldRestoreCandidateSelection
           ? stringifyResumeTarget(buildNovelCreateResumeTarget(taskId, "director"))
@@ -670,7 +680,7 @@ export class NovelWorkflowService {
       data: {
         status: job.status === "queued" ? "queued" : "running",
         progress: Math.max(existing.progress ?? 0, runningState.progress ?? defaultProgressForStage(runningState.stage)),
-        currentStage: stageLabel(runningState.stage),
+        currentStage: runningState.stage,
         currentItemKey: runningState.itemKey,
         currentItemLabel: runningState.itemLabel,
         checkpointType: null,
@@ -738,9 +748,9 @@ export class NovelWorkflowService {
       where: { id: taskId },
       data: {
         status: "waiting_approval",
-        currentStage: stageLabel("structured_outline"),
+        currentStage: "structured_outline",
         currentItemKey: existing.currentItemKey ?? "chapter_list",
-        currentItemLabel: "章节列表已生成，但标题结构仍需分散",
+        currentItemLabel: getBackendMessage("workflow.item.structured_outline_title_needs_diversity"),
         checkpointType: null,
         checkpointSummary: null,
         resumeTargetJson: stringifyResumeTarget(nextResumeTarget),
@@ -779,7 +789,7 @@ export class NovelWorkflowService {
       || candidate.status !== "running"
       || candidate.checkpointType
       || isTaskCancellationRequested(candidate)
-      || (!isStructuredOutlineItemKey(candidate.currentItemKey) && candidate.currentStage !== stageLabel("structured_outline"))
+      || (!isStructuredOutlineItemKey(candidate.currentItemKey) && normalizeNovelWorkflowStage(candidate.currentStage) !== "structured_outline")
     ) {
       return false;
     }
@@ -804,7 +814,7 @@ export class NovelWorkflowService {
     await prisma.novelWorkflowTask.update({
       where: { id: taskId },
       data: {
-        currentStage: stageLabel("structured_outline"),
+        currentStage: "structured_outline",
         currentItemKey: progressState.currentItemKey,
         currentItemLabel: progressState.currentItemLabel,
         progress: Math.max(candidate.progress ?? 0, progressState.progress),
@@ -828,7 +838,7 @@ export class NovelWorkflowService {
   ) {
     const existing = await this.getVisibleRowById(taskId);
     if (!existing) {
-      throw new AppError("Workflow task not found.", 404);
+      throw new AppError(getBackendMessage("task.error.not_found"), 404);
     }
     if (existing.lane !== "auto_director") {
       return existing;
@@ -836,7 +846,7 @@ export class NovelWorkflowService {
     const seedPayload = parseSeedPayload<DirectorWorkflowSeedPayload>(existing.seedPayloadJson);
     const nextSeedPayload = applyDirectorLlmOverride(seedPayload, llmOverride);
     if (!nextSeedPayload) {
-      throw new AppError("当前自动导演任务缺少可覆盖的模型上下文。", 400);
+      throw new AppError(getBackendMessage("workflow.error.missing_llm_context"), 400);
     }
     return prisma.novelWorkflowTask.update({
       where: { id: taskId },
@@ -888,9 +898,11 @@ export class NovelWorkflowService {
         }),
         status: "queued",
         progress: input.novelId ? defaultProgressForStage("project_setup") : 0,
-        currentStage: input.lane === "auto_director" ? "AI 自动导演" : "项目设定",
+        currentStage: input.lane === "auto_director" ? "auto_director" : "project_setup",
         currentItemKey: input.lane === "auto_director" ? "auto_director" : "project_setup",
-        currentItemLabel: input.lane === "auto_director" ? "等待生成候选方向" : "等待创建项目",
+        currentItemLabel: input.lane === "auto_director"
+          ? getBackendMessage("workflow.item.waiting_candidate_generation")
+          : getBackendMessage("workflow.item.waiting_project_creation"),
         resumeTargetJson: stringifyResumeTarget(
           this.buildResumeTarget({
             taskId: "",
@@ -970,7 +982,7 @@ export class NovelWorkflowService {
   async attachNovelToTask(taskId: string, novelId: string, stage: NovelWorkflowStage = "project_setup") {
     const existing = await this.getVisibleRowById(taskId);
     if (!existing) {
-      throw new AppError("Workflow task not found.", 404);
+      throw new AppError(getBackendMessage("task.error.not_found"), 404);
     }
     const novelTitle = await this.getNovelTitle(novelId);
     return prisma.novelWorkflowTask.update({
@@ -979,13 +991,15 @@ export class NovelWorkflowService {
         novelId,
         title: novelTitle ?? existing.title,
         progress: Math.max(existing.progress, defaultProgressForStage(stage)),
-        currentStage: stageLabel(stage),
+        currentStage: stage,
         currentItemKey: existing.lane === "auto_director"
           ? (existing.currentItemKey ?? "novel_create")
           : stage,
         currentItemLabel: existing.lane === "auto_director"
-          ? (existing.currentItemLabel ?? "正在创建小说项目")
-          : (stage === "project_setup" ? "小说项目已创建" : (existing.currentItemLabel ?? "已恢复小说主任务")),
+          ? (existing.currentItemLabel ?? getBackendMessage("workflow.item.creating_project"))
+          : (stage === "project_setup"
+            ? getBackendMessage("workflow.item.project_created")
+            : (existing.currentItemLabel ?? getBackendMessage("workflow.item.workflow_restored"))),
         resumeTargetJson: stringifyResumeTarget(this.buildResumeTarget({
           taskId,
           novelId,
@@ -1003,7 +1017,7 @@ export class NovelWorkflowService {
   }): Promise<AutoDirectorNovelCreationClaim> {
     const existing = await this.getVisibleRowByIdRaw(taskId);
     if (!existing) {
-      throw new AppError("Workflow task not found.", 404);
+      throw new AppError(getBackendMessage("task.error.not_found"), 404);
     }
     if (existing.lane !== "auto_director") {
       throw new AppError("Only auto director workflow tasks can claim novel creation.", 400);
@@ -1038,7 +1052,7 @@ export class NovelWorkflowService {
         finishedAt: null,
         heartbeatAt: now,
         progress: Math.max(existing.progress ?? 0, input.progress),
-        currentStage: stageLabel("auto_director"),
+        currentStage: "auto_director",
         currentItemKey: "novel_create",
         currentItemLabel: input.itemLabel,
         checkpointType: null,
@@ -1050,7 +1064,7 @@ export class NovelWorkflowService {
 
     const latest = await this.getVisibleRowByIdRaw(taskId);
     if (!latest) {
-      throw new AppError("Workflow task not found.", 404);
+      throw new AppError(getBackendMessage("task.error.not_found"), 404);
     }
     if (latest.novelId) {
       return {
@@ -1076,7 +1090,7 @@ export class NovelWorkflowService {
   }) {
     const existing = await this.getVisibleRowById(taskId);
     if (!existing) {
-      throw new AppError("Workflow task not found.", 404);
+      throw new AppError(getBackendMessage("task.error.not_found"), 404);
     }
     if (isTaskCancellationRequested(existing)) {
       throw new AppError("WORKFLOW_TASK_CANCELLED", 409);
@@ -1097,7 +1111,7 @@ export class NovelWorkflowService {
         finishedAt: null,
         heartbeatAt: new Date(),
         pendingManualRecovery: false,
-        currentStage: stageLabel(input.stage),
+        currentStage: input.stage,
         currentItemKey: input.itemKey ?? input.stage,
         currentItemLabel: input.itemLabel,
         progress: Math.max(existing.progress, input.progress ?? defaultProgressForStage(input.stage)),
@@ -1127,7 +1141,7 @@ export class NovelWorkflowService {
   }) {
     const existing = await this.getVisibleRowById(taskId);
     if (!existing) {
-      throw new AppError("Workflow task not found.", 404);
+      throw new AppError(getBackendMessage("task.error.not_found"), 404);
     }
     if (isTaskCancellationRequested(existing)) {
       throw new AppError("WORKFLOW_TASK_CANCELLED", 409);
@@ -1146,7 +1160,7 @@ export class NovelWorkflowService {
         status: "waiting_approval",
         finishedAt: null,
         heartbeatAt: new Date(),
-        currentStage: stageLabel(input.stage),
+        currentStage: input.stage,
         currentItemKey: input.itemKey ?? input.stage,
         currentItemLabel: input.itemLabel,
         progress: Math.max(existing.progress, input.progress ?? defaultProgressForStage(input.stage)),
@@ -1186,7 +1200,7 @@ export class NovelWorkflowService {
         status: "failed",
         finishedAt: new Date(),
         heartbeatAt: new Date(),
-        currentStage: patch?.stage ? stageLabel(patch.stage) : existing.currentStage,
+        currentStage: patch?.stage ?? existing.currentStage,
         currentItemKey: patch?.itemKey ?? existing.currentItemKey,
         currentItemLabel: patch?.itemLabel ?? existing.currentItemLabel,
         checkpointType: patch?.checkpointType ?? existing.checkpointType,
@@ -1200,7 +1214,7 @@ export class NovelWorkflowService {
   async cancelTask(taskId: string) {
     const existing = await this.getVisibleRowById(taskId);
     if (!existing) {
-      throw new AppError("Task not found.", 404);
+      throw new AppError(getBackendMessage("task.error.not_found"), 404);
     }
     return prisma.novelWorkflowTask.update({
       where: { id: taskId },
@@ -1216,7 +1230,7 @@ export class NovelWorkflowService {
   async retryTask(taskId: string) {
     const existing = await this.getVisibleRowById(taskId);
     if (!existing) {
-      throw new AppError("Task not found.", 404);
+      throw new AppError(getBackendMessage("task.error.not_found"), 404);
     }
       return prisma.novelWorkflowTask.update({
         where: { id: taskId },
@@ -1260,9 +1274,9 @@ export class NovelWorkflowService {
           finishedAt: checkpointType === "workflow_completed" ? (existing.finishedAt ?? new Date()) : null,
         cancelRequestedAt: null,
         heartbeatAt: new Date(),
-        currentStage: stageLabel(checkpointStage),
+        currentStage: checkpointStage,
         currentItemKey: checkpointStage,
-        currentItemLabel: CHECKPOINT_ITEM_LABELS[checkpointType] ?? existing.currentItemLabel,
+        currentItemLabel: getCheckpointItemLabel(checkpointType) ?? existing.currentItemLabel,
         progress: Math.max(existing.progress, defaultProgressForStage(checkpointStage)),
         resumeTargetJson: stringifyResumeTarget(resumeTarget),
         lastError: null,
@@ -1273,7 +1287,7 @@ export class NovelWorkflowService {
   async continueTask(taskId: string) {
     const existing = await this.getVisibleRowById(taskId);
     if (!existing) {
-      throw new AppError("Task not found.", 404);
+      throw new AppError(getBackendMessage("task.error.not_found"), 404);
     }
     if (isTaskCancellationRequested(existing)) {
       throw new AppError("WORKFLOW_TASK_CANCELLED", 409);
@@ -1291,7 +1305,7 @@ export class NovelWorkflowService {
   async requeueTaskForRecovery(taskId: string, message: string) {
     const existing = await this.getVisibleRowById(taskId);
     if (!existing) {
-      throw new AppError("Task not found.", 404);
+      throw new AppError(getBackendMessage("task.error.not_found"), 404);
     }
       return prisma.novelWorkflowTask.update({
         where: { id: taskId },
@@ -1312,7 +1326,7 @@ export class NovelWorkflowService {
   }) {
     const existing = await this.getVisibleRowById(taskId);
     if (!existing) {
-      throw new AppError("Workflow task not found.", 404);
+      throw new AppError(getBackendMessage("task.error.not_found"), 404);
     }
     if (isTaskCancellationRequested(existing)) {
       throw new AppError("WORKFLOW_TASK_CANCELLED", 409);
@@ -1321,9 +1335,9 @@ export class NovelWorkflowService {
       where: { id: taskId },
       data: {
         status: "waiting_approval",
-        currentStage: stageLabel("auto_director"),
+        currentStage: "auto_director",
         currentItemKey: "auto_director",
-        currentItemLabel: "等待确认书级方向",
+        currentItemLabel: getCheckpointItemLabel("candidate_selection_required"),
         checkpointType: "candidate_selection_required",
         checkpointSummary: input.summary,
         resumeTargetJson: stringifyResumeTarget(buildNovelCreateResumeTarget(taskId, "director")),
@@ -1349,7 +1363,7 @@ export class NovelWorkflowService {
   }) {
     const existing = await this.getVisibleRowById(taskId);
     if (!existing) {
-      throw new AppError("Workflow task not found.", 404);
+      throw new AppError(getBackendMessage("task.error.not_found"), 404);
     }
     if (isTaskCancellationRequested(existing)) {
       throw new AppError("WORKFLOW_TASK_CANCELLED", 409);
@@ -1367,7 +1381,7 @@ export class NovelWorkflowService {
       data: {
         status: input.checkpointType === "workflow_completed" ? "succeeded" : "waiting_approval",
         progress: input.progress ?? defaultProgressForStage(input.stage),
-        currentStage: stageLabel(input.stage),
+        currentStage: input.stage,
         currentItemKey: input.stage,
         currentItemLabel: input.itemLabel,
         checkpointType: input.checkpointType,
@@ -1402,7 +1416,7 @@ export class NovelWorkflowService {
       data: {
         status: input.status ?? "waiting_approval",
         progress: input.progress ?? Math.max(task.progress, defaultProgressForStage(input.stage)),
-        currentStage: stageLabel(input.stage),
+        currentStage: input.stage,
         currentItemKey: input.itemKey ?? input.stage,
         currentItemLabel: input.itemLabel,
         checkpointType: input.checkpointType ?? task.checkpointType,

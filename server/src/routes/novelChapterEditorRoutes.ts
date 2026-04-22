@@ -1,7 +1,7 @@
 import type { Router } from "express";
 import type { ApiResponse } from "@ai-novel/shared/types/api";
 import { z } from "zod";
-import { AppError } from "../middleware/errorHandler";
+import { getBackendMessage } from "../i18n";
 import { validate } from "../middleware/validate";
 import type { NovelService } from "../services/novel/NovelService";
 
@@ -34,14 +34,10 @@ export function registerNovelChapterEditorRoutes(input: RegisterNovelChapterEdit
         res.status(200).json({
           success: true,
           data,
-          message: "Chapter editor workspace loaded.",
+          message: getBackendMessage("novel.chapter_editor.route.workspace.loaded"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         if (forwardBusinessError(error, next)) {
-          return;
-        }
-        if (error instanceof Error && ["小说不存在。", "章节不存在。"].includes(error.message)) {
-          next(new AppError(error.message, 400));
           return;
         }
         next(error);
@@ -59,28 +55,10 @@ export function registerNovelChapterEditorRoutes(input: RegisterNovelChapterEdit
         res.status(200).json({
           success: true,
           data,
-          message: "Chapter editor AI revision preview generated.",
+          message: getBackendMessage("novel.chapter_editor.route.ai_revision_preview.generated"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         if (forwardBusinessError(error, next)) {
-          return;
-        }
-        if (
-          error instanceof Error
-          && [
-            "小说不存在。",
-            "章节不存在。",
-            "当前章节正文为空，无法发起 AI 修正。",
-            "片段修正需要先选中正文内容。",
-            "选区范围无效，请重新选择后再试。",
-            "选中文本不能为空。",
-            "选中文本已发生变化，请重新选择后再试。",
-            "请先写下你希望 AI 如何修改。",
-            "AI 未返回足够的候选版本，请重试。",
-          ].includes(error.message)
-            || (error instanceof Error && error.message.includes("整章修正当前限制为"))
-        ) {
-          next(new AppError(error.message, 400));
           return;
         }
         next(error);
@@ -98,25 +76,10 @@ export function registerNovelChapterEditorRoutes(input: RegisterNovelChapterEdit
         res.status(200).json({
           success: true,
           data,
-          message: "Chapter editor rewrite preview generated.",
+          message: getBackendMessage("novel.chapter_editor.route.rewrite_preview.generated"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         if (forwardBusinessError(error, next)) {
-          return;
-        }
-        if (
-          error instanceof Error
-          && [
-            "小说不存在。",
-            "章节不存在。",
-            "当前章节正文为空，无法发起局部改写。",
-            "选区范围无效，请重新选择后再试。",
-            "选中文本不能为空。",
-            "选中文本已发生变化，请重新选择后再试。",
-            "AI 未返回足够的候选版本，请重试。",
-          ].includes(error.message)
-        ) {
-          next(new AppError(error.message, 400));
           return;
         }
         next(error);

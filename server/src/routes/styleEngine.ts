@@ -1,6 +1,7 @@
 import { Router } from "express";
 import type { ApiResponse } from "@ai-novel/shared/types/api";
 import { z } from "zod";
+import { getBackendMessage } from "../i18n";
 import { llmProviderSchema } from "../llm/providerSchema";
 import { authMiddleware } from "../middleware/auth";
 import { validate } from "../middleware/validate";
@@ -92,7 +93,7 @@ const antiAiRuleSchema = z.object({
 
 const antiAiRuleUpdateSchema = antiAiRuleSchema.partial().refine(
   (value) => Object.keys(value).length > 0,
-  { message: "至少提供一个更新字段。" },
+  { message: "validation.style_engine_update_requires_field" },
 );
 
 const bindingSchema = z.object({
@@ -165,7 +166,7 @@ router.get("/style-profiles", async (_req, res, next) => {
     res.status(200).json({
       success: true,
       data,
-      message: "获取写法资产列表成功。",
+      message: getBackendMessage("styleEngine.route.profiles.loaded"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -178,7 +179,7 @@ router.post("/style-profiles", validate({ body: manualProfileSchema }), async (r
     res.status(201).json({
       success: true,
       data,
-      message: "创建写法资产成功。",
+      message: getBackendMessage("styleEngine.route.profile.created"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -191,7 +192,7 @@ router.post("/style-profiles/from-book-analysis", validate({ body: fromBookAnaly
     res.status(201).json({
       success: true,
       data,
-      message: "从拆书生成写法成功。",
+      message: getBackendMessage("styleEngine.route.profile.created_from_book_analysis"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -204,7 +205,7 @@ router.post("/style-profiles/from-template", validate({ body: fromTemplateSchema
     res.status(201).json({
       success: true,
       data,
-      message: "从模板创建写法成功。",
+      message: getBackendMessage("styleEngine.route.profile.created_from_template"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -217,7 +218,7 @@ router.post("/style-profiles/from-brief", validate({ body: fromBriefSchema }), a
     res.status(201).json({
       success: true,
       data,
-      message: "AI 生成写法成功。",
+      message: getBackendMessage("styleEngine.route.profile.created_from_brief"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -231,14 +232,14 @@ router.get("/style-profiles/:id", validate({ params: idSchema }), async (req, re
     if (!data) {
       res.status(404).json({
         success: false,
-        error: "写法资产不存在。",
+        error: getBackendMessage("styleEngine.route.profile.not_found"),
       } satisfies ApiResponse<null>);
       return;
     }
     res.status(200).json({
       success: true,
       data,
-      message: "获取写法资产详情成功。",
+      message: getBackendMessage("styleEngine.route.profile.loaded"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -252,7 +253,7 @@ router.put("/style-profiles/:id", validate({ params: idSchema, body: manualProfi
     res.status(200).json({
       success: true,
       data,
-      message: "更新写法资产成功。",
+      message: getBackendMessage("styleEngine.route.profile.updated"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -265,7 +266,7 @@ router.delete("/style-profiles/:id", validate({ params: idSchema }), async (req,
     await styleProfileService.deleteProfile(id);
     res.status(200).json({
       success: true,
-      message: "删除写法资产成功。",
+      message: getBackendMessage("styleEngine.route.profile.deleted"),
     } satisfies ApiResponse<null>);
   } catch (error) {
     next(error);
@@ -282,7 +283,7 @@ router.post("/style-profiles/:id/test-write", validate({ params: idSchema, body:
     res.status(200).json({
       success: true,
       data,
-      message: "试写完成。",
+      message: getBackendMessage("styleEngine.route.test_write.completed"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -295,7 +296,7 @@ router.get("/style-templates", async (_req, res, next) => {
     res.status(200).json({
       success: true,
       data,
-      message: "获取模板成功。",
+      message: getBackendMessage("styleEngine.route.templates.loaded"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -308,7 +309,7 @@ router.get("/anti-ai-rules", async (_req, res, next) => {
     res.status(200).json({
       success: true,
       data,
-      message: "获取反AI规则成功。",
+      message: getBackendMessage("styleEngine.route.anti_ai_rules.loaded"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -321,7 +322,7 @@ router.post("/anti-ai-rules", validate({ body: antiAiRuleSchema }), async (req, 
     res.status(201).json({
       success: true,
       data,
-      message: "创建反AI规则成功。",
+      message: getBackendMessage("styleEngine.route.anti_ai_rule.created"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -335,7 +336,7 @@ router.put("/anti-ai-rules/:id", validate({ params: antiRuleIdSchema, body: anti
     res.status(200).json({
       success: true,
       data,
-      message: "更新反AI规则成功。",
+      message: getBackendMessage("styleEngine.route.anti_ai_rule.updated"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -349,7 +350,7 @@ router.get("/style-bindings", validate({ query: bindingQuerySchema }), async (re
     res.status(200).json({
       success: true,
       data,
-      message: "获取写法绑定成功。",
+      message: getBackendMessage("styleEngine.route.bindings.loaded"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -362,7 +363,7 @@ router.post("/style-bindings", validate({ body: bindingSchema }), async (req, re
     res.status(201).json({
       success: true,
       data,
-      message: "创建写法绑定成功。",
+      message: getBackendMessage("styleEngine.route.binding.created"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -375,7 +376,7 @@ router.delete("/style-bindings/:id", validate({ params: bindingIdSchema }), asyn
     await styleBindingService.deleteBinding(id);
     res.status(200).json({
       success: true,
-      message: "删除写法绑定成功。",
+      message: getBackendMessage("styleEngine.route.binding.deleted"),
     } satisfies ApiResponse<null>);
   } catch (error) {
     next(error);
@@ -389,7 +390,7 @@ router.post("/style-profiles/from-extraction", validate({ body: fromExtractionSc
     res.status(201).json({
       success: true,
       data,
-      message: "已按特征选择生成写法资产。",
+      message: getBackendMessage("styleEngineExtraction.route.profile.created_from_extraction"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -410,7 +411,7 @@ router.post("/style-recommendations/novels/:id", validate({
     res.status(200).json({
       success: true,
       data,
-      message: "写法推荐已生成。",
+      message: getBackendMessage("styleEngine.route.recommendation.generated"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -423,7 +424,7 @@ router.post("/style-detection/check", validate({ body: detectionSchema }), async
     res.status(200).json({
       success: true,
       data,
-      message: "写法检测完成。",
+      message: getBackendMessage("styleEngine.route.detection.completed"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -436,7 +437,7 @@ router.post("/style-detection/rewrite", validate({ body: rewriteSchema }), async
     res.status(200).json({
       success: true,
       data,
-      message: "写法修正完成。",
+      message: getBackendMessage("styleEngine.route.rewrite.completed"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);

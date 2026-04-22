@@ -1,6 +1,7 @@
 import type { Router } from "express";
 import type { ApiResponse } from "@ai-novel/shared/types/api";
 import { z } from "zod";
+import { getBackendMessage } from "../i18n";
 import { streamToSSE } from "../llm/streaming";
 import { validate } from "../middleware/validate";
 import type { NovelService } from "../services/novel/NovelService";
@@ -48,7 +49,7 @@ export function registerNovelSnapshotCharacterRoutes(
       res.status(200).json({
         success: true,
         data,
-        message: "Snapshots loaded.",
+        message: getBackendMessage("novel.snapshot.route.snapshots.loaded"),
       } satisfies ApiResponse<typeof data>);
     } catch (error) {
       next(error);
@@ -66,7 +67,7 @@ export function registerNovelSnapshotCharacterRoutes(
         res.status(201).json({
           success: true,
           data,
-          message: "Snapshot created.",
+          message: getBackendMessage("novel.snapshot.route.snapshot.created"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);
@@ -85,7 +86,7 @@ export function registerNovelSnapshotCharacterRoutes(
         res.status(200).json({
           success: true,
           data,
-          message: "Snapshot restored.",
+          message: getBackendMessage("novel.snapshot.route.snapshot.restored"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);
@@ -100,7 +101,7 @@ export function registerNovelSnapshotCharacterRoutes(
       res.status(200).json({
         success: true,
         data,
-        message: "Characters loaded.",
+        message: getBackendMessage("novel.snapshot.route.characters.loaded"),
       } satisfies ApiResponse<typeof data>);
     } catch (error) {
       next(error);
@@ -117,7 +118,7 @@ export function registerNovelSnapshotCharacterRoutes(
         res.status(201).json({
           success: true,
           data,
-          message: "Character created.",
+          message: getBackendMessage("novel.snapshot.route.character.created"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         if (forwardBusinessError(error, next)) {
@@ -142,7 +143,7 @@ export function registerNovelSnapshotCharacterRoutes(
         res.status(200).json({
           success: true,
           data,
-          message: "Character updated.",
+          message: getBackendMessage("novel.snapshot.route.character.updated"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);
@@ -156,7 +157,7 @@ export function registerNovelSnapshotCharacterRoutes(
       await novelService.deleteCharacter(id, charId);
       res.status(200).json({
         success: true,
-        message: "Character deleted.",
+        message: getBackendMessage("novel.snapshot.route.character.deleted"),
       } satisfies ApiResponse<null>);
     } catch (error) {
       next(error);
@@ -173,7 +174,7 @@ export function registerNovelSnapshotCharacterRoutes(
         res.status(200).json({
           success: true,
           data,
-          message: "Character timeline loaded.",
+          message: getBackendMessage("novel.snapshot.route.character_timeline.loaded"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);
@@ -194,7 +195,7 @@ export function registerNovelSnapshotCharacterRoutes(
         res.status(200).json({
           success: true,
           data,
-          message: "Character timelines synced.",
+          message: getBackendMessage("novel.snapshot.route.character_timelines.synced"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);
@@ -216,7 +217,7 @@ export function registerNovelSnapshotCharacterRoutes(
         res.status(200).json({
           success: true,
           data,
-          message: "Character timeline synced.",
+          message: getBackendMessage("novel.snapshot.route.character_timeline.synced"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);
@@ -234,7 +235,7 @@ export function registerNovelSnapshotCharacterRoutes(
         res.status(200).json({
           success: true,
           data,
-          message: "Character evolved.",
+          message: getBackendMessage("novel.snapshot.route.character.evolved"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);
@@ -256,7 +257,7 @@ export function registerNovelSnapshotCharacterRoutes(
         res.status(200).json({
           success: true,
           data,
-          message: "World check completed.",
+          message: getBackendMessage("novel.snapshot.route.world_check.completed"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);

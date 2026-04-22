@@ -5,6 +5,7 @@ import type {
   PipelineBackgroundSyncState,
   PipelinePayload,
 } from "./novelCoreShared";
+import { getBackendMessage, type BackendMessageKey } from "../../i18n";
 
 const PIPELINE_ACTIVE_STAGES = ["queued", "generating_chapters", "reviewing", "repairing", "finalizing"] as const;
 const PIPELINE_STAGE_PROGRESS = {
@@ -15,11 +16,11 @@ const PIPELINE_STAGE_PROGRESS = {
   finalizing: 0.98,
 } as const;
 
-const PIPELINE_BACKGROUND_ACTIVITY_LABELS: Record<PipelineBackgroundSyncKind, string> = {
-  character_dynamics: "character dynamics syncing",
-  state_snapshot: "state snapshot syncing",
-  payoff_ledger: "payoff ledger syncing",
-  canonical_state: "canonical state syncing",
+const PIPELINE_BACKGROUND_ACTIVITY_LABELS: Record<PipelineBackgroundSyncKind, BackendMessageKey> = {
+  character_dynamics: "task.pipeline.background.character_dynamics",
+  state_snapshot: "task.pipeline.background.state_snapshot",
+  payoff_ledger: "task.pipeline.background.payoff_ledger",
+  canonical_state: "task.pipeline.background.canonical_state",
 };
 
 export const PIPELINE_QUALITY_NOTICE_CODE = "PIPELINE_QUALITY_REVIEW";
@@ -118,8 +119,11 @@ export function buildPipelineBackgroundActivityLabels(
     }
     labels.add(
       typeof activity.chapterOrder === "number"
-        ? `${baseLabel} (chapter ${activity.chapterOrder})`
-        : baseLabel,
+        ? getBackendMessage("task.pipeline.background.with_chapter", {
+          label: getBackendMessage(baseLabel),
+          chapterOrder: activity.chapterOrder,
+        })
+        : getBackendMessage(baseLabel),
     );
   }
   return Array.from(labels);
@@ -158,9 +162,18 @@ export function buildPipelineCurrentItemLabel(input: {
 }): string {
   const currentIndex = Math.min(input.totalCount, Math.max(1, input.completedCount + 1));
   if (typeof input.chapterOrder === "number") {
-    return `第${input.chapterOrder}章 · ${input.title.trim()} · 批次 ${currentIndex}/${input.totalCount}`;
+    return getBackendMessage("task.pipeline.current_item.with_chapter_order", {
+      chapterOrder: input.chapterOrder,
+      title: input.title.trim(),
+      currentIndex,
+      totalCount: input.totalCount,
+    });
   }
-  return `第 ${currentIndex}/${input.totalCount} 章 · ${input.title.trim()}`;
+  return getBackendMessage("task.pipeline.current_item.without_chapter_order", {
+    title: input.title.trim(),
+    currentIndex,
+    totalCount: input.totalCount,
+  });
 }
 
 export function parsePipelinePayload(payload: string | null | undefined): PipelinePayload {
@@ -232,9 +245,11 @@ export function getPipelineQualityNotice(details: string[] | undefined): Pipelin
     };
   }
   return {
-    displayStatus: "Completed with quality alerts",
+    displayStatus: getBackendMessage("task.pipeline.notice.quality.display"),
     noticeCode: PIPELINE_QUALITY_NOTICE_CODE,
-    noticeSummary: `Some chapters finished below the configured quality threshold: ${qualityAlertDetails.join("; ")}`,
+    noticeSummary: getBackendMessage("task.pipeline.notice.quality.summary", {
+      details: qualityAlertDetails.join("; "),
+    }),
     qualityAlertDetails,
     backgroundActivityLabels: [],
   };
@@ -252,9 +267,11 @@ export function getPipelineReplanNotice(details: string[] | undefined): Pipeline
     };
   }
   return {
-    displayStatus: "Completed with replan required",
+    displayStatus: getBackendMessage("task.pipeline.notice.replan.display"),
     noticeCode: PIPELINE_REPLAN_NOTICE_CODE,
-    noticeSummary: `State-driven replan is required before continuing: ${replanAlertDetails.join("; ")}`,
+    noticeSummary: getBackendMessage("task.pipeline.notice.replan.summary", {
+      details: replanAlertDetails.join("; "),
+    }),
     qualityAlertDetails: [],
     backgroundActivityLabels: [],
   };

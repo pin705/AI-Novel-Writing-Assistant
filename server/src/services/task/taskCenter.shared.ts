@@ -3,6 +3,7 @@ import type {
   UnifiedTaskStep,
   UnifiedTaskSummary,
 } from "@ai-novel/shared/types/task";
+import { getBackendMessage, type BackendMessageKey } from "../../i18n";
 
 export interface ListTasksFilters {
   kind?: "book_analysis" | "novel_pipeline" | "knowledge_document" | "image_generation" | "agent_run" | "novel_workflow";
@@ -27,51 +28,73 @@ export const STATUS_RANK: Record<TaskStatus, number> = {
   succeeded: 5,
 };
 
-export const BOOK_ANALYSIS_STEPS = [
-  { key: "queued", label: "排队" },
-  { key: "preparing_notes", label: "提取笔记" },
-  { key: "generating_sections", label: "生成章节" },
-  { key: "finalizing", label: "收尾" },
-] as const;
+export interface LocalizedTaskStepDefinition {
+  key: string;
+  label: string;
+}
 
-export const NOVEL_PIPELINE_STEPS = [
-  { key: "queued", label: "排队" },
-  { key: "generating_chapters", label: "生成章节" },
-  { key: "reviewing", label: "审校" },
-  { key: "repairing", label: "修复" },
-  { key: "finalizing", label: "收尾" },
-] as const;
+type StepDefinitionSeed = {
+  key: string;
+  labelKey: BackendMessageKey;
+};
 
-export const KNOWLEDGE_DOCUMENT_STEPS = [
-  { key: "queued", label: "排队" },
-  { key: "loading_source", label: "读取文档" },
-  { key: "chunking", label: "切分分块" },
-  { key: "embedding", label: "生成向量" },
-  { key: "ensuring_collection", label: "校验集合" },
-  { key: "deleting_existing", label: "清理旧索引" },
-  { key: "upserting_vectors", label: "写入向量库" },
-  { key: "writing_metadata", label: "写入元数据" },
-  { key: "completed", label: "完成" },
-] as const;
+const BOOK_ANALYSIS_STEP_SEEDS: readonly StepDefinitionSeed[] = [
+  { key: "queued", labelKey: "taskCenter.bookAnalysis.step.queued" },
+  { key: "preparing_notes", labelKey: "taskCenter.bookAnalysis.step.preparing_notes" },
+  { key: "generating_sections", labelKey: "taskCenter.bookAnalysis.step.generating_sections" },
+  { key: "finalizing", labelKey: "taskCenter.bookAnalysis.step.finalizing" },
+];
 
-export const IMAGE_TASK_STEPS = [
-  { key: "queued", label: "排队" },
-  { key: "submitting", label: "提交请求" },
-  { key: "generating", label: "生成图片" },
-  { key: "saving_assets", label: "保存素材" },
-  { key: "finalizing", label: "收尾" },
-] as const;
+const NOVEL_PIPELINE_STEP_SEEDS: readonly StepDefinitionSeed[] = [
+  { key: "queued", labelKey: "taskCenter.novelPipeline.step.queued" },
+  { key: "generating_chapters", labelKey: "taskCenter.novelPipeline.step.generating_chapters" },
+  { key: "reviewing", labelKey: "taskCenter.novelPipeline.step.reviewing" },
+  { key: "repairing", labelKey: "taskCenter.novelPipeline.step.repairing" },
+  { key: "finalizing", labelKey: "taskCenter.novelPipeline.step.finalizing" },
+];
 
-export const NOVEL_WORKFLOW_STAGE_STEPS = [
-  { key: "project_setup", label: "项目设定" },
-  { key: "auto_director", label: "自动导演" },
-  { key: "story_macro", label: "故事宏观规划" },
-  { key: "character_setup", label: "角色准备" },
-  { key: "volume_strategy", label: "卷战略 / 卷骨架" },
-  { key: "structured_outline", label: "节奏 / 拆章" },
-  { key: "chapter_execution", label: "章节执行" },
-  { key: "quality_repair", label: "质量修复" },
-] as const;
+const KNOWLEDGE_DOCUMENT_STEP_SEEDS: readonly StepDefinitionSeed[] = [
+  { key: "queued", labelKey: "taskCenter.knowledge.step.queued" },
+  { key: "loading_source", labelKey: "taskCenter.knowledge.step.loading_source" },
+  { key: "chunking", labelKey: "taskCenter.knowledge.step.chunking" },
+  { key: "embedding", labelKey: "taskCenter.knowledge.step.embedding" },
+  { key: "ensuring_collection", labelKey: "taskCenter.knowledge.step.ensuring_collection" },
+  { key: "deleting_existing", labelKey: "taskCenter.knowledge.step.deleting_existing" },
+  { key: "upserting_vectors", labelKey: "taskCenter.knowledge.step.upserting_vectors" },
+  { key: "writing_metadata", labelKey: "taskCenter.knowledge.step.writing_metadata" },
+  { key: "completed", labelKey: "taskCenter.knowledge.step.completed" },
+];
+
+const IMAGE_TASK_STEP_SEEDS: readonly StepDefinitionSeed[] = [
+  { key: "queued", labelKey: "taskCenter.image.step.queued" },
+  { key: "submitting", labelKey: "taskCenter.image.step.submitting" },
+  { key: "generating", labelKey: "taskCenter.image.step.generating" },
+  { key: "saving_assets", labelKey: "taskCenter.image.step.saving_assets" },
+  { key: "finalizing", labelKey: "taskCenter.image.step.finalizing" },
+];
+
+function buildLocalizedStepDefinitions(seeds: readonly StepDefinitionSeed[]): LocalizedTaskStepDefinition[] {
+  return seeds.map((item) => ({
+    key: item.key,
+    label: getBackendMessage(item.labelKey),
+  }));
+}
+
+export function getBookAnalysisSteps(): LocalizedTaskStepDefinition[] {
+  return buildLocalizedStepDefinitions(BOOK_ANALYSIS_STEP_SEEDS);
+}
+
+export function getNovelPipelineSteps(): LocalizedTaskStepDefinition[] {
+  return buildLocalizedStepDefinitions(NOVEL_PIPELINE_STEP_SEEDS);
+}
+
+export function getKnowledgeDocumentSteps(): LocalizedTaskStepDefinition[] {
+  return buildLocalizedStepDefinitions(KNOWLEDGE_DOCUMENT_STEP_SEEDS);
+}
+
+export function getImageTaskSteps(): LocalizedTaskStepDefinition[] {
+  return buildLocalizedStepDefinitions(IMAGE_TASK_STEP_SEEDS);
+}
 
 export function normalizeKeyword(value: string | undefined): string | undefined {
   const keyword = value?.trim();
@@ -146,6 +169,16 @@ function resolveStageIndex(
   }
   const index = definitions.findIndex((item) => item.key === currentStage);
   return index >= 0 ? index : 0;
+}
+
+export function localizeTaskStageLabel(
+  definitions: ReadonlyArray<{ key: string; label: string }>,
+  currentStage: string | null | undefined,
+): string | null {
+  if (!currentStage?.trim()) {
+    return null;
+  }
+  return definitions.find((item) => item.key === currentStage)?.label ?? currentStage;
 }
 
 export function buildSteps(

@@ -1,6 +1,7 @@
 import type { Router } from "express";
 import type { ApiResponse } from "@ai-novel/shared/types/api";
 import { z } from "zod";
+import { getBackendMessage } from "../i18n";
 import { llmProviderSchema } from "../llm/providerSchema";
 import { validate } from "../middleware/validate";
 import { StoryMacroPlanService } from "../services/novel/storyMacro/StoryMacroPlanService";
@@ -109,7 +110,7 @@ export function registerNovelStoryMacroRoutes(input: RegisterNovelStoryMacroRout
       res.status(200).json({
         success: true,
         data,
-        message: "Story macro plan loaded.",
+        message: getBackendMessage("novel.story_macro.route.plan.loaded"),
       } satisfies ApiResponse<typeof data>);
     } catch (error) {
       next(error);
@@ -127,7 +128,7 @@ export function registerNovelStoryMacroRoutes(input: RegisterNovelStoryMacroRout
         res.status(200).json({
           success: true,
           data,
-          message: "故事引擎原型已生成。",
+          message: getBackendMessage("novel.story_macro.route.decomposition.generated"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);
@@ -145,7 +146,7 @@ export function registerNovelStoryMacroRoutes(input: RegisterNovelStoryMacroRout
         res.status(200).json({
           success: true,
           data,
-          message: "约束引擎已构建。",
+          message: getBackendMessage("novel.story_macro.route.constraint_engine.built"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);
@@ -163,7 +164,7 @@ export function registerNovelStoryMacroRoutes(input: RegisterNovelStoryMacroRout
         res.status(200).json({
           success: true,
           data,
-          message: "故事宏观规划已保存。",
+          message: getBackendMessage("novel.story_macro.route.plan.saved"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);
@@ -181,7 +182,7 @@ export function registerNovelStoryMacroRoutes(input: RegisterNovelStoryMacroRout
         res.status(200).json({
           success: true,
           data,
-          message: "字段已重生成。",
+          message: getBackendMessage("novel.story_macro.route.field.regenerated"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);
@@ -196,7 +197,7 @@ export function registerNovelStoryMacroRoutes(input: RegisterNovelStoryMacroRout
       res.status(200).json({
         success: true,
         data,
-        message: "故事宏观规划状态已加载。",
+        message: getBackendMessage("novel.story_macro.route.state.loaded"),
       } satisfies ApiResponse<typeof data>);
     } catch (error) {
       next(error);
@@ -213,7 +214,7 @@ export function registerNovelStoryMacroRoutes(input: RegisterNovelStoryMacroRout
         res.status(200).json({
           success: true,
           data,
-          message: "故事宏观规划状态已更新。",
+          message: getBackendMessage("novel.story_macro.route.state.updated"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);

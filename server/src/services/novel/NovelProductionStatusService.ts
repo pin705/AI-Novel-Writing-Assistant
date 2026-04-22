@@ -1,4 +1,6 @@
+import type { BackendMessageKey } from "../../i18n";
 import { prisma } from "../../db/prisma";
+import { getBackendMessage } from "../../i18n";
 import { parseStructuredOutline } from "./novelProductionHelpers";
 
 export interface ProductionStatusStage {
@@ -24,6 +26,26 @@ export interface ProductionStatusResult {
   recoveryHint: string | null;
   currentStage: string;
   summary: string;
+}
+
+const PRODUCTION_ASSET_LABEL_KEYS = {
+  novel_workspace: "production.asset.novel_workspace",
+  world: "production.asset.world",
+  characters: "production.asset.characters",
+  story_bible: "production.asset.story_bible",
+  outline: "production.asset.outline",
+  structured_outline: "production.asset.structured_outline",
+  chapters: "production.asset.chapters",
+  pipeline: "production.asset.pipeline",
+} as const satisfies Record<string, BackendMessageKey>;
+
+function getPipelineStatusLabel(status: string | null | undefined): string | null {
+  if (status === "queued") return getBackendMessage("production.pipeline.status.queued");
+  if (status === "running") return getBackendMessage("production.pipeline.status.running");
+  if (status === "succeeded") return getBackendMessage("production.pipeline.status.succeeded");
+  if (status === "failed") return getBackendMessage("production.pipeline.status.failed");
+  if (status === "cancelled") return getBackendMessage("production.pipeline.status.cancelled");
+  return status?.trim() || null;
 }
 
 export class NovelProductionStatusService {
@@ -59,7 +81,7 @@ export class NovelProductionStatusService {
           orderBy: { updatedAt: "desc" },
         });
     if (!novel) {
-      throw new Error("未找到当前小说。");
+      throw new Error(getBackendMessage("production.error.novel_not_found"));
     }
 
     const structuredOutlineChapters = novel.structuredOutline?.trim()
@@ -72,17 +94,44 @@ export class NovelProductionStatusService {
     const latestJob = novel.generationJobs[0] ?? null;
     const chapterCount = novel.chapters.length;
 
+    const pipelineStatusLabel = getPipelineStatusLabel(latestJob?.status ?? null);
     const assetStages: ProductionStatusStage[] = [
-      { key: "novel_workspace", label: "小说工作区", status: "completed", detail: `《${novel.title}》` },
-      { key: "world", label: "世界观", status: novel.world ? "completed" : "pending", detail: novel.world?.name ?? null },
-      { key: "characters", label: "核心角色", status: novel.characters.length > 0 ? "completed" : "pending", detail: novel.characters.length > 0 ? `${novel.characters.length} 个角色` : null },
-      { key: "story_bible", label: "小说圣经", status: novel.bible ? "completed" : "pending", detail: novel.bible?.mainPromise ?? novel.bible?.coreSetting ?? null },
-      { key: "outline", label: "发展走向", status: novel.outline?.trim() ? "completed" : "pending", detail: novel.outline?.trim() ? "已生成发展走向" : null },
-      { key: "structured_outline", label: "结构化大纲", status: novel.structuredOutline?.trim() ? "completed" : "pending", detail: novel.structuredOutline?.trim() ? `${structuredOutlineChapters} 章规划` : null },
-      { key: "chapters", label: "章节目录", status: chapterCount > 0 ? "completed" : "pending", detail: chapterCount > 0 ? `${chapterCount}/${targetChapterCount} 章` : null },
+      { key: "novel_workspace", label: getBackendMessage(PRODUCTION_ASSET_LABEL_KEYS.novel_workspace), status: "completed", detail: novel.title },
+      { key: "world", label: getBackendMessage(PRODUCTION_ASSET_LABEL_KEYS.world), status: novel.world ? "completed" : "pending", detail: novel.world?.name ?? null },
+      {
+        key: "characters",
+        label: getBackendMessage(PRODUCTION_ASSET_LABEL_KEYS.characters),
+        status: novel.characters.length > 0 ? "completed" : "pending",
+        detail: novel.characters.length > 0
+          ? getBackendMessage("production.asset.characters.count", { count: novel.characters.length })
+          : null,
+      },
+      { key: "story_bible", label: getBackendMessage(PRODUCTION_ASSET_LABEL_KEYS.story_bible), status: novel.bible ? "completed" : "pending", detail: novel.bible?.mainPromise ?? novel.bible?.coreSetting ?? null },
+      {
+        key: "outline",
+        label: getBackendMessage(PRODUCTION_ASSET_LABEL_KEYS.outline),
+        status: novel.outline?.trim() ? "completed" : "pending",
+        detail: novel.outline?.trim() ? getBackendMessage("production.asset.outline.generated") : null,
+      },
+      {
+        key: "structured_outline",
+        label: getBackendMessage(PRODUCTION_ASSET_LABEL_KEYS.structured_outline),
+        status: novel.structuredOutline?.trim() ? "completed" : "pending",
+        detail: novel.structuredOutline?.trim()
+          ? getBackendMessage("production.asset.structured_outline.chapter_count", { count: structuredOutlineChapters })
+          : null,
+      },
+      {
+        key: "chapters",
+        label: getBackendMessage(PRODUCTION_ASSET_LABEL_KEYS.chapters),
+        status: chapterCount > 0 ? "completed" : "pending",
+        detail: chapterCount > 0
+          ? getBackendMessage("production.asset.chapters.chapter_count", { chapterCount, targetChapterCount })
+          : null,
+      },
       {
         key: "pipeline",
-        label: "整本写作任务",
+        label: getBackendMessage(PRODUCTION_ASSET_LABEL_KEYS.pipeline),
         status: latestJob
           ? latestJob.status === "running" || latestJob.status === "queued"
             ? "running"
@@ -90,51 +139,61 @@ export class NovelProductionStatusService {
               ? "completed"
               : "blocked"
           : "pending",
-        detail: latestJob ? `状态：${latestJob.status}` : null,
+        detail: latestJob && pipelineStatusLabel
+          ? getBackendMessage("production.asset.pipeline.status_detail", { statusLabel: pipelineStatusLabel })
+          : null,
       },
     ];
 
     const assetsReady = assetStages.filter((stage) => stage.key !== "pipeline").every((stage) => stage.status === "completed");
     const pipelineReady = assetsReady && chapterCount > 0;
 
-    let currentStage = "资产待准备";
+    let currentStage = getBackendMessage("production.current.assets_pending");
     if (!novel.world) {
-      currentStage = "等待生成世界观";
+      currentStage = getBackendMessage("production.current.waiting_world");
     } else if (novel.characters.length === 0) {
-      currentStage = "等待生成核心角色";
+      currentStage = getBackendMessage("production.current.waiting_characters");
     } else if (!novel.bible) {
-      currentStage = "等待生成小说圣经";
+      currentStage = getBackendMessage("production.current.waiting_story_bible");
     } else if (!novel.outline?.trim()) {
-      currentStage = "等待生成发展走向";
+      currentStage = getBackendMessage("production.current.waiting_outline");
     } else if (!novel.structuredOutline?.trim()) {
-      currentStage = "等待生成结构化大纲";
+      currentStage = getBackendMessage("production.current.waiting_structured_outline");
     } else if (chapterCount === 0) {
-      currentStage = "等待同步章节目录";
+      currentStage = getBackendMessage("production.current.waiting_chapter_sync");
     } else if (!latestJob) {
-      currentStage = "等待启动整本写作";
+      currentStage = getBackendMessage("production.current.waiting_pipeline_start");
     } else if (latestJob.status === "queued" || latestJob.status === "running") {
-      currentStage = "整本写作进行中";
+      currentStage = getBackendMessage("production.current.pipeline_running");
     } else if (latestJob.status === "succeeded") {
-      currentStage = "整本写作已完成";
+      currentStage = getBackendMessage("production.current.pipeline_completed");
     } else if (latestJob.status === "failed") {
-      currentStage = "整本写作失败";
+      currentStage = getBackendMessage("production.current.pipeline_failed");
     } else if (latestJob.status === "cancelled") {
-      currentStage = "整本写作已取消";
+      currentStage = getBackendMessage("production.current.pipeline_cancelled");
     }
 
-    const failureSummary = latestJob?.status === "failed" ? latestJob.error ?? "整本写作任务失败。" : null;
+    const failureSummary = latestJob?.status === "failed"
+      ? (latestJob.error ?? getBackendMessage("production.failure.pipeline_default"))
+      : null;
     const recoveryHint = latestJob?.status === "failed"
-      ? "请检查章节目录和模型配置，必要时重新发起整本写作。"
+      ? getBackendMessage("production.recovery.failed")
       : !pipelineReady
-        ? "请先完成世界观、角色、圣经、大纲和章节目录准备。"
+        ? getBackendMessage("production.recovery.prepare_assets")
         : latestJob
           ? null
-          : "当前资产已准备完成，可在审批通过后启动整本写作。";
+          : getBackendMessage("production.recovery.ready_to_start");
     const summary = latestJob
-      ? `《${novel.title}》当前阶段：${currentStage}。`
+      ? getBackendMessage("production.summary.current_stage", {
+        title: novel.title,
+        currentStage,
+      })
       : pipelineReady
-        ? `《${novel.title}》资产已准备完成，尚未启动整本写作。`
-        : `《${novel.title}》当前阶段：${currentStage}。`;
+        ? getBackendMessage("production.summary.ready_not_started", { title: novel.title })
+        : getBackendMessage("production.summary.current_stage", {
+          title: novel.title,
+          currentStage,
+        });
 
     return {
       novelId: novel.id,
@@ -147,7 +206,7 @@ export class NovelProductionStatusService {
       assetsReady,
       pipelineReady,
       pipelineJobId: latestJob?.id ?? null,
-      pipelineStatus: latestJob?.status ?? null,
+      pipelineStatus: pipelineStatusLabel,
       failureSummary,
       recoveryHint,
       currentStage,

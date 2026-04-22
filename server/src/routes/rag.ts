@@ -1,6 +1,7 @@
 import { Router } from "express";
 import type { ApiResponse } from "@ai-novel/shared/types/api";
 import { z } from "zod";
+import { getBackendMessage } from "../i18n";
 import { authMiddleware } from "../middleware/auth";
 import { validate } from "../middleware/validate";
 import { ragServices } from "../services/rag";
@@ -28,7 +29,7 @@ router.post("/reindex", validate({ body: reindexSchema }), async (req, res, next
     res.status(202).json({
       success: true,
       data,
-      message: "RAG reindex jobs queued.",
+      message: getBackendMessage("rag.route.reindex.queued"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -42,7 +43,7 @@ router.get("/jobs", validate({ query: jobsQuerySchema }), async (req, res, next)
     res.status(200).json({
       success: true,
       data,
-      message: "RAG job list loaded.",
+      message: getBackendMessage("rag.route.jobs.loaded"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -71,7 +72,9 @@ router.get("/health", async (_req, res, next) => {
     res.status(data.ok ? 200 : 503).json({
       success: data.ok,
       data,
-      message: data.ok ? "RAG health check passed." : "RAG health check failed.",
+      message: data.ok
+        ? getBackendMessage("rag.route.health.ok")
+        : getBackendMessage("rag.route.health.failed"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);

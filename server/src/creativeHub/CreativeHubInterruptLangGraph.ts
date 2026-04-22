@@ -4,6 +4,7 @@ import { AgentTraceStore } from "../agents/traceStore";
 import { ApprovalContinuationService } from "../agents/runtime/ApprovalContinuationService";
 import { RunExecutionService } from "../agents/runtime/RunExecutionService";
 import type { AgentRuntimeCallbacks } from "../agents/types";
+import { getBackendMessage } from "../i18n";
 import { novelProductionService } from "../services/novel/NovelProductionService";
 import { sanitizeCreativeHubToolOutput } from "./toolEventPayloads";
 import { creativeHubService } from "./CreativeHubService";
@@ -64,7 +65,7 @@ export class CreativeHubInterruptLangGraph {
   private getInvocation(state: CreativeHubInterruptGraphStateValue): CreativeHubInterruptInvocation {
     const invocation = this.invocations.get(state.invocationId);
     if (!invocation) {
-      throw new Error("创作中枢中断恢复上下文不存在。");
+      throw new Error(getBackendMessage("creativeHub.runtime.interrupt.error.invocation_missing"));
     }
     return invocation;
   }
@@ -106,7 +107,7 @@ export class CreativeHubInterruptLangGraph {
     const threadState = await creativeHubService.getThreadState(state.threadId);
     const runId = threadState.thread.latestRunId;
     if (!runId) {
-      throw new Error("当前线程没有可恢复的运行。");
+      throw new Error(getBackendMessage("creativeHub.runtime.interrupt.error.no_resumable_run"));
     }
     const resourceBindings = toBindings(threadState.thread.resourceBindings);
     return {
@@ -125,7 +126,7 @@ export class CreativeHubInterruptLangGraph {
 
   private async resolveApprovalNode(state: CreativeHubInterruptGraphStateValue) {
     if (!state.runId) {
-      throw new Error("创作中枢缺少待恢复的 runId。");
+      throw new Error(getBackendMessage("creativeHub.runtime.interrupt.error.missing_run_id"));
     }
 
     const interrupts: CreativeHubInterrupt[] = [];
@@ -175,7 +176,7 @@ export class CreativeHubInterruptLangGraph {
       },
       onRunStatus: (payload) => {
         threadStatus = deriveThreadStatusFromRunStatus(payload.status);
-        latestError = payload.status === "failed" ? payload.message ?? "审批后续执行失败。" : null;
+        latestError = payload.status === "failed" ? payload.message ?? getBackendMessage("creativeHub.runtime.interrupt.error.execution_failed") : null;
         this.emitFrame(state, {
           event: "creative_hub/run_status",
           data: payload,
@@ -203,7 +204,7 @@ export class CreativeHubInterruptLangGraph {
 
   private async answerFinalizeNode(state: CreativeHubInterruptGraphStateValue) {
     if (!state.executionResult) {
-      throw new Error("创作中枢审批恢复缺少执行结果。");
+      throw new Error(getBackendMessage("creativeHub.runtime.interrupt.error.missing_execution_result"));
     }
     return {
       finalMessages: appendAssistantMessage(

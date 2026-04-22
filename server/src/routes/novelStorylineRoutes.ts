@@ -1,6 +1,7 @@
 import type { Router } from "express";
 import type { ApiResponse } from "@ai-novel/shared/types/api";
 import { z } from "zod";
+import { getBackendMessage } from "../i18n";
 import { validate } from "../middleware/validate";
 import type { NovelService } from "../services/novel/NovelService";
 
@@ -35,7 +36,7 @@ export function registerNovelStorylineRoutes(input: RegisterNovelStorylineRoutes
         res.status(200).json({
           success: true,
           data,
-          message: "Storyline versions loaded.",
+          message: getBackendMessage("novel.storyline.route.versions.loaded"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);
@@ -53,7 +54,7 @@ export function registerNovelStorylineRoutes(input: RegisterNovelStorylineRoutes
         res.status(201).json({
           success: true,
           data,
-          message: "Storyline draft created.",
+          message: getBackendMessage("novel.storyline.route.draft.created"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);
@@ -71,7 +72,7 @@ export function registerNovelStorylineRoutes(input: RegisterNovelStorylineRoutes
         res.status(200).json({
           success: true,
           data,
-          message: "Storyline version activated.",
+          message: getBackendMessage("novel.storyline.route.version.activated"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);
@@ -89,7 +90,7 @@ export function registerNovelStorylineRoutes(input: RegisterNovelStorylineRoutes
         res.status(200).json({
           success: true,
           data,
-          message: "Storyline version frozen.",
+          message: getBackendMessage("novel.storyline.route.version.frozen"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);
@@ -108,7 +109,7 @@ export function registerNovelStorylineRoutes(input: RegisterNovelStorylineRoutes
         res.status(200).json({
           success: true,
           data,
-          message: "Storyline diff loaded.",
+          message: getBackendMessage("novel.storyline.route.diff.loaded"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);
@@ -126,7 +127,7 @@ export function registerNovelStorylineRoutes(input: RegisterNovelStorylineRoutes
         res.status(200).json({
           success: true,
           data,
-          message: "Storyline impact analysis completed.",
+          message: getBackendMessage("novel.storyline.route.impact_analysis.completed"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);

@@ -3,6 +3,7 @@ import type {
   UnifiedTaskDetail,
   UnifiedTaskSummary,
 } from "@ai-novel/shared/types/task";
+import { getBackendMessage } from "../../../i18n";
 import { prisma } from "../../../db/prisma";
 import { AppError } from "../../../middleware/errorHandler";
 import { bookAnalysisService } from "../../bookAnalysis/BookAnalysisService";
@@ -19,13 +20,18 @@ import {
   isTaskArchived,
 } from "../taskArchive";
 import {
-  BOOK_ANALYSIS_STEPS,
   buildSteps,
+  getBookAnalysisSteps,
+  localizeTaskStageLabel,
   mapBookStatusToTaskStatus,
   toLegacyTaskStatus,
 } from "../taskCenter.shared";
 
 export class BookTaskAdapter {
+  private getStepDefinitions() {
+    return getBookAnalysisSteps();
+  }
+
   async list(input: {
     status?: TaskStatus;
     keyword?: string;
@@ -79,13 +85,14 @@ export class BookTaskAdapter {
         continue;
       }
       const structuredFailure = resolveStructuredFailureSummary(row.lastError);
+      const stepDefinitions = this.getStepDefinitions();
       summaries.push({
         id: row.id,
         kind: "book_analysis",
         title: row.title,
         status: mappedStatus,
         progress: row.progress,
-        currentStage: row.currentStage,
+        currentStage: localizeTaskStageLabel(stepDefinitions, row.currentStage),
         currentItemLabel: row.currentItemLabel,
         attemptCount: row.attemptCount,
         maxAttempts: row.maxAttempts,
@@ -100,7 +107,7 @@ export class BookTaskAdapter {
           ? (structuredFailure.failureCode ?? "BOOK_ANALYSIS_FAILED")
           : null,
         failureSummary: normalizedStatus === "failed"
-          ? (structuredFailure.failureSummary ?? normalizeFailureSummary(row.lastError, "拆书任务失败，但没有记录明确错误。"))
+          ? (structuredFailure.failureSummary ?? normalizeFailureSummary(row.lastError, getBackendMessage("task.bookAnalysis.failure.default")))
           : row.lastError,
         recoveryHint: buildTaskRecoveryHint("book_analysis", mappedStatus),
         sourceResource: {
@@ -149,13 +156,14 @@ export class BookTaskAdapter {
       return null;
     }
     const structuredFailure = resolveStructuredFailureSummary(row.lastError);
+    const stepDefinitions = this.getStepDefinitions();
     const summary: UnifiedTaskSummary = {
       id: row.id,
       kind: "book_analysis",
       title: row.title,
       status,
       progress: row.progress,
-      currentStage: row.currentStage,
+      currentStage: localizeTaskStageLabel(stepDefinitions, row.currentStage),
       currentItemLabel: row.currentItemLabel,
       attemptCount: row.attemptCount,
       maxAttempts: row.maxAttempts,
@@ -170,7 +178,7 @@ export class BookTaskAdapter {
         ? (structuredFailure.failureCode ?? "BOOK_ANALYSIS_FAILED")
         : null,
       failureSummary: normalizedStatus === "failed"
-        ? (structuredFailure.failureSummary ?? normalizeFailureSummary(row.lastError, "拆书任务失败，但没有记录明确错误。"))
+        ? (structuredFailure.failureSummary ?? normalizeFailureSummary(row.lastError, getBackendMessage("task.bookAnalysis.failure.default")))
         : row.lastError,
       recoveryHint: buildTaskRecoveryHint("book_analysis", status),
       sourceResource: {
@@ -199,9 +207,9 @@ export class BookTaskAdapter {
         cancelRequestedAt: row.cancelRequestedAt?.toISOString() ?? null,
       },
       steps: buildSteps(
-        BOOK_ANALYSIS_STEPS,
+        stepDefinitions,
         summary.status,
-        summary.currentStage,
+        row.currentStage,
         summary.createdAt,
         summary.updatedAt,
       ),
@@ -211,26 +219,26 @@ export class BookTaskAdapter {
 
   async retry(id: string): Promise<UnifiedTaskDetail> {
     if (await isTaskArchived("book_analysis", id)) {
-      throw new AppError("Task not found.", 404);
+      throw new AppError(getBackendMessage("task.error.not_found"), 404);
     }
 
     const analysis = await bookAnalysisService.retryAnalysis(id);
     const detail = await this.detail(analysis.id);
     if (!detail) {
-      throw new AppError("Task not found after retry.", 404);
+      throw new AppError(getBackendMessage("task.error.not_found_after_retry"), 404);
     }
     return detail;
   }
 
   async cancel(id: string): Promise<UnifiedTaskDetail> {
     if (await isTaskArchived("book_analysis", id)) {
-      throw new AppError("Task not found.", 404);
+      throw new AppError(getBackendMessage("task.error.not_found"), 404);
     }
 
     const analysis = await bookAnalysisService.cancelAnalysis(id);
     const detail = await this.detail(analysis.id);
     if (!detail) {
-      throw new AppError("Task not found after cancellation.", 404);
+      throw new AppError(getBackendMessage("task.error.not_found_after_cancellation"), 404);
     }
     return detail;
   }
@@ -244,7 +252,7 @@ export class BookTaskAdapter {
       where: { id },
     });
     if (!analysis) {
-      throw new AppError("Task not found.", 404);
+      throw new AppError(getBackendMessage("task.error.not_found"), 404);
     }
 
     const status = mapBookStatusToTaskStatus(analysis.status);
@@ -253,7 +261,7 @@ export class BookTaskAdapter {
         await recordTaskArchive("book_analysis", id);
         return null;
       }
-      throw new AppError("Only completed, failed, or cancelled tasks can be archived.", 400);
+      throw new AppError(getBackendMessage("task.error.archive_requires_terminal_status"), 400);
     }
 
     await bookAnalysisService.updateAnalysisStatus(id, "archived");

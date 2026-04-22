@@ -2,6 +2,7 @@ import type { BaseMessageChunk } from "@langchain/core/messages";
 import { HumanMessage, SystemMessage } from "@langchain/core/messages";
 import type { LLMProvider } from "@ai-novel/shared/types/llm";
 import { prisma } from "../../db/prisma";
+import { getBackendMessage } from "../../i18n";
 import { getLLM } from "../../llm/factory";
 
 interface ExtractFormulaInput {
@@ -53,6 +54,12 @@ export class WritingFormulaService {
   }
 
   async createExtractStream(input: ExtractFormulaInput) {
+    const headings = {
+      style: getBackendMessage("writingFormula.heading.style"),
+      coreTechniques: getBackendMessage("writingFormula.heading.coreTechniques"),
+      formula: getBackendMessage("writingFormula.heading.formula"),
+      application: getBackendMessage("writingFormula.heading.application"),
+    };
     const llm = await getLLM(input.provider ?? "deepseek", {
       model: input.model,
       temperature: 0.6,
@@ -60,13 +67,14 @@ export class WritingFormulaService {
 
     const stream = await llm.stream([
       new SystemMessage(
-        `你是一个专业的写作风格分析专家，能够深度解析文学作品的创作技巧。
-请对文本进行 ${input.extractLevel} 级别分析，重点关注：${input.focusAreas.join(", ")}。
-输出格式（Markdown）：
-## 整体风格定位
-## 核心写作技巧（含原文例句）
-## 可复现的写作公式
-## 应用指南（如何用这个公式写新文本）`,
+        getBackendMessage("writingFormula.prompt.extract.system", {
+          extractLevel: input.extractLevel,
+          focusAreas: input.focusAreas.join(", "),
+          styleHeading: headings.style,
+          coreTechniquesHeading: headings.coreTechniques,
+          formulaHeading: headings.formula,
+          applicationHeading: headings.application,
+        }),
       ),
       new HumanMessage(input.sourceText),
     ]);
@@ -79,10 +87,10 @@ export class WritingFormulaService {
             name: input.name,
             sourceText: input.sourceText,
             content: fullContent,
-            style: pickSection(fullContent, "整体风格定位"),
-            formulaDescription: pickSection(fullContent, "核心写作技巧（含原文例句）"),
-            formulaSteps: pickSection(fullContent, "可复现的写作公式"),
-            applicationTips: pickSection(fullContent, "应用指南（如何用这个公式写新文本）"),
+            style: pickSection(fullContent, headings.style),
+            formulaDescription: pickSection(fullContent, headings.coreTechniques),
+            formulaSteps: pickSection(fullContent, headings.formula),
+            applicationTips: pickSection(fullContent, headings.application),
           },
         });
       },
@@ -102,18 +110,21 @@ export class WritingFormulaService {
         : undefined);
 
     if (!formulaContent) {
-      throw new Error("未找到可用写作公式内容。");
+      throw new Error(getBackendMessage("writingFormula.error.formulaContentMissing"));
     }
 
     if (input.mode === "rewrite") {
       if (!input.sourceText) {
-        throw new Error("rewrite 模式需要 sourceText。");
+        throw new Error(getBackendMessage("writingFormula.error.rewriteRequiresSourceText"));
       }
       const stream = await llm.stream([
         new SystemMessage(
-          "你是一位专业的写作助手。请严格按照以下写作公式，对给定文本进行改写。要求：保持原文核心意思不变，但文风、节奏、句式按照公式重塑。",
+          getBackendMessage("writingFormula.prompt.rewrite.system"),
         ),
-        new HumanMessage(`写作公式：\n${formulaContent}\n\n原文：\n${input.sourceText}`),
+        new HumanMessage(getBackendMessage("writingFormula.prompt.rewrite.human", {
+          formulaContent,
+          sourceText: input.sourceText,
+        })),
       ]);
       return {
         stream: stream as AsyncIterable<BaseMessageChunk>,
@@ -121,15 +132,19 @@ export class WritingFormulaService {
     }
 
     if (!input.topic) {
-      throw new Error("generate 模式需要 topic。");
+      throw new Error(getBackendMessage("writingFormula.error.generateRequiresTopic"));
     }
     const targetLength = input.targetLength ?? 1200;
     const stream = await llm.stream([
       new SystemMessage(
-        `你是一位专业的写作助手。请严格按照以下写作公式，围绕给定主题创作新内容。
-要求：字数控制在 ${targetLength} 字左右，每个段落都体现公式核心特征。`,
+        getBackendMessage("writingFormula.prompt.generate.system", {
+          targetLength,
+        }),
       ),
-      new HumanMessage(`写作公式：\n${formulaContent}\n\n创作主题：\n${input.topic}`),
+      new HumanMessage(getBackendMessage("writingFormula.prompt.generate.human", {
+        formulaContent,
+        topic: input.topic,
+      })),
     ]);
     return {
       stream: stream as AsyncIterable<BaseMessageChunk>,

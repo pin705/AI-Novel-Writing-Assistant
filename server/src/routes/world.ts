@@ -4,6 +4,7 @@ import type { ApiResponse } from "@ai-novel/shared/types/api";
 import type { WorldLayerKey, WorldStructureSectionKey } from "@ai-novel/shared/types/world";
 import { z } from "zod";
 import { authMiddleware } from "../middleware/auth";
+import { getBackendMessage } from "../i18n";
 import { validate } from "../middleware/validate";
 import { llmProviderSchema } from "../llm/providerSchema";
 import { initSSE, streamToSSE, writeSSEFrame } from "../llm/streaming";
@@ -22,7 +23,7 @@ const requireWorldWizard: RequestHandler = (_req, res, next) => {
   }
   res.status(404).json({
     success: false,
-    error: "World wizard feature is disabled.",
+    error: getBackendMessage("world.route.wizard_disabled"),
   } satisfies ApiResponse<null>);
 };
 
@@ -33,7 +34,7 @@ const requireWorldVisualization: RequestHandler = (_req, res, next) => {
   }
   res.status(404).json({
     success: false,
-    error: "World visualization feature is disabled.",
+    error: getBackendMessage("world.route.visualization_disabled"),
   } satisfies ApiResponse<null>);
 };
 
@@ -274,7 +275,7 @@ router.get("/templates", requireWorldWizard, async (_req, res, next) => {
     res.status(200).json({
       success: true,
       data,
-      message: "Templates loaded.",
+      message: getBackendMessage("world.route.templates.loaded"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -287,7 +288,7 @@ router.post("/inspiration/analyze", requireWorldWizard, validate({ body: inspira
     res.status(200).json({
       success: true,
       data,
-      message: "Inspiration analyzed.",
+      message: getBackendMessage("world.route.inspiration.analyzed"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -301,7 +302,7 @@ router.get("/library", requireWorldWizard, validate({ query: libraryListQuerySch
     res.status(200).json({
       success: true,
       data,
-      message: "Library loaded.",
+      message: getBackendMessage("world.route.library.loaded"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -314,7 +315,7 @@ router.post("/library", requireWorldWizard, validate({ body: libraryCreateSchema
     res.status(201).json({
       success: true,
       data,
-      message: "Library item created.",
+      message: getBackendMessage("world.route.library_item.created"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -332,7 +333,7 @@ router.post(
       res.status(200).json({
         success: true,
         data,
-        message: "Library item used.",
+        message: getBackendMessage("world.route.library_item.used"),
       } satisfies ApiResponse<typeof data>);
     } catch (error) {
       next(error);
@@ -346,7 +347,7 @@ router.post("/import", requireWorldWizard, validate({ body: worldImportSchema })
     res.status(201).json({
       success: true,
       data,
-      message: "World imported.",
+      message: getBackendMessage("world.route.imported"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -359,7 +360,7 @@ router.get("/", async (_req, res, next) => {
     res.status(200).json({
       success: true,
       data,
-      message: "World list loaded.",
+      message: getBackendMessage("world.route.list.loaded"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -372,7 +373,7 @@ router.post("/", validate({ body: createWorldSchema }), async (req, res, next) =
     res.status(201).json({
       success: true,
       data,
-      message: "World created.",
+      message: getBackendMessage("world.route.created"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -397,14 +398,14 @@ router.get("/:id", validate({ params: worldIdSchema }), async (req, res, next) =
     if (!data) {
       res.status(404).json({
         success: false,
-        error: "World not found.",
+        error: getBackendMessage("world.route.not_found"),
       } satisfies ApiResponse<null>);
       return;
     }
     res.status(200).json({
       success: true,
       data,
-      message: "World loaded.",
+      message: getBackendMessage("world.route.loaded"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -426,7 +427,9 @@ router.post(
         type: "run_status",
         runId,
         status: "queued",
-        message: isReferenceMode ? "已开始分析参考作品" : "已开始分析世界灵感",
+        message: isReferenceMode
+          ? getBackendMessage("world.route.inspiration.analysis_started.reference")
+          : getBackendMessage("world.route.inspiration.analysis_started.inspiration"),
       });
 
       const data = await worldService.analyzeInspiration(
@@ -445,14 +448,18 @@ router.post(
         type: "run_status",
         runId,
         status: "succeeded",
-        message: isReferenceMode ? "原作锚点与架空方向已生成" : "概念卡与属性选项已生成",
+        message: isReferenceMode
+          ? getBackendMessage("world.route.inspiration.analysis_succeeded.reference")
+          : getBackendMessage("world.route.inspiration.analysis_succeeded.inspiration"),
       });
       writeSSEFrame(res, {
         type: "done",
         fullContent: JSON.stringify(data),
       });
     } catch (error) {
-      const message = error instanceof Error ? error.message : "世界灵感分析失败。";
+      const message = error instanceof Error
+        ? error.message
+        : getBackendMessage("world.route.inspiration.analysis_failed");
       writeSSEFrame(res, {
         type: "run_status",
         runId,
@@ -479,7 +486,7 @@ router.get("/:id/structure", requireWorldWizard, validate({ params: worldIdSchem
     res.status(200).json({
       success: true,
       data,
-      message: "Structured world loaded.",
+      message: getBackendMessage("world.route.structure.loaded"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -497,7 +504,7 @@ router.put(
       res.status(200).json({
         success: true,
         data,
-        message: "Structured world saved.",
+        message: getBackendMessage("world.route.structure.saved"),
       } satisfies ApiResponse<typeof data>);
     } catch (error) {
       next(error);
@@ -516,7 +523,7 @@ router.post(
       res.status(200).json({
         success: true,
         data,
-        message: "Structured world backfilled.",
+        message: getBackendMessage("world.route.structure.backfilled"),
       } satisfies ApiResponse<typeof data>);
     } catch (error) {
       next(error);
@@ -537,7 +544,7 @@ router.post(
       res.status(200).json({
         success: true,
         data,
-        message: "Structure section generated.",
+        message: getBackendMessage("world.route.structure.section_generated"),
       } satisfies ApiResponse<typeof data>);
     } catch (error) {
       next(error);
@@ -552,7 +559,7 @@ router.get("/:id/knowledge-documents", validate({ params: worldIdSchema }), asyn
     res.status(200).json({
       success: true,
       data,
-      message: "World knowledge documents loaded.",
+      message: getBackendMessage("world.route.knowledge_documents.loaded"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -570,7 +577,7 @@ router.put(
       res.status(200).json({
         success: true,
         data,
-        message: "World knowledge documents updated.",
+        message: getBackendMessage("world.route.knowledge_documents.updated"),
       } satisfies ApiResponse<typeof data>);
     } catch (error) {
       next(error);
@@ -585,7 +592,7 @@ router.put("/:id", validate({ params: worldIdSchema, body: updateWorldSchema }),
     res.status(200).json({
       success: true,
       data,
-      message: "World updated.",
+      message: getBackendMessage("world.route.updated"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -598,7 +605,7 @@ router.delete("/:id", validate({ params: worldIdSchema }), async (req, res, next
     await worldService.deleteWorld(id);
     res.status(200).json({
       success: true,
-      message: "World deleted.",
+      message: getBackendMessage("world.route.deleted"),
     } satisfies ApiResponse<null>);
   } catch (error) {
     next(error);
@@ -612,7 +619,7 @@ router.post("/:id/axioms/suggest", requireWorldWizard, validate({ params: worldI
     res.status(200).json({
       success: true,
       data,
-      message: "Axioms suggested.",
+      message: getBackendMessage("world.route.axioms.suggested"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -627,7 +634,7 @@ router.put("/:id/axioms", requireWorldWizard, validate({ params: worldIdSchema, 
     res.status(200).json({
       success: true,
       data,
-      message: "Axioms updated.",
+      message: getBackendMessage("world.route.axioms.updated"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -645,7 +652,7 @@ router.post(
       res.status(200).json({
         success: true,
         data,
-        message: "All layers generated.",
+        message: getBackendMessage("world.route.layers.generated_all"),
       } satisfies ApiResponse<typeof data>);
     } catch (error) {
       next(error);
@@ -668,7 +675,7 @@ router.post(
       res.status(200).json({
         success: true,
         data,
-        message: "Layer generated.",
+        message: getBackendMessage("world.route.layer.generated"),
       } satisfies ApiResponse<typeof data>);
     } catch (error) {
       next(error);
@@ -687,7 +694,7 @@ router.put("/:id/layers/:layerKey", requireWorldWizard, validate({ params: layer
     res.status(200).json({
       success: true,
       data,
-      message: "Layer updated.",
+      message: getBackendMessage("world.route.layer.updated"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -701,7 +708,7 @@ router.post("/:id/layers/:layerKey/confirm", requireWorldWizard, validate({ para
     res.status(200).json({
       success: true,
       data,
-      message: "Layer confirmed.",
+      message: getBackendMessage("world.route.layer.confirmed"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -715,7 +722,7 @@ router.post("/:id/deepening/questions", requireWorldWizard, validate({ params: w
     res.status(200).json({
       success: true,
       data,
-      message: "Deepening questions generated.",
+      message: getBackendMessage("world.route.deepening.questions.generated"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -730,7 +737,7 @@ router.post("/:id/deepening/answers", requireWorldWizard, validate({ params: wor
     res.status(200).json({
       success: true,
       data,
-      message: "Answers integrated.",
+      message: getBackendMessage("world.route.deepening.answers.integrated"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -744,7 +751,7 @@ router.post("/:id/consistency/check", requireWorldWizard, validate({ params: wor
     res.status(200).json({
       success: true,
       data,
-      message: "Consistency checked.",
+      message: getBackendMessage("world.route.consistency.checked"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -763,7 +770,7 @@ router.patch(
       res.status(200).json({
         success: true,
         data,
-        message: "Issue status updated.",
+        message: getBackendMessage("world.route.consistency.issue_status.updated"),
       } satisfies ApiResponse<typeof data>);
     } catch (error) {
       next(error);
@@ -778,7 +785,7 @@ router.get("/:id/overview", requireWorldWizard, validate({ params: worldIdSchema
     res.status(200).json({
       success: true,
       data,
-      message: "Overview loaded.",
+      message: getBackendMessage("world.route.overview.loaded"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -792,7 +799,7 @@ router.get("/:id/visualization", requireWorldWizard, requireWorldVisualization, 
     res.status(200).json({
       success: true,
       data,
-      message: "Visualization loaded.",
+      message: getBackendMessage("world.route.visualization.loaded"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -816,7 +823,7 @@ router.get("/:id/snapshots", requireWorldWizard, validate({ params: worldIdSchem
     res.status(200).json({
       success: true,
       data,
-      message: "Snapshots loaded.",
+      message: getBackendMessage("world.route.snapshots.loaded"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -831,7 +838,7 @@ router.post("/:id/snapshots", requireWorldWizard, validate({ params: worldIdSche
     res.status(201).json({
       success: true,
       data,
-      message: "Snapshot created.",
+      message: getBackendMessage("world.route.snapshot.created"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -845,7 +852,7 @@ router.post("/:id/snapshots/:snapshotId/restore", requireWorldWizard, validate({
     res.status(200).json({
       success: true,
       data,
-      message: "Snapshot restored.",
+      message: getBackendMessage("world.route.snapshot.restored"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -860,7 +867,7 @@ router.get("/:id/snapshots/diff", requireWorldWizard, validate({ params: worldId
     res.status(200).json({
       success: true,
       data,
-      message: "Snapshot diff generated.",
+      message: getBackendMessage("world.route.snapshot_diff.generated"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -875,7 +882,7 @@ router.get("/:id/export", requireWorldWizard, validate({ params: worldIdSchema, 
     res.status(200).json({
       success: true,
       data,
-      message: "Export payload prepared.",
+      message: getBackendMessage("world.route.export.prepared"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);

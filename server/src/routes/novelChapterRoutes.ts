@@ -2,6 +2,8 @@ import type { Router } from "express";
 import type { ApiResponse } from "@ai-novel/shared/types/api";
 import { z } from "zod";
 import { agentRuntime } from "../agents";
+import { localizeAgentRunRecord } from "../agents/runtime/agentRunLabels";
+import { getBackendMessage } from "../i18n";
 import { validate } from "../middleware/validate";
 import type { NovelService } from "../services/novel/NovelService";
 
@@ -33,7 +35,7 @@ export function registerNovelChapterRoutes(input: RegisterNovelChapterRoutesInpu
       res.status(200).json({
         success: true,
         data,
-        message: "Chapters loaded.",
+        message: getBackendMessage("novel.chapter.route.list.loaded"),
       } satisfies ApiResponse<typeof data>);
     } catch (error) {
       next(error);
@@ -50,7 +52,7 @@ export function registerNovelChapterRoutes(input: RegisterNovelChapterRoutesInpu
         res.status(201).json({
           success: true,
           data,
-          message: "Chapter created.",
+          message: getBackendMessage("novel.chapter.route.created"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);
@@ -72,7 +74,7 @@ export function registerNovelChapterRoutes(input: RegisterNovelChapterRoutesInpu
         res.status(200).json({
           success: true,
           data,
-          message: "Chapter updated.",
+          message: getBackendMessage("novel.chapter.route.updated"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);
@@ -86,7 +88,7 @@ export function registerNovelChapterRoutes(input: RegisterNovelChapterRoutesInpu
       await novelService.deleteChapter(id, chapterId);
       res.status(200).json({
         success: true,
-        message: "Chapter deleted.",
+        message: getBackendMessage("novel.chapter.route.deleted"),
       } satisfies ApiResponse<null>);
     } catch (error) {
       next(error);
@@ -99,11 +101,12 @@ export function registerNovelChapterRoutes(input: RegisterNovelChapterRoutesInpu
     async (req, res, next) => {
       try {
         const { id, chapterId } = req.params as z.infer<typeof chapterParamsSchema>;
-        const data = await agentRuntime.listRuns({ novelId: id, chapterId, limit: 20 });
+        const rawData = await agentRuntime.listRuns({ novelId: id, chapterId, limit: 20 });
+        const data = rawData.map((item) => localizeAgentRunRecord(item));
         res.status(200).json({
           success: true,
           data,
-          message: "Chapter traces loaded.",
+          message: getBackendMessage("novel.chapter.route.traces.loaded"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);
@@ -121,7 +124,7 @@ export function registerNovelChapterRoutes(input: RegisterNovelChapterRoutesInpu
         res.status(200).json({
           success: true,
           data,
-          message: "Chapter execution contract generated.",
+          message: getBackendMessage("novel.chapter.route.execution_contract.generated"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);

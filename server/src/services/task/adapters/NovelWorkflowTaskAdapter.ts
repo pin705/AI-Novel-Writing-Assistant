@@ -8,6 +8,7 @@ import type {
 } from "@ai-novel/shared/types/novelDirector";
 import type { ResourceRef } from "@ai-novel/shared/types/agent";
 import type { TaskStatus, UnifiedTaskDetail, UnifiedTaskSummary } from "@ai-novel/shared/types/task";
+import { getBackendMessage } from "../../../i18n";
 import { prisma } from "../../../db/prisma";
 import { AppError } from "../../../middleware/errorHandler";
 import { NovelDirectorService } from "../../novel/director/NovelDirectorService";
@@ -26,6 +27,8 @@ import {
 import { isAutoDirectorRecoveryInProgress } from "../../novel/workflow/novelWorkflowRecoveryHeuristics";
 import {
   buildNovelCreateResumeTarget,
+  getNovelWorkflowStageLabel,
+  normalizeNovelWorkflowStage,
   parseMilestones,
   parseSeedPayload,
   parseResumeTarget,
@@ -50,7 +53,7 @@ function buildOwnerLabel(row: {
   novel?: { title: string } | null;
   title: string;
 }): string {
-  return row.novel?.title?.trim() || row.title.trim() || "小说主任务";
+  return row.novel?.title?.trim() || row.title.trim() || getBackendMessage("workflow.owner.default");
 }
 
 function parseLinkedPipelineJobId(seedPayloadJson?: string | null): string | null {
@@ -98,7 +101,7 @@ function parseTaskNotice(seedPayloadJson?: string | null): DirectorTaskNotice | 
     action: action && typeof action.type === "string" && typeof action.label === "string"
       ? {
         type: action.type === "open_structured_outline" ? "open_structured_outline" : "open_structured_outline",
-        label: action.label.trim() || "打开当前卷拆章",
+        label: action.label.trim() || getBackendMessage("workflow.notice.action.open_structured_outline"),
         volumeId: typeof action.volumeId === "string" && action.volumeId.trim()
           ? action.volumeId.trim()
           : (seedResumeTarget?.volumeId?.trim() || null),
@@ -235,13 +238,14 @@ function mapSummary(row: {
     targetResources.push({
       type: "generation_job" as const,
       id: linkedPipelineJobId,
-      label: "章节流水线",
+      label: getBackendMessage("workflow.target.pipeline"),
       route: `/novels/${row.novelId}/edit`,
     });
   }
+  const currentStage = normalizeNovelWorkflowStage(row.currentStage);
   const explainability = buildWorkflowExplainability({
     status,
-    currentStage: row.currentStage,
+    currentStage: currentStage ?? row.currentStage,
     currentItemKey: row.currentItemKey,
     checkpointType,
     lastError: row.lastError,
@@ -252,14 +256,14 @@ function mapSummary(row: {
     : explainability.blockingReason;
   const checkpointSummary = isSkippableReviewBlockedFailure
     ? buildSkippableAutoExecutionReviewCheckpointSummary({
-      scopeLabel: autoExecution?.scopeLabel?.trim() || "前 10 章",
+      scopeLabel: autoExecution?.scopeLabel?.trim() || getBackendMessage("workflow.scope.front10"),
       autoExecution,
     })
     : row.checkpointSummary;
   const failureSummary = status === "failed"
     ? (isSkippableReviewBlockedFailure
       ? buildSkippableAutoExecutionReviewFailureSummary(autoExecution)
-      : normalizeFailureSummary(lastError, "Novel workflow stopped without a recorded error."))
+      : normalizeFailureSummary(lastError, getBackendMessage("workflow.failure.default")))
     : null;
   const recoveryHint = isSkippableReviewBlockedFailure
     ? buildSkippableAutoExecutionReviewRecoveryHint(autoExecution)
@@ -270,7 +274,7 @@ function mapSummary(row: {
     title: row.title,
     status,
     progress: row.progress,
-    currentStage: row.currentStage,
+    currentStage: currentStage ? getNovelWorkflowStageLabel(currentStage) : row.currentStage,
     currentItemKey: row.currentItemKey,
     currentItemLabel: row.currentItemLabel,
     executionScopeLabel: autoExecution?.scopeLabel?.trim() || null,
@@ -506,11 +510,11 @@ export class NovelWorkflowTaskAdapter {
   }): Promise<UnifiedTaskDetail> {
     const { id, llmOverride, resume } = input;
     if (await isTaskArchived("novel_workflow", id)) {
-      throw new AppError("Task not found.", 404);
+      throw new AppError(getBackendMessage("task.error.not_found"), 404);
     }
     const row = await this.workflowService.getTaskById(id);
     if (!row) {
-      throw new AppError("Task not found.", 404);
+      throw new AppError(getBackendMessage("task.error.not_found"), 404);
     }
     if (row.lane === "auto_director" && llmOverride) {
       await this.workflowService.applyAutoDirectorLlmOverride(id, llmOverride);
@@ -521,19 +525,19 @@ export class NovelWorkflowTaskAdapter {
     }
     const detail = await this.detail(id);
     if (!detail) {
-      throw new AppError("Task not found after retry.", 404);
+      throw new AppError(getBackendMessage("task.error.not_found_after_retry"), 404);
     }
     return detail;
   }
 
   async cancel(id: string): Promise<UnifiedTaskDetail> {
     if (await isTaskArchived("novel_workflow", id)) {
-      throw new AppError("Task not found.", 404);
+      throw new AppError(getBackendMessage("task.error.not_found"), 404);
     }
     await this.workflowService.cancelTask(id);
     const detail = await this.detail(id);
     if (!detail) {
-      throw new AppError("Task not found after cancellation.", 404);
+      throw new AppError(getBackendMessage("task.error.not_found_after_cancellation"), 404);
     }
     return detail;
   }
@@ -548,10 +552,10 @@ export class NovelWorkflowTaskAdapter {
       select: { status: true },
     });
     if (!row) {
-      throw new AppError("Task not found.", 404);
+      throw new AppError(getBackendMessage("task.error.not_found"), 404);
     }
     if (!isArchivableTaskStatus(row.status as TaskStatus)) {
-      throw new AppError("Only completed, failed, or cancelled tasks can be archived.", 400);
+      throw new AppError(getBackendMessage("task.error.archive_requires_terminal_status"), 400);
     }
     await recordTaskArchive("novel_workflow", id);
     return null;

@@ -3,6 +3,7 @@ import type {
   KnowledgeDocumentStatus,
   KnowledgeRecallTestResult,
 } from "@ai-novel/shared/types/knowledge";
+import { getBackendMessage } from "../../i18n";
 import { prisma } from "../../db/prisma";
 import { ragServices } from "../rag";
 import {
@@ -12,6 +13,10 @@ import {
 } from "./common";
 
 export class KnowledgeService {
+  private getIndexFailureFallback(): string {
+    return getBackendMessage("knowledge.index.failure.check_tasks");
+  }
+
   private async loadLatestFailedIndexErrors(documentIds: string[]): Promise<Map<string, string | null>> {
     if (documentIds.length === 0) {
       return new Map();
@@ -33,7 +38,7 @@ export class KnowledgeService {
     const errorMap = new Map<string, string | null>();
     for (const row of rows) {
       if (!errorMap.has(row.ownerId)) {
-        errorMap.set(row.ownerId, row.lastError ?? "索引任务失败。请到任务列表查看详情。");
+        errorMap.set(row.ownerId, row.lastError ?? this.getIndexFailureFallback());
       }
     }
     return errorMap;
@@ -55,13 +60,13 @@ export class KnowledgeService {
     if (targetType === "novel") {
       const exists = await prisma.novel.count({ where: { id: targetId } });
       if (!exists) {
-        throw new Error("Novel not found.");
+        throw new Error(getBackendMessage("knowledge.error.target_novel_not_found"));
       }
       return;
     }
     const exists = await prisma.world.count({ where: { id: targetId } });
     if (!exists) {
-      throw new Error("World not found.");
+      throw new Error(getBackendMessage("knowledge.error.target_world_not_found"));
     }
   }
 
@@ -104,7 +109,7 @@ export class KnowledgeService {
       latestIndexStatus: item.latestIndexStatus,
       latestIndexError:
         item.latestIndexStatus === "failed"
-          ? (failedIndexErrors.get(item.id) ?? "索引任务失败。请到任务列表查看详情。")
+          ? (failedIndexErrors.get(item.id) ?? this.getIndexFailureFallback())
           : null,
       lastIndexedAt: item.lastIndexedAt,
       createdAt: item.createdAt,
@@ -153,7 +158,7 @@ export class KnowledgeService {
       latestIndexStatus: document.latestIndexStatus,
       latestIndexError:
         document.latestIndexStatus === "failed"
-          ? (failedIndexError?.lastError ?? "索引任务失败。请到任务列表查看详情。")
+          ? (failedIndexError?.lastError ?? this.getIndexFailureFallback())
           : null,
       lastIndexedAt: document.lastIndexedAt,
       createdAt: document.createdAt,
@@ -251,7 +256,7 @@ export class KnowledgeService {
     this.queueKnowledgeRebuild(document.id);
     const detail = await this.getDocumentById(document.id);
     if (!detail) {
-      throw new Error("Knowledge document not found after creation.");
+      throw new Error(getBackendMessage("knowledge.error.document_not_found_after_creation"));
     }
     return detail;
   }
@@ -268,10 +273,10 @@ export class KnowledgeService {
         where: { id: documentId },
       });
       if (!existing) {
-        throw new Error("Knowledge document not found.");
+        throw new Error(getBackendMessage("task.error.knowledge.document_not_found"));
       }
       if (existing.status === "archived") {
-        throw new Error("Archived knowledge documents cannot accept new versions.");
+        throw new Error(getBackendMessage("knowledge.error.archived_no_new_versions"));
       }
       const nextVersionNumber = existing.activeVersionNumber + 1;
       const version = await tx.knowledgeDocumentVersion.create({
@@ -302,7 +307,7 @@ export class KnowledgeService {
     this.queueKnowledgeRebuild(document.id);
     const detail = await this.getDocumentById(document.id);
     if (!detail) {
-      throw new Error("Knowledge document not found after version creation.");
+      throw new Error(getBackendMessage("knowledge.error.document_not_found_after_version_creation"));
     }
     return detail;
   }
@@ -316,7 +321,7 @@ export class KnowledgeService {
         },
       });
       if (!version) {
-        throw new Error("Knowledge document version not found.");
+        throw new Error(getBackendMessage("knowledge.error.version_not_found"));
       }
       return tx.knowledgeDocument.update({
         where: { id: documentId },
@@ -336,7 +341,7 @@ export class KnowledgeService {
     this.queueKnowledgeRebuild(document.id);
     const detail = await this.getDocumentById(document.id);
     if (!detail) {
-      throw new Error("Knowledge document not found after version activation.");
+      throw new Error(getBackendMessage("knowledge.error.document_not_found_after_version_activation"));
     }
     return detail;
   }
@@ -346,10 +351,10 @@ export class KnowledgeService {
       where: { id: documentId },
     });
     if (!document) {
-      throw new Error("Knowledge document not found.");
+      throw new Error(getBackendMessage("task.error.knowledge.document_not_found"));
     }
     if (!document.activeVersionId) {
-      throw new Error("Knowledge document has no active version.");
+      throw new Error(getBackendMessage("knowledge.error.no_active_version"));
     }
     const updated = await prisma.knowledgeDocument.update({
       where: { id: documentId },
@@ -366,7 +371,7 @@ export class KnowledgeService {
       where: { id: documentId },
     });
     if (!document) {
-      throw new Error("Knowledge document not found.");
+      throw new Error(getBackendMessage("task.error.knowledge.document_not_found"));
     }
     const updated = await prisma.knowledgeDocument.update({
       where: { id: documentId },
@@ -386,13 +391,13 @@ export class KnowledgeService {
       where: { id: documentId },
     });
     if (!document) {
-      throw new Error("Knowledge document not found.");
+      throw new Error(getBackendMessage("task.error.knowledge.document_not_found"));
     }
     if (document.status === "archived") {
-      throw new Error("Archived knowledge documents cannot be recall tested.");
+      throw new Error(getBackendMessage("knowledge.error.archived_no_recall_test"));
     }
     if (document.latestIndexStatus !== "succeeded") {
-      throw new Error("Knowledge document recall test is only available after indexing succeeds.");
+      throw new Error(getBackendMessage("knowledge.error.recall_requires_index_success"));
     }
 
     const hits = await ragServices.hybridRetrievalService.retrieve(query, {
@@ -458,7 +463,7 @@ export class KnowledgeService {
         select: { id: true },
       });
       if (documents.length !== uniqueDocumentIds.length) {
-        throw new Error("Some knowledge documents are missing or archived.");
+        throw new Error(getBackendMessage("knowledge.error.some_documents_missing_or_archived"));
       }
     }
 

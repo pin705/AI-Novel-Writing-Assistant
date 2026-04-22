@@ -1,6 +1,7 @@
 import { Router } from "express";
 import type { ApiResponse } from "@ai-novel/shared/types/api";
 import { z } from "zod";
+import { getBackendMessage } from "../i18n";
 import { llmProviderSchema } from "../llm/providerSchema";
 import { authMiddleware } from "../middleware/auth";
 import { validate } from "../middleware/validate";
@@ -47,14 +48,14 @@ const generateTitleSchema = z.object({
     context.addIssue({
       code: z.ZodIssueCode.custom,
       path: ["brief"],
-      message: "自由标题工坊需要创作简报。",
+      message: "validation.title_library_brief_required",
     });
   }
   if (value.mode === "adapt" && !(value.referenceTitle ?? "").trim()) {
     context.addIssue({
       code: z.ZodIssueCode.custom,
       path: ["referenceTitle"],
-      message: "改编模式需要参考标题。",
+      message: "validation.title_library_reference_title_required",
     });
   }
 });
@@ -68,7 +69,7 @@ router.get("/", async (req, res, next) => {
     res.status(200).json({
       success: true,
       data,
-      message: "标题库加载成功。",
+      message: getBackendMessage("title.route.library.loaded"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -81,7 +82,7 @@ router.post("/", validate({ body: createTitleSchema }), async (req, res, next) =
     res.status(201).json({
       success: true,
       data,
-      message: "标题已加入标题库。",
+      message: getBackendMessage("title.route.created"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -94,7 +95,7 @@ router.post("/generate", validate({ body: generateTitleSchema }), async (req, re
     res.status(200).json({
       success: true,
       data,
-      message: "标题工坊生成成功。",
+      message: getBackendMessage("title.route.generated"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -108,7 +109,7 @@ router.post("/:id/use", validate({ params: idParamsSchema }), async (req, res, n
     res.status(200).json({
       success: true,
       data,
-      message: "标题使用次数已更新。",
+      message: getBackendMessage("title.route.usage.updated"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -121,7 +122,7 @@ router.delete("/:id", validate({ params: idParamsSchema }), async (req, res, nex
     await titleLibraryService.delete(id);
     res.status(200).json({
       success: true,
-      message: "标题已删除。",
+      message: getBackendMessage("title.route.deleted"),
     } satisfies ApiResponse<null>);
   } catch (error) {
     next(error);

@@ -1,6 +1,7 @@
 import { Router } from "express";
 import type { ApiResponse } from "@ai-novel/shared/types/api";
 import { z } from "zod";
+import { getBackendMessage } from "../i18n";
 import { llmProviderSchema } from "../llm/providerSchema";
 import { validate } from "../middleware/validate";
 import type { NovelService } from "../services/novel/NovelService";
@@ -39,7 +40,7 @@ export function registerNovelCharacterPreparationRoutes(
       res.status(200).json({
         success: true,
         data,
-        message: "角色关系列表已加载。",
+        message: getBackendMessage("novel.character_preparation.route.relations.loaded"),
       } satisfies ApiResponse<typeof data>);
     } catch (error) {
       next(error);
@@ -53,7 +54,7 @@ export function registerNovelCharacterPreparationRoutes(
       res.status(200).json({
         success: true,
         data,
-        message: "角色阵容方案已加载。",
+        message: getBackendMessage("novel.character_preparation.route.cast_options.loaded"),
       } satisfies ApiResponse<typeof data>);
     } catch (error) {
       next(error);
@@ -71,7 +72,7 @@ export function registerNovelCharacterPreparationRoutes(
         res.status(200).json({
           success: true,
           data,
-          message: "角色阵容方案已生成。",
+          message: getBackendMessage("novel.character_preparation.route.cast_options.generated"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);
@@ -89,7 +90,7 @@ export function registerNovelCharacterPreparationRoutes(
         res.status(200).json({
           success: true,
           data,
-          message: "角色阵容方案已应用。",
+          message: getBackendMessage("novel.character_preparation.route.cast_option.applied"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);
@@ -107,7 +108,7 @@ export function registerNovelCharacterPreparationRoutes(
         res.status(200).json({
           success: true,
           data,
-          message: "补充角色候选已生成。",
+          message: getBackendMessage("novel.character_preparation.route.supplemental_candidates.generated"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);
@@ -125,7 +126,7 @@ export function registerNovelCharacterPreparationRoutes(
         res.status(200).json({
           success: true,
           data,
-          message: "补充角色已创建。",
+          message: getBackendMessage("novel.character_preparation.route.supplemental_character.created"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);
@@ -143,7 +144,7 @@ export function registerNovelCharacterPreparationRoutes(
         res.status(200).json({
           success: true,
           data,
-          message: "角色阵容方案已删除。",
+          message: getBackendMessage("novel.character_preparation.route.cast_option.deleted"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);
@@ -158,7 +159,7 @@ export function registerNovelCharacterPreparationRoutes(
       res.status(200).json({
         success: true,
         data,
-        message: "角色阵容方案已清空。",
+        message: getBackendMessage("novel.character_preparation.route.cast_options.cleared"),
       } satisfies ApiResponse<typeof data>);
     } catch (error) {
       next(error);

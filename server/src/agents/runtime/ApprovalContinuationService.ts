@@ -1,5 +1,6 @@
 import { AgentTraceStore } from "../traceStore";
 import type { AgentApprovalDecisionInput, AgentRuntimeCallbacks, AgentRuntimeResult, PlannedAction } from "../types";
+import { getBackendMessage } from "../../i18n";
 import { RunExecutionService } from "./RunExecutionService";
 import { withSharedRunLock } from "./runLocks";
 
@@ -9,6 +10,19 @@ type FailRunFn = (
   agentName: string,
   callbacks?: AgentRuntimeCallbacks,
 ) => Promise<void>;
+
+function getApprovalStatusLabel(status: string): string {
+  switch (status) {
+    case "approved":
+      return getBackendMessage("agent.runtime.approval.status.approved");
+    case "rejected":
+      return getBackendMessage("agent.runtime.approval.status.rejected");
+    case "expired":
+      return getBackendMessage("agent.runtime.approval.status.expired");
+    default:
+      return status;
+  }
+}
 
 export class ApprovalContinuationService {
   constructor(
@@ -35,8 +49,8 @@ export class ApprovalContinuationService {
 
     const latestApproval = detail.approvals[detail.approvals.length - 1];
     const errorMessage = latestApproval?.status === "expired"
-      ? "审批已过期，运行已停止。"
-      : "审批状态异常，运行已停止。";
+      ? getBackendMessage("agent.runtime.error.approval_expired_stopped")
+      : getBackendMessage("agent.runtime.error.approval_inconsistent_stopped");
 
     await this.store.updateRun(runId, {
       status: "failed",
@@ -75,17 +89,21 @@ export class ApprovalContinuationService {
       await this.reconcileWaitingApprovalRun(input.runId);
       const detail = await this.store.getRunDetail(input.runId);
       if (!detail) {
-        throw new Error("Run not found.");
+        throw new Error(getBackendMessage("agent.runtime.error.run_not_found"));
       }
       if (detail.run.status === "cancelled") {
-        throw new Error("Run is cancelled.");
+        throw new Error(getBackendMessage("agent.runtime.error.run_cancelled"));
       }
       await this.store.expirePendingApprovals(input.runId);
       const pending = await this.store.findPendingApproval(input.runId, input.approvalId);
       if (!pending) {
         const latest = await this.store.getRunDetail(input.runId);
         const target = latest?.approvals.find((item) => item.id === input.approvalId);
-        throw new Error(target ? `Approval already ${target.status}.` : "Approval not found.");
+        throw new Error(target
+          ? getBackendMessage("agent.runtime.error.approval_already_resolved", {
+            status: getApprovalStatusLabel(target.status),
+          })
+          : getBackendMessage("agent.runtime.error.approval_not_found"));
       }
 
       const approval = await this.store.resolveApproval({
@@ -103,8 +121,8 @@ export class ApprovalContinuationService {
 
       const payload = this.executor.parseApprovalPayload(approval.payloadJson);
       if (!payload) {
-        await failRun(input.runId, "审批续跑数据损坏，无法继续执行。", "Planner", callbacks);
-        return this.executor.getRunDetailOrThrow(input.runId, "审批续跑数据损坏，运行已终止。");
+        await failRun(input.runId, getBackendMessage("agent.runtime.error.approval_payload_invalid"), "Planner", callbacks);
+        return this.executor.getRunDetailOrThrow(input.runId, getBackendMessage("agent.runtime.error.approval_payload_terminated"));
       }
 
       if (input.action === "reject") {
@@ -112,11 +130,11 @@ export class ApprovalContinuationService {
         if (alternatives.length === 0) {
           await failRun(
             input.runId,
-            input.note?.trim() || "用户拒绝高影响写入，且没有可执行替代路径。",
+            input.note?.trim() || getBackendMessage("agent.runtime.error.rejected_no_alternative"),
             "Planner",
             callbacks,
           );
-          return this.executor.getRunDetailOrThrow(input.runId, "已拒绝该高影响写入，运行已停止。");
+          return this.executor.getRunDetailOrThrow(input.runId, getBackendMessage("agent.runtime.error.rejected_stopped"));
         }
         await this.store.updateRun(input.runId, {
           status: "running",
@@ -128,7 +146,7 @@ export class ApprovalContinuationService {
         callbacks?.onRunStatus?.({
           runId: input.runId,
           status: "running",
-          message: "审批拒绝，改走替代路径",
+          message: getBackendMessage("agent.runtime.status.approval_rejected_alternative"),
         });
         return this.executor.runActionPlan(
           input.runId,
@@ -151,7 +169,7 @@ export class ApprovalContinuationService {
       callbacks?.onRunStatus?.({
         runId: input.runId,
         status: "running",
-        message: "审批通过，继续执行",
+        message: getBackendMessage("agent.runtime.status.approval_approved_resume"),
       });
       const approvedActions = this.markApprovedContinuation(payload.plannedActions);
       return this.executor.runActionPlan(

@@ -7,6 +7,7 @@ import type {
 } from "../types";
 import type { AgentToolError } from "../types";
 import type { AgentToolErrorCode } from "@ai-novel/shared/types/agent";
+import { getBackendMessage } from "../../i18n";
 
 export interface ToolExecutionResult {
   tool: ToolCall["tool"];
@@ -85,7 +86,7 @@ export function summarizeOutput(tool: string, output: Record<string, unknown>): 
   }
   if (tool === "list_novels") {
     const items = Array.isArray(output.items) ? output.items : [];
-    return `已读取 ${items.length} 本小说。`;
+    return getBackendMessage("agent.runtime.summary.list_novels", { count: items.length });
   }
   if (tool === "create_novel") {
     const title = typeof output.title === "string" ? output.title : "";
@@ -93,9 +94,11 @@ export function summarizeOutput(tool: string, output: Record<string, unknown>): 
       ? String((output.setup as Record<string, unknown>).stage)
       : "";
     if (title && stage === "ready_for_production") {
-      return `已创建小说《${title}》，初始化已完成。`;
+      return getBackendMessage("agent.runtime.summary.create_novel.ready", { title });
     }
-    return title ? `已创建小说《${title}》，并进入初始化引导。` : "已创建小说。";
+    return title
+      ? getBackendMessage("agent.runtime.summary.create_novel.setup", { title })
+      : getBackendMessage("agent.runtime.summary.create_novel.generic");
   }
   if (tool === "select_novel_workspace") {
     const title = typeof output.title === "string" ? output.title : "";
@@ -103,173 +106,234 @@ export function summarizeOutput(tool: string, output: Record<string, unknown>): 
       ? String((output.setup as Record<string, unknown>).stage)
       : "";
     if (title && stage !== "ready_for_production") {
-      return `已切换到小说《${title}》，当前继续初始化。`;
+      return getBackendMessage("agent.runtime.summary.select_workspace.setup", { title });
     }
-    return title ? `已切换到小说《${title}》。` : "已切换到目标小说。";
+    return title
+      ? getBackendMessage("agent.runtime.summary.select_workspace.ready", { title })
+      : getBackendMessage("agent.runtime.summary.select_workspace.generic");
   }
   if (tool === "bind_world_to_novel") {
     const worldName = typeof output.worldName === "string" ? output.worldName.trim() : "";
     const novelTitle = typeof output.novelTitle === "string" ? output.novelTitle.trim() : "";
     if (worldName && novelTitle) {
-      return `已将世界观《${worldName}》绑定到小说《${novelTitle}》。`;
+      return getBackendMessage("agent.runtime.summary.bind_world.with_novel", { worldName, novelTitle });
     }
     if (worldName) {
-      return `已绑定世界观《${worldName}》。`;
+      return getBackendMessage("agent.runtime.summary.bind_world.with_world", { worldName });
     }
-    return "已完成世界观绑定。";
+    return getBackendMessage("agent.runtime.summary.bind_world.generic");
   }
   if (tool === "unbind_world_from_novel") {
     const previousWorldName = typeof output.previousWorldName === "string" ? output.previousWorldName.trim() : "";
     const novelTitle = typeof output.novelTitle === "string" ? output.novelTitle.trim() : "";
     if (previousWorldName && novelTitle) {
-      return `已将世界观《${previousWorldName}》从小说《${novelTitle}》解绑。`;
+      return getBackendMessage("agent.runtime.summary.unbind_world.with_novel_and_world", {
+        worldName: previousWorldName,
+        novelTitle,
+      });
     }
     if (novelTitle) {
-      return `小说《${novelTitle}》当前没有绑定世界观。`;
+      return getBackendMessage("agent.runtime.summary.unbind_world.no_world_bound", { novelTitle });
     }
-    return "已处理世界观解绑。";
+    return getBackendMessage("agent.runtime.summary.unbind_world.generic");
   }
   if (tool === "generate_world_for_novel") {
     const worldName = typeof output.worldName === "string" ? output.worldName.trim() : "";
-    return worldName ? `已生成世界观《${worldName}》。` : "已生成小说世界观。";
+    return worldName
+      ? getBackendMessage("agent.runtime.summary.generate_world.named", { worldName })
+      : getBackendMessage("agent.runtime.summary.generate_world.generic");
   }
   if (tool === "generate_novel_characters") {
-    return `已生成 ${String(output.characterCount ?? 0)} 个核心角色。`;
+    return getBackendMessage("agent.runtime.summary.generate_characters", {
+      count: String(output.characterCount ?? 0),
+    });
   }
   if (tool === "generate_story_bible") {
-    return "已生成小说圣经。";
+    return getBackendMessage("agent.runtime.summary.generate_story_bible");
   }
   if (tool === "generate_novel_outline") {
-    return "已生成小说发展走向。";
+    return getBackendMessage("agent.runtime.summary.generate_outline");
   }
   if (tool === "generate_structured_outline") {
-    return `已生成 ${String(output.targetChapterCount ?? output.chapterCount ?? 0)} 章结构化大纲。`;
+    return getBackendMessage("agent.runtime.summary.generate_structured_outline", {
+      count: String(output.targetChapterCount ?? output.chapterCount ?? 0),
+    });
   }
   if (tool === "sync_chapters_from_structured_outline") {
-    return `已同步 ${String(output.chapterCount ?? 0)} 个章节目录。`;
+    return getBackendMessage("agent.runtime.summary.sync_chapters", {
+      count: String(output.chapterCount ?? 0),
+    });
   }
   if (tool === "start_full_novel_pipeline" || tool === "get_novel_production_status") {
-    return typeof output.summary === "string" ? output.summary : `${tool} 执行完成。`;
+    return typeof output.summary === "string"
+      ? output.summary
+      : getBackendMessage("agent.runtime.summary.tool_completed", { tool });
   }
   if (tool === "get_novel_context") {
     const title = typeof output.title === "string" ? output.title.trim() : "";
     const chapterCount = typeof output.chapterCount === "number" ? output.chapterCount : null;
-    return title
-      ? `${title}${chapterCount != null ? `（共 ${chapterCount} 章）` : ""}`
-      : "已读取小说总览。";
+    if (title && chapterCount != null) {
+      return getBackendMessage("agent.runtime.summary.novel_context.with_chapters", { title, chapterCount });
+    }
+    if (title) {
+      return getBackendMessage("agent.runtime.summary.novel_context.with_title", { title });
+    }
+    return getBackendMessage("agent.runtime.summary.novel_context.generic");
   }
   if (tool === "get_story_bible") {
     const exists = output.exists === true;
-    return exists ? "已读取小说圣经设定。" : "当前小说还没有已保存的小说圣经。";
+    return exists
+      ? getBackendMessage("agent.runtime.summary.story_bible.exists")
+      : getBackendMessage("agent.runtime.summary.story_bible.missing");
   }
   if (tool === "get_world_constraints") {
     const worldName = typeof output.worldName === "string" ? output.worldName.trim() : "";
-    return worldName ? `已读取世界观约束：${worldName}。` : "当前小说尚未绑定世界观约束。";
+    return worldName
+      ? getBackendMessage("agent.runtime.summary.world_constraints.with_name", { worldName })
+      : getBackendMessage("agent.runtime.summary.world_constraints.missing");
   }
   if (tool === "list_chapters") {
     const items = Array.isArray(output.items) ? output.items : [];
-    return `已读取 ${items.length} 个章节元信息。`;
+    return getBackendMessage("agent.runtime.summary.list_chapters", { count: items.length });
   }
   if (tool === "get_chapter_by_order" || tool === "get_chapter_content_by_order" || tool === "get_chapter_content") {
     const order = typeof output.order === "number" ? output.order : null;
     const title = typeof output.title === "string" ? output.title.trim() : "";
-    return order != null ? `已读取第${order}章${title ? `《${title}》` : ""}。` : "已读取章节内容。";
+    if (order != null && title) {
+      return getBackendMessage("agent.runtime.summary.chapter.with_order_and_title", { order, title });
+    }
+    if (order != null) {
+      return getBackendMessage("agent.runtime.summary.chapter.with_order", { order });
+    }
+    return getBackendMessage("agent.runtime.summary.chapter.generic");
   }
   if (tool === "summarize_chapter_range") {
     const start = typeof output.startOrder === "number" ? output.startOrder : null;
     const end = typeof output.endOrder === "number" ? output.endOrder : null;
     return start != null && end != null
-      ? `已总结第${start}到第${end}章。`
-      : "已完成章节范围总结。";
+      ? getBackendMessage("agent.runtime.summary.summarize_range.with_bounds", {
+        startOrder: start,
+        endOrder: end,
+      })
+      : getBackendMessage("agent.runtime.summary.summarize_range.generic");
   }
   if (tool === "search_knowledge") {
     const hitCount = typeof output.hitCount === "number" ? output.hitCount : 0;
-    return `命中 ${hitCount} 条知识片段。`;
+    return getBackendMessage("agent.runtime.summary.search_knowledge", { hitCount });
   }
   if (tool === "list_book_analyses") {
     const items = Array.isArray(output.items) ? output.items : [];
-    return `已读取 ${items.length} 个拆书任务。`;
+    return getBackendMessage("agent.runtime.summary.list_book_analyses", { count: items.length });
   }
   if (tool === "get_book_analysis_detail") {
-    return typeof output.title === "string" ? `已读取拆书详情：${output.title}。` : "已读取拆书详情。";
+    return typeof output.title === "string"
+      ? getBackendMessage("agent.runtime.summary.book_analysis_detail.with_title", { title: output.title })
+      : getBackendMessage("agent.runtime.summary.book_analysis_detail.generic");
   }
   if (tool === "get_book_analysis_failure_reason" || tool === "get_index_failure_reason" || tool === "get_task_failure_reason" || tool === "get_run_failure_reason") {
-    return typeof output.failureSummary === "string" ? output.failureSummary : `${tool} 已返回诊断信息。`;
+    return typeof output.failureSummary === "string"
+      ? output.failureSummary
+      : getBackendMessage("agent.runtime.summary.diagnosis.generic", { tool });
   }
   if (tool === "list_knowledge_documents") {
     const items = Array.isArray(output.items) ? output.items : [];
-    return `已读取 ${items.length} 个知识文档。`;
+    return getBackendMessage("agent.runtime.summary.list_knowledge_documents", { count: items.length });
   }
   if (tool === "get_knowledge_document_detail") {
-    return typeof output.title === "string" ? `已读取知识文档《${output.title}》。` : "已读取知识文档详情。";
+    return typeof output.title === "string"
+      ? getBackendMessage("agent.runtime.summary.knowledge_document_detail.with_title", { title: output.title })
+      : getBackendMessage("agent.runtime.summary.knowledge_document_detail.generic");
   }
   if (tool === "list_worlds") {
     const items = Array.isArray(output.items) ? output.items : [];
-    return `已读取 ${items.length} 个世界观。`;
+    return getBackendMessage("agent.runtime.summary.list_worlds", { count: items.length });
   }
   if (tool === "get_world_detail") {
-    return typeof output.name === "string" ? `已读取世界观《${output.name}》。` : "已读取世界观详情。";
+    return typeof output.name === "string"
+      ? getBackendMessage("agent.runtime.summary.world_detail.with_name", { name: output.name })
+      : getBackendMessage("agent.runtime.summary.world_detail.generic");
   }
   if (tool === "explain_world_conflict" || tool === "explain_generation_blocker") {
-    return typeof output.failureSummary === "string" ? output.failureSummary : `${tool} 已返回冲突/阻塞说明。`;
+    return typeof output.failureSummary === "string"
+      ? output.failureSummary
+      : getBackendMessage("agent.runtime.summary.blocker.generic", { tool });
   }
   if (tool === "list_writing_formulas") {
     const items = Array.isArray(output.items) ? output.items : [];
-    return `已读取 ${items.length} 条写作公式。`;
+    return getBackendMessage("agent.runtime.summary.list_writing_formulas", { count: items.length });
   }
   if (tool === "get_writing_formula_detail") {
-    return typeof output.name === "string" ? `已读取写作公式《${output.name}》。` : "已读取写作公式详情。";
+    return typeof output.name === "string"
+      ? getBackendMessage("agent.runtime.summary.writing_formula_detail.with_name", { name: output.name })
+      : getBackendMessage("agent.runtime.summary.writing_formula_detail.generic");
   }
   if (tool === "explain_formula_match") {
-    return typeof output.summary === "string" ? output.summary : "已完成写作公式适配分析。";
+    return typeof output.summary === "string"
+      ? output.summary
+      : getBackendMessage("agent.runtime.summary.formula_match.generic");
   }
   if (tool === "list_base_characters") {
     const items = Array.isArray(output.items) ? output.items : [];
-    return `已读取 ${items.length} 个基础角色模板。`;
+    return getBackendMessage("agent.runtime.summary.list_base_characters", { count: items.length });
   }
   if (tool === "get_base_character_detail") {
-    return typeof output.name === "string" ? `已读取角色模板《${output.name}》。` : "已读取角色模板详情。";
+    return typeof output.name === "string"
+      ? getBackendMessage("agent.runtime.summary.base_character_detail.with_name", { name: output.name })
+      : getBackendMessage("agent.runtime.summary.base_character_detail.generic");
   }
   if (tool === "list_tasks") {
     const items = Array.isArray(output.items) ? output.items : [];
-    return `已读取 ${items.length} 个系统任务。`;
+    return getBackendMessage("agent.runtime.summary.list_tasks", { count: items.length });
   }
   if (tool === "get_task_detail") {
-    return typeof output.title === "string" ? `已读取任务详情：${output.title}。` : "已读取任务详情。";
+    return typeof output.title === "string"
+      ? getBackendMessage("agent.runtime.summary.task_detail.with_title", { title: output.title })
+      : getBackendMessage("agent.runtime.summary.task_detail.generic");
   }
   if (tool === "retry_task" || tool === "cancel_task") {
-    return typeof output.summary === "string" ? output.summary : `${tool} 执行完成。`;
+    return typeof output.summary === "string"
+      ? output.summary
+      : getBackendMessage("agent.runtime.summary.tool_completed", { tool });
   }
   if (tool === "preview_pipeline_run") {
-    return `已预览 ${String(output.chapterCount ?? 0)} 个章节。`;
+    return getBackendMessage("agent.runtime.summary.preview_pipeline_run", {
+      count: String(output.chapterCount ?? 0),
+    });
   }
   if (tool === "queue_pipeline_run") {
-    return `流水线任务已处理：${String(output.jobId ?? output.status ?? "unknown")}`;
+    return getBackendMessage("agent.runtime.summary.queue_pipeline_run", {
+      value: String(output.jobId ?? output.status ?? "unknown"),
+    });
   }
   if (tool === "apply_chapter_patch" || tool === "save_chapter_draft") {
-    return `章节写入已处理，字数 ${String(output.contentLength ?? 0)}。`;
+    return getBackendMessage("agent.runtime.summary.chapter_write_processed", {
+      contentLength: String(output.contentLength ?? 0),
+    });
   }
-  return `${tool} 执行完成。`;
+  return getBackendMessage("agent.runtime.summary.tool_completed", { tool });
 }
 
 export function summarizeFailure(tool: string, error: unknown): string {
-  return `${tool} 执行失败：${error instanceof Error ? error.message : "unknown error"}`;
+  return getBackendMessage("agent.runtime.summary.tool_failed", {
+    tool,
+    message: error instanceof Error ? error.message : getBackendMessage("agent.runtime.unknown_error"),
+  });
 }
 
 export function buildFinalMessage(results: ToolExecutionResult[], waitingForApproval: boolean): string {
   const lines: string[] = [];
   if (results.length > 0) {
-    lines.push("已完成以下步骤：");
+    lines.push(getBackendMessage("agent.runtime.final.completed_steps"));
     for (const item of results) {
       lines.push(`- ${item.summary}`);
     }
   }
   if (waitingForApproval) {
-    lines.push("当前存在高影响写入，已暂停等待审批。");
+    lines.push(getBackendMessage("agent.runtime.final.waiting_approval"));
   } else if (results.length > 0) {
-    lines.push("执行完成。");
+    lines.push(getBackendMessage("agent.runtime.final.completed"));
   } else {
-    lines.push("没有可执行的工具步骤。");
+    lines.push(getBackendMessage("agent.runtime.final.no_steps"));
   }
   return lines.join("\n");
 }
@@ -324,7 +388,7 @@ export function parseApprovalPayload(payloadJson: string | null | undefined): Se
         .filter((call): call is Record<string, unknown> => isRecord(call))
         .map((call) => ({
           tool: call.tool as ToolCall["tool"],
-          reason: typeof call.reason === "string" ? call.reason : "工具调用",
+          reason: typeof call.reason === "string" ? call.reason : getBackendMessage("agent.runtime.approval.default_reason"),
           idempotencyKey: typeof call.idempotencyKey === "string" ? call.idempotencyKey : `k_${Date.now()}`,
           input: isRecord(call.input) ? call.input : {},
           dryRun: call.dryRun === true,
@@ -332,7 +396,9 @@ export function parseApprovalPayload(payloadJson: string | null | undefined): Se
         }));
       return {
         agent: normalizeAgent(item.agent),
-        reasoning: typeof item.reasoning === "string" ? item.reasoning : "继续执行",
+        reasoning: typeof item.reasoning === "string"
+          ? item.reasoning
+          : getBackendMessage("agent.runtime.approval.default_reasoning"),
         calls,
       };
     })
@@ -368,10 +434,12 @@ export function buildAlternativePathFromRejectedApproval(
     if (novelId && chapterId && content.trim()) {
       return [{
         agent: "Writer",
-        reasoning: "审批拒绝后改为草稿保存，避免直接覆盖正文。",
+        reasoning: getBackendMessage("agent.runtime.approval.fallback_draft.reasoning"),
         calls: [{
           tool: "save_chapter_draft",
-          reason: `审批拒绝，转草稿保存。${note ? `备注: ${note}` : ""}`.trim(),
+          reason: note?.trim()
+            ? getBackendMessage("agent.runtime.approval.fallback_draft.reason.with_note", { note: note.trim() })
+            : getBackendMessage("agent.runtime.approval.fallback_draft.reason.without_note"),
           idempotencyKey: `fallback_draft_${chapterId}_${Date.now()}`,
           input: {
             novelId,
@@ -391,10 +459,10 @@ export function buildAlternativePathFromRejectedApproval(
     if (novelId && typeof startOrder === "number" && typeof endOrder === "number") {
       return [{
         agent: "Planner",
-        reasoning: "审批拒绝后保留预览，不实际启动流水线。",
+        reasoning: getBackendMessage("agent.runtime.approval.fallback_preview.reasoning"),
         calls: [{
           tool: "preview_pipeline_run",
-          reason: "审批拒绝，改为范围预览。",
+          reason: getBackendMessage("agent.runtime.approval.fallback_preview.reason"),
           idempotencyKey: `fallback_preview_${startOrder}_${endOrder}_${Date.now()}`,
           input: {
             novelId,

@@ -1,6 +1,7 @@
 import type { AgentRunDetail, ReplayRequest } from "@ai-novel/shared/types/agent";
 import { createStructuredPlan } from "../orchestrator";
 import { AgentTraceStore } from "../traceStore";
+import { getBackendMessage } from "../../i18n";
 import type {
   AgentApprovalDecisionInput,
   AgentRuntimeCallbacks,
@@ -82,7 +83,7 @@ export class AgentRuntime {
 
   async start(input: AgentRunStartInput, callbacks?: AgentRuntimeCallbacks): Promise<AgentRuntimeResult> {
     if (input.contextMode === "novel" && !input.novelId) {
-      throw new Error("novel mode requires novelId.");
+      throw new Error(getBackendMessage("agent.runtime.error.requires_novel_id"));
     }
 
     const activeRuns = await this.store.listRuns({
@@ -93,8 +94,8 @@ export class AgentRuntime {
     const blockingRun = activeRuns.find((item) => item.status === "running" || item.status === "waiting_approval");
     if (blockingRun && blockingRun.id !== input.runId) {
       const message = blockingRun.status === "waiting_approval"
-        ? "当前已有运行在等待审批，请先处理审批。"
-        : "当前已有运行仍在执行中。";
+        ? getBackendMessage("agent.runtime.error.blocking_run_waiting_approval")
+        : getBackendMessage("agent.runtime.error.blocking_run_running");
       return this.executor.getRunDetailOrThrow(blockingRun.id, message);
     }
 
@@ -103,9 +104,9 @@ export class AgentRuntime {
       const existing = await this.store.getRun(input.runId);
       if (existing && !TERMINAL_STATUSES.has(existing.status)) {
         if (existing.status === "waiting_approval") {
-          return this.executor.getRunDetailOrThrow(existing.id, "当前运行正等待审批，请先处理审批。");
+          return this.executor.getRunDetailOrThrow(existing.id, getBackendMessage("agent.runtime.error.current_run_waiting_approval"));
         }
-        return this.executor.getRunDetailOrThrow(existing.id, "当前运行仍在执行中。");
+        return this.executor.getRunDetailOrThrow(existing.id, getBackendMessage("agent.runtime.error.current_run_running"));
       }
     }
 
@@ -113,7 +114,7 @@ export class AgentRuntime {
     callbacks?.onRunStatus?.({
       runId: run.id,
       status: "queued",
-      message: "已创建运行",
+      message: getBackendMessage("agent.runtime.status.run_created"),
     });
 
     return this.withRunLock(run.id, async () => {
@@ -126,7 +127,7 @@ export class AgentRuntime {
       callbacks?.onRunStatus?.({
         runId: run.id,
         status: "running",
-        message: "开始规划",
+        message: getBackendMessage("agent.runtime.status.planning_started"),
       });
 
       const planningStep = await this.store.addStep({
@@ -158,7 +159,7 @@ export class AgentRuntime {
           currentStep: "planning",
         });
       } catch (error) {
-        const message = error instanceof Error ? error.message : "LLM 意图识别失败。";
+        const message = error instanceof Error ? error.message : getBackendMessage("agent.runtime.error.plan_failed");
         await this.store.addStep({
           runId: run.id,
           agentName: "Planner",
@@ -229,11 +230,11 @@ export class AgentRuntime {
   async replayFromStep(runId: string, request: ReplayRequest): Promise<AgentRuntimeResult> {
     const detail = await this.store.getRunDetail(runId);
     if (!detail) {
-      throw new Error("Run not found.");
+      throw new Error(getBackendMessage("agent.runtime.error.run_not_found"));
     }
     const fromStep = detail.steps.find((item) => item.id === request.fromStepId);
     if (!fromStep) {
-      throw new Error("Replay source step not found.");
+      throw new Error(getBackendMessage("agent.runtime.error.replay_source_step_not_found"));
     }
     const afterSteps = detail.steps
       .filter((item) => item.seq > fromStep.seq && item.stepType === "tool_call")
@@ -257,12 +258,12 @@ export class AgentRuntime {
       };
       replayActions.push({
         agent: normalizeAgent(step.agentName),
-        reasoning: "从历史步骤重放",
+        reasoning: getBackendMessage("agent.runtime.approval.replay_reasoning"),
         calls: [call],
       });
     }
     if (replayActions.length === 0) {
-      throw new Error("No replayable tool steps after source step.");
+      throw new Error(getBackendMessage("agent.runtime.error.replay_no_steps"));
     }
     const metadata = parseRunMetadata(detail.run.metadataJson);
     const run = await this.store.createRun({
@@ -324,7 +325,7 @@ export class AgentRuntime {
 
   async cancelRun(runId: string): Promise<void> {
     await this.withRunLock(runId, async () => {
-      await this.store.expireAllPendingApprovals(runId, "Run cancelled.");
+      await this.store.expireAllPendingApprovals(runId, getBackendMessage("agent.runtime.error.run_cancelled"));
       await this.store.updateRun(runId, {
         status: "cancelled",
         error: null,
@@ -337,7 +338,7 @@ export class AgentRuntime {
   async retryRun(runId: string): Promise<AgentRuntimeResult> {
     const detail = await this.store.getRunDetail(runId);
     if (!detail) {
-      throw new Error("Run not found.");
+      throw new Error(getBackendMessage("agent.runtime.error.run_not_found"));
     }
     const metadata = parseRunMetadata(detail.run.metadataJson);
     return this.start({
@@ -353,11 +354,11 @@ export class AgentRuntime {
     });
   }
 
-  /** 创建章节生成轨迹 run，用于章节编辑页展示 */
+  /** Create a chapter-generation trace run for the chapter editor UI. */
   async createChapterGenRun(novelId: string, chapterId: string, chapterOrder: number): Promise<string> {
     const run = await this.store.createRun({
       sessionId: `chapter-gen-${chapterId}-${Date.now()}`,
-      goal: `章节 ${chapterOrder} 生成`,
+      goal: getBackendMessage("agent.runtime.chapter.goal", { chapterOrder }),
       novelId,
       chapterId,
       entryAgent: "Writer",
@@ -366,12 +367,12 @@ export class AgentRuntime {
     return run.id;
   }
 
-  /** 章节生成完成后更新 run 并记录一条步骤 */
+  /** Mark the chapter-generation run as completed and store the summary step. */
   async finishChapterGenRun(runId: string, summary: string, durationMs?: number): Promise<void> {
     await this.store.updateRun(runId, {
       status: "succeeded",
       finishedAt: new Date(),
-      currentStep: "章节生成完成",
+      currentStep: "chapter_generation_completed",
     });
     await this.store.addStep({
       runId,

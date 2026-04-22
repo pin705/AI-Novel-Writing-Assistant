@@ -1,6 +1,7 @@
 import { getLLM } from "../../llm/factory";
 import { preparePromptExecution, runTextPrompt } from "../../prompting/core/promptRunner";
 import { runtimeSetupIdeationPrompt } from "../../prompting/prompts/agent/runtime.prompts";
+import { getBackendMessage } from "../../i18n";
 import type { StructuredIntent, ToolCall, ToolExecutionContext } from "../types";
 import { safeJson, type ToolExecutionResult } from "./runtimeHelpers";
 
@@ -58,10 +59,13 @@ function toReadableValue(value: unknown): string | null {
   return null;
 }
 
-function pushFact(lines: string[], label: string, value: unknown): void {
+function pushFact(lines: string[], labelKey: Parameters<typeof getBackendMessage>[0], value: unknown): void {
   const text = toReadableValue(value);
   if (text) {
-    lines.push(`${label}：${text}`);
+    lines.push(getBackendMessage("agent.setup.fact.label_value", {
+      label: getBackendMessage(labelKey),
+      value: text,
+    }));
   }
 }
 
@@ -73,57 +77,57 @@ function buildIdeationFacts(results: ToolExecutionResult[], structuredIntent?: S
   const lines: string[] = [];
 
   if (novelContext) {
-    pushFact(lines, "小说标题", novelContext.title);
-    pushFact(lines, "已有简介", novelContext.description);
-    pushFact(lines, "题材", novelContext.genre);
-    pushFact(lines, "风格气质", novelContext.styleTone);
-    pushFact(lines, "叙事视角", novelContext.narrativePov);
-    pushFact(lines, "推进节奏", novelContext.pacePreference);
-    pushFact(lines, "协作模式", novelContext.projectMode);
-    pushFact(lines, "情绪强度", novelContext.emotionIntensity);
-    pushFact(lines, "AI 自由度", novelContext.aiFreedom);
-    pushFact(lines, "默认章长", novelContext.defaultChapterLength);
-    pushFact(lines, "绑定世界观", novelContext.worldName);
-    pushFact(lines, "已有大纲", novelContext.outline);
-    pushFact(lines, "结构化大纲", novelContext.structuredOutline);
-    pushFact(lines, "章节数", novelContext.chapterCount);
-    pushFact(lines, "已完成章节数", novelContext.completedChapterCount);
+    pushFact(lines, "agent.ideation.label.novel_title", novelContext.title);
+    pushFact(lines, "agent.ideation.label.novel_description", novelContext.description);
+    pushFact(lines, "agent.ideation.label.novel_genre", novelContext.genre);
+    pushFact(lines, "agent.ideation.label.novel_style_tone", novelContext.styleTone);
+    pushFact(lines, "agent.ideation.label.novel_narrative_pov", novelContext.narrativePov);
+    pushFact(lines, "agent.ideation.label.novel_pace_preference", novelContext.pacePreference);
+    pushFact(lines, "agent.ideation.label.novel_project_mode", novelContext.projectMode);
+    pushFact(lines, "agent.ideation.label.novel_emotion_intensity", novelContext.emotionIntensity);
+    pushFact(lines, "agent.ideation.label.novel_ai_freedom", novelContext.aiFreedom);
+    pushFact(lines, "agent.ideation.label.novel_default_chapter_length", novelContext.defaultChapterLength);
+    pushFact(lines, "agent.ideation.label.novel_world_name", novelContext.worldName);
+    pushFact(lines, "agent.ideation.label.novel_outline", novelContext.outline);
+    pushFact(lines, "agent.ideation.label.novel_structured_outline", novelContext.structuredOutline);
+    pushFact(lines, "agent.ideation.label.novel_chapter_count", novelContext.chapterCount);
+    pushFact(lines, "agent.ideation.label.novel_completed_chapter_count", novelContext.completedChapterCount);
   }
 
   if (storyBible) {
-    pushFact(lines, "核心设定草稿", storyBible.coreSetting);
-    pushFact(lines, "故事承诺", storyBible.mainPromise);
-    pushFact(lines, "角色弧线", storyBible.characterArcs);
-    pushFact(lines, "世界规则", storyBible.worldRules);
-    pushFact(lines, "禁用规则", storyBible.forbiddenRules);
+    pushFact(lines, "agent.ideation.label.bible_core_setting", storyBible.coreSetting);
+    pushFact(lines, "agent.ideation.label.bible_main_promise", storyBible.mainPromise);
+    pushFact(lines, "agent.ideation.label.bible_character_arcs", storyBible.characterArcs);
+    pushFact(lines, "agent.ideation.label.bible_world_rules", storyBible.worldRules);
+    pushFact(lines, "agent.ideation.label.bible_forbidden_rules", storyBible.forbiddenRules);
   }
 
   if (world) {
-    pushFact(lines, "世界观名称", world.worldName);
+    pushFact(lines, "agent.ideation.label.world_name", world.worldName);
     const constraints = typeof world.constraints === "object" && world.constraints
       ? world.constraints as Record<string, unknown>
       : null;
     if (constraints) {
-      pushFact(lines, "世界公理", constraints.axioms);
-      pushFact(lines, "力量体系", constraints.magicSystem);
-      pushFact(lines, "核心冲突环境", constraints.conflicts);
-      pushFact(lines, "一致性备注", constraints.consistencyReport);
+      pushFact(lines, "agent.ideation.label.world_axioms", constraints.axioms);
+      pushFact(lines, "agent.ideation.label.world_magic_system", constraints.magicSystem);
+      pushFact(lines, "agent.ideation.label.world_conflicts", constraints.conflicts);
+      pushFact(lines, "agent.ideation.label.world_consistency_report", constraints.consistencyReport);
     }
   }
 
   if (knowledge) {
-    pushFact(lines, "知识库命中数", knowledge.hitCount);
-    pushFact(lines, "知识库上下文", knowledge.contextBlock);
+    pushFact(lines, "agent.ideation.label.knowledge_hit_count", knowledge.hitCount);
+    pushFact(lines, "agent.ideation.label.knowledge_context_block", knowledge.contextBlock);
   }
 
   if (structuredIntent) {
-    pushFact(lines, "用户显式标题", structuredIntent.novelTitle);
-    pushFact(lines, "用户显式题材", structuredIntent.genre);
-    pushFact(lines, "用户显式设定", structuredIntent.description);
-    pushFact(lines, "用户显式风格", structuredIntent.styleTone);
+    pushFact(lines, "agent.ideation.label.intent_title", structuredIntent.novelTitle);
+    pushFact(lines, "agent.ideation.label.intent_genre", structuredIntent.genre);
+    pushFact(lines, "agent.ideation.label.intent_description", structuredIntent.description);
+    pushFact(lines, "agent.ideation.label.intent_style", structuredIntent.styleTone);
   }
 
-  return lines.length > 0 ? lines.join("\n") : "当前还没有可用的小说上下文事实。";
+  return lines.length > 0 ? lines.join("\n") : getBackendMessage("agent.ideation.no_facts");
 }
 
 function buildIdeationFallback(results: ToolExecutionResult[], structuredIntent?: StructuredIntent): string {
@@ -135,9 +139,9 @@ function buildIdeationFallback(results: ToolExecutionResult[], structuredIntent?
       : "";
 
   if (title) {
-    return `我可以直接围绕《${title}》给你做几套备选，不过为了更贴近你要的方向，最好再告诉我你最想保留的一个核心元素，比如题材、主角身份，或者最想写的冲突。`;
+    return getBackendMessage("agent.ideation.fallback.with_title", { title });
   }
-  return "我可以直接给你做几套备选，不过先告诉我这本书至少要保留什么：暂定标题、题材，或者一个你最想写的冲突点。";
+  return getBackendMessage("agent.ideation.fallback.without_title");
 }
 
 export async function composeNovelSetupIdeationAnswer(

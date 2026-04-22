@@ -1,6 +1,7 @@
 import { Router } from "express";
 import type { ApiResponse } from "@ai-novel/shared/types/api";
 import { z } from "zod";
+import { getBackendMessage } from "../i18n";
 import { llmProviderSchema } from "../llm/providerSchema";
 import { authMiddleware } from "../middleware/auth";
 import { validate } from "../middleware/validate";
@@ -35,7 +36,7 @@ const applySchema = z
     model: z.string().optional(),
   })
   .refine((value) => value.formulaId || value.formulaContent, {
-    message: "必须提供 formulaId 或 formulaContent。",
+    message: "validation.writing_formula_requires_formula_source",
     path: ["formulaId"],
   });
 
@@ -47,7 +48,7 @@ router.get("/", async (_req, res, next) => {
     res.status(200).json({
       success: true,
       data,
-      message: "获取写作公式列表成功。",
+      message: getBackendMessage("writingFormula.route.list.loaded"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -61,14 +62,14 @@ router.get("/:id", validate({ params: idSchema }), async (req, res, next) => {
     if (!data) {
       res.status(404).json({
         success: false,
-        error: "写作公式不存在。",
+        error: getBackendMessage("writingFormula.route.not_found"),
       } satisfies ApiResponse<null>);
       return;
     }
     res.status(200).json({
       success: true,
       data,
-      message: "获取写作公式详情成功。",
+      message: getBackendMessage("writingFormula.route.detail.loaded"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -81,7 +82,7 @@ router.delete("/:id", validate({ params: idSchema }), async (req, res, next) => 
     await writingFormulaService.deleteFormula(id);
     res.status(200).json({
       success: true,
-      message: "删除写作公式成功。",
+      message: getBackendMessage("writingFormula.route.deleted"),
     } satisfies ApiResponse<null>);
   } catch (error) {
     next(error);

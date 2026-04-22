@@ -1,5 +1,7 @@
 import { asObject, summarizeOutput } from "../agents/runtime/runtimeHelpers";
 import type { AgentRuntimeResult, PlannerResult, StructuredIntent } from "../agents/types";
+import { localizeAgentRunCurrentStep } from "../agents/runtime/agentRunLabels";
+import { getBackendLanguage, getBackendMessage, getRequestLocale } from "../i18n";
 import type { ProductionStatusResult } from "../services/novel/NovelProductionStatusService";
 import type { AgentStep } from "@ai-novel/shared/types/agent";
 import type {
@@ -17,42 +19,46 @@ function truncateText(value: string, max = 180): string {
   return normalized.length > max ? `${normalized.slice(0, max)}...` : normalized;
 }
 
+function getSummarySeparator(): string {
+  return getBackendLanguage(getRequestLocale()) === "zh" ? "；" : "; ";
+}
+
 function formatIntentLabel(intent: StructuredIntent["intent"] | undefined): string {
   switch (intent) {
     case "social_opening":
-      return "轻度开场";
+      return getBackendMessage("creativeHub.turn.intent.social_opening");
     case "list_novels":
-      return "查看小说工作区";
+      return getBackendMessage("creativeHub.turn.intent.list_novels");
     case "create_novel":
-      return "创建新小说";
+      return getBackendMessage("creativeHub.turn.intent.create_novel");
     case "select_novel_workspace":
-      return "切换当前工作区";
+      return getBackendMessage("creativeHub.turn.intent.select_novel_workspace");
     case "unbind_world_from_novel":
-      return "解除当前世界观绑定";
+      return getBackendMessage("creativeHub.turn.intent.unbind_world_from_novel");
     case "produce_novel":
-      return "推进整本创作";
+      return getBackendMessage("creativeHub.turn.intent.produce_novel");
     case "query_novel_production_status":
-      return "查看整本生产进度";
+      return getBackendMessage("creativeHub.turn.intent.query_novel_production_status");
     case "query_chapter_content":
-      return "查看章节内容";
+      return getBackendMessage("creativeHub.turn.intent.query_chapter_content");
     case "inspect_failure_reason":
-      return "诊断当前阻塞";
+      return getBackendMessage("creativeHub.turn.intent.inspect_failure_reason");
     case "write_chapter":
-      return "推进章节创作";
+      return getBackendMessage("creativeHub.turn.intent.write_chapter");
     case "rewrite_chapter":
-      return "重写当前章节";
+      return getBackendMessage("creativeHub.turn.intent.rewrite_chapter");
     case "search_knowledge":
-      return "查阅知识资料";
+      return getBackendMessage("creativeHub.turn.intent.search_knowledge");
     case "ideate_novel_setup":
-      return "生成设定备选";
+      return getBackendMessage("creativeHub.turn.intent.ideate_novel_setup");
     case "inspect_world":
-      return "检查世界观约束";
+      return getBackendMessage("creativeHub.turn.intent.inspect_world");
     case "inspect_characters":
-      return "查看角色状态";
+      return getBackendMessage("creativeHub.turn.intent.inspect_characters");
     case "general_chat":
-      return "创作讨论";
+      return getBackendMessage("creativeHub.turn.intent.general_chat");
     default:
-      return "推进当前创作";
+      return getBackendMessage("creativeHub.turn.intent.default");
   }
 }
 
@@ -114,7 +120,9 @@ function buildIntentSummary(goal: string, plannerResult: PlannerResult | null): 
   const structuredIntent = plannerResult?.structuredIntent;
   const describedGoal = truncateText(structuredIntent?.description ?? structuredIntent?.note ?? goal, 150);
   const label = formatIntentLabel(structuredIntent?.intent);
-  return describedGoal ? `${label}：${describedGoal}` : label;
+  return describedGoal
+    ? getBackendMessage("creativeHub.turn.intent_summary.with_goal", { label, goal: describedGoal })
+    : getBackendMessage("creativeHub.turn.intent_summary.label_only", { label });
 }
 
 function buildActionSummary(
@@ -123,20 +131,23 @@ function buildActionSummary(
   toolSummaries: string[],
 ): string {
   if (toolSummaries.length > 0) {
-    const preview = toolSummaries.slice(0, 3).join("；");
+    const preview = toolSummaries.slice(0, 3).join(getSummarySeparator());
     if (toolSummaries.length > 3) {
-      return `${preview} 等 ${toolSummaries.length} 项动作。`;
+      return getBackendMessage("creativeHub.turn.action.with_more", {
+        preview,
+        remainingCount: toolSummaries.length - 3,
+      });
     }
     return preview;
   }
   if ((plannerResult?.actions.length ?? 0) > 0) {
     const count = plannerResult?.actions.reduce((total, action) => total + action.calls.length, 0) ?? 0;
     if (turnStatus === "interrupted") {
-      return `已规划 ${count} 项动作，当前停在审批或确认环节。`;
+      return getBackendMessage("creativeHub.turn.action.planned.interrupted", { count });
     }
-    return `已规划 ${count} 项动作，本轮以创作协同与状态整理为主。`;
+    return getBackendMessage("creativeHub.turn.action.planned.default", { count });
   }
-  return "本轮未触发显式工具动作，以创作对话与工作区理解为主。";
+  return getBackendMessage("creativeHub.turn.action.none");
 }
 
 function buildImpactSummary(
@@ -149,7 +160,7 @@ function buildImpactSummary(
     return truncateText(latestError, 180);
   }
   if (interrupts.length > 0) {
-    return truncateText(interrupts[0]?.summary ?? "当前存在待确认的高影响操作。", 180);
+    return truncateText(interrupts[0]?.summary ?? getBackendMessage("creativeHub.turn.impact.pending_approval"), 180);
   }
   if (productionStatus?.summary?.trim()) {
     return truncateText(productionStatus.summary, 180);
@@ -157,7 +168,7 @@ function buildImpactSummary(
   if (toolSummaries.length > 0) {
     return toolSummaries[toolSummaries.length - 1];
   }
-  return "工作区状态已更新，可继续沿当前创作方向推进。";
+  return getBackendMessage("creativeHub.turn.impact.default");
 }
 
 function buildNextSuggestion(
@@ -168,30 +179,30 @@ function buildNextSuggestion(
   productionStatus?: ProductionStatusResult | null,
 ): string {
   if (turnStatus === "interrupted" && interrupts.length > 0) {
-    return "先处理当前审批卡，再继续推进后续创作。";
+    return getBackendMessage("creativeHub.turn.next.interrupted");
   }
   if (turnStatus === "failed" || latestError) {
     return productionStatus?.recoveryHint?.trim()
-      || "先查看失败诊断与阻塞原因，再决定继续生成还是调整上下文。";
+      || getBackendMessage("creativeHub.turn.next.failure_default");
   }
   switch (plannerResult?.structuredIntent.intent) {
     case "create_novel":
-      return "继续补齐世界观、角色或整本生产参数，让这本书进入稳定工作区。";
+      return getBackendMessage("creativeHub.turn.next.create_novel");
     case "unbind_world_from_novel":
-      return "如果还需要世界观支撑，就重新选择一套更合适的世界观；否则继续补核心设定。";
+      return getBackendMessage("creativeHub.turn.next.unbind_world_from_novel");
     case "produce_novel":
-      return "继续围绕当前小说推进整本生产，必要时先检查关键阻塞。";
+      return getBackendMessage("creativeHub.turn.next.produce_novel");
     case "query_novel_production_status":
-      return "结合当前进度决定是继续生成、补资源，还是先处理失败点。";
+      return getBackendMessage("creativeHub.turn.next.query_novel_production_status");
     case "write_chapter":
     case "rewrite_chapter":
-      return "继续围绕当前章节推进正文、修复问题或检查上下文一致性。";
+      return getBackendMessage("creativeHub.turn.next.write_chapter");
     case "search_knowledge":
-      return "根据已找到的资料继续追问，或将关键材料绑定到当前工作区。";
+      return getBackendMessage("creativeHub.turn.next.search_knowledge");
     case "ideate_novel_setup":
-      return "从当前备选里挑出最接近的一版，再继续细化主角、冲突和故事承诺。";
+      return getBackendMessage("creativeHub.turn.next.ideate_novel_setup");
     default:
-      return "继续围绕当前工作区推进下一步创作。";
+      return getBackendMessage("creativeHub.turn.next.default");
   }
 }
 
@@ -202,16 +213,16 @@ function buildCurrentStage(
   productionStatus?: ProductionStatusResult | null,
 ): string {
   if (turnStatus === "interrupted") {
-    return "等待审批";
+    return localizeAgentRunCurrentStep("waiting_approval") ?? formatIntentLabel(plannerResult?.structuredIntent.intent);
   }
   if (turnStatus === "failed") {
-    return "运行失败";
+    return localizeAgentRunCurrentStep("failed") ?? formatIntentLabel(plannerResult?.structuredIntent.intent);
   }
   if (productionStatus?.currentStage?.trim()) {
     return productionStatus.currentStage.trim();
   }
   if (executionResult?.run.currentStep?.trim()) {
-    return executionResult.run.currentStep.trim();
+    return localizeAgentRunCurrentStep(executionResult.run.currentStep) ?? executionResult.run.currentStep.trim();
   }
   return formatIntentLabel(plannerResult?.structuredIntent.intent);
 }

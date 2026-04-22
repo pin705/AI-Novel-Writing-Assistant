@@ -2,6 +2,7 @@ import type { Router } from "express";
 import type { ApiResponse } from "@ai-novel/shared/types/api";
 import { NOVEL_LIST_PAGE_LIMIT_DEFAULT, NOVEL_LIST_PAGE_LIMIT_MAX } from "@ai-novel/shared/types/pagination";
 import { z } from "zod";
+import { getBackendMessage } from "../i18n";
 import { llmProviderSchema } from "../llm/providerSchema";
 import { validate } from "../middleware/validate";
 import { KnowledgeService } from "../services/knowledge/KnowledgeService";
@@ -29,7 +30,7 @@ const idParamsSchema = z.object({
 });
 
 const createNovelSchema = z.object({
-  title: z.string().trim().min(1, "标题不能为空。"),
+  title: z.string().trim().min(1, "validation.title_required"),
   description: z.string().trim().optional(),
   targetAudience: z.string().trim().optional(),
   bookSellingPoint: z.string().trim().optional(),
@@ -129,7 +130,7 @@ const createResourceRecommendationSchema = z.object({
     value.styleTone,
     ...(value.commercialTags ?? []),
   ].some((item) => typeof item === "string" && item.trim().length > 0),
-  { message: "至少提供一句话概述、卖点、读者定位或类似开书信息，系统才能推荐资源组合。" },
+  { message: "validation.novel_resource_recommendation_requires_brief" },
 );
 
 interface RegisterNovelBaseRoutesInput {
@@ -148,7 +149,7 @@ export function registerNovelBaseRoutes(input: RegisterNovelBaseRoutesInput): vo
       const response: ApiResponse<typeof data> = {
         success: true,
         data,
-        message: "获取小说列表成功。",
+        message: getBackendMessage("novel.route.list.loaded"),
       };
       res.status(200).json(response);
     } catch (error) {
@@ -162,7 +163,7 @@ export function registerNovelBaseRoutes(input: RegisterNovelBaseRoutesInput): vo
       const response: ApiResponse<typeof data> = {
         success: true,
         data,
-        message: "创建小说成功。",
+        message: getBackendMessage("novel.route.created"),
       };
       res.status(201).json(response);
     } catch (error) {
@@ -178,7 +179,7 @@ export function registerNovelBaseRoutes(input: RegisterNovelBaseRoutesInput): vo
       res.status(200).json({
         success: true,
         data,
-        message: "AI 已生成开书资源推荐。",
+        message: getBackendMessage("novel.route.resource_recommendation.generated"),
       } satisfies ApiResponse<typeof data>);
     } catch (error) {
       next(error);
@@ -192,14 +193,14 @@ export function registerNovelBaseRoutes(input: RegisterNovelBaseRoutesInput): vo
       if (!data) {
         res.status(404).json({
           success: false,
-          error: "小说不存在。",
+          error: getBackendMessage("novel.route.not_found"),
         } satisfies ApiResponse<null>);
         return;
       }
       res.status(200).json({
         success: true,
         data,
-        message: "获取小说详情成功。",
+        message: getBackendMessage("novel.route.detail.loaded"),
       } satisfies ApiResponse<typeof data>);
     } catch (error) {
       next(error);
@@ -213,7 +214,7 @@ export function registerNovelBaseRoutes(input: RegisterNovelBaseRoutesInput): vo
       res.status(200).json({
         success: true,
         data,
-        message: "Novel knowledge documents loaded.",
+        message: getBackendMessage("novel.route.knowledge_documents.loaded"),
       } satisfies ApiResponse<typeof data>);
     } catch (error) {
       next(error);
@@ -231,7 +232,7 @@ export function registerNovelBaseRoutes(input: RegisterNovelBaseRoutesInput): vo
         res.status(200).json({
           success: true,
           data,
-          message: "Novel knowledge documents updated.",
+          message: getBackendMessage("novel.route.knowledge_documents.updated"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);
@@ -249,7 +250,7 @@ export function registerNovelBaseRoutes(input: RegisterNovelBaseRoutesInput): vo
         res.status(200).json({
           success: true,
           data,
-          message: "更新小说成功。",
+          message: getBackendMessage("novel.route.updated"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);
@@ -263,7 +264,7 @@ export function registerNovelBaseRoutes(input: RegisterNovelBaseRoutesInput): vo
       await novelService.deleteNovel(id);
       res.status(200).json({
         success: true,
-        message: "删除小说成功。",
+        message: getBackendMessage("novel.route.deleted"),
       } satisfies ApiResponse<null>);
     } catch (error) {
       next(error);

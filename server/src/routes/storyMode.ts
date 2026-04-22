@@ -1,6 +1,7 @@
 import { Router } from "express";
 import type { ApiResponse } from "@ai-novel/shared/types/api";
 import { z } from "zod";
+import { getBackendMessage } from "../i18n";
 import { llmProviderSchema } from "../llm/providerSchema";
 import { authMiddleware } from "../middleware/auth";
 import { validate } from "../middleware/validate";
@@ -86,7 +87,7 @@ router.get("/", async (_req, res, next) => {
     res.status(200).json({
       success: true,
       data,
-      message: "获取流派模式树成功。",
+      message: getBackendMessage("storyMode.route.tree.loaded"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -99,7 +100,7 @@ router.post("/", validate({ body: createStoryModeSchema }), async (req, res, nex
     res.status(201).json({
       success: true,
       data,
-      message: "创建流派模式成功。",
+      message: getBackendMessage("storyMode.route.created"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -122,7 +123,7 @@ router.post("/batch-children", validate({ body: createStoryModeChildrenSchema })
     res.status(201).json({
       success: true,
       data,
-      message: "批量创建流派模式子类成功。",
+      message: getBackendMessage("storyMode.route.children.created"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -135,7 +136,7 @@ router.post("/generate", validate({ body: generateStoryModeSchema }), async (req
     res.status(200).json({
       success: true,
       data,
-      message: "AI 流派模式树草稿生成成功。",
+      message: getBackendMessage("storyMode.route.generated"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -148,7 +149,7 @@ router.post("/generate-child", validate({ body: generateStoryModeChildSchema }),
     res.status(200).json({
       success: true,
       data,
-      message: "AI 流派模式子类草稿生成成功。",
+      message: getBackendMessage("storyMode.route.children.generated"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -162,7 +163,7 @@ router.put("/:id", validate({ params: idParamsSchema, body: updateStoryModeSchem
     res.status(200).json({
       success: true,
       data,
-      message: "更新流派模式成功。",
+      message: getBackendMessage("storyMode.route.updated"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -175,7 +176,7 @@ router.delete("/:id", validate({ params: idParamsSchema }), async (req, res, nex
     await storyModeService.deleteStoryMode(id);
     res.status(200).json({
       success: true,
-      message: "删除流派模式成功。",
+      message: getBackendMessage("storyMode.route.deleted"),
     } satisfies ApiResponse<null>);
   } catch (error) {
     next(error);

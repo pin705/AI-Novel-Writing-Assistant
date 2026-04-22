@@ -4,6 +4,7 @@ import type { QualityScore, ReviewIssue } from "@ai-novel/shared/types/novel";
 import { runTextPrompt } from "../../../prompting/core/promptRunner";
 import { buildChapterRepairContextBlocks } from "../../../prompting/prompts/novel/chapterLayeredContext";
 import { chapterRepairPrompt } from "../../../prompting/prompts/novel/review.prompts";
+import type { NovelCharacterRequirementActionKey } from "../novelCoreSupport";
 import type { ChapterRuntimeRequestInput } from "./chapterRuntimeSchema";
 
 export interface PipelineRuntimeHooks {
@@ -42,7 +43,11 @@ export interface AssembledRuntimeChapter {
 
 interface RunPipelineChapterDeps {
   validateRequest: (input: ChapterRuntimeRequestInput) => ChapterRuntimeRequestInput;
-  ensureNovelCharacters: (novelId: string, actionName: string, minCount?: number) => Promise<void>;
+  ensureNovelCharacters: (
+    novelId: string,
+    actionKey: NovelCharacterRequirementActionKey,
+    minCount?: number,
+  ) => Promise<void>;
   assemble: (novelId: string, chapterId: string, request: ChapterRuntimeRequestInput) => Promise<AssembledRuntimeChapter>;
   generateDraftFromWriter: (input: {
     novelId: string;
@@ -97,7 +102,7 @@ export async function runPipelineChapterWithRuntime(
     ...requestInput
   } = options;
   const request = deps.validateRequest(requestInput);
-  await deps.ensureNovelCharacters(novelId, "run chapter pipeline");
+  await deps.ensureNovelCharacters(novelId, "run_chapter_pipeline");
 
   const assembled = await deps.assemble(novelId, chapterId, request);
   let content = assembled.chapter.content?.trim() ? assembled.chapter.content : "";

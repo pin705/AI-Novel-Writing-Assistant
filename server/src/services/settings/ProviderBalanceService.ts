@@ -1,4 +1,5 @@
 import type { LLMProvider } from "@ai-novel/shared/types/llm";
+import { getBackendMessage, translateBackendText } from "../../i18n";
 import { PROVIDERS } from "../../llm/providers";
 
 export type ProviderBalanceStatusKind = "available" | "missing_api_key" | "unsupported" | "error";
@@ -90,7 +91,7 @@ function buildMissingApiKeyStatus(provider: LLMProvider): ProviderBalanceStatus 
     chargeBalance: null,
     toppedUpBalance: null,
     grantedBalance: null,
-    message: "请先配置 API Key，再查询余额。",
+    message: getBackendMessage("settings.balance.missing_api_key"),
     error: null,
   });
 }
@@ -104,8 +105,9 @@ async function fetchJson(url: string, init: RequestInit): Promise<unknown> {
       signal: controller.signal,
     });
     if (!response.ok) {
-      const detail = await response.text();
-      throw new Error(detail.trim() || `请求失败（${response.status}）`);
+      throw new Error(getBackendMessage("settings.balance.error.request_failed_with_status", {
+        status: response.status,
+      }));
     }
     return response.json();
   } finally {
@@ -131,7 +133,7 @@ async function fetchDeepSeekBalance(apiKey: string): Promise<ProviderBalanceStat
   };
   const primary = Array.isArray(payload.balance_infos) ? payload.balance_infos[0] : null;
   if (!primary) {
-    throw new Error("DeepSeek 未返回可用余额信息。");
+    throw new Error(getBackendMessage("settings.balance.error.deepseek_missing_balance"));
   }
   return buildStatus({
     provider: "deepseek",
@@ -147,7 +149,7 @@ async function fetchDeepSeekBalance(apiKey: string): Promise<ProviderBalanceStat
     chargeBalance: null,
     toppedUpBalance: toNumber(primary.topped_up_balance),
     grantedBalance: toNumber(primary.granted_balance),
-    message: "余额已从 DeepSeek 官方接口刷新。",
+    message: getBackendMessage("settings.balance.deepseek_refreshed"),
     error: null,
   });
 }
@@ -170,7 +172,7 @@ async function fetchSiliconFlowBalance(apiKey: string): Promise<ProviderBalanceS
   const data = payload.data ?? {};
   const totalBalance = toNumber(data.totalBalance) ?? toNumber(data.balance);
   if (totalBalance === null) {
-    throw new Error("SiliconFlow 未返回可用余额信息。");
+    throw new Error(getBackendMessage("settings.balance.error.siliconflow_missing_balance"));
   }
   return buildStatus({
     provider: "siliconflow",
@@ -186,7 +188,7 @@ async function fetchSiliconFlowBalance(apiKey: string): Promise<ProviderBalanceS
     chargeBalance: toNumber(data.chargeBalance),
     toppedUpBalance: null,
     grantedBalance: toNumber(data.balance),
-    message: "余额已从 SiliconFlow 官方接口刷新。",
+    message: getBackendMessage("settings.balance.siliconflow_refreshed"),
     error: null,
   });
 }
@@ -209,7 +211,7 @@ async function fetchKimiBalance(apiKey: string): Promise<ProviderBalanceStatus> 
   const data = payload.data ?? {};
   const availableBalance = toNumber(data.available_balance);
   if (availableBalance === null) {
-    throw new Error("Kimi 未返回可用余额信息。");
+    throw new Error(getBackendMessage("settings.balance.error.kimi_missing_balance"));
   }
   return buildStatus({
     provider: "kimi",
@@ -225,7 +227,7 @@ async function fetchKimiBalance(apiKey: string): Promise<ProviderBalanceStatus> 
     chargeBalance: null,
     toppedUpBalance: null,
     grantedBalance: null,
-    message: "余额已从 Kimi 官方接口刷新。",
+    message: getBackendMessage("settings.balance.kimi_refreshed"),
     error: null,
   });
 }
@@ -235,11 +237,11 @@ async function getProviderBalance(input: ProviderBalanceInput): Promise<Provider
   if (input.provider === "qwen") {
     return buildUnsupportedStatus(
       "qwen",
-      "当前系统只保存 DashScope API Key；阿里云账户余额查询需要额外的账户级凭证，暂不支持直接读取。",
+      getBackendMessage("settings.balance.unsupported_qwen"),
     );
   }
   if (input.provider !== "deepseek" && input.provider !== "siliconflow" && input.provider !== "kimi") {
-    return buildUnsupportedStatus(input.provider, "当前厂商暂未接入可程序化余额查询。");
+    return buildUnsupportedStatus(input.provider, getBackendMessage("settings.balance.unsupported_provider"));
   }
   if (!apiKey) {
     return buildMissingApiKeyStatus(input.provider);
@@ -255,8 +257,8 @@ async function getProviderBalance(input: ProviderBalanceInput): Promise<Provider
     return await fetchKimiBalance(apiKey);
   } catch (error) {
     const message = error instanceof Error && error.message.trim()
-      ? error.message.trim()
-      : "余额查询失败。";
+      ? translateBackendText(error.message.trim())
+      : getBackendMessage("settings.balance.query_failed");
     return buildStatus({
       provider: input.provider,
       status: "error",
@@ -271,7 +273,7 @@ async function getProviderBalance(input: ProviderBalanceInput): Promise<Provider
       chargeBalance: null,
       toppedUpBalance: null,
       grantedBalance: null,
-      message: "余额查询失败，请稍后重试。",
+      message: getBackendMessage("settings.balance.query_failed_retry_later"),
       error: message,
     });
   }

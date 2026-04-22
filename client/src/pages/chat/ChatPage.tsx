@@ -381,11 +381,7 @@ export default function ChatPage() {
       const message = error instanceof Error
         ? error.message
         : t("重放失败。");
-      setLocalError(
-        message === "No replayable tool steps after source step."
-          ? t("所选步骤之后没有可重放的工具步骤，请选择更早的步骤。")
-          : message,
-      );
+      setLocalError(message);
       return;
     }
   };

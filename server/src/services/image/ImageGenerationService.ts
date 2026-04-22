@@ -24,19 +24,19 @@ export class ImageGenerationService {
 
   async createCharacterTask(input: ImageGenerationRequest): Promise<ImageGenerationTask> {
     if (input.sceneType !== "character") {
-      throw new AppError("Only character image generation is supported in phase one.", 400);
+      throw new AppError("image.error.character_only_supported_phase_one", 400);
     }
 
     const provider: LLMProvider = input.provider ?? "openai";
     if (!isImageProviderSupported(provider)) {
-      throw new AppError(`Provider ${provider} is not supported for image generation yet.`, 400);
+      throw new AppError("image.error.provider_not_supported_yet", 400, { provider });
     }
 
     const character = await prisma.baseCharacter.findUnique({
       where: { id: input.baseCharacterId },
     });
     if (!character) {
-      throw new AppError("Base character not found.", 404);
+      throw new AppError("image.error.base_character_not_found", 404);
     }
 
     const model = await resolveImageModel(provider, input.model);
@@ -79,10 +79,10 @@ export class ImageGenerationService {
       where: { id: taskId },
     });
     if (!task) {
-      throw new AppError("Image task not found.", 404);
+      throw new AppError("image.error.task_not_found", 404);
     }
     if (task.status !== "failed" && task.status !== "cancelled") {
-      throw new AppError("Only failed or cancelled image tasks can be retried.", 400);
+      throw new AppError("image.error.retry_only_failed_or_cancelled", 400);
     }
     await prisma.imageGenerationTask.update({
       where: { id: taskId },
@@ -110,10 +110,10 @@ export class ImageGenerationService {
       where: { id: taskId },
     });
     if (!task) {
-      throw new AppError("Image task not found.", 404);
+      throw new AppError("image.error.task_not_found", 404);
     }
     if (task.status === "succeeded" || task.status === "failed" || task.status === "cancelled") {
-      throw new AppError("Only queued or running image tasks can be cancelled.", 400);
+      throw new AppError("image.error.cancel_only_queued_or_running", 400);
     }
     if (task.status === "queued") {
       await prisma.imageGenerationTask.update({
@@ -158,10 +158,10 @@ export class ImageGenerationService {
       where: { id: assetId },
     });
     if (!asset) {
-      throw new AppError("Image asset not found.", 404);
+      throw new AppError("image.error.asset_not_found", 404);
     }
     if (!asset.baseCharacterId) {
-      throw new AppError("Asset is missing baseCharacterId.", 400);
+      throw new AppError("image.error.asset_missing_base_character_id", 400);
     }
     await prisma.$transaction(async (tx) => {
       await tx.imageAsset.updateMany({
@@ -185,7 +185,7 @@ export class ImageGenerationService {
       where: { id: assetId },
     });
     if (!asset) {
-      throw new AppError("Image asset not found.", 404);
+      throw new AppError("image.error.asset_not_found", 404);
     }
 
     await prisma.$transaction(async (tx) => {
@@ -239,7 +239,7 @@ export class ImageGenerationService {
       },
     });
     if (!asset) {
-      throw new AppError("Image asset not found.", 404);
+      throw new AppError("image.error.asset_not_found", 404);
     }
 
     const { localPath } = await resolveLocalImageAssetFile({
@@ -274,7 +274,7 @@ export class ImageGenerationService {
           data: {
             status: "queued",
             pendingManualRecovery: true,
-            error: "服务重启后任务已暂停，等待手动恢复。",
+            error: "image.error.paused_after_restart",
             heartbeatAt: null,
             currentStage: "queued",
             currentItemKey: null,
@@ -289,7 +289,7 @@ export class ImageGenerationService {
           where: { id: { in: queuedIds } },
           data: {
             pendingManualRecovery: true,
-            error: "服务重启后任务已暂停，等待手动恢复。",
+            error: "image.error.paused_after_restart",
             heartbeatAt: null,
             cancelRequestedAt: null,
           },
@@ -352,7 +352,7 @@ export class ImageGenerationService {
         data: {
           status: "failed",
           progress: 1,
-          error: "Base character was not found.",
+          error: "image.error.base_character_not_found",
           heartbeatAt: null,
           currentStage: null,
           currentItemKey: null,
@@ -560,10 +560,10 @@ export class ImageGenerationService {
       },
     });
     if (!task) {
-      throw new AppError("Image task not found.", 404);
+      throw new AppError("image.error.task_not_found", 404);
     }
     if (task.status !== "queued" && task.status !== "running") {
-      throw new AppError("Only queued or running image tasks can be resumed.", 400);
+      throw new AppError("image.error.resume_only_queued_or_running", 400);
     }
 
     await prisma.imageGenerationTask.update({

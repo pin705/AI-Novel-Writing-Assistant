@@ -17,7 +17,7 @@ export function normalizeImageGenerationError(error: unknown): string {
   if (error instanceof Error) {
     return error.message.slice(0, 1000);
   }
-  return "Unknown image generation error.";
+  return "image.error.unknown_generation_failed";
 }
 
 export function toImageTask(row: Awaited<{
@@ -48,7 +48,7 @@ export function toImageTask(row: Awaited<{
   updatedAt: Date;
 } | null>): ImageGenerationTask {
   if (!row) {
-    throw new AppError("Image task not found.", 404);
+    throw new AppError("image.error.task_not_found", 404);
   }
   return {
     id: row.id,
@@ -99,7 +99,7 @@ export function toImageAsset(row: Awaited<{
   updatedAt: Date;
 } | null>): ImageAsset {
   if (!row) {
-    throw new AppError("Image asset not found.", 404);
+    throw new AppError("image.error.asset_not_found", 404);
   }
   const metadata = parseImageAssetMetadata(row.metadata);
   const localPath = metadata.localPath ?? (path.isAbsolute(row.url) ? row.url : null);

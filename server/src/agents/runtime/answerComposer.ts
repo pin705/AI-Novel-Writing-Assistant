@@ -1,5 +1,6 @@
 import { runTextPrompt } from "../../prompting/core/promptRunner";
 import { runtimeFallbackAnswerPrompt } from "../../prompting/prompts/agent/runtime.prompts";
+import { getBackendLanguage, getBackendMessage, getRequestLocale } from "../../i18n";
 import { listAgentToolDefinitions } from "../toolRegistry";
 import type { StructuredIntent, ToolCall, ToolExecutionContext } from "../types";
 import { isRecord, safeJson, type ToolExecutionResult } from "./runtimeHelpers";
@@ -25,6 +26,15 @@ function truncateText(value: string, max = 320): string {
   }
   return normalized.length > max ? `${normalized.slice(0, max)}...` : normalized;
 }
+
+function getLocalizedInlineSeparator(): string {
+  return getBackendLanguage(getRequestLocale()) === "zh" ? "、" : ", ";
+}
+
+function joinLocalizedItems(items: string[]): string {
+  return items.join(getLocalizedInlineSeparator());
+}
+
 function getSuccessfulOutputs(results: ToolExecutionResult[], tool: ToolCall["tool"]): Record<string, unknown>[] {
   return results
     .filter((item) => item.success && item.tool === tool && item.output)
@@ -65,14 +75,14 @@ function buildCollaborativeQuestion(structuredIntent?: StructuredIntent): string
   switch (structuredIntent?.intent) {
     case "produce_novel":
     case "create_novel":
-      return "你想先把一句话设定钉牢，还是让我直接给你三套可选方向？";
+      return getBackendMessage("agent.collab.question.produce");
     case "write_chapter":
     case "rewrite_chapter":
-      return "这章你最想先解决的是剧情推进、人物情绪，还是文风节奏？";
+      return getBackendMessage("agent.collab.question.write");
     case "ideate_novel_setup":
-      return "你更想先看核心设定、故事承诺，还是题材风格的备选方案？";
+      return getBackendMessage("agent.collab.question.ideate");
     default:
-      return "你现在最想先解决哪一个创作问题？";
+      return getBackendMessage("agent.collab.question.default");
   }
 }
 
@@ -81,53 +91,54 @@ function buildCollaborativeOptions(structuredIntent?: StructuredIntent): string[
     case "produce_novel":
     case "create_novel":
       return [
-        "我先基于当前信息给你 3 套核心设定方向。",
-        "你补一句主角、冲突和目标，我帮你收敛成可执行设定。",
-        "如果你已经想清楚，也可以直接说“现在启动整本生产”。",
+        getBackendMessage("agent.collab.option.produce.1"),
+        getBackendMessage("agent.collab.option.produce.2"),
+        getBackendMessage("agent.collab.option.produce.3"),
       ];
     case "write_chapter":
     case "rewrite_chapter":
       return [
-        "我先帮你判断这一章的问题出在情节、人物还是节奏。",
-        "你告诉我这章的目标和想保留的部分，我给你重写方案。",
-        "如果你已经确定范围，也可以直接说要改哪一章、往哪个方向改。",
+        getBackendMessage("agent.collab.option.write.1"),
+        getBackendMessage("agent.collab.option.write.2"),
+        getBackendMessage("agent.collab.option.write.3"),
       ];
     case "ideate_novel_setup":
       return [
-        "先给你 3 套核心设定备选。",
-        "先给你 3 套故事承诺和卖点方向。",
-        "先给你 3 套题材风格与叙事配置组合。",
+        getBackendMessage("agent.collab.option.ideate.1"),
+        getBackendMessage("agent.collab.option.ideate.2"),
+        getBackendMessage("agent.collab.option.ideate.3"),
       ];
     default:
       return [
-        "我先帮你拆清楚这个问题。",
-        "我先给你几个可选方向。",
-        "你补充最关键的限制条件，我再继续推进。",
+        getBackendMessage("agent.collab.option.default.1"),
+        getBackendMessage("agent.collab.option.default.2"),
+        getBackendMessage("agent.collab.option.default.3"),
       ];
   }
 }
 
 function composeCollaborativeAnswer(goal: string, structuredIntent?: StructuredIntent): string {
   const missingInfo = formatMissingInfo(structuredIntent);
+  const missingInfoText = joinLocalizedItems(missingInfo);
   const lead = structuredIntent?.intent === "general_chat" || structuredIntent?.intent === "unknown"
-    ? `我先不把它当成命令执行，先和你一起把问题说清楚：${goal}`
-    : `我理解你现在想推进的是：${goal}`;
+    ? getBackendMessage("agent.collab.lead.general", { goal })
+    : getBackendMessage("agent.collab.lead.intent", { goal });
   const collaborationLead = structuredIntent?.interactionMode === "review"
-    ? "这轮更适合先一起诊断和判断。"
-    : "这轮更适合先共创澄清，再决定是否进入执行。";
+    ? getBackendMessage("agent.collab.mode.review")
+    : getBackendMessage("agent.collab.mode.cocreate");
 
   if ((structuredIntent?.assistantResponse ?? "explain") === "offer_options") {
     const options = buildCollaborativeOptions(structuredIntent)
       .map((item, index) => `${index + 1}. ${item}`)
       .join("\n");
     const missingLine = missingInfo.length > 0
-      ? `在继续之前，我还想补齐这几个点：${missingInfo.join("、")}。\n`
+      ? getBackendMessage("agent.collab.missing.offer_options", { missingInfo: missingInfoText })
       : "";
-    return `${lead}\n${collaborationLead}\n${missingLine}你可以直接选一个方向继续：\n${options}`;
+    return `${lead}\n${collaborationLead}\n${missingLine}${getBackendMessage("agent.collab.choose_direction", { options })}`;
   }
 
   const missingLine = missingInfo.length > 0
-    ? `在继续之前，我还缺这几个关键信息：${missingInfo.join("、")}。`
+    ? getBackendMessage("agent.collab.missing.default", { missingInfo: missingInfoText })
     : "";
   return [lead, collaborationLead, missingLine, buildCollaborativeQuestion(structuredIntent)]
     .filter(Boolean)
@@ -136,16 +147,16 @@ function composeCollaborativeAnswer(goal: string, structuredIntent?: StructuredI
 
 function composeSocialOpeningAnswer(context: Omit<ToolExecutionContext, "runId" | "agentName">): string {
   if (context.novelId) {
-    return "你好。我可以继续陪你打磨这本书的设定、大纲、人物、章节，或者先帮你判断当前卡点。你现在想先推进哪一块？";
+    return getBackendMessage("agent.social.with_novel");
   }
-  return "你好。我可以帮你一起打磨设定、大纲、人物、章节，或者帮你诊断当前卡点。你现在想先推进哪一块？";
+  return getBackendMessage("agent.social.default");
 }
 
 function composeTitleAnswer(results: ToolExecutionResult[]): string {
   const title = getSuccessfulOutputs(results, "get_novel_context")
     .map((item) => (typeof item.title === "string" ? item.title.trim() : ""))
     .find(Boolean);
-  return title ? `《${title}》` : "未获取到标题";
+  return title ? title : getBackendMessage("agent.common.title_missing");
 }
 
 function composeNovelListAnswer(results: ToolExecutionResult[]): string {
@@ -153,60 +164,76 @@ function composeNovelListAnswer(results: ToolExecutionResult[]): string {
   const items = Array.isArray(list?.items) ? list.items : [];
   const total = typeof list?.total === "number" ? list.total : items.length;
   if (items.length === 0) {
-    return "当前还没有小说。";
+    return getBackendMessage("agent.list.novels.empty");
   }
   const lines = items.slice(0, 8).map((item, index) => {
-    const title = typeof item?.title === "string" && item.title.trim() ? item.title.trim() : "未命名小说";
+    const title = typeof item?.title === "string" && item.title.trim()
+      ? item.title.trim()
+      : getBackendMessage("agent.list.novels.untitled");
     const chapterCount = typeof item?.chapterCount === "number" ? item.chapterCount : null;
-    return `${index + 1}. 《${title}》${chapterCount != null ? `（${chapterCount}章）` : ""}`;
+    return chapterCount != null
+      ? getBackendMessage("agent.list.novels.item.with_count", { index: index + 1, title, chapterCount })
+      : getBackendMessage("agent.list.novels.item.without_count", { index: index + 1, title });
   });
-  return `当前共有 ${total} 本小说：\n${lines.join("\n")}`;
+  return getBackendMessage("agent.list.novels.summary", { total, lines: lines.join("\n") });
 }
 
 function composeBaseCharacterListAnswer(results: ToolExecutionResult[]): string {
   const list = getSuccessfulOutputs(results, "list_base_characters")[0];
   const items = Array.isArray(list?.items) ? list.items : [];
   if (items.length === 0) {
-    return "当前基础角色库还是空的。";
+    return getBackendMessage("agent.list.base_characters.empty");
   }
   const lines = items.slice(0, 8).map((item, index) => {
-    const name = typeof item?.name === "string" && item.name.trim() ? item.name.trim() : "未命名角色";
+    const name = typeof item?.name === "string" && item.name.trim()
+      ? item.name.trim()
+      : getBackendMessage("agent.list.base_characters.unnamed");
     const role = typeof item?.role === "string" && item.role.trim() ? item.role.trim() : null;
     const category = typeof item?.category === "string" && item.category.trim() ? item.category.trim() : null;
     const tags = typeof item?.tags === "string" && item.tags.trim() ? item.tags.trim() : null;
     const suffix = [role, category, tags].filter(Boolean).join(" / ");
-    return `${index + 1}. ${name}${suffix ? `（${suffix}）` : ""}`;
+    return suffix
+      ? getBackendMessage("agent.list.base_characters.item.with_suffix", { index: index + 1, name, suffix })
+      : getBackendMessage("agent.list.base_characters.item.without_suffix", { index: index + 1, name });
   });
-  return `当前基础角色库共有 ${items.length} 个角色模板：\n${lines.join("\n")}`;
+  return getBackendMessage("agent.list.base_characters.summary", { count: items.length, lines: lines.join("\n") });
 }
 
 function composeWorldListAnswer(results: ToolExecutionResult[]): string {
   const list = getSuccessfulOutputs(results, "list_worlds")[0];
   const items = Array.isArray(list?.items) ? list.items : [];
   if (items.length === 0) {
-    return "当前还没有世界观。";
+    return getBackendMessage("agent.list.worlds.empty");
   }
   const lines = items.slice(0, 8).map((item, index) => {
-    const name = typeof item?.name === "string" && item.name.trim() ? item.name.trim() : "未命名世界观";
+    const name = typeof item?.name === "string" && item.name.trim()
+      ? item.name.trim()
+      : getBackendMessage("agent.list.worlds.unnamed");
     const status = typeof item?.status === "string" && item.status.trim() ? item.status.trim() : null;
-    return `${index + 1}. ${name}${status ? `（${status}）` : ""}`;
+    return status
+      ? getBackendMessage("agent.list.worlds.item.with_status", { index: index + 1, name, status })
+      : getBackendMessage("agent.list.worlds.item.without_status", { index: index + 1, name });
   });
-  return `当前共有 ${items.length} 个世界观：\n${lines.join("\n")}`;
+  return getBackendMessage("agent.list.worlds.summary", { count: items.length, lines: lines.join("\n") });
 }
 
 function composeTaskListAnswer(results: ToolExecutionResult[]): string {
   const list = getSuccessfulOutputs(results, "list_tasks")[0];
   const items = Array.isArray(list?.items) ? list.items : [];
   if (items.length === 0) {
-    return "当前没有系统任务。";
+    return getBackendMessage("agent.list.tasks.empty");
   }
   const lines = items.slice(0, 8).map((item, index) => {
-    const title = typeof item?.title === "string" && item.title.trim() ? item.title.trim() : "未命名任务";
+    const title = typeof item?.title === "string" && item.title.trim()
+      ? item.title.trim()
+      : getBackendMessage("agent.list.tasks.unnamed");
     const status = typeof item?.status === "string" && item.status.trim() ? item.status.trim() : "unknown";
     const kind = typeof item?.kind === "string" && item.kind.trim() ? item.kind.trim() : null;
-    return `${index + 1}. ${title}${kind ? `（${kind}）` : ""} - ${status}`;
+    return kind
+      ? getBackendMessage("agent.list.tasks.item.with_kind", { index: index + 1, title, kind, status })
+      : getBackendMessage("agent.list.tasks.item.without_kind", { index: index + 1, title, status });
   });
-  return `当前共有 ${items.length} 个系统任务：\n${lines.join("\n")}`;
+  return getBackendMessage("agent.list.tasks.summary", { count: items.length, lines: lines.join("\n") });
 }
 
 function getFirstSuccessfulOutput(results: ToolExecutionResult[], tool: ToolCall["tool"]): Record<string, unknown> | null {
@@ -226,21 +253,21 @@ function composeBindWorldAnswer(
     const worldName = typeof bound.worldName === "string" ? bound.worldName.trim() : "";
     const novelTitle = typeof bound.novelTitle === "string" ? bound.novelTitle.trim() : "";
     if (worldName && novelTitle) {
-      return `已将世界观《${worldName}》绑定到小说《${novelTitle}》。`;
+      return getBackendMessage("agent.bind_world.bound", { worldName, novelTitle });
     }
-    return "已完成世界观绑定。";
+    return getBackendMessage("agent.bind_world.completed");
   }
   if (!context.novelId) {
-    return "没有当前小说上下文，无法设置世界观。";
+    return getBackendMessage("agent.bind_world.no_context");
   }
   const failed = getFailedResult(results, "bind_world_to_novel");
   if (failed?.errorCode === "NOT_FOUND") {
-    return "未找到要绑定的世界观。";
+    return getBackendMessage("agent.bind_world.not_found");
   }
   if (failed?.summary) {
     return failed.summary;
   }
-  return "未完成世界观绑定。";
+  return getBackendMessage("agent.bind_world.incomplete");
 }
 
 function composeUnbindWorldAnswer(
@@ -256,27 +283,27 @@ function composeUnbindWorldAnswer(
     const novelTitle = typeof unbound.novelTitle === "string" ? unbound.novelTitle.trim() : "";
     const previousWorldName = typeof unbound.previousWorldName === "string" ? unbound.previousWorldName.trim() : "";
     if (novelTitle && previousWorldName) {
-      return `已将世界观《${previousWorldName}》从小说《${novelTitle}》解绑。`;
+      return getBackendMessage("agent.unbind_world.unbound", { worldName: previousWorldName, novelTitle });
     }
     if (novelTitle) {
-      return `已更新小说《${novelTitle}》的世界观绑定状态。`;
+      return getBackendMessage("agent.unbind_world.updated", { novelTitle });
     }
-    return "已完成世界观解绑。";
+    return getBackendMessage("agent.unbind_world.completed");
   }
   if (!context.novelId) {
-    return "没有当前小说上下文，无法解除世界观绑定。";
+    return getBackendMessage("agent.unbind_world.no_context");
   }
   const failed = getFailedResult(results, "unbind_world_from_novel");
   if (failed?.summary) {
     return failed.summary;
   }
-  return "未完成世界观解绑。";
+  return getBackendMessage("agent.unbind_world.incomplete");
 }
 
 function composeProgressAnswer(results: ToolExecutionResult[]): string {
   const context = getSuccessfulOutputs(results, "get_novel_context")[0];
   if (!context) {
-    return "当前信息不足，无法继续";
+    return getBackendMessage("agent.common.insufficient_info");
   }
   const completedChapterCount = typeof context.completedChapterCount === "number"
     ? context.completedChapterCount
@@ -286,38 +313,42 @@ function composeProgressAnswer(results: ToolExecutionResult[]): string {
     ? context.latestCompletedChapterOrder
     : null;
   if (completedChapterCount == null) {
-    return "当前信息不足，无法继续";
+    return getBackendMessage("agent.common.insufficient_info");
   }
   const parts = [
     chapterCount != null
-      ? `当前已完成 ${completedChapterCount} / ${chapterCount} 章。`
-      : `当前已完成 ${completedChapterCount} 章。`,
+      ? getBackendMessage("agent.progress.completed.with_total", { completedChapterCount, chapterCount })
+      : getBackendMessage("agent.progress.completed.without_total", { completedChapterCount }),
   ];
   if (latestCompletedChapterOrder != null) {
-    parts.push(`最近完成到第${latestCompletedChapterOrder}章。`);
+    parts.push(getBackendMessage("agent.progress.latest_completed", { chapterOrder: latestCompletedChapterOrder }));
   }
   if (completedChapterCount === 0) {
-    parts.push("当前还没有检测到已写入正文的章节。");
+    parts.push(getBackendMessage("agent.progress.none_written"));
   }
-  return parts.join("");
+  return parts.join(" ");
 }
 
 function composeCharacterAnswer(results: ToolExecutionResult[]): string {
   const characterState = getSuccessfulOutputs(results, "get_character_states")[0];
   if (!characterState) {
-    return "未获取到角色状态信息";
+    return getBackendMessage("agent.character.status_missing");
   }
   const count = typeof characterState.count === "number" ? characterState.count : 0;
   const items = Array.isArray(characterState.items) ? characterState.items : [];
   if (count === 0 || items.length === 0) {
-    return "当前小说还没有已规划角色。";
+    return getBackendMessage("agent.character.none_planned");
   }
   const lines = items.slice(0, 6).map((item, index) => {
-    const name = typeof item?.name === "string" && item.name.trim() ? item.name.trim() : "未命名角色";
+    const name = typeof item?.name === "string" && item.name.trim()
+      ? item.name.trim()
+      : getBackendMessage("agent.character.unnamed");
     const role = typeof item?.role === "string" && item.role.trim() ? item.role.trim() : null;
-    return `${index + 1}. ${name}${role ? `（${role}）` : ""}`;
+    return role
+      ? getBackendMessage("agent.character.item.with_role", { index: index + 1, name, role })
+      : getBackendMessage("agent.character.item.without_role", { index: index + 1, name });
   });
-  return `当前小说已规划 ${count} 个角色：\n${lines.join("\n")}`;
+  return getBackendMessage("agent.character.summary", { count, lines: lines.join("\n") });
 }
 
 function composeChapterAnswer(results: ToolExecutionResult[]): string | null {
@@ -332,7 +363,10 @@ function composeChapterAnswer(results: ToolExecutionResult[]): string | null {
       const order = Number(item.order);
       const title = typeof item.title === "string" ? item.title.trim() : "";
       const content = typeof item.content === "string" ? item.content : "";
-      return `第${order}章${title ? `《${title}》` : ""}：${truncateText(content, 360) || "正文为空"}`;
+      const truncated = truncateText(content, 360) || getBackendMessage("agent.chapter.empty_body");
+      return title
+        ? getBackendMessage("agent.chapter.item.with_title", { order, title, content: truncated })
+        : getBackendMessage("agent.chapter.item.without_title", { order, content: truncated });
     }).join("\n\n");
   }
 
@@ -360,8 +394,8 @@ function composeWriteAnswer(results: ToolExecutionResult[], waitingForApproval: 
     const end = typeof preview.endOrder === "number" ? preview.endOrder : null;
     if (start != null && end != null) {
       return start === end
-        ? `已完成第${start}章执行预览，当前等待审批。`
-        : `已完成第${start}到第${end}章执行预览，当前等待审批。`;
+        ? getBackendMessage("agent.write.preview.single", { startOrder: start })
+        : getBackendMessage("agent.write.preview.range", { startOrder: start, endOrder: end });
     }
   }
   if (queue) {
@@ -369,8 +403,13 @@ function composeWriteAnswer(results: ToolExecutionResult[], waitingForApproval: 
     const end = typeof queue.endOrder === "number" ? queue.endOrder : null;
     const jobId = typeof queue.jobId === "string" ? queue.jobId : "";
     if (start != null && end != null) {
-      const scope = start === end ? `第${start}章` : `第${start}到第${end}章`;
-      return `已创建 ${scope} 的写作任务${jobId ? `（任务 ${jobId}）` : ""}。`;
+      const scope = start === end
+        ? getBackendMessage("agent.write.task_scope.single", { startOrder: start })
+        : getBackendMessage("agent.write.task_scope.range", { startOrder: start, endOrder: end });
+      const jobSuffix = jobId ? getBackendMessage("agent.production.job_suffix", { jobId }) : "";
+      return jobSuffix
+        ? getBackendMessage("agent.write.task_created.with_job", { scope, jobSuffix })
+        : getBackendMessage("agent.write.task_created.without_job", { scope });
     }
   }
   return null;
@@ -383,28 +422,34 @@ function composeProductionStatusAnswer(
   const status = getFirstSuccessfulOutput(results, "get_novel_production_status");
   if (!status) {
     return context.novelId
-      ? "未获取到整本生产状态。"
-      : "没有当前小说上下文，无法读取整本生产状态。";
+      ? getBackendMessage("agent.production.status.unavailable")
+      : getBackendMessage("agent.production.status.no_context");
   }
-  const title = typeof status.title === "string" ? status.title.trim() : "当前小说";
-  const currentStage = typeof status.currentStage === "string" ? status.currentStage.trim() : "未知阶段";
+  const title = typeof status.title === "string"
+    ? status.title.trim()
+    : getBackendMessage("agent.production.current_novel");
+  const currentStage = typeof status.currentStage === "string"
+    ? status.currentStage.trim()
+    : getBackendMessage("agent.production.unknown_stage");
   const chapterCount = typeof status.chapterCount === "number" ? status.chapterCount : 0;
   const targetChapterCount = typeof status.targetChapterCount === "number" ? status.targetChapterCount : null;
   const pipelineStatus = typeof status.pipelineStatus === "string" ? status.pipelineStatus.trim() : null;
   const failureSummary = typeof status.failureSummary === "string" ? status.failureSummary.trim() : "";
   const recoveryHint = typeof status.recoveryHint === "string" ? status.recoveryHint.trim() : "";
-  const parts = [`《${title}》当前阶段：${currentStage}。`];
-  parts.push(targetChapterCount != null ? `章节目录：${chapterCount}/${targetChapterCount} 章。` : `章节目录：${chapterCount} 章。`);
+  const parts = [getBackendMessage("agent.production.status.stage", { title, currentStage })];
+  parts.push(targetChapterCount != null
+    ? getBackendMessage("agent.production.status.chapters.with_target", { chapterCount, targetChapterCount })
+    : getBackendMessage("agent.production.status.chapters.without_target", { chapterCount }));
   if (pipelineStatus) {
-    parts.push(`整本写作任务状态：${pipelineStatus}。`);
+    parts.push(getBackendMessage("agent.production.status.pipeline", { pipelineStatus }));
   }
   if (failureSummary) {
-    parts.push(`失败原因：${failureSummary}`);
+    parts.push(getBackendMessage("agent.production.status.failure", { failureSummary }));
   }
   if (recoveryHint) {
-    parts.push(`建议：${recoveryHint}`);
+    parts.push(getBackendMessage("agent.production.status.recovery", { recoveryHint }));
   }
-  return parts.join("");
+  return parts.join(" ");
 }
 
 async function composeProduceNovelAnswer(
@@ -433,42 +478,55 @@ async function composeProduceNovelAnswer(
     ? created.title.trim()
     : typeof productionStatus?.title === "string" && productionStatus.title.trim()
       ? productionStatus.title.trim()
-      : "当前小说";
+      : getBackendMessage("agent.production.current_novel");
   const assetParts: string[] = [];
   if (world) {
     const worldName = typeof world.worldName === "string" ? world.worldName.trim() : "";
-    assetParts.push(worldName ? `世界观《${worldName}》` : "世界观");
+    assetParts.push(worldName
+      ? getBackendMessage("agent.production.asset.world.named", { worldName })
+      : getBackendMessage("agent.production.asset.world.generic"));
   }
   if (characters) {
     const characterCount = typeof characters.characterCount === "number" ? characters.characterCount : 0;
-    assetParts.push(`${characterCount} 个核心角色`);
+    assetParts.push(getBackendMessage("agent.production.asset.characters", { characterCount }));
   }
   if (bible) {
-    assetParts.push("小说圣经");
+    assetParts.push(getBackendMessage("agent.production.asset.story_bible"));
   }
   if (outline) {
-    assetParts.push("发展走向");
+    assetParts.push(getBackendMessage("agent.production.asset.outline"));
   }
   if (structured) {
     const targetChapterCount = typeof structured.targetChapterCount === "number" ? structured.targetChapterCount : null;
-    assetParts.push(targetChapterCount != null ? `${targetChapterCount} 章结构化大纲` : "结构化大纲");
+    assetParts.push(targetChapterCount != null
+      ? getBackendMessage("agent.production.asset.structured_outline.count", { targetChapterCount })
+      : getBackendMessage("agent.production.asset.structured_outline.generic"));
   }
   if (synced) {
     const chapterCount = typeof synced.chapterCount === "number" ? synced.chapterCount : null;
-    assetParts.push(chapterCount != null ? `${chapterCount} 个章节目录` : "章节目录");
+    assetParts.push(chapterCount != null
+      ? getBackendMessage("agent.production.asset.chapter_list.count", { chapterCount })
+      : getBackendMessage("agent.production.asset.chapter_list.generic"));
   }
+  const assetList = assetParts.length > 0
+    ? getBackendMessage("agent.production.asset_list.with_items", {
+      assetList: joinLocalizedItems(assetParts),
+    })
+    : "";
+  const assetsReadyLead = getBackendMessage("agent.production.assets_ready", { title, assetList });
 
   if (waitingForApproval && preview) {
-    return `《${title}》的核心资产已生成完成${assetParts.length > 0 ? `：${assetParts.join("、")}。` : "。"}整本写作预览已完成，当前等待审批。`;
+    return `${assetsReadyLead} ${getBackendMessage("agent.production.preview_waiting")}`;
   }
   if (queued) {
-    const jobId = typeof queued.jobId === "string" && queued.jobId.trim() ? `（任务 ${queued.jobId}）` : "";
-    return `《${title}》的核心资产已生成完成${assetParts.length > 0 ? `：${assetParts.join("、")}。` : "。"}整本写作任务已启动${jobId}。`;
+    const jobId = typeof queued.jobId === "string" && queued.jobId.trim() ? queued.jobId.trim() : "";
+    const jobSuffix = jobId ? getBackendMessage("agent.production.job_suffix", { jobId }) : "";
+    return `${assetsReadyLead} ${getBackendMessage("agent.production.pipeline_started", { jobSuffix })}`;
   }
   if (preview) {
-    return `《${title}》的核心资产已生成完成${assetParts.length > 0 ? `：${assetParts.join("、")}。` : "。"}整本写作未启动。`;
+    return `${assetsReadyLead} ${getBackendMessage("agent.production.pipeline_not_started")}`;
   }
-  return `《${title}》的核心资产已生成完成${assetParts.length > 0 ? `：${assetParts.join("、")}。` : "。"}`
+  return assetsReadyLead;
 }
 
 function composeFailureDiagnosisAnswer(results: ToolExecutionResult[]): string {
@@ -481,17 +539,17 @@ function composeFailureDiagnosisAnswer(results: ToolExecutionResult[]): string {
   ];
   const first = candidates.find((item) => typeof item.failureSummary === "string" && item.failureSummary.trim());
   if (!first) {
-    return "当前没有可用的失败诊断信息";
+    return getBackendMessage("agent.failure.none");
   }
   const parts = [String(first.failureSummary).trim()];
   if (typeof first.failureDetails === "string" && first.failureDetails.trim() && first.failureDetails.trim() !== parts[0]) {
-    parts.push(`详情：${first.failureDetails.trim()}`);
+    parts.push(getBackendMessage("agent.failure.detail", { detail: first.failureDetails.trim() }));
   }
   if (typeof first.recoveryHint === "string" && first.recoveryHint.trim()) {
-    parts.push(`建议：${first.recoveryHint.trim()}`);
+    parts.push(getBackendMessage("agent.failure.recovery", { recoveryHint: first.recoveryHint.trim() }));
   }
   if (typeof first.lastFailedStep === "string" && first.lastFailedStep.trim()) {
-    parts.push(`失败步骤：${first.lastFailedStep.trim()}`);
+    parts.push(getBackendMessage("agent.failure.last_failed_step", { lastFailedStep: first.lastFailedStep.trim() }));
   }
   return parts.join("\n");
 }
@@ -523,11 +581,11 @@ async function composeFallbackAnswer(
         maxTokens: context.maxTokens,
       },
     });
-    return result.output.trim() || "当前信息不足，无法继续";
+    return result.output.trim() || getBackendMessage("agent.common.insufficient_info");
   } catch {
-    return summary || "当前信息不足，无法继续";
+    return summary || getBackendMessage("agent.common.insufficient_info");
   }
-  return "当前信息不足，无法继续";
+  return getBackendMessage("agent.common.insufficient_info");
 }
 
 export async function composeAssistantMessage(
@@ -580,7 +638,7 @@ export async function composeAssistantMessage(
     case "query_progress":
       return composeProgressAnswer(results);
     case "query_chapter_content":
-      return composeChapterAnswer(results) ?? "未获取到章节正文";
+      return composeChapterAnswer(results) ?? getBackendMessage("agent.common.chapter_content_missing");
     case "inspect_failure_reason":
       return composeFailureDiagnosisAnswer(results);
     case "ideate_novel_setup":
@@ -589,7 +647,7 @@ export async function composeAssistantMessage(
     case "rewrite_chapter":
     case "save_chapter_draft":
     case "start_pipeline":
-      return composeWriteAnswer(results, waitingForApproval) ?? "未获取到可执行范围";
+      return composeWriteAnswer(results, waitingForApproval) ?? getBackendMessage("agent.common.executable_range_missing");
     default:
       break;
   }

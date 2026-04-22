@@ -1,5 +1,6 @@
 import { Router } from "express";
 import type { ApiResponse } from "@ai-novel/shared/types/api";
+import { getBackendMessage } from "../i18n";
 import { authMiddleware } from "../middleware/auth";
 
 const router = Router();
@@ -13,7 +14,7 @@ router.get("/", (_req, res) => {
       status: "ok",
       timestamp: new Date().toISOString(),
     },
-    message: "服务运行正常。",
+    message: getBackendMessage("health.route.ok"),
   };
   res.status(200).json(response);
 });

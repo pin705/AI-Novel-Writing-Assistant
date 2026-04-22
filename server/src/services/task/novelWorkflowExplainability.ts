@@ -3,9 +3,13 @@ import type {
   NovelWorkflowStage,
 } from "@ai-novel/shared/types/novelWorkflow";
 import type { TaskStatus } from "@ai-novel/shared/types/task";
+import { getBackendMessage, type BackendMessageKey } from "../../i18n";
 import { isAutoDirectorRecoveryInProgress } from "../novel/workflow/novelWorkflowRecoveryHeuristics";
+import {
+  getNovelWorkflowStageLabel,
+  normalizeNovelWorkflowStage,
+} from "../novel/workflow/novelWorkflow.shared";
 import { normalizeFailureSummary } from "./taskSupport";
-import { NOVEL_WORKFLOW_STAGE_LABELS } from "../novel/workflow/novelWorkflow.shared";
 
 interface WorkflowExplainabilityInput {
   status: TaskStatus;
@@ -47,26 +51,26 @@ const WORKFLOW_ITEM_STAGE_MAP: Partial<Record<string, NovelWorkflowStage>> = {
   quality_repair: "quality_repair",
 };
 
-const CHECKPOINT_DISPLAY_STATUS: Record<NovelWorkflowCheckpoint, string> = {
-  candidate_selection_required: "等待确认书级方向",
-  book_contract_ready: "Book Contract 已就绪",
-  character_setup_required: "角色准备待审核",
-  volume_strategy_ready: "卷战略待审核",
-  front10_ready: "前 10 章已可进入章节执行",
-  chapter_batch_ready: "前 10 章自动执行已暂停",
-  replan_required: "等待处理重规划",
-  workflow_completed: "自动导演已完成",
+const CHECKPOINT_DISPLAY_STATUS_KEYS: Record<NovelWorkflowCheckpoint, BackendMessageKey> = {
+  candidate_selection_required: "workflow.display.candidate_selection_required",
+  book_contract_ready: "workflow.display.book_contract_ready",
+  character_setup_required: "workflow.display.character_setup_required",
+  volume_strategy_ready: "workflow.display.volume_strategy_ready",
+  front10_ready: "workflow.display.front10_ready",
+  chapter_batch_ready: "workflow.display.chapter_batch_ready",
+  replan_required: "workflow.display.replan_required",
+  workflow_completed: "workflow.display.workflow_completed",
 };
 
-const CHECKPOINT_BLOCKING_REASON: Record<NovelWorkflowCheckpoint, string> = {
-  candidate_selection_required: "需要先确认书级方向，自动导演才能继续推进后续主链。",
-  book_contract_ready: "Book Contract 已生成，需先确认核心承诺后再继续后续规划。",
-  character_setup_required: "角色准备已生成，需先审核角色阵容后再继续推进。",
-  volume_strategy_ready: "卷战略与卷骨架已就绪，需先确认卷级推进方案后再继续。",
-  front10_ready: "前 10 章细化已准备完成，你可以进入章节执行，或继续让系统自动执行前 10 章。",
-  chapter_batch_ready: "前 10 章自动执行在批量阶段暂停了，建议先看结果，再决定是否继续自动执行剩余章节。",
-  replan_required: "审计结果要求先处理重规划，后续章节才能继续推进。",
-  workflow_completed: "默认主流程已跑通，你可以直接进入章节执行继续写作。",
+const CHECKPOINT_BLOCKING_REASON_KEYS: Record<NovelWorkflowCheckpoint, BackendMessageKey> = {
+  candidate_selection_required: "workflow.reason.candidate_selection_required",
+  book_contract_ready: "workflow.reason.book_contract_ready",
+  character_setup_required: "workflow.reason.character_setup_required",
+  volume_strategy_ready: "workflow.reason.volume_strategy_ready",
+  front10_ready: "workflow.reason.front10_ready",
+  chapter_batch_ready: "workflow.reason.chapter_batch_ready",
+  replan_required: "workflow.reason.replan_required",
+  workflow_completed: "workflow.reason.workflow_completed",
 };
 
 const CHECKPOINT_LAST_HEALTHY_STAGE: Record<NovelWorkflowCheckpoint, NovelWorkflowStage> = {
@@ -80,41 +84,41 @@ const CHECKPOINT_LAST_HEALTHY_STAGE: Record<NovelWorkflowCheckpoint, NovelWorkfl
   workflow_completed: "quality_repair",
 };
 
-function getExecutionScopeLabel(input: WorkflowExplainabilityInput, fallback = "前 10 章"): string {
-  return input.executionScopeLabel?.trim() || fallback;
+function getExecutionScopeLabel(input: WorkflowExplainabilityInput): string {
+  return input.executionScopeLabel?.trim() || getBackendMessage("workflow.scope.front10");
 }
 
 function buildAutoExecutionPreparedStatus(input: WorkflowExplainabilityInput): string {
-  return `${getExecutionScopeLabel(input)}已可进入章节执行`;
+  return getBackendMessage("workflow.status.prepared", { scopeLabel: getExecutionScopeLabel(input) });
 }
 
 function buildAutoExecutionRunningStatus(input: WorkflowExplainabilityInput): string {
-  return `${getExecutionScopeLabel(input)}自动执行中`;
+  return getBackendMessage("workflow.status.running", { scopeLabel: getExecutionScopeLabel(input) });
 }
 
 function buildAutoExecutionPausedStatus(input: WorkflowExplainabilityInput): string {
-  return `${getExecutionScopeLabel(input)}自动执行已暂停`;
+  return getBackendMessage("workflow.status.paused", { scopeLabel: getExecutionScopeLabel(input) });
 }
 
 function buildAutoExecutionCancelledStatus(input: WorkflowExplainabilityInput): string {
-  return `${getExecutionScopeLabel(input)}自动执行已取消`;
+  return getBackendMessage("workflow.status.cancelled", { scopeLabel: getExecutionScopeLabel(input) });
 }
 
 function buildAutoExecutionResumeAction(input: WorkflowExplainabilityInput): string {
-  return `继续自动执行${getExecutionScopeLabel(input)}`;
+  return getBackendMessage("workflow.action.resume_auto_execution", { scopeLabel: getExecutionScopeLabel(input) });
 }
 
 function buildAutoExecutionPreparedReason(input: WorkflowExplainabilityInput): string {
   const scopeLabel = getExecutionScopeLabel(input);
-  return `${scopeLabel}细化已准备完成，你可以进入章节执行，或继续让系统自动执行${scopeLabel}。`;
+  return getBackendMessage("workflow.reason.prepared_scope", { scopeLabel });
 }
 
 function buildAutoExecutionPausedReason(input: WorkflowExplainabilityInput): string {
-  return `${getExecutionScopeLabel(input)}自动执行在批量阶段暂停了，建议先看结果，再决定是否继续自动执行当前范围。`;
+  return getBackendMessage("workflow.reason.paused_scope", { scopeLabel: getExecutionScopeLabel(input) });
 }
 
 function getStageLabel(stage: NovelWorkflowStage | null | undefined): string | null {
-  return stage ? (NOVEL_WORKFLOW_STAGE_LABELS[stage] ?? stage) : null;
+  return stage ? getNovelWorkflowStageLabel(stage) : null;
 }
 
 function getLastHealthyStage(input: WorkflowExplainabilityInput): string | null {
@@ -125,7 +129,10 @@ function getLastHealthyStage(input: WorkflowExplainabilityInput): string | null 
   if (mappedStage) {
     return getStageLabel(mappedStage);
   }
-  return input.currentStage?.trim() || null;
+  const normalizedCurrentStage = normalizeNovelWorkflowStage(input.currentStage);
+  return normalizedCurrentStage
+    ? getStageLabel(normalizedCurrentStage)
+    : input.currentStage?.trim() || null;
 }
 
 function getCurrentStageLabel(input: WorkflowExplainabilityInput): string | null {
@@ -133,8 +140,9 @@ function getCurrentStageLabel(input: WorkflowExplainabilityInput): string | null
   if (mappedStage) {
     return getStageLabel(mappedStage);
   }
-  if (input.currentStage && input.currentStage in NOVEL_WORKFLOW_STAGE_LABELS) {
-    return getStageLabel(input.currentStage as NovelWorkflowStage);
+  const normalizedCurrentStage = normalizeNovelWorkflowStage(input.currentStage);
+  if (normalizedCurrentStage) {
+    return getStageLabel(normalizedCurrentStage);
   }
   return input.currentStage?.trim() || null;
 }
@@ -147,16 +155,16 @@ export function buildWorkflowResumeAction(
   const explainabilityInput = { status, checkpointType, executionScopeLabel } satisfies WorkflowExplainabilityInput;
   if (status === "waiting_approval") {
     if (checkpointType === "candidate_selection_required") {
-      return "继续确认书级方向";
+      return getBackendMessage("workflow.action.candidate_selection_required");
     }
     if (checkpointType === "book_contract_ready") {
-      return "查看 Book Contract";
+      return getBackendMessage("workflow.action.book_contract_ready");
     }
     if (checkpointType === "character_setup_required") {
-      return "去审核角色准备";
+      return getBackendMessage("workflow.action.character_setup_required");
     }
     if (checkpointType === "volume_strategy_ready") {
-      return "查看卷战略";
+      return getBackendMessage("workflow.action.volume_strategy_ready");
     }
     if (checkpointType === "front10_ready") {
       return buildAutoExecutionResumeAction(explainabilityInput);
@@ -165,12 +173,12 @@ export function buildWorkflowResumeAction(
       return buildAutoExecutionResumeAction(explainabilityInput);
     }
     if (checkpointType === "replan_required") {
-      return "处理重规划";
+      return getBackendMessage("workflow.action.replan_required");
     }
     if (checkpointType === "workflow_completed") {
-      return "进入章节执行";
+      return getBackendMessage("workflow.action.enter_chapter_execution");
     }
-    return "继续小说主流程";
+    return getBackendMessage("workflow.action.continue_main_flow");
   }
   if (status === "failed" || status === "cancelled") {
     if (checkpointType === "front10_ready") {
@@ -180,15 +188,15 @@ export function buildWorkflowResumeAction(
       return buildAutoExecutionResumeAction(explainabilityInput);
     }
     if (checkpointType === "workflow_completed") {
-      return "进入章节执行";
+      return getBackendMessage("workflow.action.enter_chapter_execution");
     }
-    return "从最近检查点恢复";
+    return getBackendMessage("workflow.action.recover_from_checkpoint");
   }
   if (status === "running" || status === "queued") {
-    return "查看当前进度";
+    return getBackendMessage("workflow.action.view_progress");
   }
   if (status === "succeeded" && checkpointType === "workflow_completed") {
-    return "进入章节执行";
+    return getBackendMessage("workflow.action.enter_chapter_execution");
   }
   return null;
 }
@@ -197,8 +205,8 @@ function buildDisplayStatus(input: WorkflowExplainabilityInput): string | null {
   if (isAutoDirectorRecoveryInProgress(input)) {
     const currentStageLabel = getCurrentStageLabel(input);
     return currentStageLabel
-      ? `${currentStageLabel}恢复中`
-      : "自动导演恢复中";
+      ? getBackendMessage("workflow.display.recovery_in_progress", { stageLabel: currentStageLabel })
+      : getBackendMessage("workflow.display.auto_director_recovering");
   }
   if (
     (input.status === "queued" || input.status === "running")
@@ -214,45 +222,45 @@ function buildDisplayStatus(input: WorkflowExplainabilityInput): string | null {
       return buildAutoExecutionPausedStatus(input);
     }
     return input.checkpointType
-      ? CHECKPOINT_DISPLAY_STATUS[input.checkpointType]
-      : "等待继续小说主流程";
+      ? getBackendMessage(CHECKPOINT_DISPLAY_STATUS_KEYS[input.checkpointType])
+      : getBackendMessage("workflow.display.waiting_continue");
   }
   if (input.status === "running") {
     const currentStageLabel = getCurrentStageLabel(input);
     return currentStageLabel
-      ? `${currentStageLabel}进行中`
-      : "自动导演进行中";
+      ? getBackendMessage("workflow.display.stage_running", { stageLabel: currentStageLabel })
+      : getBackendMessage("workflow.display.auto_director_running");
   }
   if (input.status === "queued") {
-    return "自动导演排队中";
+    return getBackendMessage("workflow.display.auto_director_queued");
   }
   if (input.status === "failed") {
     if (input.checkpointType === "chapter_batch_ready") {
       return buildAutoExecutionPausedStatus(input);
     }
-    return "自动导演执行失败";
+    return getBackendMessage("workflow.display.auto_director_failed");
   }
   if (input.status === "cancelled") {
     if (input.checkpointType === "chapter_batch_ready") {
       return buildAutoExecutionCancelledStatus(input);
     }
-    return "自动导演已取消";
+    return getBackendMessage("workflow.display.auto_director_cancelled");
   }
   if (input.checkpointType === "workflow_completed") {
-    return "自动导演已完成";
+    return getBackendMessage("workflow.display.auto_director_completed");
   }
-  return input.status === "succeeded" ? "小说主流程已完成" : null;
+  return input.status === "succeeded" ? getBackendMessage("workflow.display.main_flow_completed") : null;
 }
 
 function buildBlockingReason(input: WorkflowExplainabilityInput): string | null {
   if (isAutoDirectorRecoveryInProgress(input)) {
-    return input.lastError?.trim() || "自动导演任务正在从服务重启中恢复。";
+    return input.lastError?.trim() || getBackendMessage("workflow.blocking.recovering");
   }
   if (input.status === "running" || input.status === "succeeded") {
     return null;
   }
   if (input.status === "queued") {
-    return "任务已进入队列，正在等待工作线程和模型资源可用。";
+    return getBackendMessage("workflow.blocking.queued");
   }
   if (input.status === "waiting_approval") {
     if (input.checkpointType === "front10_ready") {
@@ -262,20 +270,20 @@ function buildBlockingReason(input: WorkflowExplainabilityInput): string | null 
       return buildAutoExecutionPausedReason(input);
     }
     return input.checkpointType
-      ? CHECKPOINT_BLOCKING_REASON[input.checkpointType]
-      : "当前流程已停在安全检查点，处理完当前阶段后才能继续。";
+      ? getBackendMessage(CHECKPOINT_BLOCKING_REASON_KEYS[input.checkpointType])
+      : getBackendMessage("workflow.blocking.safe_checkpoint");
   }
   if (input.status === "failed") {
     if (input.checkpointType === "chapter_batch_ready") {
-      return `${getExecutionScopeLabel(input)}自动执行在批量阶段中断了，建议从最近健康阶段继续恢复。`;
+      return getBackendMessage("workflow.blocking.failed_batch", { scopeLabel: getExecutionScopeLabel(input) });
     }
-    return normalizeFailureSummary(input.lastError, "当前阶段执行失败，建议从最近检查点恢复。");
+    return normalizeFailureSummary(input.lastError, getBackendMessage("workflow.blocking.failed_default"));
   }
   if (input.status === "cancelled") {
     if (input.checkpointType === "chapter_batch_ready") {
-      return `${getExecutionScopeLabel(input)}自动执行已取消，如需继续可从最近健康阶段恢复。`;
+      return getBackendMessage("workflow.blocking.cancelled_batch", { scopeLabel: getExecutionScopeLabel(input) });
     }
-    return "任务已取消，如仍需继续，可从最近检查点恢复。";
+    return getBackendMessage("workflow.blocking.cancelled_default");
   }
   return null;
 }

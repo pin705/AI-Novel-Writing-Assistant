@@ -11,6 +11,8 @@ import type {
   VolumeChapterPlan,
   VolumePlan,
 } from "@ai-novel/shared/types/novel";
+import { AppError } from "../../../middleware/errorHandler";
+import { getBackendMessage } from "../../../i18n";
 import { runStructuredPrompt } from "../../../prompting/core/promptRunner";
 import {
   chapterEditorWorkspaceDiagnosisPrompt,
@@ -230,12 +232,12 @@ export class ChapterEditorWorkspaceService {
     ]);
 
     if (!novel) {
-      throw new Error("小说不存在。");
+      throw new AppError("novel.chapter_editor.error.novel_not_found", 400);
     }
 
     const chapter = novel.chapters.find((item) => item.id === chapterId);
     if (!chapter) {
-      throw new Error("章节不存在。");
+      throw new AppError("novel.chapter_editor.error.chapter_not_found", 400);
     }
 
     const latestStateSnapshot = normalizeSnapshotDates(latestStateSnapshotRaw);
@@ -257,21 +259,21 @@ export class ChapterEditorWorkspaceService {
       || currentVolumeChapter?.purpose?.trim()
       || currentVolumeChapter?.summary?.trim()
       || chapter.expectation?.trim()
-      || "当前重点是保证本章继续服务卷内推进。";
+      || getBackendMessage("novel.chapter_editor.workspace.chapter_mission.default");
     const chapterRoleInVolume = currentVolumeChapter?.purpose?.trim()
       || toRoleLabel(chapterPlan?.planRole)
       || chapterPlan?.phaseLabel?.trim()
-      || "负责承接本章在卷内的推进职责。";
+      || getBackendMessage("novel.chapter_editor.workspace.chapter_role.default");
     const macroContext: ChapterEditorMacroContext = {
       chapterRoleInVolume,
-      volumeTitle: location.volume?.title?.trim() || "未识别所属卷",
+      volumeTitle: location.volume?.title?.trim() || getBackendMessage("novel.chapter_editor.workspace.volume.unrecognized"),
       volumePositionLabel: location.volumePositionLabel,
       volumePhaseLabel: location.volumePhaseLabel,
       paceDirective: buildPaceDirective(location.volumePhaseLabel, novel.pacePreference),
       chapterMission,
-      previousChapterBridge: buildVolumeChapterBridge(previousVolumeChapter, buildBridgeLabel(previousChapter, "本章前没有可承接的上一章摘要。")),
-      nextChapterBridge: buildVolumeChapterBridge(nextVolumeChapter, buildBridgeLabel(nextChapter, "本章后没有可参考的下一章摘要。")),
-      activePlotThreads: activePlotThreads.length > 0 ? activePlotThreads : ["当前没有明确抽取出的主线提醒。"],
+      previousChapterBridge: buildVolumeChapterBridge(previousVolumeChapter, buildBridgeLabel(previousChapter, getBackendMessage("novel.chapter_editor.workspace.bridge.previous.missing"))),
+      nextChapterBridge: buildVolumeChapterBridge(nextVolumeChapter, buildBridgeLabel(nextChapter, getBackendMessage("novel.chapter_editor.workspace.bridge.next.missing"))),
+      activePlotThreads: activePlotThreads.length > 0 ? activePlotThreads : [getBackendMessage("novel.chapter_editor.workspace.plot_threads.none")],
       characterStateSummary: buildCharacterStateSummary(latestStateSnapshot),
       worldConstraintSummary: buildWorldConstraintSummary(novel.world),
       mustKeepConstraints: buildMustKeepConstraints(novel.bookContract, chapterPlan),
@@ -301,7 +303,7 @@ export class ChapterEditorWorkspaceService {
         chapterMeta: {
           chapterId: context.chapter.id,
           order: context.chapter.order,
-          title: context.chapter.title?.trim() || "未命名章节",
+          title: context.chapter.title?.trim() || getBackendMessage("novel.chapter_editor.workspace.chapter.untitled"),
           wordCount: countEditorWords(context.normalizedContent),
           openIssueCount: context.openAuditIssues.length,
           styleSummary: context.styleSummary || null,
@@ -310,7 +312,7 @@ export class ChapterEditorWorkspaceService {
         macroContext: context.macroContext,
         diagnosticCards: [],
         recommendedTask: null,
-        refreshReason: "当前章节正文为空，先补正文后再由 AI 生成修文建议。",
+        refreshReason: getBackendMessage("novel.chapter_editor.workspace.refresh_reason.empty_content"),
       };
     }
 
@@ -351,7 +353,7 @@ export class ChapterEditorWorkspaceService {
         chapterMeta: {
           chapterId: context.chapter.id,
           order: context.chapter.order,
-          title: context.chapter.title?.trim() || "未命名章节",
+          title: context.chapter.title?.trim() || getBackendMessage("novel.chapter_editor.workspace.chapter.untitled"),
           wordCount: countEditorWords(context.normalizedContent),
           openIssueCount: context.openAuditIssues.length,
           styleSummary: context.styleSummary || null,
@@ -360,7 +362,7 @@ export class ChapterEditorWorkspaceService {
         macroContext: context.macroContext,
         diagnosticCards,
         recommendedTask,
-        refreshReason: "已基于本章内容、卷内定位与开放问题实时生成修文建议。",
+        refreshReason: getBackendMessage("novel.chapter_editor.workspace.refresh_reason.generated"),
       };
     } catch (error) {
       console.warn("Failed to generate chapter editor workspace diagnosis.", error);
@@ -368,7 +370,7 @@ export class ChapterEditorWorkspaceService {
         chapterMeta: {
           chapterId: context.chapter.id,
           order: context.chapter.order,
-          title: context.chapter.title?.trim() || "未命名章节",
+          title: context.chapter.title?.trim() || getBackendMessage("novel.chapter_editor.workspace.chapter.untitled"),
           wordCount: countEditorWords(context.normalizedContent),
           openIssueCount: context.openAuditIssues.length,
           styleSummary: context.styleSummary || null,
@@ -377,7 +379,7 @@ export class ChapterEditorWorkspaceService {
         macroContext: context.macroContext,
         diagnosticCards: [],
         recommendedTask: null,
-        refreshReason: "AI 暂未完成本章诊断，你仍可先手动定位片段或直接告诉 AI 怎么改。",
+        refreshReason: getBackendMessage("novel.chapter_editor.workspace.refresh_reason.fallback"),
       };
     }
   }

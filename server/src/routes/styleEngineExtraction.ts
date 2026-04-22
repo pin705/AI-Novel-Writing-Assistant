@@ -1,6 +1,7 @@
 import { Router } from "express";
 import type { ApiResponse } from "@ai-novel/shared/types/api";
 import { z } from "zod";
+import { getBackendMessage } from "../i18n";
 import { llmProviderSchema } from "../llm/providerSchema";
 import { authMiddleware } from "../middleware/auth";
 import { validate } from "../middleware/validate";
@@ -84,7 +85,7 @@ router.post("/style-extractions/from-text", validate({ body: fromTextSchema }), 
     res.status(200).json({
       success: true,
       data,
-      message: "文本写法特征提取完成。",
+      message: getBackendMessage("styleEngineExtraction.route.extraction.completed"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -97,7 +98,7 @@ router.post("/style-profiles/from-text", validate({ body: fromTextSchema }), asy
     res.status(201).json({
       success: true,
       data,
-      message: "从文本提取写法成功。",
+      message: getBackendMessage("styleEngineExtraction.route.profile.created_from_text"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -110,7 +111,7 @@ router.post("/style-profiles/from-extraction", validate({ body: fromExtractionSc
     res.status(201).json({
       success: true,
       data,
-      message: "已按特征选择生成写法资产。",
+      message: getBackendMessage("styleEngineExtraction.route.profile.created_from_extraction"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);

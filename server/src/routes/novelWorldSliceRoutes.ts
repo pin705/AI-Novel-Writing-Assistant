@@ -5,6 +5,7 @@ import {
   storyWorldSliceOverridesSchema,
 } from "@ai-novel/shared/types/storyWorldSlice";
 import { z } from "zod";
+import { getBackendMessage } from "../i18n";
 import { llmProviderSchema } from "../llm/providerSchema";
 import { validate } from "../middleware/validate";
 import { NovelService } from "../services/novel/NovelService";
@@ -36,7 +37,7 @@ export function registerNovelWorldSliceRoutes(input: RegisterNovelWorldSliceRout
       res.status(200).json({
         success: true,
         data,
-        message: "Novel world slice loaded.",
+        message: getBackendMessage("novel.world_slice.route.loaded"),
       } satisfies ApiResponse<typeof data>);
     } catch (error) {
       next(error);
@@ -54,7 +55,7 @@ export function registerNovelWorldSliceRoutes(input: RegisterNovelWorldSliceRout
         res.status(200).json({
           success: true,
           data,
-          message: "Novel world slice refreshed.",
+          message: getBackendMessage("novel.world_slice.route.refreshed"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);
@@ -75,7 +76,7 @@ export function registerNovelWorldSliceRoutes(input: RegisterNovelWorldSliceRout
         res.status(200).json({
           success: true,
           data,
-          message: "Novel world slice preferences updated.",
+          message: getBackendMessage("novel.world_slice.route.preferences.updated"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);

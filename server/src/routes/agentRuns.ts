@@ -4,6 +4,8 @@ import type { AgentRunDetail, ReplayRequest } from "@ai-novel/shared/types/agent
 import type { TaskStatus } from "@ai-novel/shared/types/task";
 import { z } from "zod";
 import { agentRuntime } from "../agents";
+import { localizeAgentRunCurrentStep, localizeAgentRunRecord } from "../agents/runtime/agentRunLabels";
+import { getBackendMessage } from "../i18n";
 import { authMiddleware } from "../middleware/auth";
 import { validate } from "../middleware/validate";
 import { buildTaskRecoveryHint, normalizeFailureSummary } from "../services/task/taskSupport";
@@ -40,9 +42,9 @@ const replayBodySchema = z.object({
 function enrichRunDetail(detail: AgentRunDetail): AgentRunDetail {
   const failedStep = [...detail.steps].reverse().find((step) => step.status === "failed");
   const failureSummary = detail.run.status === "failed"
-    ? normalizeFailureSummary(detail.run.error ?? failedStep?.error, "运行失败，但没有记录明确错误。")
+    ? normalizeFailureSummary(detail.run.error ?? failedStep?.error, getBackendMessage("task.agentRun.failure.default"))
     : detail.run.status === "waiting_approval"
-      ? "当前运行在等待审批。"
+      ? getBackendMessage("task.agentRun.failure.waiting_approval")
       : detail.run.error ?? null;
   return {
     ...detail,
@@ -56,20 +58,20 @@ function enrichRunDetail(detail: AgentRunDetail): AgentRunDetail {
       ? {
         type: "novel",
         id: detail.run.novelId,
-        label: `小说 ${detail.run.novelId}`,
+        label: getBackendMessage("task.agentRun.owner.novel", { novelId: detail.run.novelId }),
         route: `/novels/${detail.run.novelId}/edit`,
       }
       : {
         type: "agent_run",
         id: detail.run.id,
-        label: "全局运行",
+        label: getBackendMessage("task.agentRun.source.global"),
         route: `/creative-hub?runId=${detail.run.id}`,
       },
     targetResources: detail.run.chapterId
       ? [{
         type: "chapter",
         id: detail.run.chapterId,
-        label: detail.run.currentStep ?? "章节目标",
+        label: localizeAgentRunCurrentStep(detail.run.currentStep) ?? getBackendMessage("task.agentRun.target.chapter_goal"),
         route: detail.run.novelId ? `/novels/${detail.run.novelId}/edit` : `/creative-hub?runId=${detail.run.id}`,
       }]
       : [],
@@ -81,16 +83,17 @@ router.use(authMiddleware);
 router.get("/", validate({ query: listQuerySchema }), async (req, res, next) => {
   try {
     const query = listQuerySchema.parse(req.query);
-    const data = await agentRuntime.listRuns({
+    const rawData = await agentRuntime.listRuns({
       status: query.status,
       novelId: query.novelId,
       sessionId: query.sessionId,
       limit: query.limit,
     });
+    const data = rawData.map((item) => localizeAgentRunRecord(item));
     res.status(200).json({
       success: true,
       data,
-      message: "Agent runs loaded.",
+      message: getBackendMessage("agentRun.route.list.loaded"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -105,14 +108,14 @@ router.get("/:id", validate({ params: runIdParamsSchema }), async (req, res, nex
     if (!data) {
       res.status(404).json({
         success: false,
-        error: "Agent run not found.",
+        error: getBackendMessage("agentRun.route.not_found"),
       } satisfies ApiResponse<null>);
       return;
     }
     res.status(200).json({
       success: true,
       data,
-      message: "Agent run loaded.",
+      message: getBackendMessage("agentRun.route.detail.loaded"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -135,7 +138,9 @@ router.post(
       res.status(200).json({
         success: true,
         data,
-        message: body.action === "approve" ? "Approval accepted." : "Approval rejected.",
+        message: body.action === "approve"
+          ? getBackendMessage("agentRun.route.approval.approved")
+          : getBackendMessage("agentRun.route.approval.rejected"),
       } satisfies ApiResponse<typeof data>);
     } catch (error) {
       next(error);
@@ -154,7 +159,7 @@ router.post(
       res.status(200).json({
         success: true,
         data,
-        message: "Replay started.",
+        message: getBackendMessage("agentRun.route.replay.started"),
       } satisfies ApiResponse<typeof data>);
     } catch (error) {
       next(error);

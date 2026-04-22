@@ -1,4 +1,5 @@
 import { prisma } from "../../../db/prisma";
+import { getBackendMessage } from "../../../i18n";
 import type { DirectorWorkflowSeedPayload } from "../director/novelDirectorHelpers";
 import type { DirectorAutoExecutionState } from "@ai-novel/shared/types/novelDirector";
 import {
@@ -16,7 +17,6 @@ import {
   buildNovelEditResumeTarget,
   parseSeedPayload,
   stringifyResumeTarget,
-  NOVEL_WORKFLOW_STAGE_LABELS,
 } from "./novelWorkflow.shared";
 
 export interface AutoDirectorChapterBatchReconciliation {
@@ -63,7 +63,9 @@ export function reconcileAutoDirectorChapterBatchState(input: {
   }
 
   const failureMessage = input.failureMessage?.trim()
-    || `${buildDirectorAutoExecutionScopeLabelFromState(autoExecution, range.totalChapterCount)}自动执行未能全部通过质量要求。`;
+    || getBackendMessage("workflow.auto_execution.quality_not_passed", {
+      scopeLabel: buildDirectorAutoExecutionScopeLabelFromState(autoExecution, range.totalChapterCount),
+    });
   return {
     autoExecution,
     checkpointType: "chapter_batch_ready",
@@ -155,7 +157,7 @@ export async function syncAutoDirectorChapterBatchCheckpoint(input: {
       data: {
         status: "succeeded",
         progress: reconciliation.progress,
-        currentStage: NOVEL_WORKFLOW_STAGE_LABELS.quality_repair,
+        currentStage: "quality_repair",
         currentItemKey: "quality_repair",
         currentItemLabel: reconciliation.itemLabel,
         checkpointType: "workflow_completed",
@@ -182,7 +184,7 @@ export async function syncAutoDirectorChapterBatchCheckpoint(input: {
   await prisma.novelWorkflowTask.update({
     where: { id: input.taskId },
     data: {
-      currentStage: NOVEL_WORKFLOW_STAGE_LABELS.quality_repair,
+      currentStage: "quality_repair",
       currentItemKey: "quality_repair",
       currentItemLabel: reconciliation.itemLabel,
       checkpointSummary: reconciliation.checkpointSummary,

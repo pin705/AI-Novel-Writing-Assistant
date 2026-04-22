@@ -1,6 +1,7 @@
 import { Router } from "express";
 import type { ApiResponse } from "@ai-novel/shared/types/api";
 import { z } from "zod";
+import { getBackendMessage } from "../i18n";
 import { authMiddleware } from "../middleware/auth";
 import { validate } from "../middleware/validate";
 import { KnowledgeService } from "../services/knowledge/KnowledgeService";
@@ -52,7 +53,7 @@ router.get("/documents", validate({ query: listDocumentsQuerySchema }), async (r
     res.status(200).json({
       success: true,
       data,
-      message: "Knowledge documents loaded.",
+      message: getBackendMessage("knowledge.route.documents.loaded"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -66,7 +67,7 @@ router.post("/documents", validate({ body: createDocumentSchema }), async (req, 
     res.status(201).json({
       success: true,
       data,
-      message: "Knowledge document created.",
+      message: getBackendMessage("knowledge.route.document.created"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -80,14 +81,14 @@ router.get("/documents/:id", validate({ params: documentParamsSchema }), async (
     if (!data) {
       res.status(404).json({
         success: false,
-        error: "Knowledge document not found.",
+        error: getBackendMessage("task.error.knowledge.document_not_found"),
       } satisfies ApiResponse<null>);
       return;
     }
     res.status(200).json({
       success: true,
       data,
-      message: "Knowledge document loaded.",
+      message: getBackendMessage("knowledge.route.document.loaded"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -104,7 +105,7 @@ router.post(
       res.status(201).json({
         success: true,
         data,
-        message: "Knowledge document version created.",
+        message: getBackendMessage("knowledge.route.version.created"),
       } satisfies ApiResponse<typeof data>);
     } catch (error) {
       next(error);
@@ -123,7 +124,7 @@ router.post(
       res.status(200).json({
         success: true,
         data,
-        message: "Knowledge document version activated.",
+        message: getBackendMessage("knowledge.route.version.activated"),
       } satisfies ApiResponse<typeof data>);
     } catch (error) {
       next(error);
@@ -138,7 +139,7 @@ router.post("/documents/:id/reindex", validate({ params: documentParamsSchema })
     res.status(202).json({
       success: true,
       data,
-      message: "Knowledge document reindex queued.",
+      message: getBackendMessage("knowledge.route.reindex.queued"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -156,7 +157,7 @@ router.post(
       res.status(200).json({
         success: true,
         data,
-        message: "Knowledge document recall test completed.",
+        message: getBackendMessage("knowledge.route.recall.completed"),
       } satisfies ApiResponse<typeof data>);
     } catch (error) {
       next(error);
@@ -175,7 +176,7 @@ router.patch(
       res.status(200).json({
         success: true,
         data,
-        message: "Knowledge document updated.",
+        message: getBackendMessage("knowledge.route.document.updated"),
       } satisfies ApiResponse<typeof data>);
     } catch (error) {
       next(error);

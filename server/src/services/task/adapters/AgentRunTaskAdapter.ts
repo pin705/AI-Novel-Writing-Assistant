@@ -1,5 +1,7 @@
 import type { AgentRunStatus } from "@ai-novel/shared/types/agent";
 import type { TaskStatus, UnifiedTaskDetail, UnifiedTaskStep, UnifiedTaskSummary } from "@ai-novel/shared/types/task";
+import { getBackendMessage } from "../../../i18n";
+import { localizeAgentRunCurrentStep } from "../../../agents/runtime/agentRunLabels";
 import { prisma } from "../../../db/prisma";
 import { agentRuntime } from "../../../agents";
 import { AppError } from "../../../middleware/errorHandler";
@@ -39,10 +41,10 @@ export class AgentRunTaskAdapter {
     return {
       id: item.id,
       kind: "agent_run",
-      title: item.goal.slice(0, 80) || "Agent run",
+      title: item.goal.slice(0, 80) || getBackendMessage("task.agentRun.title.default"),
       status: item.status as TaskStatus,
       progress,
-      currentStage: item.currentStep,
+      currentStage: localizeAgentRunCurrentStep(item.currentStep) ?? item.currentStep,
       currentItemLabel: `steps:${stepCount}`,
       attemptCount: 0,
       maxAttempts: 0,
@@ -51,33 +53,35 @@ export class AgentRunTaskAdapter {
       updatedAt: item.updatedAt.toISOString(),
       heartbeatAt: item.status === "running" || item.status === "waiting_approval" ? item.updatedAt.toISOString() : null,
       ownerId: item.novelId ?? item.id,
-      ownerLabel: item.novelId ? `Novel ${item.novelId}` : "Global chat",
+      ownerLabel: item.novelId
+        ? getBackendMessage("task.agentRun.owner.novel", { novelId: item.novelId })
+        : getBackendMessage("task.agentRun.owner.global"),
       sourceRoute: `/creative-hub?runId=${item.id}${item.novelId ? `&novelId=${item.novelId}` : ""}`,
       failureCode: item.status === "failed" ? "AGENT_RUN_FAILED" : null,
       failureSummary: item.status === "failed"
-        ? normalizeFailureSummary(item.error, "运行失败，但没有记录明确错误。")
+        ? normalizeFailureSummary(item.error, getBackendMessage("task.agentRun.failure.default"))
         : item.status === "waiting_approval"
-          ? "当前运行在等待审批。"
+          ? getBackendMessage("task.agentRun.failure.waiting_approval")
           : item.error,
       recoveryHint: buildTaskRecoveryHint("agent_run", item.status as TaskStatus),
       sourceResource: item.novelId
         ? {
           type: "novel",
           id: item.novelId,
-          label: `小说 ${item.novelId}`,
+          label: getBackendMessage("task.agentRun.owner.novel", { novelId: item.novelId }),
           route: `/novels/${item.novelId}/edit`,
         }
         : {
           type: "agent_run",
           id: item.id,
-          label: "全局运行",
+          label: getBackendMessage("task.agentRun.source.global"),
           route: `/creative-hub?runId=${item.id}`,
         },
       targetResources: item.chapterId
         ? [{
           type: "chapter",
           id: item.chapterId,
-          label: item.currentStep ?? "章节目标",
+          label: localizeAgentRunCurrentStep(item.currentStep) ?? getBackendMessage("task.agentRun.target.chapter_goal"),
           route: item.novelId ? `/novels/${item.novelId}/edit` : `/creative-hub?runId=${item.id}`,
         }]
         : [],
@@ -182,26 +186,26 @@ export class AgentRunTaskAdapter {
 
   async retry(id: string): Promise<UnifiedTaskDetail> {
     if (await isTaskArchived("agent_run", id)) {
-      throw new AppError("Task not found.", 404);
+      throw new AppError(getBackendMessage("task.error.not_found"), 404);
     }
 
     const result = await agentRuntime.retryRun(id);
     const detail = await this.detail(result.run.id);
     if (!detail) {
-      throw new AppError("Task not found after retry.", 404);
+      throw new AppError(getBackendMessage("task.error.not_found_after_retry"), 404);
     }
     return detail;
   }
 
   async cancel(id: string): Promise<UnifiedTaskDetail> {
     if (await isTaskArchived("agent_run", id)) {
-      throw new AppError("Task not found.", 404);
+      throw new AppError(getBackendMessage("task.error.not_found"), 404);
     }
 
     await agentRuntime.cancelRun(id);
     const detail = await this.detail(id);
     if (!detail) {
-      throw new AppError("Task not found after cancellation.", 404);
+      throw new AppError(getBackendMessage("task.error.not_found_after_cancellation"), 404);
     }
     return detail;
   }
@@ -219,10 +223,10 @@ export class AgentRunTaskAdapter {
       },
     });
     if (!run) {
-      throw new AppError("Task not found.", 404);
+      throw new AppError(getBackendMessage("task.error.not_found"), 404);
     }
     if (!isArchivableTaskStatus(run.status as TaskStatus)) {
-      throw new AppError("Only completed, failed, or cancelled tasks can be archived.", 400);
+      throw new AppError(getBackendMessage("task.error.archive_requires_terminal_status"), 400);
     }
 
     await recordTaskArchive("agent_run", id);

@@ -1,4 +1,5 @@
 import { prisma } from "../../db/prisma";
+import { AppError } from "../../middleware/errorHandler";
 import { runStructuredPrompt } from "../../prompting/core/promptRunner";
 import {
   characterEvolutionPrompt,
@@ -25,7 +26,7 @@ export class NovelCoreCharacterService {
         where: { id: input.baseCharacterId },
       });
       if (!baseCharacter) {
-        throw new Error("基础角色不存在");
+        throw new AppError("novel.error.base_character_not_found", 404);
       }
       payload = {
         ...payload,
@@ -46,7 +47,7 @@ export class NovelCoreCharacterService {
       select: { id: true, currentState: true, currentGoal: true },
     });
     if (!exists) {
-      throw new Error("角色不存在");
+      throw new AppError("novel.error.character_not_found", 404);
     }
 
     const hasStateChanged = typeof input.currentState === "string" && input.currentState !== exists.currentState;
@@ -67,7 +68,7 @@ export class NovelCoreCharacterService {
     queueRagDelete("character", characterId);
     const deleted = await prisma.character.deleteMany({ where: { id: characterId, novelId } });
     if (deleted.count === 0) {
-      throw new Error("角色不存在");
+      throw new AppError("novel.error.character_not_found", 404);
     }
   }
 
@@ -87,7 +88,7 @@ export class NovelCoreCharacterService {
       where: { id: characterId, novelId },
     });
     if (!character) {
-      throw new Error("角色不存在");
+      throw new AppError("novel.error.character_not_found", 404);
     }
 
     const chapters = await prisma.chapter.findMany({
@@ -221,7 +222,7 @@ export class NovelCoreCharacterService {
     ]);
 
     if (!novel || !character) {
-      throw new Error("小说或角色不存在");
+      throw new AppError("novel.error.novel_or_character_not_found", 404);
     }
 
     const timelineText = timelines.length > 0
@@ -307,7 +308,7 @@ export class NovelCoreCharacterService {
       }),
     ]);
     if (!novel || !character) {
-      throw new Error("小说或角色不存在");
+      throw new AppError("novel.error.novel_or_character_not_found", 404);
     }
     if (!novel.world) {
       return {

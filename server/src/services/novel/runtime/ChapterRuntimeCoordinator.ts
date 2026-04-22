@@ -6,6 +6,8 @@ import type {
   RuntimeStyleDetectionReport,
 } from "@ai-novel/shared/types/chapterRuntime";
 import { prisma } from "../../../db/prisma";
+import { getBackendMessage, type BackendMessageKey } from "../../../i18n";
+import { AppError } from "../../../middleware/errorHandler";
 import { auditService } from "../../audit/AuditService";
 import { buildSyntheticPayoffIssues } from "../../payoff/payoffLedgerShared";
 import { plannerService } from "../../planner/PlannerService";
@@ -19,6 +21,7 @@ import { GenerationContextAssembler } from "./GenerationContextAssembler";
 import { chapterRuntimeRequestSchema, type ChapterRuntimeRequestInput } from "./chapterRuntimeSchema";
 import { withChapterRepairContext } from "../../../prompting/prompts/novel/chapterLayeredContext";
 import { NovelVolumeService } from "../volume/NovelVolumeService";
+import type { NovelCharacterRequirementActionKey } from "../novelCoreSupport";
 import {
   runPipelineChapterWithRuntime,
   type AssembledRuntimeChapter,
@@ -41,7 +44,11 @@ interface ChapterRuntimeCoordinatorDeps {
   styleDetectionService?: Pick<StyleDetectionService, "check">;
   styleRewriteService?: Pick<StyleRewriteService, "rewrite">;
   agentRuntime?: AgentRuntimeLike;
-  ensureNovelCharacters?: (novelId: string, actionName: string, minCount?: number) => Promise<void>;
+  ensureNovelCharacters?: (
+    novelId: string,
+    actionKey: NovelCharacterRequirementActionKey,
+    minCount?: number,
+  ) => Promise<void>;
   ensureChapterExecutionContract?: (
     novelId: string,
     chapterId: string,
@@ -62,6 +69,15 @@ interface FinalizeChapterContentResult {
   runtimePackage: ChapterRuntimePackage;
   styleReview: StyleReviewResult;
 }
+
+const NOVEL_CHARACTER_ACTION_LABEL_KEYS: Record<NovelCharacterRequirementActionKey, BackendMessageKey> = {
+  generate_structured_outline: "novel.action.generate_structured_outline",
+  generate_novel_bible: "novel.action.generate_novel_bible",
+  generate_story_beats: "novel.action.generate_story_beats",
+  start_pipeline: "novel.action.start_pipeline",
+  run_chapter_pipeline: "novel.action.run_chapter_pipeline",
+  generate_chapter_content: "novel.action.generate_chapter_content",
+};
 
 function parseStringArray(value: string | null | undefined): string[] {
   if (!value?.trim()) {
@@ -179,7 +195,7 @@ export class ChapterRuntimeCoordinator {
     onDone: (fullContent: string, helpers: StreamDoneHelpers) => Promise<void | StreamDonePayload>;
   }> {
     const request = this.deps.validateRequest(options);
-    await this.deps.ensureNovelCharacters(novelId, "generate chapter content");
+    await this.deps.ensureNovelCharacters(novelId, "generate_chapter_content");
     await this.markChapterStatus(chapterId, "generating");
 
     const assembled = await this.deps.assembler.assemble(novelId, chapterId, request);
@@ -715,10 +731,17 @@ export class ChapterRuntimeCoordinator {
     helpers?.writeFrame(payload);
   }
 
-  private async ensureNovelCharacters(novelId: string, actionName: string, minCount = 1): Promise<void> {
+  private async ensureNovelCharacters(
+    novelId: string,
+    actionKey: NovelCharacterRequirementActionKey,
+    minCount = 1,
+  ): Promise<void> {
     const count = await prisma.character.count({ where: { novelId } });
     if (count < minCount) {
-      throw new Error(`请先在本小说中至少添加 ${minCount} 个角色后再${actionName}。`);
+      throw new AppError("novel.error.characters_required", 400, {
+        minCount,
+        action: getBackendMessage(NOVEL_CHARACTER_ACTION_LABEL_KEYS[actionKey]),
+      });
     }
   }
 }

@@ -1,6 +1,7 @@
 import { Router } from "express";
 import type { ApiResponse } from "@ai-novel/shared/types/api";
 import { z } from "zod";
+import { getBackendMessage } from "../i18n";
 import { authMiddleware } from "../middleware/auth";
 import { validate } from "../middleware/validate";
 import { NovelDirectorService } from "../services/novel/director/NovelDirectorService";
@@ -81,7 +82,7 @@ router.post("/bootstrap", validate({ body: bootstrapSchema }), async (req, res, 
     res.status(200).json({
       success: true,
       data,
-      message: "Novel workflow ready.",
+      message: getBackendMessage("novel.workflow.route.ready"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -97,7 +98,9 @@ router.get("/novels/:novelId/auto-director", validate({ params: novelParamsSchem
     res.status(200).json({
       success: true,
       data,
-      message: data ? "Latest auto director task loaded." : "No auto director task found.",
+      message: data
+        ? getBackendMessage("novel.workflow.route.auto_director.latest.loaded")
+        : getBackendMessage("novel.workflow.route.auto_director.not_found"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -115,7 +118,7 @@ router.post("/:id/continue", validate({ params: continueParamsSchema, body: cont
     res.status(200).json({
       success: true,
       data,
-      message: "Novel workflow continued.",
+      message: getBackendMessage("novel.workflow.route.continued"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -133,7 +136,7 @@ router.post("/:id/repair-chapter-titles", validate({ params: continueParamsSchem
     res.status(200).json({
       success: true,
       data,
-      message: "Chapter title repair started.",
+      message: getBackendMessage("novel.workflow.route.chapter_title_repair.started"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -158,7 +161,7 @@ router.post("/sync-stage", validate({ body: syncStageSchema }), async (req, res,
     res.status(200).json({
       success: true,
       data,
-      message: "Novel workflow stage synced.",
+      message: getBackendMessage("novel.workflow.route.stage.synced"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);

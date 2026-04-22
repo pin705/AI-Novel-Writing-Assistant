@@ -1,6 +1,7 @@
 import { Router } from "express";
 import type { ApiResponse } from "@ai-novel/shared/types/api";
 import { buildAgentCatalog } from "../agents/catalog";
+import { getBackendMessage } from "../i18n";
 import { authMiddleware } from "../middleware/auth";
 
 const router = Router();
@@ -12,7 +13,7 @@ router.get("/", (_req, res) => {
   res.status(200).json({
     success: true,
     data,
-    message: "能力目录加载成功。",
+    message: getBackendMessage("agentCatalog.route.loaded"),
   } satisfies ApiResponse<typeof data>);
 });
 

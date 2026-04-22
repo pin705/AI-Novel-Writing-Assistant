@@ -1,6 +1,7 @@
 import type { ReviewIssue } from "@ai-novel/shared/types/novel";
 import type { Prisma } from "@prisma/client";
 import { prisma } from "../../db/prisma";
+import { AppError } from "../../middleware/errorHandler";
 import { novelEventBus } from "../../events";
 import { runWithLlmUsageTracking } from "../../llm/usageTracking";
 import { ChapterRuntimeCoordinator } from "./runtime/ChapterRuntimeCoordinator";
@@ -289,7 +290,7 @@ export class NovelCorePipelineService {
   async startPipelineJob(novelId: string, options: PipelineRunOptions) {
     const rangeKey = this.buildRangeKey(novelId, options.startOrder, options.endOrder);
     return this.withStartLock(rangeKey, async () => {
-      await ensureNovelCharacters(novelId, "启动批量章节流水");
+      await ensureNovelCharacters(novelId, "start_pipeline");
 
       const existingActiveJob = await this.reconcileActivePipelineJobsForRange({
         novelId,
@@ -313,7 +314,7 @@ export class NovelCorePipelineService {
         _count: { order: true },
       });
       if ((chapterStats._count.order ?? 0) === 0) {
-        throw new Error("当前小说还没有章节，请先创建章节后再启动流水线。");
+        throw new AppError("novel.error.no_chapters_for_pipeline", 400);
       }
 
       const chapters = await prisma.chapter.findMany({
@@ -330,7 +331,7 @@ export class NovelCorePipelineService {
       if (chapters.length === 0) {
         const minOrder = chapterStats._min.order ?? 1;
         const maxOrder = chapterStats._max.order ?? 1;
-        throw new Error(`指定区间内没有可生成的章节。当前可用章节范围为第 ${minOrder} 章到第 ${maxOrder} 章。`);
+        throw new AppError("novel.error.no_chapters_in_range", 400, { minOrder, maxOrder });
       }
 
       logPipelineInfo("创建批量任务", {

@@ -1,6 +1,7 @@
 import type { Router } from "express";
 import type { ApiResponse } from "@ai-novel/shared/types/api";
 import { z } from "zod";
+import { getBackendMessage } from "../i18n";
 import { validate } from "../middleware/validate";
 import type { NovelService } from "../services/novel/NovelService";
 
@@ -35,7 +36,7 @@ export function registerNovelPlanningRoutes(input: RegisterNovelPlanningRoutesIn
       res.status(200).json({
         success: true,
         data,
-        message: "Story state loaded.",
+        message: getBackendMessage("novel.planning.route.state.loaded"),
       } satisfies ApiResponse<typeof data>);
     } catch (error) {
       next(error);
@@ -49,7 +50,7 @@ export function registerNovelPlanningRoutes(input: RegisterNovelPlanningRoutesIn
       res.status(200).json({
         success: true,
         data,
-        message: "Latest state snapshot loaded.",
+        message: getBackendMessage("novel.planning.route.state_snapshot.latest.loaded"),
       } satisfies ApiResponse<typeof data>);
     } catch (error) {
       next(error);
@@ -67,7 +68,7 @@ export function registerNovelPlanningRoutes(input: RegisterNovelPlanningRoutesIn
         res.status(200).json({
           success: true,
           data,
-          message: "Payoff ledger loaded.",
+          message: getBackendMessage("novel.planning.route.payoff_ledger.loaded"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);
@@ -85,7 +86,7 @@ export function registerNovelPlanningRoutes(input: RegisterNovelPlanningRoutesIn
         res.status(200).json({
           success: true,
           data,
-          message: "Chapter state snapshot loaded.",
+          message: getBackendMessage("novel.planning.route.chapter_state_snapshot.loaded"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);
@@ -103,7 +104,7 @@ export function registerNovelPlanningRoutes(input: RegisterNovelPlanningRoutesIn
         res.status(200).json({
           success: true,
           data,
-          message: "Story state rebuild completed.",
+          message: getBackendMessage("novel.planning.route.state.rebuilt"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);
@@ -121,7 +122,7 @@ export function registerNovelPlanningRoutes(input: RegisterNovelPlanningRoutesIn
         res.status(200).json({
           success: true,
           data,
-          message: "Book plan generated.",
+          message: getBackendMessage("novel.planning.route.book_plan.generated"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);
@@ -139,7 +140,7 @@ export function registerNovelPlanningRoutes(input: RegisterNovelPlanningRoutesIn
         res.status(200).json({
           success: true,
           data,
-          message: "Arc plan generated.",
+          message: getBackendMessage("novel.planning.route.arc_plan.generated"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);
@@ -161,7 +162,7 @@ export function registerNovelPlanningRoutes(input: RegisterNovelPlanningRoutesIn
         res.status(200).json({
           success: true,
           data,
-          message: "Chapter plan generated.",
+          message: getBackendMessage("novel.planning.route.chapter_plan.generated"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);
@@ -179,7 +180,7 @@ export function registerNovelPlanningRoutes(input: RegisterNovelPlanningRoutesIn
         res.status(200).json({
           success: true,
           data,
-          message: "Chapter plan loaded.",
+          message: getBackendMessage("novel.planning.route.chapter_plan.loaded"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);
@@ -197,7 +198,7 @@ export function registerNovelPlanningRoutes(input: RegisterNovelPlanningRoutesIn
         res.status(200).json({
           success: true,
           data,
-          message: "Replan completed.",
+          message: getBackendMessage("novel.planning.route.replan.completed"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);

@@ -1,6 +1,7 @@
 import type { Router } from "express";
 import type { ApiResponse } from "@ai-novel/shared/types/api";
 import { z } from "zod";
+import { getBackendMessage } from "../i18n";
 import { streamToSSE } from "../llm/streaming";
 import { validate } from "../middleware/validate";
 import type { NovelService } from "../services/novel/NovelService";
@@ -36,7 +37,7 @@ export function registerNovelReviewRoutes(input: RegisterNovelReviewRoutesInput)
         res.status(200).json({
           success: true,
           data,
-          message: "Chapter review completed.",
+          message: getBackendMessage("novel.review.route.chapter.completed"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);
@@ -54,7 +55,7 @@ export function registerNovelReviewRoutes(input: RegisterNovelReviewRoutesInput)
         res.status(200).json({
           success: true,
           data,
-          message: "Continuity audit completed.",
+          message: getBackendMessage("novel.review.route.audit.continuity.completed"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);
@@ -72,7 +73,7 @@ export function registerNovelReviewRoutes(input: RegisterNovelReviewRoutesInput)
         res.status(200).json({
           success: true,
           data,
-          message: "Character audit completed.",
+          message: getBackendMessage("novel.review.route.audit.character.completed"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);
@@ -90,7 +91,7 @@ export function registerNovelReviewRoutes(input: RegisterNovelReviewRoutesInput)
         res.status(200).json({
           success: true,
           data,
-          message: "Plot audit completed.",
+          message: getBackendMessage("novel.review.route.audit.plot.completed"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);
@@ -108,7 +109,7 @@ export function registerNovelReviewRoutes(input: RegisterNovelReviewRoutesInput)
         res.status(200).json({
           success: true,
           data,
-          message: "Full audit completed.",
+          message: getBackendMessage("novel.review.route.audit.full.completed"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);
@@ -126,7 +127,7 @@ export function registerNovelReviewRoutes(input: RegisterNovelReviewRoutesInput)
         res.status(200).json({
           success: true,
           data,
-          message: "Audit reports loaded.",
+          message: getBackendMessage("novel.review.route.audit_reports.loaded"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);
@@ -144,7 +145,7 @@ export function registerNovelReviewRoutes(input: RegisterNovelReviewRoutesInput)
         res.status(200).json({
           success: true,
           data,
-          message: "Audit issue resolved.",
+          message: getBackendMessage("novel.review.route.audit_issue.resolved"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);
@@ -177,7 +178,7 @@ export function registerNovelReviewRoutes(input: RegisterNovelReviewRoutesInput)
       res.status(200).json({
         success: true,
         data,
-        message: "Quality report loaded.",
+        message: getBackendMessage("novel.review.route.quality_report.loaded"),
       } satisfies ApiResponse<typeof data>);
     } catch (error) {
       next(error);

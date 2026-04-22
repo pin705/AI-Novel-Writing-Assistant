@@ -3,8 +3,9 @@ import type { ApiResponse } from "@ai-novel/shared/types/api";
 import type { BuiltinLLMProvider, LLMProvider } from "@ai-novel/shared/types/llm";
 import { z } from "zod";
 import { prisma } from "../db/prisma";
+import { getBackendMessage, translateBackendText } from "../i18n";
 import { setProviderSecretCache } from "../llm/factory";
-import { getProviderModels, refreshProviderModels } from "../llm/modelCatalog";
+import { getProviderModels, ModelCatalogError, refreshProviderModels } from "../llm/modelCatalog";
 import { llmProviderSchema } from "../llm/providerSchema";
 import {
   getProviderEnvApiKey,
@@ -50,7 +51,7 @@ const upsertApiKeySchema = z.object({
   key: z.string().trim().optional(),
   model: z.string().trim().optional(),
   imageModel: z.string().trim().optional(),
-  baseURL: z.union([z.string().trim().url("API URL is invalid."), z.literal("")]).optional(),
+  baseURL: z.union([z.string().trim().url("validation.api_url_invalid"), z.literal("")]).optional(),
   isActive: z.boolean().optional(),
   reasoningEnabled: z.boolean().optional(),
 });
@@ -59,7 +60,7 @@ const createCustomProviderSchema = z.object({
   name: z.string().trim().min(1),
   key: z.string().trim().optional(),
   model: z.string().trim().min(1),
-  baseURL: z.string().trim().url("API URL is invalid."),
+  baseURL: z.string().trim().url("validation.api_url_invalid"),
   isActive: z.boolean().optional(),
   reasoningEnabled: z.boolean().optional(),
 });
@@ -287,7 +288,7 @@ router.get("/rag", async (_req, res, next) => {
     res.status(200).json({
       success: true,
       data,
-      message: "Loaded RAG settings.",
+      message: getBackendMessage("settings.route.rag.loaded"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -343,13 +344,15 @@ router.put(
         && runtimeResult.settings.enabled;
 
       let reindexQueuedCount = 0;
-      let message = "Saved RAG settings.";
+      let message = getBackendMessage("settings.route.rag.saved");
       if (shouldReindex) {
         const reindexResult = await ragServices.ragIndexService.enqueueReindex("all");
         reindexQueuedCount = reindexResult.count;
-        message = `Saved RAG settings and queued ${reindexQueuedCount} reindex job(s).`;
+        message = getBackendMessage("settings.route.rag.saved_and_reindex_queued", {
+          count: reindexQueuedCount,
+        });
       } else if ((embeddingResult.shouldReindex || runtimeResult.shouldReindex) && !runtimeResult.settings.enabled) {
-        message = "Saved RAG settings. Reindex was skipped because RAG is currently disabled.";
+        message = getBackendMessage("settings.route.rag.saved_reindex_skipped_disabled");
       }
 
       const providers = await getRagEmbeddingProviders();
@@ -380,7 +383,7 @@ router.get(
       res.status(200).json({
         success: true,
         data,
-        message: "Loaded embedding models.",
+        message: getBackendMessage("settings.route.rag.embedding_models.loaded"),
       } satisfies ApiResponse<typeof data>);
     } catch (error) {
       next(error);
@@ -406,7 +409,7 @@ router.get("/api-keys", async (_req, res, next) => {
     res.status(200).json({
       success: true,
       data,
-      message: "Loaded provider settings.",
+      message: getBackendMessage("settings.route.providers.loaded"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -437,11 +440,11 @@ router.post(
         reasoningEnabled: data.reasoningEnabled ?? true,
       } : null);
       let models = getFallbackModels(provider, data.model ?? undefined);
-      let message = "Created custom provider.";
+      let message = getBackendMessage("settings.route.custom_provider.created");
       try {
         models = await refreshProviderModels(provider, data.key ?? undefined, data.baseURL ?? undefined);
       } catch {
-        message = "Created custom provider, but refreshing models failed. You can refresh them later.";
+        message = getBackendMessage("settings.route.custom_provider.created_model_refresh_failed");
       }
       res.status(201).json({
         success: true,
@@ -483,24 +486,26 @@ router.delete(
     try {
       const { provider } = req.params as z.infer<typeof providerSchema>;
       if (isBuiltInProvider(provider)) {
-        throw new AppError("Built-in providers cannot be deleted.", 400);
+        throw new AppError("settings.error.builtin_provider_delete_forbidden", 400);
       }
       const existing = await secretStore.getProvider(provider);
       if (!existing) {
-        throw new AppError("Custom provider not found.", 404);
+        throw new AppError("settings.error.custom_provider_not_found", 404);
       }
       const routeInUse = await prisma.modelRouteConfig.findFirst({
         where: { provider },
         select: { taskType: true },
       });
       if (routeInUse) {
-        throw new AppError(`Please reassign model route ${routeInUse.taskType} before deleting this provider.`, 400);
+        throw new AppError(getBackendMessage("settings.error.reassign_model_route_before_delete", {
+          taskType: routeInUse.taskType,
+        }), 400);
       }
       await secretStore.deleteProvider(provider);
       setProviderSecretCache(provider, null);
       res.status(200).json({
         success: true,
-        message: "Deleted custom provider.",
+        message: getBackendMessage("settings.route.custom_provider.deleted"),
       } satisfies ApiResponse<null>);
     } catch (error) {
       next(error);
@@ -521,7 +526,7 @@ router.get("/api-keys/balances", async (_req, res, next) => {
     res.status(200).json({
       success: true,
       data,
-      message: "Loaded provider balances.",
+      message: getBackendMessage("settings.route.provider_balances.loaded"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -538,7 +543,7 @@ router.put(
       const existing = await secretStore.getProvider(provider);
       const existingRecord = existing as APIKeyRecordLike | null;
       if (!isBuiltInProvider(provider) && !existing) {
-        throw new AppError("Custom provider not found.", 404);
+        throw new AppError("settings.error.custom_provider_not_found", 404);
       }
 
       const nextKey = normalizeOptionalText(body.key) ?? normalizeOptionalText(existingRecord?.key);
@@ -555,13 +560,13 @@ router.put(
       const requiresApiKey = providerRequiresApiKey(provider);
 
       if (requiresApiKey && !effectiveKey) {
-        throw new AppError("API key is required.", 400);
+        throw new AppError("settings.error.api_key_required", 400);
       }
       if (!isBuiltInProvider(provider) && !nextModel) {
-        throw new AppError("A default model is required for custom providers.", 400);
+        throw new AppError("settings.error.custom_provider_model_required", 400);
       }
       if (!isBuiltInProvider(provider) && !nextBaseURL) {
-        throw new AppError("An API URL is required for custom providers.", 400);
+        throw new AppError("settings.error.custom_provider_base_url_required", 400);
       }
 
       const data = (isBuiltInProvider(provider)
@@ -594,11 +599,11 @@ router.put(
       } : null);
 
       let models = getFallbackModels(provider, data.model ?? undefined);
-      let message = "Saved provider settings.";
+      let message = getBackendMessage("settings.route.provider.saved");
       try {
         models = await refreshProviderModels(provider, effectiveKey, nextBaseURL ?? getProviderEnvBaseUrl(provider));
       } catch {
-        message = "Saved provider settings, but refreshing models failed. You can refresh them later.";
+        message = getBackendMessage("settings.route.provider.saved_model_refresh_failed");
       }
 
       res.status(200).json({
@@ -641,7 +646,7 @@ router.post(
     try {
       const { provider } = req.params as z.infer<typeof providerSchema>;
       if (!isBuiltInProvider(provider)) {
-        throw new AppError("Balance refresh is not supported for custom providers.", 400);
+        throw new AppError("settings.error.custom_provider_balance_refresh_unsupported", 400);
       }
       const keyConfig = await secretStore.getProvider(provider);
       const data = await providerBalanceService.getProviderBalance({
@@ -651,7 +656,9 @@ router.post(
       res.status(200).json({
         success: true,
         data,
-        message: data.status === "available" ? "Refreshed provider balance." : data.message,
+        message: data.status === "available"
+          ? getBackendMessage("settings.route.provider_balance.refreshed")
+          : translateBackendText(data.message),
       } satisfies ApiResponse<typeof data>);
     } catch (error) {
       next(error);
@@ -668,7 +675,7 @@ router.post(
       const keyConfig = await secretStore.getProvider(provider);
       const effectiveKey = normalizeOptionalText(keyConfig?.key) ?? getProviderEnvApiKey(provider);
       if (providerRequiresApiKey(provider) && !effectiveKey) {
-        throw new AppError("Configure an API key before refreshing models.", 400);
+        throw new AppError("settings.error.configure_api_key_before_refresh_models", 400);
       }
       const models = await refreshProviderModels(
         provider,
@@ -685,14 +692,14 @@ router.post(
           models,
           currentModel,
         },
-        message: "Refreshed provider models.",
+        message: getBackendMessage("settings.route.provider_models.refreshed"),
       } satisfies ApiResponse<{
         provider: string;
         models: string[];
         currentModel: string;
       }>);
     } catch (error) {
-      if (error instanceof Error && /failed|empty/i.test(error.message)) {
+      if (error instanceof ModelCatalogError) {
         next(new AppError(error.message, 400));
         return;
       }

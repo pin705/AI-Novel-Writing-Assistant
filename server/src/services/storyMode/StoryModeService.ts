@@ -1,6 +1,6 @@
 import type { Prisma } from "@prisma/client";
 import { prisma } from "../../db/prisma";
-import { compareLocalizedText } from "../../i18n";
+import { compareLocalizedText, getBackendMessage } from "../../i18n";
 import { AppError } from "../../middleware/errorHandler";
 import { buildStoryModePromptBlock, normalizeStoryModeOutput, sanitizeStoryModeProfile, serializeStoryModeProfile } from "./storyModeProfile";
 import type { StoryModeTreeDraft } from "./storyModeGenerate";
@@ -57,7 +57,7 @@ function normalizeOptionalText(value: string | null | undefined): string | null 
 function normalizeRequiredName(value: string): string {
   const trimmed = value.trim();
   if (!trimmed) {
-    throw new AppError("流派模式名称不能为空。", 400);
+    throw new AppError("storyMode.error.name_required", 400);
   }
   return trimmed;
 }
@@ -78,14 +78,14 @@ function normalizeDraft(input: CreateStoryModeTreeNodeInput): StoryModeTreeDraft
 
 function validateDraftSubtree(draft: StoryModeTreeDraft, depth = 1): void {
   if (depth > 2) {
-    throw new AppError("流派模式树最多只支持两级结构。", 400);
+    throw new AppError("storyMode.error.max_depth_exceeded", 400);
   }
 
   const seen = new Set<string>();
   for (const child of draft.children) {
     const key = normalizeNameKey(child.name);
     if (seen.has(key)) {
-      throw new AppError(`同一层下存在重复的流派模式名称：${child.name}。`, 400);
+      throw new AppError(getBackendMessage("storyMode.error.duplicate_name_same_level", { name: child.name }), 400);
     }
     seen.add(key);
     validateDraftSubtree(child, depth + 1);
@@ -201,12 +201,12 @@ export class StoryModeService {
   async createStoryModeChildren(input: CreateStoryModeChildrenInput) {
     const parentId = normalizeOptionalText(input.parentId);
     if (!parentId) {
-      throw new AppError("父级流派模式不能为空。", 400);
+      throw new AppError("storyMode.error.parent_required", 400);
     }
 
     const drafts = (input.drafts ?? []).map((draft) => normalizeDraft(draft));
     if (drafts.length === 0) {
-      throw new AppError("至少需要一个待创建的流派模式子类。", 400);
+      throw new AppError("storyMode.error.children_required", 400);
     }
 
     const batchNames = new Set<string>();
@@ -214,7 +214,7 @@ export class StoryModeService {
       validateDraftSubtree(draft, 2);
       const key = normalizeNameKey(draft.name);
       if (batchNames.has(key)) {
-        throw new AppError(`待创建子类中存在重复名称：${draft.name}。`, 400);
+        throw new AppError(getBackendMessage("storyMode.error.duplicate_child_name_in_batch", { name: draft.name }), 400);
       }
       batchNames.add(key);
     }
@@ -230,7 +230,7 @@ export class StoryModeService {
 
       for (const draft of drafts) {
         if (existingNames.has(normalizeNameKey(draft.name))) {
-          throw new AppError(`同一父级下已存在相同名称的流派模式：${draft.name}。`, 400);
+          throw new AppError(getBackendMessage("storyMode.error.duplicate_name_same_parent_with_name", { name: draft.name }), 400);
         }
       }
 
@@ -254,7 +254,7 @@ export class StoryModeService {
         },
       });
       if (!existing) {
-        throw new AppError("流派模式不存在。", 404);
+        throw new AppError("storyMode.error.not_found", 404);
       }
 
       const nextParentId = input.parentId === undefined
@@ -265,7 +265,7 @@ export class StoryModeService {
         await this.ensureParentCanAcceptChild(tx, nextParentId);
         await this.ensureNoCycle(tx, id, nextParentId);
         if (existing._count.children > 0) {
-          throw new AppError("带子节点的流派模式不能移动到其他父类下，否则会超过两级结构。", 400);
+          throw new AppError("storyMode.error.cannot_move_branch_to_other_parent", 400);
         }
       }
 
@@ -322,7 +322,7 @@ export class StoryModeService {
         0,
       );
       if (boundNovelCount > 0) {
-        throw new AppError("当前推进模式树已被小说引用，请先解绑相关小说后再删除。", 400);
+        throw new AppError("storyMode.error.bound_novels_prevent_delete", 400);
       }
 
       for (const row of subtree) {
@@ -342,7 +342,7 @@ export class StoryModeService {
       },
     });
     if (!novel) {
-      throw new AppError("小说不存在。", 404);
+      throw new AppError("storyMode.error.novel_not_found", 404);
     }
     return buildStoryModePromptBlock({
       primary: novel.primaryStoryMode ? normalizeStoryModeOutput(novel.primaryStoryMode) : null,
@@ -378,10 +378,10 @@ export class StoryModeService {
       select: { id: true, parentId: true },
     });
     if (!existing) {
-      throw new AppError("父级流派模式不存在。", 400);
+      throw new AppError("storyMode.error.parent_not_found", 400);
     }
     if (existing.parentId) {
-      throw new AppError("流派模式树最多两级，只能挂在根节点下面。", 400);
+      throw new AppError("storyMode.error.only_root_accepts_children", 400);
     }
   }
 
@@ -400,7 +400,7 @@ export class StoryModeService {
       select: { id: true },
     });
     if (existing) {
-      throw new AppError("同一父级下已存在相同名称的流派模式。", 400);
+      throw new AppError("storyMode.error.duplicate_name_same_parent", 400);
     }
   }
 
@@ -412,7 +412,7 @@ export class StoryModeService {
     let cursorId: string | null = parentId;
     while (cursorId) {
       if (cursorId === id) {
-        throw new AppError("不能把流派模式移动到自己的子树下。", 400);
+        throw new AppError("storyMode.error.cannot_move_to_descendant", 400);
       }
       const current: { parentId: string | null } | null = await tx.novelStoryMode.findUnique({
         where: { id: cursorId },

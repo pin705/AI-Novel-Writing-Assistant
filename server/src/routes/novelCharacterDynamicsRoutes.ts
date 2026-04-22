@@ -1,6 +1,7 @@
 import type { Router } from "express";
 import type { ApiResponse } from "@ai-novel/shared/types/api";
 import { z } from "zod";
+import { getBackendMessage } from "../i18n";
 import { validate } from "../middleware/validate";
 import type { NovelService } from "../services/novel/NovelService";
 import {
@@ -51,7 +52,7 @@ export function registerNovelCharacterDynamicsRoutes(
         res.status(200).json({
           success: true,
           data,
-          message: "Character dynamics overview loaded.",
+          message: getBackendMessage("novel.character_dynamics.route.overview.loaded"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);
@@ -69,7 +70,7 @@ export function registerNovelCharacterDynamicsRoutes(
         res.status(200).json({
           success: true,
           data,
-          message: "Character candidates loaded.",
+          message: getBackendMessage("novel.character_dynamics.route.candidates.loaded"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);
@@ -87,7 +88,7 @@ export function registerNovelCharacterDynamicsRoutes(
         res.status(200).json({
           success: true,
           data,
-          message: "Character candidate confirmed.",
+          message: getBackendMessage("novel.character_dynamics.route.candidate.confirmed"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);
@@ -105,7 +106,7 @@ export function registerNovelCharacterDynamicsRoutes(
         res.status(200).json({
           success: true,
           data,
-          message: "Character candidate merged.",
+          message: getBackendMessage("novel.character_dynamics.route.candidate.merged"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);
@@ -123,7 +124,7 @@ export function registerNovelCharacterDynamicsRoutes(
         res.status(200).json({
           success: true,
           data,
-          message: "Character dynamic state updated.",
+          message: getBackendMessage("novel.character_dynamics.route.dynamic_state.updated"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);
@@ -141,7 +142,7 @@ export function registerNovelCharacterDynamicsRoutes(
         res.status(200).json({
           success: true,
           data,
-          message: "Character relation stage updated.",
+          message: getBackendMessage("novel.character_dynamics.route.relation_stage.updated"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);
@@ -159,7 +160,7 @@ export function registerNovelCharacterDynamicsRoutes(
         res.status(200).json({
           success: true,
           data,
-          message: "Character dynamics rebuilt.",
+          message: getBackendMessage("novel.character_dynamics.route.rebuilt"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);

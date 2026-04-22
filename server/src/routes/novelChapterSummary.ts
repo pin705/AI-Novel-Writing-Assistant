@@ -1,6 +1,7 @@
 import { Router } from "express";
 import type { ApiResponse } from "@ai-novel/shared/types/api";
 import { z } from "zod";
+import { getBackendMessage } from "../i18n";
 import { llmProviderSchema } from "../llm/providerSchema";
 import { authMiddleware } from "../middleware/auth";
 import { validate } from "../middleware/validate";
@@ -36,7 +37,7 @@ router.post(
       res.status(200).json({
         success: true,
         data,
-        message: "章节摘要生成成功。",
+        message: getBackendMessage("novel.chapter_summary.route.generated"),
       } satisfies ApiResponse<typeof data>);
     } catch (error) {
       next(error);

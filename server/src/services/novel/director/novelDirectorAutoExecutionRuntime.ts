@@ -4,6 +4,7 @@ import type {
 } from "@ai-novel/shared/types/novelDirector";
 import type { NovelControlPolicy } from "@ai-novel/shared/types/canonicalState";
 import type { PipelineJobStatus } from "@ai-novel/shared/types/novel";
+import { AppError } from "../../../middleware/errorHandler";
 import { buildNovelEditResumeTarget } from "../workflow/novelWorkflow.shared";
 import { buildDirectorSessionState } from "./novelDirectorHelpers";
 import {
@@ -114,7 +115,7 @@ interface NovelDirectorAutoExecutionRuntimeDeps {
 }
 
 function isNoChaptersToGenerateError(error: unknown): boolean {
-  return error instanceof Error && error.message.includes("指定区间内没有可生成的章节");
+  return error instanceof AppError && error.message === "novel.error.no_chapters_in_range";
 }
 
 export class NovelDirectorAutoExecutionRuntime {

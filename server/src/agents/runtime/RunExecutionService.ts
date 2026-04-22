@@ -2,6 +2,7 @@ import type { AgentRuntimeCallbacks, AgentRuntimeResult, PlannedAction, Structur
 import { canAgentUseTool, evaluateApprovalRequirement } from "../approvalPolicy";
 import { AgentTraceStore } from "../traceStore";
 import { getAgentToolDefinition } from "../toolRegistry";
+import { getBackendMessage } from "../../i18n";
 import { composeAssistantMessage } from "./answerComposer";
 import { applyToolResultContext, resolveToolInput } from "./executionContext";
 import {
@@ -38,7 +39,7 @@ export class RunExecutionService {
   async getRunDetailOrThrow(runId: string, fallbackOutput: string): Promise<AgentRuntimeResult> {
     const detail = await this.store.getRunDetail(runId);
     if (!detail) {
-      throw new Error("Run not found.");
+      throw new Error(getBackendMessage("agent.runtime.error.run_not_found"));
     }
     return {
       run: detail.run,
@@ -64,7 +65,7 @@ export class RunExecutionService {
         const output = asObject(cached.outputJson);
         const summary = cached.status === "succeeded"
           ? summarizeOutput(call.tool, output)
-          : summarizeFailure(call.tool, cached.error ?? "cached failed");
+          : summarizeFailure(call.tool, cached.error ?? getBackendMessage("agent.runtime.unknown_error"));
         callbacks?.onToolResult?.({
           runId: context.runId,
           stepId: cached.id,
@@ -168,7 +169,7 @@ export class RunExecutionService {
           input: call.input,
           dryRun: call.dryRun ?? false,
         }),
-        error: error instanceof Error ? error.message : "unknown error",
+        error: error instanceof Error ? error.message : getBackendMessage("agent.runtime.unknown_error"),
         errorCode: code,
         durationMs: Date.now() - start,
         provider: context.provider,
@@ -223,7 +224,10 @@ export class RunExecutionService {
         stepType: "reasoning",
         status: "succeeded",
         inputJson: safeJson({
-          message: `工具 ${call.tool} 第 ${attempt + 1} 次失败，准备重试。`,
+          message: getBackendMessage("agent.runtime.reason.retry_tool", {
+            tool: call.tool,
+            attempt: attempt + 1,
+          }),
           errorCode: result.errorCode,
         }),
       });
@@ -231,7 +235,7 @@ export class RunExecutionService {
     return finalResult ?? {
       tool: call.tool,
       success: false,
-      summary: `${call.tool} 执行失败：unknown`,
+      summary: summarizeFailure(call.tool, getBackendMessage("agent.runtime.unknown_error")),
       errorCode: "INTERNAL",
     };
   }
@@ -288,7 +292,10 @@ export class RunExecutionService {
         const call = action.calls[callIndex];
         const resolvedInput = resolveToolInput(currentContext, call.input);
         if (!canAgentUseTool(action.agent, call.tool)) {
-          const message = `权限拒绝：${action.agent} 不允许调用 ${call.tool}。`;
+          const message = getBackendMessage("agent.runtime.error.permission_denied", {
+            agent: action.agent,
+            tool: call.tool,
+          });
           await this.store.addStep({
             runId,
             agentName: action.agent,
@@ -311,7 +318,7 @@ export class RunExecutionService {
           ? { required: false }
           : evaluateApprovalRequirement(call.tool, resolvedInput);
         if (approvalDecision.required) {
-          let diffSummary = approvalDecision.summary ?? "高影响写入操作待确认。";
+          let diffSummary = approvalDecision.summary ?? getBackendMessage("agent.runtime.approval.default_diff_summary");
           if (shouldUseDryRunPreview(call)) {
             const previewCall: ToolCall = {
               ...call,
@@ -351,7 +358,7 @@ export class RunExecutionService {
           const continuationActions: PlannedAction[] = [
             {
               agent: action.agent,
-              reasoning: `审批通过后继续执行 ${action.agent} 任务`,
+              reasoning: getBackendMessage("agent.runtime.approval.continuation_reasoning", { agent: action.agent }),
               calls: [currentCallAfterApproval, ...action.calls.slice(callIndex + 1)],
             },
             ...plannedActions.slice(actionIndex + 1),
@@ -437,7 +444,7 @@ export class RunExecutionService {
       callbacks?.onRunStatus?.({
         runId,
         status: "succeeded",
-        message: "执行完成",
+        message: getBackendMessage("agent.runtime.final.completed"),
       });
     }
 
@@ -462,7 +469,7 @@ export class RunExecutionService {
     });
     const detail = await this.store.getRunDetail(runId);
     if (!detail) {
-      throw new Error("Run not found after execution.");
+      throw new Error(getBackendMessage("agent.runtime.error.run_not_found_after_execution"));
     }
     return {
       run: detail.run,

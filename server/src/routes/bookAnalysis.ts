@@ -1,6 +1,7 @@
 import { Router } from "express";
 import type { ApiResponse } from "@ai-novel/shared/types/api";
 import { z } from "zod";
+import { getBackendMessage } from "../i18n";
 import { llmProviderSchema } from "../llm/providerSchema";
 import { authMiddleware } from "../middleware/auth";
 import { validate } from "../middleware/validate";
@@ -57,7 +58,7 @@ const sectionUpdateSchema = z.object({
 }).refine(
   (value) => value.editedContent !== undefined || value.notes !== undefined || value.frozen !== undefined,
   {
-    message: "At least one field must be provided.",
+    message: "validation.book_analysis_section_update_requires_field",
   },
 );
 
@@ -83,7 +84,7 @@ router.get("/", validate({ query: listQuerySchema }), async (req, res, next) => 
     res.status(200).json({
       success: true,
       data,
-      message: "Book analyses loaded.",
+      message: getBackendMessage("bookAnalysis.route.list.loaded"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -97,7 +98,7 @@ router.post("/", validate({ body: createSchema }), async (req, res, next) => {
     res.status(201).json({
       success: true,
       data,
-      message: "Book analysis created.",
+      message: getBackendMessage("bookAnalysis.route.created"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -111,14 +112,14 @@ router.get("/:id", validate({ params: analysisParamsSchema }), async (req, res, 
     if (!data) {
       res.status(404).json({
         success: false,
-        error: "Book analysis not found.",
+        error: getBackendMessage("bookAnalysis.route.not_found"),
       } satisfies ApiResponse<null>);
       return;
     }
     res.status(200).json({
       success: true,
       data,
-      message: "Book analysis loaded.",
+      message: getBackendMessage("bookAnalysis.route.loaded"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -132,7 +133,7 @@ router.post("/:id/rebuild", validate({ params: analysisParamsSchema }), async (r
     res.status(202).json({
       success: true,
       data,
-      message: "Book analysis rebuild queued.",
+      message: getBackendMessage("bookAnalysis.route.rebuild.queued"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -146,7 +147,7 @@ router.post("/:id/copy", validate({ params: analysisParamsSchema }), async (req,
     res.status(201).json({
       success: true,
       data,
-      message: "Book analysis copied.",
+      message: getBackendMessage("bookAnalysis.route.copied"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -164,7 +165,7 @@ router.post(
       res.status(200).json({
         success: true,
         data,
-        message: "Book analysis published to novel knowledge.",
+        message: getBackendMessage("bookAnalysis.route.published"),
       } satisfies ApiResponse<typeof data>);
     } catch (error) {
       next(error);
@@ -183,7 +184,7 @@ router.post(
       res.status(200).json({
         success: true,
         data,
-        message: "Book analysis section optimize preview generated.",
+        message: getBackendMessage("bookAnalysis.route.section.optimize_preview.generated"),
       } satisfies ApiResponse<typeof data>);
     } catch (error) {
       next(error);
@@ -201,7 +202,7 @@ router.post(
       res.status(202).json({
         success: true,
         data,
-        message: "Book analysis section regeneration queued.",
+        message: getBackendMessage("bookAnalysis.route.section.regeneration.queued"),
       } satisfies ApiResponse<typeof data>);
     } catch (error) {
       next(error);
@@ -220,7 +221,7 @@ router.patch(
       res.status(200).json({
         success: true,
         data,
-        message: "Book analysis section updated.",
+        message: getBackendMessage("bookAnalysis.route.section.updated"),
       } satisfies ApiResponse<typeof data>);
     } catch (error) {
       next(error);
@@ -239,7 +240,7 @@ router.patch(
       res.status(200).json({
         success: true,
         data,
-        message: "Book analysis updated.",
+        message: getBackendMessage("bookAnalysis.route.updated"),
       } satisfies ApiResponse<typeof data>);
     } catch (error) {
       next(error);

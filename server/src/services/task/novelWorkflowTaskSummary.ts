@@ -1,6 +1,7 @@
 import type { NovelAutoDirectorTaskSummary } from "@ai-novel/shared/types/novel";
 import type { NovelWorkflowCheckpoint } from "@ai-novel/shared/types/novelWorkflow";
 import type { TaskStatus } from "@ai-novel/shared/types/task";
+import { getBackendMessage } from "../../i18n";
 import { buildWorkflowExplainability, buildWorkflowResumeAction } from "./novelWorkflowExplainability";
 import type { DirectorWorkflowSeedPayload } from "../novel/director/novelDirectorHelpers";
 import { parseSeedPayload } from "../novel/workflow/novelWorkflow.shared";
@@ -15,7 +16,7 @@ export function buildNovelWorkflowNextActionLabel(
     return null;
   }
   if (status === "waiting_approval" && checkpointType === "front10_ready") {
-    return "进入已准备章节";
+    return getBackendMessage("workflow.next_action.enter_prepared_chapters");
   }
   return resumeAction;
 }

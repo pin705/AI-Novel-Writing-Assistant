@@ -2,6 +2,7 @@ import type { Router } from "express";
 import type { ApiResponse } from "@ai-novel/shared/types/api";
 import type { BookFramingSuggestionInput } from "@ai-novel/shared/types/novelFraming";
 import { z } from "zod";
+import { getBackendMessage } from "../i18n";
 import { llmProviderSchema } from "../llm/providerSchema";
 import { validate } from "../middleware/validate";
 import { novelFramingSuggestionService } from "../services/novel/NovelFramingSuggestionService";
@@ -18,7 +19,7 @@ const framingSuggestSchema = llmGenerateSchema.extend({
   genreLabel: z.string().trim().max(120).optional(),
   styleTone: z.string().trim().max(120).optional(),
 }).refine((value) => Boolean(value.title?.trim() || value.description?.trim()), {
-  message: "请至少填写书名或一句话概述。",
+  message: "validation.book_framing_requires_title_or_description",
 });
 
 interface RegisterNovelFramingRoutesInput {
@@ -38,7 +39,7 @@ export function registerNovelFramingRoutes(input: RegisterNovelFramingRoutesInpu
         res.status(200).json({
           success: true,
           data,
-          message: "Book framing suggestion generated.",
+          message: getBackendMessage("novel.framing.route.suggestion.generated"),
         } satisfies ApiResponse<typeof data>);
       } catch (error) {
         next(error);

@@ -10,6 +10,8 @@ import type {
   ChapterEditorRewritePreviewResponse,
   ChapterEditorTargetRange,
 } from "@ai-novel/shared/types/novel";
+import { getBackendMessage } from "../../../i18n";
+import { AppError } from "../../../middleware/errorHandler";
 import { runStructuredPrompt } from "../../../prompting/core/promptRunner";
 import {
   chapterEditorRewriteCandidatesPrompt,
@@ -83,7 +85,7 @@ function buildIntentSummary(intent: ChapterEditorAiRevisionIntent): string {
 
 function resolveSelectionTargetRange(content: string, targetRange?: ChapterEditorTargetRange): ChapterEditorTargetRange {
   if (!targetRange) {
-    throw new Error("片段修正需要先选中正文内容。");
+    throw new AppError("novel.chapter_editor.error.selection_required", 400);
   }
   if (
     typeof targetRange.from !== "number"
@@ -92,14 +94,14 @@ function resolveSelectionTargetRange(content: string, targetRange?: ChapterEdito
     || targetRange.to <= targetRange.from
     || targetRange.to > content.length
   ) {
-    throw new Error("选区范围无效，请重新选择后再试。");
+    throw new AppError("novel.chapter_editor.error.invalid_selection_range", 400);
   }
   const selectedText = content.slice(targetRange.from, targetRange.to);
   if (!selectedText.trim()) {
-    throw new Error("选中文本不能为空。");
+    throw new AppError("novel.chapter_editor.error.selection_text_empty", 400);
   }
   if (normalizeEditorText(targetRange.text) !== selectedText) {
-    throw new Error("选中文本已发生变化，请重新选择后再试。");
+    throw new AppError("novel.chapter_editor.error.selection_text_changed", 400);
   }
   return {
     from: targetRange.from,
@@ -122,11 +124,16 @@ export class NovelChapterEditorService {
     const context = await this.workspaceService.loadContext(novelId, chapterId);
     const content = normalizeChapterContent(input.contentSnapshot || context.chapter.content || "");
     if (!content.trim()) {
-      throw new Error("当前章节正文为空，无法发起 AI 修正。");
+      throw new AppError("novel.chapter_editor.error.chapter_content_empty", 400);
     }
 
     if (input.scope === "chapter" && countEditorWords(content) > FULL_CHAPTER_REVISION_LIMIT) {
-      throw new Error(`整章修正当前限制为 ${FULL_CHAPTER_REVISION_LIMIT} 个非空白字符以内，请改为片段修正。`);
+      throw new AppError(
+        getBackendMessage("novel.chapter_editor.error.full_chapter_revision_limit", {
+          limit: FULL_CHAPTER_REVISION_LIMIT,
+        }),
+        400,
+      );
     }
 
     const targetRange = input.scope === "chapter"
@@ -178,7 +185,7 @@ export class NovelChapterEditorService {
     );
 
     if (candidates.length < 2) {
-      throw new Error("AI 未返回足够的候选版本，请重试。");
+      throw new AppError("novel.chapter_editor.error.candidate_versions_insufficient", 400);
     }
 
     return {
@@ -234,7 +241,7 @@ export class NovelChapterEditorService {
     }
 
     if (!input.instruction?.trim()) {
-      throw new Error("请先写下你希望 AI 如何修改。");
+      throw new AppError("novel.chapter_editor.error.instruction_required", 400);
     }
 
     const result = await this.promptRunner({

@@ -1,6 +1,7 @@
 import { Router } from "express";
 import type { ApiResponse } from "@ai-novel/shared/types/api";
 import { z } from "zod";
+import { getBackendMessage } from "../i18n";
 import { authMiddleware } from "../middleware/auth";
 import { validate } from "../middleware/validate";
 import { novelDecisionService } from "../services/novel/NovelDecisionService";
@@ -41,7 +42,7 @@ router.get("/:id/creative-decisions", validate({ params: novelParamsSchema }), a
     res.status(200).json({
       success: true,
       data,
-      message: "创作决策已加载。",
+      message: getBackendMessage("novel.decision.route.list.loaded"),
     } satisfies ApiResponse<typeof data>);
   } catch (error) {
     next(error);
@@ -58,7 +59,7 @@ router.post(
       res.status(201).json({
         success: true,
         data,
-        message: "创作决策已创建。",
+        message: getBackendMessage("novel.decision.route.created"),
       } satisfies ApiResponse<typeof data>);
     } catch (error) {
       next(error);
@@ -76,7 +77,7 @@ router.put(
       res.status(200).json({
         success: true,
         data,
-        message: "创作决策已更新。",
+        message: getBackendMessage("novel.decision.route.updated"),
       } satisfies ApiResponse<typeof data>);
     } catch (error) {
       next(error);
@@ -93,7 +94,7 @@ router.delete(
       await novelDecisionService.remove(id, decisionId);
       res.status(200).json({
         success: true,
-        message: "创作决策已删除。",
+        message: getBackendMessage("novel.decision.route.deleted"),
       } satisfies ApiResponse<null>);
     } catch (error) {
       next(error);
@@ -112,7 +113,7 @@ router.post(
       res.status(200).json({
         success: true,
         data,
-        message: "创作决策已批量失效。",
+        message: getBackendMessage("novel.decision.route.batch_invalidated"),
       } satisfies ApiResponse<typeof data>);
     } catch (error) {
       next(error);
