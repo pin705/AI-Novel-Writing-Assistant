@@ -1,0 +1,508 @@
+{
+  "layout": {
+    "taskRecovery": {
+      "title": "检测到待恢复任务",
+      "description": "系统启动时发现有后台任务在服务重启前中断了。现在不会自动继续执行，你可以先逐个确认，再决定是否恢复。",
+      "later": "稍后处理",
+      "resumeAll": "继续全部",
+      "resumeAllPending": "恢复全部中...",
+      "resumeSingle": "继续单个",
+      "resumeSinglePending": "恢复中...",
+      "openLocation": "打开任务位置",
+      "ownerLabel": "所属对象：{{value}}",
+      "currentStage": "当前阶段：{{value}}",
+      "currentItem": "中断位置：{{value}}",
+      "resumeAction": "建议动作：{{value}}",
+      "recoveryHint": "恢复建议：{{value}}",
+      "statusRunning": "运行中断",
+      "statusQueued": "排队中断",
+      "kinds": {
+        "novel_workflow": "小说主流程",
+        "novel_pipeline": "章节流水线",
+        "book_analysis": "拆书任务",
+        "style_extraction": "写法提取",
+        "image": "图片任务"
+      },
+      "toasts": {
+        "resumeStarted": "已开始恢复任务。",
+        "resumeFailed": "恢复任务失败。",
+        "resumeAllStarted": "已开始恢复 {{count}} 个任务。",
+        "resumeAllEmpty": "当前没有可恢复任务。",
+        "resumeAllFailed": "批量恢复任务失败。"
+      }
+    },
+    "desktopBootstrap": {
+      "appTitle": "AI 小说创作工作台",
+      "betaBadge": "桌面版 Beta",
+      "shellNote": "这个页面只会在桌面版启动时短暂出现，用来承接本地服务启动，避免先看到白屏或空白窗口。",
+      "currentProgress": "当前进度",
+      "status": "状态",
+      "lastUpdated": "最近更新",
+      "logsTitle": "日志与排查",
+      "logsHint": "如果启动卡住、本地服务提前退出，或者你要定位启动耗时，可以直接查看桌面端日志。",
+      "openLogs": "打开日志目录",
+      "copyLogPath": "复制日志路径",
+      "restart": "重新启动",
+      "states": {
+        "launching": "准备中",
+        "startingServer": "启动本地引擎",
+        "loadingUi": "加载工作区",
+        "ready": "已就绪",
+        "error": "启动受阻"
+      },
+      "stages": {
+        "launching": "准备启动",
+        "appReady": "应用已就绪",
+        "splashShown": "启动页已显示",
+        "serverStarting": "本地服务启动中",
+        "serverHealthy": "本地服务已就绪",
+        "rendererReady": "界面已准备",
+        "mainWindowShown": "主窗口已显示",
+        "error": "启动失败"
+      },
+      "progressHints": {
+        "launching": "正在准备桌面运行时和启动资源。",
+        "startingServer": "桌面版需要先拉起本地服务，随后才会进入主工作区。",
+        "loadingUi": "本地服务已经可用，正在切入主工作台。",
+        "ready": "启动链路已经完成。",
+        "error": "启动过程中遇到问题，建议先查看日志再重试。"
+      },
+      "updater": {
+        "sectionTitle": "版本检查",
+        "currentVersion": "本机版本",
+        "availableVersion": "可用版本",
+        "checkedAt": "检查时间",
+        "checking": "检查中",
+        "recheck": "重新检查",
+        "check": "检查更新",
+        "download": "下载更新",
+        "installRestart": "重启安装",
+        "progress": " 下载进度 {{percent}}%。",
+        "status": {
+          "disabled": "不可用",
+          "idle": "待检查",
+          "checking": "检查中",
+          "updateAvailable": "发现更新",
+          "downloading": "下载中",
+          "downloaded": "待安装",
+          "notAvailable": "无需更新",
+          "error": "检查失败"
+        },
+        "hints": {
+          "portable": "便携版需要下载新版安装包后手动替换。",
+          "devBuild": "开发运行不会连接发布更新通道，打包安装版会自动检查桌面版本。",
+          "idleError": "启动受阻时会同步检查桌面版本，方便先安装可用修复。",
+          "idleDefault": "进入工作区前会检查桌面版本，有可用版本时会在这里提示。",
+          "checking": "版本检查中，有可用版本时会提示下载。",
+          "updateAvailable": "桌面版 {{version}} 可用，建议先下载更新包。",
+          "fallbackVersion": "新版本",
+          "downloading": "更新包下载中，请保持应用打开。",
+          "downloaded": "更新包已下载，重启应用后完成安装。",
+          "notAvailable": "本机安装版本与发布通道保持同步。",
+          "errorFallback": "版本检查失败，可以稍后重试。"
+        }
+      }
+    },
+    "desktopLegacyImport": {
+      "titleSuggested": "检测到旧版本地数据库",
+      "titleManual": "导入旧版本地数据库",
+      "descriptionSuggested": "桌面版检测到了你之前 web/开发版使用的本地数据库，可以一键导入并接管原有小说、API Key 和知识库数据。",
+      "descriptionManual": "桌面版默认使用独立数据目录。如果你之前在 web/开发版里已经有本地数据，可以选择旧的 dev.db 导入到桌面版。",
+      "freshBadge": "当前桌面库看起来是空的",
+      "detectedPath": "已检测到旧库：{{path}}",
+      "detectedPathWithLabel": "已检测到旧库：{{path}} ({{label}})",
+      "backupNote": "导入前会自动备份当前桌面数据库到：{{path}}",
+      "closeOldProcess": "导入前请先关闭旧的 web/开发版进程，避免同一份 SQLite 文件还在被写入。",
+      "importDetected": "导入检测到的旧数据",
+      "chooseAnotherDb": "选择其他 dev.db",
+      "chooseDb": "选择旧 dev.db 导入",
+      "preparing": "正在准备...",
+      "detectFailed": "旧数据探测失败。",
+      "importFailed": "导入旧数据失败。",
+      "importScheduled": "正在准备导入旧数据，应用会自动重启一次。"
+    },
+    "desktopModelSetup": {
+      "settingsTitle": "Complete Desktop Setup",
+      "settingsBadge": "Desktop install",
+      "settingsDescription": "Finish at least one active model provider and default model here before returning to the main workspace.",
+      "settingsBody": "The packaged desktop app is running normally, but it still needs a usable provider configuration.",
+      "usableProviders": "Current usable providers: {{count}}",
+      "blockerTitle": "Set Up A Model Provider First",
+      "blockerDescription": "The Windows desktop app is installed correctly, but it cannot start the writing workflow until at least one model provider and default model are configured.",
+      "blockerHint": "Open the existing settings page, fill in an API key or local endpoint, choose a default model, and save it.",
+      "openSettings": "Open model settings",
+      "openHelp": "查看新手上路"
+    },
+    "novelWorkspaceRail": {
+      "creationWorkspace": "创作工作台",
+      "defaultNovelTitle": "小说创作工作台",
+      "expand": "展开创作导航",
+      "collapse": "收起创作导航",
+      "backToList": "返回小说列表",
+      "flowProgress": "流程：{{stage}}",
+      "history": "版本历史",
+      "openProgressTitle": "查看导演进度：{{status}}",
+      "openProgress": "查看导演进度",
+      "switchProjectNav": "切换到项目导航",
+      "progressDialogTitle": "AI 自动导演进度",
+      "progressDialogDescription": "查看这本书的推进步骤、最近进展和 AI 用量。",
+      "stepStatus": {
+        "current": "当前步骤",
+        "inFlow": "流程中",
+        "viewing": "查看中",
+        "done": "已完成",
+        "pending": "待推进"
+      },
+      "taskStatus": {
+        "running": "进行中",
+        "queued": "排队中",
+        "waitingApproval": "待审核",
+        "failed": "异常",
+        "succeeded": "已完成",
+        "idle": "空闲"
+      },
+      "summary": {
+        "interrupted": "后台任务已中断，可打开执行详情查看原因。",
+        "waitingFor": "等待处理：{{stage}}",
+        "aiAdvancing": "AI 正在推进 {{stage}}",
+        "noActiveTask": "当前没有后台导演任务，可以直接继续手动创作。",
+        "pleaseHandlePoint": "请先查看当前停留点",
+        "nextStep": "下一步：{{label}}",
+        "needsAttention": "需要处理：{{reason}}"
+      },
+      "errors": {
+        "noActiveTask": "当前没有可继续的自动导演任务。",
+        "continueFailed": "继续自动导演失败。"
+      }
+    },
+    "serverStartup": {
+      "title": "正在连接本地创作服务",
+      "description": "页面已准备好，系统会在服务可用后自动进入工作台。",
+      "recheck": "重新检查"
+    },
+    "mobileSiteShell": {
+      "appTitle": "AI 小说创作工作台",
+      "openBook": "开书",
+      "openMore": "打开更多入口",
+      "closeMore": "关闭更多入口",
+      "moreTitle": "更多入口",
+      "moreDescription": "选择要继续处理的工作区。",
+      "fallbackTitle": "更多功能",
+      "routes": {
+        "home": "首页",
+        "help": "新手上路",
+        "novels": "小说",
+        "novelCreate": "创建小说",
+        "novelPreview": "小说预览",
+        "novelEdit": "小说工作区",
+        "chapterEdit": "章节正文",
+        "creativeHub": "创作中枢",
+        "chatLegacy": "旧版聊天",
+        "bookAnalysis": "拆书",
+        "tasks": "任务",
+        "autoDirectorFollowUps": "导演跟进",
+        "knowledge": "知识库",
+        "genres": "题材基底",
+        "storyModes": "推进模式",
+        "titles": "标题工坊",
+        "promptWorkbench": "提示词管理",
+        "modelRoutes": "模型路由",
+        "settings": "系统设置",
+        "worlds": "世界观",
+        "worldGenerator": "世界生成",
+        "worldWorkspace": "世界工作台",
+        "styleEngine": "写法引擎",
+        "antiAiRules": "反 AI 规则",
+        "baseCharacters": "基础角色"
+      },
+      "primary": {
+        "home": "首页",
+        "novels": "小说",
+        "creation": "创作",
+        "tasks": "任务",
+        "more": "更多"
+      },
+      "moreGroups": {
+        "creationAid": "创作辅助",
+        "assets": "资产库",
+        "worldsAndSystem": "世界与系统"
+      }
+    }
+  },
+  "common": {
+    "selectField": {
+      "placeholder": "请选择",
+      "empty": "暂无可选项"
+    },
+    "searchableSelect": {
+      "placeholder": "请选择",
+      "searchPlaceholder": "搜索",
+      "empty": "没有可选项"
+    },
+    "llmSelector": {
+      "badge": "模型",
+      "providerPlaceholder": "选择厂商",
+      "providerNoneAvailable": "请先配置可用厂商",
+      "modelPlaceholder": "选择模型",
+      "modelUnavailable": "暂无可用模型",
+      "searchModel": "搜索模型",
+      "noModels": "没有可用模型",
+      "noProvidersHelper": "当前没有已配置且启用的模型厂商，请先到系统设置里完成 API Key 和模型配置。",
+      "temperatureLabel": "温度 (0~2)",
+      "maxTokensLabel": "最大 Tokens (留空 = 不限制)"
+    },
+    "aiRevisionWorkspace": {
+      "instructionTitle": "AI 修正指令",
+      "instructionPlaceholder": "输入修正要求，例如：压缩冗余、加强冲突、保持既有设定不变。",
+      "selectionTitle": "当前选中内容（将用于精准优化）",
+      "selectionHint": "未选中内容时仅支持全文优化。",
+      "optimizing": "优化中...",
+      "previewFull": "全文优化预览",
+      "previewSelection": "仅优化选中内容",
+      "previewTitle": "优化预览",
+      "applyPreview": "应用预览",
+      "cancelPreview": "取消预览"
+    },
+    "streamOutput": {
+      "defaultTitle": "AI 输出",
+      "defaultEmpty": "等待流式输出...",
+      "generating": "正在生成...",
+      "wordCount": "字数：{{count}}",
+      "stop": "停止生成"
+    }
+  },
+  "autoDirector": {
+    "approvalPoints": {
+      "risk": {
+        "high": "高风险",
+        "medium": "中风险",
+        "low": "低风险"
+      },
+      "summaryNone": "不会自动通过审批点",
+      "summaryEtc": "{{labels}} 等 {{count}} 项"
+    },
+    "approvalStrategy": {
+      "panelTitle": "自动推进方式",
+      "fullAutoTitle": "AI 自动推进",
+      "fullAutoDescription": "目标范围内全自动推进；只有模型不可用、服务异常、保护正文或不可恢复风险会停下。",
+      "copilotTitle": "AI 副驾确认",
+      "copilotDescription": "按高级审批授权放行低风险节点，其余审批点交给你判断。",
+      "summaryFullAuto": "自动推进：系统会在目标范围内自动确认规划、章节执行、质量修复和必要重规划。",
+      "summaryCopilot": "副驾确认边界：{{summary}}。未包含的审批点会等待你确认。",
+      "advancedTitle": "高级审批授权"
+    },
+    "cockpit": {
+      "title": "AI 驾驶舱",
+      "view": "查看",
+      "fallbackReason": "没有需要你处理的 AI 自动推进任务。",
+      "fallbackStatus": "未开启",
+      "states": {
+        "processing": "AI 正在处理",
+        "needsConfirmation": "等你确认",
+        "paused": "已暂停",
+        "needsAttention": "出错需处理",
+        "completed": "已完成",
+        "idle": "未开启"
+      },
+      "datePlaceholder": "暂无",
+      "lessThanOneSecond": "<1 秒",
+      "secondsUnit": "{{count}} 秒",
+      "minutesUnit": "{{count}} 分",
+      "minutesSecondsUnit": "{{minutes}} 分 {{seconds}} 秒",
+      "usageLine": {
+        "callCount": "{{count}} 次调用",
+        "promptTokens": "输入 {{count}}",
+        "completionTokens": "输出 {{count}}",
+        "totalTokens": "总计 {{count}} Tokens",
+        "duration": "累计调用耗时 {{duration}}"
+      },
+      "renderAction": {
+        "confirmContinue": "确认并继续",
+        "fallback": "继续处理",
+        "openNovel": "打开小说"
+      },
+      "artifactTypes": {
+        "book_contract": "书级约定",
+        "story_macro": "故事规划",
+        "character_cast": "角色",
+        "volume_strategy": "分卷",
+        "chapter_task_sheet": "任务单",
+        "chapter_draft": "正文",
+        "audit_report": "审校",
+        "repair_ticket": "修复",
+        "reader_promise": "读者承诺",
+        "character_governance_state": "角色状态",
+        "world_skeleton": "世界框架",
+        "source_knowledge_pack": "资料包",
+        "chapter_retention_contract": "留存约定",
+        "continuity_state": "连续性",
+        "rolling_window_review": "近期复盘"
+      },
+      "recoveryActions": {
+        "retry": "重试当前步骤",
+        "resume_after_review": "查看原因后继续",
+        "switch_model": "切换模型后继续",
+        "confirm_protected_content": "确认保护内容边界",
+        "manual_repair": "先处理章节问题"
+      },
+      "workerStates": {
+        "idle": "未运行",
+        "queued_waiting_worker": "等待接手",
+        "leased_starting": "正在接手",
+        "running_step": "自动推进中",
+        "waiting_gate": "等待确认",
+        "auto_recovering": "恢复中",
+        "cancelled": "已停止",
+        "failed_recoverable": "等待恢复",
+        "failed_hard": "需要处理",
+        "succeeded": "已完成"
+      },
+      "workerDetail": {
+        "queued": "任务已排队，后台执行接手后会继续推进。",
+        "running": "后台执行正在处理当前任务。",
+        "stale": "后台执行中断后会从最近进度尝试恢复。",
+        "noBackgroundAction": "当前没有正在排队或执行的后台动作。",
+        "label": "后台执行",
+        "queueCount": "排队",
+        "leasedCount": "接手",
+        "runningCount": "执行",
+        "recoveringCount": "恢复",
+        "waitingForLease": "等待接手 {{duration}}"
+      },
+      "circuitBreaker": {
+        "title": "自动推进已暂停",
+        "fallback": "系统检测到继续自动推进可能反复失败。",
+        "recovery": "建议：{{action}}。"
+      },
+      "usagePanel": {
+        "title": "AI 用量",
+        "stagesTitle": "阶段用量",
+        "stepsTitle": "推进步骤"
+      },
+      "artifacts": {
+        "title": "产物记录",
+        "affectedChapters": "影响 {{count}} 个章节",
+        "needsReview": "{{count}} 个产物需复核",
+        "recentRepairs": "{{count}} 条修复记录",
+        "newVersions": "{{count}} 个产物有新版本"
+      },
+      "nextAction": "下一步：{{label}}",
+      "historyTitle": "自动化记录",
+      "historyDuration": "耗时 {{duration}}",
+      "processing": "处理中...",
+      "executionDetails": "执行详情"
+    },
+    "directorBookAutomationCard": {
+      "projectNav": "项目导航"
+    },
+    "runtimeProjection": {
+      "title": "导演进度",
+      "primaryFallback": "等待同步当前推进状态",
+      "attentionFallback": "请先处理当前停留点。",
+      "needsAttention": "需要你处理：{{text}}",
+      "pausedReason": "暂停原因：{{text}}",
+      "policy": "推进方式：{{mode}}",
+      "updatedAt": "更新时间：{{value}}",
+      "recentEvents": "最近进展",
+      "datePlaceholder": "暂无",
+      "policyModes": {
+        "suggest_only": "只给建议",
+        "run_next_step": "推进下一步",
+        "auto_safe_scope": "安全范围自动推进",
+        "default": "推进到检查点"
+      },
+      "statuses": {
+        "running": "推进中",
+        "waiting_approval": "等待确认",
+        "blocked": "已暂停",
+        "failed": "失败",
+        "completed": "已完成",
+        "default": "待开始"
+      },
+      "qualityDebt": "质量待回收{{detail}}。系统会先继续写后续章节，并在质量修复阶段回收这些问题。",
+      "qualityDebtChapters": "：第 {{chapters}} 章",
+      "qualityBudget": "{{chapter}}质量预算：局部修复 {{patch}}/1，整章重写 {{rewrite}}/1，窗口重规划 {{replan}}/1。{{nextAction}}",
+      "qualityBudgetCurrentChapter": "当前章节",
+      "qualityBudgetSpecificChapter": "第 {{order}} 章",
+      "rootCauses": {
+        "replan": "当前问题来自章节职责失配，系统需要先调整附近章节安排。",
+        "obligation": "正文已经生成，但仍有本章必须完成的内容没有兑现。",
+        "repairExhausted": "正文已经生成，但自动修复后仍有阻塞问题需要继续处理。",
+        "draftMissing": "正文没有成功生成，需要重新执行当前章节。"
+      },
+      "obligationsLine": "仍需处理：{{summaries}}",
+      "activeExecution": "后台执行：{{label}}",
+      "activeExecutionWithClass": "后台执行：{{label}} · {{class}}",
+      "activeExecutionFallback": "自动导演任务",
+      "waitingReason": "等待原因：{{reason}}",
+      "executionQueue": "执行队列：{{queued}} 个等待",
+      "executionProcessing": "{{count}} 个处理中",
+      "executor": "执行器：{{id}}",
+      "nextAction": "下一步：{{label}}",
+      "recommendedReason": "推荐原因：{{reason}}",
+      "autopilotRecoverable": "AI 可以从当前进度继续处理。",
+      "metrics": {
+        "planning": "规划",
+        "chapters": "章节",
+        "quality": "质量",
+        "currentAction": "当前动作"
+      },
+      "usagePanel": {
+        "title": "AI 用量",
+        "stages": "阶段用量",
+        "steps": "推进步骤"
+      },
+      "usageLine": {
+        "callCount": "{{count}} 次调用",
+        "promptTokens": "输入 {{count}}",
+        "completionTokens": "输出 {{count}}",
+        "totalTokens": "总计 {{count}} Tokens",
+        "duration": "累计调用耗时 {{duration}}",
+        "lessThanOneSecond": "<1 秒",
+        "secondsUnit": "{{count}} 秒",
+        "minutesUnit": "{{count}} 分",
+        "minutesSecondsUnit": "{{minutes}} 分 {{seconds}} 秒"
+      }
+    }
+  },
+  "creativeHub": {
+    "openButton": "在创作中枢中继续"
+  },
+  "knowledge": {
+    "bindingPanel": {
+      "defaultTitle": "参考知识",
+      "documentDescription": "绑定后会成为该实体的默认知识文档来源。",
+      "saving": "保存中...",
+      "save": "保存绑定"
+    },
+    "documentPicker": {
+      "auto": "自动",
+      "custom": "自定义",
+      "autoHint": "当前使用自动规则：若有实体绑定文档则优先使用绑定文档，否则回退到全部启用文档。",
+      "searchPlaceholder": "搜索知识文档",
+      "loading": "加载中...",
+      "empty": "没有可选文档。",
+      "selectedCount": "已选择 {{count}} 个文档。保持为空会显式关闭知识库检索。"
+    }
+  },
+  "workflow": {
+    "aiTakeover": {
+      "modeLabels": {
+        "loading": "加载中",
+        "running": "AI 接管中",
+        "waiting": "等待确认",
+        "actionRequired": "待处理",
+        "failed": "执行异常"
+      },
+      "progressStatus": {
+        "running": "实时推进中",
+        "waiting": "等待你确认",
+        "actionRequired": "需要你处理",
+        "failed": "已中断"
+      },
+      "taskTag": "任务 #{{id}}",
+      "progressLabel": "流程进度",
+      "checkpointLabel": "最近检查点：{{label}}"
+    }
+  }
+}

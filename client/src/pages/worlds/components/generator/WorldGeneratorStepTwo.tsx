@@ -6,6 +6,7 @@ import type {
   WorldReferenceSeedSelection,
 } from "@ai-novel/shared/types/worldWizard";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "@/i18n";
 import WorldLibraryQuickPick from "./WorldLibraryQuickPick";
 import WorldPropertyOptionSelector from "./WorldPropertyOptionSelector";
 import WorldReferenceSeedSelector from "./WorldReferenceSeedSelector";
@@ -86,30 +87,32 @@ export default function WorldGeneratorStepTwo(props: WorldGeneratorStepTwoProps)
     onCreateDraft,
   } = props;
 
+  const { t } = useTranslation();
+
   return (
     <div className="space-y-3">
       {isReferenceMode ? (
         <div className="rounded-md border p-3 text-sm space-y-3">
-          <div className="font-medium">参考作品改造蓝图</div>
-          <div className="text-xs text-muted-foreground">当前方式：{getReferenceModeLabel(referenceMode)}</div>
+          <div className="font-medium">{t("worlds.generator.stepTwo.blueprintTitle")}</div>
+          <div className="text-xs text-muted-foreground">{t("worlds.generator.stepTwo.currentMode", { value: getReferenceModeLabel(referenceMode, t) })}</div>
           {referenceAnchors.length > 0 ? (
             <div className="space-y-1">
-              <div className="text-xs font-medium text-muted-foreground">原作世界锚点</div>
+              <div className="text-xs font-medium text-muted-foreground">{t("worlds.generator.stepTwo.anchorsTitle")}</div>
               {referenceAnchors.map((anchor) => (
                 <div key={anchor.id} className="text-xs text-muted-foreground">
-                  {anchor.label}：{anchor.content}
+                  {t("worlds.generator.stepTwo.anchorLine", { label: anchor.label, content: anchor.content })}
                 </div>
               ))}
             </div>
           ) : null}
           {preserveElements.length > 0 ? (
-            <div className="text-xs text-muted-foreground">必须保留：{preserveElements.join("、")}</div>
+            <div className="text-xs text-muted-foreground">{t("worlds.generator.stepTwo.preserveLine", { value: preserveElements.join("、") })}</div>
           ) : null}
           {allowedChanges.length > 0 ? (
-            <div className="text-xs text-muted-foreground">允许改造：{allowedChanges.join("、")}</div>
+            <div className="text-xs text-muted-foreground">{t("worlds.generator.stepTwo.allowedLine", { value: allowedChanges.join("、") })}</div>
           ) : null}
           {forbiddenElements.length > 0 ? (
-            <div className="text-xs text-muted-foreground">禁止偏离：{forbiddenElements.join("、")}</div>
+            <div className="text-xs text-muted-foreground">{t("worlds.generator.stepTwo.forbiddenLine", { value: forbiddenElements.join("、") })}</div>
           ) : null}
         </div>
       ) : null}
@@ -136,10 +139,10 @@ export default function WorldGeneratorStepTwo(props: WorldGeneratorStepTwoProps)
       </select>
 
       <div className="rounded-md border p-3 text-sm space-y-2">
-        <div className="font-medium">{selectedTemplate?.description ?? "-"}</div>
-        <div className="text-xs text-muted-foreground">当前类型：{currentTypeLabel}</div>
+        <div className="font-medium">{selectedTemplate?.description ?? t("worlds.generator.stepTwo.templatePlaceholder")}</div>
+        <div className="text-xs text-muted-foreground">{t("worlds.generator.stepTwo.currentTypeLine", { value: currentTypeLabel })}</div>
         <div className="text-xs text-muted-foreground">
-          坑点提醒：{selectedTemplate?.pitfalls.join(" | ") || "-"}
+          {t("worlds.generator.stepTwo.pitfallsLine", { value: selectedTemplate?.pitfalls.join(" | ") || "-" })}
         </div>
         <div className="grid gap-2 md:grid-cols-3">
           {Object.keys(selectedDimensions).map((key) => (
@@ -149,7 +152,7 @@ export default function WorldGeneratorStepTwo(props: WorldGeneratorStepTwoProps)
                 checked={Boolean(selectedDimensions[key])}
                 onChange={(event) => onToggleDimension(key, event.target.checked)}
               />
-              {getDimensionLabel(key)}
+              {getDimensionLabel(key, t)}
             </label>
           ))}
         </div>
@@ -157,7 +160,7 @@ export default function WorldGeneratorStepTwo(props: WorldGeneratorStepTwoProps)
 
       {!isReferenceMode ? (
         <div className="rounded-md border p-3 text-sm">
-          <div className="font-medium mb-2">经典元素</div>
+          <div className="font-medium mb-2">{t("worlds.generator.stepTwo.classicElements")}</div>
           <div className="grid gap-2 md:grid-cols-2">
             {(selectedTemplate?.classicElements ?? []).map((element) => (
               <label key={element} className="flex items-center gap-2">
@@ -174,9 +177,9 @@ export default function WorldGeneratorStepTwo(props: WorldGeneratorStepTwoProps)
       ) : null}
 
       <div className="space-y-2">
-        <div className="font-medium text-sm">前置世界属性</div>
+        <div className="font-medium text-sm">{t("worlds.generator.stepTwo.propertiesTitle")}</div>
         <div className="rounded-md border border-dashed p-3 text-xs text-muted-foreground">
-          系统已经先帮你勾选了建议项。通常只需要取消不想要的方向，或补一句自己的偏好。
+          {t("worlds.generator.stepTwo.propertiesHint")}
         </div>
         <WorldPropertyOptionSelector
           options={propertyOptions}
@@ -198,7 +201,7 @@ export default function WorldGeneratorStepTwo(props: WorldGeneratorStepTwoProps)
       ) : null}
 
       <Button onClick={onCreateDraft} disabled={createDraftPending}>
-        {createDraftPending ? "创建中..." : "创建草稿并生成公理建议"}
+        {createDraftPending ? t("worlds.generator.stepTwo.creatingDraft") : t("worlds.generator.stepTwo.createDraft")}
       </Button>
     </div>
   );

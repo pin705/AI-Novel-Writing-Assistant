@@ -19,13 +19,13 @@ import { queryKeys } from "@/api/queryKeys";
 import { Badge } from "@/components/ui/badge";
 import { useLLMStore } from "@/store/llmStore";
 import { hasCreativeHubBindings } from "@/lib/creativeHubLinks";
+import { useTranslation } from "@/i18n";
 import CreativeHubConversation from "./components/CreativeHubConversation";
 import CreativeHubSidebar from "./components/CreativeHubSidebar";
 import CreativeHubThreadList from "./components/CreativeHubThreadList";
 import { useCreativeHubRuntime } from "./hooks/useCreativeHubRuntime";
 
 const RUNTIME_DETAILS_COLLAPSED_STORAGE_KEY = "creative-hub.runtime-details-collapsed";
-const DEFAULT_THREAD_TITLE = "\u65b0\u5bf9\u8bdd";
 const pendingAutoCreateThreadKeys = new Set<string>();
 
 function buildBindingsFromSearch(searchParams: URLSearchParams): CreativeHubResourceBinding {
@@ -59,7 +59,7 @@ function applyBindingsToSearchParams(searchParams: URLSearchParams, bindings: Cr
   for (const key of singleValueKeys) {
     const value = bindings[key];
     if (typeof value === "string" && value.trim()) {
-      next.set(key, value); 
+      next.set(key, value);
     } else {
       next.delete(key);
     }
@@ -108,6 +108,7 @@ function buildAutoCreateThreadKey(bindings: CreativeHubResourceBinding, shouldCr
 export default function CreativeHubPage() {
   const llm = useLLMStore();
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
   const [activeThreadId, setActiveThreadId] = useState(searchParams.get("threadId")?.trim() ?? "");
   const [approvalNote, setApprovalNote] = useState("");
@@ -117,6 +118,8 @@ export default function CreativeHubPage() {
     }
     return window.localStorage.getItem(RUNTIME_DETAILS_COLLAPSED_STORAGE_KEY) !== "expanded";
   });
+
+  const DEFAULT_THREAD_TITLE = t("creativeHub.common.defaultThreadTitle");
 
   const initialBindings = useMemo(
     () => buildBindingsFromSearch(searchParams),
@@ -165,7 +168,7 @@ export default function CreativeHubPage() {
           : {
             success: true,
             data: [createdThread],
-            message: "Creative Hub thread list updated.",
+            message: t("creativeHub.page.errors.createThreadMessage"),
           };
       });
       await queryClient.invalidateQueries({ queryKey: queryKeys.creativeHub.threads });
@@ -197,6 +200,7 @@ export default function CreativeHubPage() {
       },
     });
   }, [
+    DEFAULT_THREAD_TITLE,
     autoCreateThreadKey,
     createThreadMutation,
     initialBindings,
@@ -365,8 +369,8 @@ export default function CreativeHubPage() {
     if (!normalized) {
       return;
     }
-    await runtimeState.sendPrompt(`创建一本小说《${normalized}》。`);
-  }, [runtimeState]);
+    await runtimeState.sendPrompt(t("creativeHub.page.createNovelPrompt", { title: normalized }));
+  }, [runtimeState, t]);
 
   useEffect(() => {
     if (!activeThreadId || !productionStatus?.worldId || rawThreadBindings.worldId === productionStatus.worldId) {
@@ -387,29 +391,45 @@ export default function CreativeHubPage() {
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center gap-2">
-        <Badge variant="secondary">创作中枢</Badge>
+        <Badge variant="secondary">{t("creativeHub.common.title")}</Badge>
         {currentThread ? <Badge variant="outline">{currentThread.title}</Badge> : null}
-        {currentBindings.novelId ? <Badge variant="outline">小说 {currentBindings.novelId}</Badge> : null}
-        {currentBindings.worldId ? <Badge variant="outline">世界观 {currentBindings.worldId}</Badge> : null}
-        {currentBindings.taskId ? <Badge variant="outline">任务 {currentBindings.taskId}</Badge> : null}
-        {currentBindings.bookAnalysisId ? <Badge variant="outline">拆书 {currentBindings.bookAnalysisId}</Badge> : null}
-        {currentBindings.formulaId ? <Badge variant="outline">公式 {currentBindings.formulaId}</Badge> : null}
-        {currentBindings.baseCharacterId ? <Badge variant="outline">角色 {currentBindings.baseCharacterId}</Badge> : null}
-        {currentBindings.styleProfileId ? <Badge variant="outline">鍐欐硶 {currentBindings.styleProfileId}</Badge> : null}
+        {currentBindings.novelId ? (
+          <Badge variant="outline">{t("creativeHub.page.novelLabel", { value: currentBindings.novelId })}</Badge>
+        ) : null}
+        {currentBindings.worldId ? (
+          <Badge variant="outline">{t("creativeHub.page.worldLabel", { value: currentBindings.worldId })}</Badge>
+        ) : null}
+        {currentBindings.taskId ? (
+          <Badge variant="outline">{t("creativeHub.page.taskLabel", { value: currentBindings.taskId })}</Badge>
+        ) : null}
+        {currentBindings.bookAnalysisId ? (
+          <Badge variant="outline">{t("creativeHub.page.bookAnalysisLabel", { value: currentBindings.bookAnalysisId })}</Badge>
+        ) : null}
+        {currentBindings.formulaId ? (
+          <Badge variant="outline">{t("creativeHub.page.formulaLabel", { value: currentBindings.formulaId })}</Badge>
+        ) : null}
+        {currentBindings.baseCharacterId ? (
+          <Badge variant="outline">{t("creativeHub.page.baseCharacterLabel", { value: currentBindings.baseCharacterId })}</Badge>
+        ) : null}
+        {currentBindings.styleProfileId ? (
+          <Badge variant="outline">{t("creativeHub.page.styleProfileLabel", { value: currentBindings.styleProfileId })}</Badge>
+        ) : null}
         {latestTurnSummary?.currentStage ? <Badge variant="outline">{latestTurnSummary.currentStage}</Badge> : null}
         {currentBindings.knowledgeDocumentIds?.length ? (
-          <Badge variant="outline">知识文档 {currentBindings.knowledgeDocumentIds.length} 份</Badge>
+          <Badge variant="outline">
+            {t("creativeHub.page.knowledgeDocumentsLabel", { count: currentBindings.knowledgeDocumentIds.length })}
+          </Badge>
         ) : null}
         {currentCheckpointId ? (
-          <Badge variant="outline">Checkpoint {currentCheckpointId.slice(0, 8)}</Badge>
+          <Badge variant="outline">{t("creativeHub.page.checkpointLabel", { value: currentCheckpointId.slice(0, 8) })}</Badge>
         ) : null}
       </div>
 
       <div className="flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-950">
         <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
         <div>
-          <div className="font-medium">待完善</div>
-          <div className="mt-0.5 leading-6">当前模块还在开发中，尚未完善；可先用于创作问题诊断、方案讨论和轻量推进。</div>
+          <div className="font-medium">{t("creativeHub.page.draftNoticeTitle")}</div>
+          <div className="mt-0.5 leading-6">{t("creativeHub.page.draftNoticeDescription")}</div>
         </div>
       </div>
 

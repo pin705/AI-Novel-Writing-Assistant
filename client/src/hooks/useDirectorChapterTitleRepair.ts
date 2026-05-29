@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { repairNovelWorkflowChapterTitles } from "@/api/novelWorkflow";
 import { queryKeys } from "@/api/queryKeys";
 import { toast } from "@/components/ui/toast";
+import { useTranslation } from "@/i18n";
 import { resolveChapterTitleWarning } from "@/lib/directorTaskNotice";
 
 interface DirectorChapterTitleRepairOptions {
@@ -17,10 +18,11 @@ interface DirectorChapterTitleRepairOptions {
 export function useDirectorChapterTitleRepair(options: DirectorChapterTitleRepairOptions = {}) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   const mutation = useMutation({
     mutationFn: async (task: UnifiedTaskDetail) => {
-      const warning = resolveChapterTitleWarning(task);
+      const warning = resolveChapterTitleWarning(task, t);
       if (!warning) {
         throw new Error("当前任务没有可直接 AI 修复的章节标题提醒。");
       }

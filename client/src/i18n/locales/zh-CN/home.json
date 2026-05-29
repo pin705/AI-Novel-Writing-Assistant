@@ -1,0 +1,69 @@
+{
+  "metrics": {
+    "liveTitle": "最近自动推进中",
+    "liveHint": "最近项目中仍在后台推进的自动导演或自动执行项目。",
+    "actionTitle": "最近待你处理",
+    "actionHint": "最近项目里等待审核、失败或已取消后需要你决定下一步的项目。",
+    "readyTitle": "最近可进入章节执行",
+    "readyHint": "最近项目里准备到可开写阶段，可以直接进入章节写作。",
+    "failedTitle": "后台失败任务",
+    "failedHint": "来自任务中心的失败任务总数，可后续集中处理。"
+  },
+  "recommend": {
+    "newcomer": "新手推荐",
+    "lowBarrier": "低门槛开书",
+    "titleHasNovels": "想快速开启下一本书？先交给 AI 自动导演。",
+    "titleEmpty": "第一次使用？先让 AI 自动导演带你开一本书。",
+    "description": "你只需要提供一个模糊想法，AI 会先帮你生成方向方案、标题包和开书准备，并在关键阶段停下来等你确认，不需要你一开始就把结构全部想清楚。",
+    "hintA": "适合还没想清楚题材、卖点和前 30 章承诺时使用",
+    "hintB": "也适合先快速搭起一本可继续推进的新项目",
+    "directorCta": "AI 自动导演开书",
+    "manualCta": "手动创建小说",
+    "helpCta": "新手上路"
+  },
+  "continueRecent": {
+    "title": "继续最近项目",
+    "description": "首页应该直接把你送回当前最值得继续的一本书。",
+    "errorMessage": "当前无法读取项目列表，首页没法为你推荐下一步入口。",
+    "emptyMessage": "你还没有开始小说项目。第一次使用时，推荐直接走 AI 自动导演，它会先帮你搭好方向和开写准备。",
+    "openProject": "打开项目",
+    "executionDetails": "执行详情",
+    "noAutoDirectorTask": "无自动导演任务",
+    "progress": "进度 {{percent}}%",
+    "updatedAt": "更新时间：{{value}}",
+    "chapterCount": "章节数：{{value}}",
+    "characterCount": "角色数：{{value}}",
+    "currentStage": "当前阶段：{{value}}",
+    "lastHealthyStage": "最近健康阶段：{{value}}",
+    "stage": "阶段：{{value}}"
+  },
+  "novelLead": {
+    "worldBound": "当前项目已绑定世界观「{{world}}」，可以直接继续创作。",
+    "noDescription": "当前项目暂无简介，可以直接进入编辑页继续推进。"
+  },
+  "actions": {
+    "continueExecuting": "继续执行中...",
+    "continueAutoExecute": "继续自动执行{{scope}}",
+    "defaultScope": "当前章节范围",
+    "continuing": "继续中...",
+    "continueDirector": "继续导演",
+    "confirmDirection": "继续确认书级方向",
+    "enterChapterExecution": "进入章节执行",
+    "viewProgress": "查看推进状态",
+    "editNovel": "编辑小说",
+    "continueAutoExecuteFailed": "继续自动执行当前章节范围失败。",
+    "continueDirectorFailed": "继续自动导演失败。"
+  },
+  "quickActions": {
+    "title": "快捷操作",
+    "description": "把常用入口和新手最容易上手的开书方式放在一起。",
+    "createBookAnalysis": "新建拆书",
+    "backgroundTasks": "后台任务"
+  },
+  "recent": {
+    "title": "最近项目",
+    "description": "这里不只显示标题，也直接显示当前所处阶段和恢复入口。",
+    "errorMessage": "当前无法加载最近项目，稍后可以重试。",
+    "emptyMessage": "暂无小说项目，先从“新建小说”开始。"
+  }
+}

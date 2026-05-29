@@ -8,6 +8,7 @@ import {
   refreshNovelWorldSlice,
   updateNovelWorldSliceOverrides,
 } from "@/api/novelWorldSlice";
+import { useTranslation } from "@/i18n";
 
 interface UseNovelWorldSliceOptions {
   novelId: string;
@@ -21,6 +22,7 @@ interface UseNovelWorldSliceOptions {
 }
 
 export function useNovelWorldSlice({ novelId, enabled = true, llm, queryClient }: UseNovelWorldSliceOptions) {
+  const { t } = useTranslation();
   const [worldSliceMessage, setWorldSliceMessage] = useState("");
 
   const worldSliceQuery = useQuery({
@@ -37,7 +39,7 @@ export function useNovelWorldSlice({ novelId, enabled = true, llm, queryClient }
       temperature: llm.temperature,
     }),
     onSuccess: async () => {
-      setWorldSliceMessage("已重新整理这本书会用到的世界设定。");
+      setWorldSliceMessage(t("novels.worldSlice.refreshed"));
       await queryClient.invalidateQueries({ queryKey: queryKeys.novels.worldSlice(novelId) });
       await queryClient.invalidateQueries({ queryKey: queryKeys.novels.detail(novelId) });
     },
@@ -46,7 +48,7 @@ export function useNovelWorldSlice({ novelId, enabled = true, llm, queryClient }
   const saveWorldSliceOverridesMutation = useMutation({
     mutationFn: (payload: StoryWorldSliceOverrides) => updateNovelWorldSliceOverrides(novelId, payload),
     onSuccess: async () => {
-      setWorldSliceMessage("已保存这本书的世界设定保留项。");
+      setWorldSliceMessage(t("novels.worldSlice.saved"));
       await queryClient.invalidateQueries({ queryKey: queryKeys.novels.worldSlice(novelId) });
     },
   });

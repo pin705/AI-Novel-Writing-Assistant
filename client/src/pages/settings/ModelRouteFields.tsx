@@ -2,6 +2,7 @@ import type { APIKeyStatus } from "@/api/settings";
 import SearchableSelect from "@/components/common/SearchableSelect";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useTranslation } from "@/i18n";
 import {
   getModelOptions,
   getPreferredModel,
@@ -38,12 +39,13 @@ export default function ModelRouteFields({
   manualModelPlaceholder,
   showProtocolFields = true,
 }: ModelRouteFieldsProps) {
+  const { t } = useTranslation();
   const modelOptions = getModelOptions(providerConfigs, draft.provider, draft.model);
 
   return (
     <div className={`grid gap-3 ${showProtocolFields ? "md:grid-cols-6" : "md:grid-cols-4"}`}>
       <div className="space-y-1">
-        <div className="text-xs text-muted-foreground">服务商</div>
+        <div className="text-xs text-muted-foreground">{t("settings.modelRoutes.providerLabel")}</div>
         <Select
           value={draft.provider}
           onValueChange={(value) => {
@@ -55,7 +57,7 @@ export default function ModelRouteFields({
           }}
         >
           <SelectTrigger>
-            <SelectValue placeholder="选择服务商" />
+            <SelectValue placeholder={t("settings.modelRoutes.providerPlaceholder")} />
           </SelectTrigger>
           <SelectContent>
             {providerOptions.map((provider) => (
@@ -68,13 +70,13 @@ export default function ModelRouteFields({
       </div>
 
       <div className="space-y-1">
-        <div className="text-xs text-muted-foreground">模型</div>
+        <div className="text-xs text-muted-foreground">{t("settings.modelRoutes.modelLabel")}</div>
         <SearchableSelect
           value={draft.model || undefined}
           onValueChange={(value) => onPatch({ model: value })}
           options={modelOptions.map((model) => ({ value: model }))}
-          placeholder="选择模型"
-          searchPlaceholder="搜索模型"
+          placeholder={t("settings.modelRoutes.modelSelectPlaceholder")}
+          searchPlaceholder={t("settings.modelRoutes.modelSearchPlaceholder")}
           emptyText={modelEmptyText}
         />
         <Input
@@ -85,7 +87,7 @@ export default function ModelRouteFields({
       </div>
 
       <div className="space-y-1">
-        <div className="text-xs text-muted-foreground">温度</div>
+        <div className="text-xs text-muted-foreground">{t("settings.modelRoutes.temperatureLabel")}</div>
         <Input
           value={draft.temperature}
           placeholder={temperaturePlaceholder}
@@ -94,7 +96,7 @@ export default function ModelRouteFields({
       </div>
 
       <div className="space-y-1">
-        <div className="text-xs text-muted-foreground">最大输出长度</div>
+        <div className="text-xs text-muted-foreground">{t("settings.modelRoutes.maxTokensLabel")}</div>
         <Input
           value={draft.maxTokens}
           placeholder={maxTokensPlaceholder}
@@ -104,7 +106,7 @@ export default function ModelRouteFields({
 
       {showProtocolFields ? (
         <div className="space-y-1">
-          <div className="text-xs text-muted-foreground">请求协议</div>
+          <div className="text-xs text-muted-foreground">{t("settings.modelRoutes.requestProtocolLabel")}</div>
           <Select
             value={draft.requestProtocol}
             onValueChange={(value) => {
@@ -118,12 +120,12 @@ export default function ModelRouteFields({
             }}
           >
             <SelectTrigger>
-              <SelectValue placeholder="自动选择" />
+              <SelectValue placeholder={t("settings.modelRoutes.requestProtocolAuto")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="auto">自动选择</SelectItem>
-              <SelectItem value="openai_compatible">OpenAI 兼容</SelectItem>
-              <SelectItem value="anthropic">Anthropic</SelectItem>
+              <SelectItem value="auto">{t("settings.modelRoutes.requestProtocolAuto")}</SelectItem>
+              <SelectItem value="openai_compatible">{t("settings.modelRoutes.requestProtocolOpenAi")}</SelectItem>
+              <SelectItem value="anthropic">{t("settings.modelRoutes.requestProtocolAnthropic")}</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -131,7 +133,7 @@ export default function ModelRouteFields({
 
       {showProtocolFields ? (
         <div className="space-y-1">
-          <div className="text-xs text-muted-foreground">结构化格式</div>
+          <div className="text-xs text-muted-foreground">{t("settings.modelRoutes.structuredFormatLabel")}</div>
           <Select
             value={draft.structuredResponseFormat}
             onValueChange={(value) => onPatch({
@@ -139,12 +141,12 @@ export default function ModelRouteFields({
             })}
           >
             <SelectTrigger>
-              <SelectValue placeholder="自动选择" />
+              <SelectValue placeholder={t("settings.modelRoutes.structuredFormatAuto")} />
             </SelectTrigger>
             <SelectContent>
               {getStructuredResponseFormatOptions(draft.requestProtocol).map((format) => (
                 <SelectItem key={format} value={format}>
-                  {format === "auto" ? "自动选择" : format}
+                  {format === "auto" ? t("settings.modelRoutes.structuredFormatAuto") : format}
                 </SelectItem>
               ))}
             </SelectContent>

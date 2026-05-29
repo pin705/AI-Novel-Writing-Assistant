@@ -116,6 +116,10 @@ export async function restartDesktopApp(): Promise<void> {
   await getDesktopBridge()?.restartApp?.();
 }
 
+export function notifyDesktopLocaleChanged(locale: string): void {
+  getDesktopBridge()?.setLocale?.(locale);
+}
+
 export async function getDesktopDataImportSnapshot(): Promise<DesktopDataImportSnapshot | null> {
   return getDesktopBridge()?.getDataImportSnapshot?.() ?? null;
 }

@@ -1,0 +1,134 @@
+{
+  "common": {
+    "none": "None",
+    "default": "Default",
+    "openInCreativeHubLabel": "Send analysis to Creative Hub"
+  },
+  "status": {
+    "draft": "Draft",
+    "queued": "Queued",
+    "running": "Running",
+    "succeeded": "Succeeded",
+    "failed": "Failed",
+    "archived": "Archived",
+    "idle": "Idle"
+  },
+  "stage": {
+    "loadingCache": "Checking cache",
+    "preparingNotes": "Preparing notes",
+    "generatingSections": "Generating sections"
+  },
+  "sidebar": {
+    "create": {
+      "title": "Create book analysis",
+      "documentLabel": "Knowledge document",
+      "selectDocumentPlaceholder": "Select a document",
+      "versionLabel": "Document version",
+      "useActiveVersionPlaceholder": "Use the active version",
+      "versionLabelFormat": "v{{version}}",
+      "versionLabelActiveFormat": "v{{version}} (active)",
+      "modelLabel": "Model",
+      "includeTimelineLabel": "Generate story timeline (off by default)",
+      "submit": "Create",
+      "sourceSummary": "Versions: {{versions}} | Analyses: {{count}}"
+    },
+    "list": {
+      "title": "Analysis list",
+      "searchPlaceholder": "Search by title or keyword",
+      "filterAll": "All statuses",
+      "publishedBadge": "Published",
+      "documentVersionFormat": "{{title}} | v{{version}}",
+      "progressFormat": "Progress {{percent}}% | Updated {{updatedAt}}",
+      "empty": "No book analyses yet — pick a knowledge document and create one."
+    }
+  },
+  "detail": {
+    "empty": {
+      "title": "Book analysis workspace",
+      "description": "Select an analysis on the left, or create a new one from a knowledge document."
+    },
+    "header": {
+      "documentInfo": "{{document}} | Source version v{{version}}",
+      "activeVersionSuffix": " | Active version v{{version}}",
+      "publishedBadge": "Published",
+      "progress": "Progress {{percent}}%",
+      "copy": "Copy",
+      "rebuild": "Rebuild",
+      "openInTasks": "Open in Task Center",
+      "exportMarkdown": "Export Markdown",
+      "exportJson": "Export JSON",
+      "generateStyleProfile": "Build style asset from analysis",
+      "generatingStyleProfile": "Generating style asset...",
+      "archive": "Archive"
+    },
+    "warnings": {
+      "outdatedSource": "This analysis is based on an older source document; the active version is v{{version}}."
+    },
+    "publish": {
+      "title": "Publish to a novel's knowledge base",
+      "selectNovelPlaceholder": "Select target novel",
+      "publishCta": "Publish and bind",
+      "publishedAt": "Published at: {{value}}",
+      "feedbackSuccess": "Published: document {{documentId}}, version v{{version}}, bound {{count}} items",
+      "feedbackFailedFallback": "Publishing failed."
+    },
+    "styleProfile": {
+      "feedbackStart": "Generating a style asset from the \"Voice & Technique\" section. We'll take you to the Style Engine when it's ready.",
+      "feedbackFailedFallback": "Building a style asset from the analysis failed.",
+      "successToast": "Style asset generated from the analysis. Opening Style Engine.",
+      "namePattern": "{{title}} — Style asset"
+    },
+    "summary": {
+      "title": "Summary",
+      "placeholder": "Once the overview is generated, the summary will appear here."
+    },
+    "meta": {
+      "title": "Run metadata",
+      "provider": "Provider: {{value}}",
+      "model": "Model: {{value}}",
+      "temperature": "Temperature: {{value}}",
+      "maxTokens": "Max tokens: {{value}}",
+      "currentStage": "Current stage: {{value}}",
+      "currentSection": "Current section: {{value}}",
+      "heartbeatAt": "Last heartbeat: {{value}}",
+      "lastRunAt": "Last run: {{value}}",
+      "createdAt": "Created at: {{value}}"
+    },
+    "lastError": "Latest error: {{value}}",
+    "evidence": {
+      "title": "Evidence panel",
+      "itemHeading": "{{section}} | [{{source}}] {{label}}",
+      "empty": "No evidence captured for this analysis yet."
+    }
+  },
+  "section": {
+    "frozenBadge": "Frozen",
+    "regenerate": "Regenerate",
+    "save": "Save",
+    "freezeLabel": "Freeze this section so auto-reruns won't overwrite its content.",
+    "frozenNotice": "Currently frozen — unfreeze before using \"Regenerate\" or \"AI optimize\".",
+    "draftTitle": "Current draft",
+    "viewTab": "View",
+    "editTab": "Edit",
+    "viewEmpty": "This section has no content to display yet.",
+    "editPlaceholder": "Edit the draft of this section directly here.",
+    "optimize": {
+      "title": "AI optimize / refine",
+      "instructionPlaceholder": "Type an optimize or refine instruction, e.g. trim filler, sharpen conflict, keep the facts.",
+      "preview": "Generate preview",
+      "previewing": "Generating preview...",
+      "previewLabel": "Optimized preview",
+      "apply": "Apply to current draft",
+      "cancel": "Discard preview"
+    },
+    "advanced": {
+      "summary": "Advanced: notes",
+      "notesLabel": "Notes",
+      "notesPlaceholder": "Add notes, assumptions, or follow-ups."
+    },
+    "evidence": {
+      "title": "Evidence",
+      "itemHeading": "[{{source}}] {{label}}"
+    }
+  }
+}

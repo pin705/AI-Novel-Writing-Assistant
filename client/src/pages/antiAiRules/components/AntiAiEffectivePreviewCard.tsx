@@ -2,6 +2,7 @@ import type { AntiAiEffectiveRulesResult, StyleProfile } from "@ai-novel/shared/
 import { SlidersHorizontal } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useTranslation } from "@/i18n";
 import EffectiveRuleList from "./EffectiveRuleList";
 
 interface AntiAiEffectivePreviewCardProps {
@@ -13,15 +14,16 @@ interface AntiAiEffectivePreviewCardProps {
 }
 
 export default function AntiAiEffectivePreviewCard(props: AntiAiEffectivePreviewCardProps) {
+  const { t } = useTranslation();
   return (
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-xl">
           <SlidersHorizontal className="h-5 w-5" />
-          生效预览
+          {t("antiAiRules.effectivePreview.title")}
         </CardTitle>
         <CardDescription>
-          查看正文生成会拿到的全局规则，以及选中写法后叠加的专属规则。
+          {t("antiAiRules.effectivePreview.description")}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -30,10 +32,10 @@ export default function AntiAiEffectivePreviewCard(props: AntiAiEffectivePreview
           onValueChange={(value) => props.onStyleProfileChange(value === "__global__" ? "" : value)}
         >
           <SelectTrigger>
-            <SelectValue placeholder="选择预览上下文" />
+            <SelectValue placeholder={t("antiAiRules.effectivePreview.contextPlaceholder")} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="__global__">只看全局默认</SelectItem>
+            <SelectItem value="__global__">{t("antiAiRules.effectivePreview.globalOnly")}</SelectItem>
             {props.profiles.map((profile) => (
               <SelectItem key={profile.id} value={profile.id}>{profile.name}</SelectItem>
             ))}
@@ -41,30 +43,30 @@ export default function AntiAiEffectivePreviewCard(props: AntiAiEffectivePreview
         </Select>
 
         {props.loading ? (
-          <div className="text-sm text-muted-foreground">正在计算生效规则...</div>
+          <div className="text-sm text-muted-foreground">{t("antiAiRules.effectivePreview.calculating")}</div>
         ) : null}
 
         {props.effective ? (
           <div className="space-y-4">
             <div className="grid gap-2 text-sm sm:grid-cols-2">
               <div className="rounded-md border bg-muted/20 p-3">
-                <div className="text-xs text-muted-foreground">全局基线</div>
-                <div className="mt-1 font-semibold">{props.effective.usesGlobalAntiAiBaseline ? "应用" : "未应用"}</div>
+                <div className="text-xs text-muted-foreground">{t("antiAiRules.effectivePreview.globalBaseline")}</div>
+                <div className="mt-1 font-semibold">{props.effective.usesGlobalAntiAiBaseline ? t("antiAiRules.effectivePreview.applied") : t("antiAiRules.effectivePreview.notApplied")}</div>
               </div>
               <div className="rounded-md border bg-muted/20 p-3">
-                <div className="text-xs text-muted-foreground">生效规则</div>
+                <div className="text-xs text-muted-foreground">{t("antiAiRules.effectivePreview.effectiveCount")}</div>
                 <div className="mt-1 font-semibold">{props.effective.effectiveRules.length}</div>
               </div>
             </div>
             <EffectiveRuleList
-              title="全局默认规则"
+              title={t("antiAiRules.effectivePreview.globalRulesTitle")}
               rules={props.effective.globalBaselineRules}
-              empty="没有全局默认规则。"
+              empty={t("antiAiRules.effectivePreview.globalRulesEmpty")}
             />
             <EffectiveRuleList
-              title="写法专属规则"
+              title={t("antiAiRules.effectivePreview.styleRulesTitle")}
               rules={props.effective.styleSpecificRules}
-              empty="预览上下文没有叠加写法专属规则。"
+              empty={t("antiAiRules.effectivePreview.styleRulesEmpty")}
             />
           </div>
         ) : null}

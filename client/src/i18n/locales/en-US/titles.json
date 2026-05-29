@@ -1,0 +1,92 @@
+{
+  "page": {
+    "title": "Title studio",
+    "description": "Unify \"title generation\" and \"title curation\" into a single formal asset module. The studio produces candidates; the library handles reuse and stats.",
+    "tabFactory": "Title studio",
+    "tabLibrary": "Title library"
+  },
+  "factory": {
+    "modelSection": "Model settings",
+    "modeNovel": "From a novel",
+    "modeBrief": "Free studio",
+    "modeAdapt": "Adapt reference",
+    "selectNovel": "Pick a novel project",
+    "selectNovelPlaceholder": "Pick a project",
+    "selectNovelHint": "Reuses the existing \"project-context title generation\" capability — best for works that already have a synopsis and genre nailed down.",
+    "briefLabel": "Creative brief",
+    "briefPlaceholder": "Describe the genre, protagonist hook, conflict, voice and reader expectation. The more specific, the more distinctive your titles.",
+    "genreFilterLabel": "Genre filter",
+    "genreFilterNone": "Any genre",
+    "referenceLabel": "Reference title",
+    "referencePlaceholder": "e.g. I'm farming attributes in the wasteland",
+    "adaptBriefLabel": "Current work brief",
+    "adaptBriefPlaceholder": "Describe your work's genre, characters and hook. The system will riff on the reference's rhythm without copying it verbatim.",
+    "countLabel": "How many",
+    "generating": "Generating...",
+    "generate": "Generate title candidates",
+    "emptyMessage": "Pick a studio mode and start generating — results will land here.",
+    "primaryAction": "Copy title",
+    "errors": {
+      "selectNovel": "Pick a novel project first."
+    },
+    "toast": {
+      "generated": "Generated {{count}} title candidates.",
+      "saved": "Title saved to the library.",
+      "copied": "Title copied to clipboard."
+    },
+    "saveDescription": {
+      "novel": "Source project: {{title}}",
+      "novelFallback": "Untitled project",
+      "adapt": "Reference title: {{reference}}"
+    },
+    "saveKeywords": {
+      "adapt": "Adapted from / {{reference}}"
+    }
+  },
+  "library": {
+    "searchLabel": "Search",
+    "searchPlaceholder": "Match title, description or keywords",
+    "genreLabel": "Genre",
+    "genreAll": "All genres",
+    "sortLabel": "Sort by",
+    "sortNewest": "Newest",
+    "sortHot": "Most used",
+    "sortClickRate": "Click potential",
+    "loading": "Loading title library...",
+    "emptyTitle": "The title library is empty",
+    "emptyHint": "Generate a batch in the title studio first, then save the ones worth reusing here.",
+    "estimate": "Est. {{value}}",
+    "usedBadge": "Used {{count}}",
+    "keywordsLine": "Keywords: {{value}}",
+    "addedAt": "Added: {{value}}",
+    "copy": "Copy",
+    "markUsed": "Mark as used",
+    "marking": "Updating...",
+    "delete": "Delete",
+    "deleting": "Deleting...",
+    "confirmDelete": "Delete title \"{{title}}\"?",
+    "pagination": "Page {{page}} / {{totalPages}}, {{total}} entries total",
+    "prev": "Previous",
+    "next": "Next",
+    "toast": {
+      "deleted": "Title deleted.",
+      "marked": "Title usage count updated.",
+      "copied": "Title copied to clipboard."
+    }
+  },
+  "suggestion": {
+    "estimate": "Est. {{value}}",
+    "selected": "Currently selected",
+    "copy": "Copy",
+    "save": "Add to library",
+    "saving": "Saving...",
+    "emptyDefault": "No titles generated yet."
+  },
+  "styles": {
+    "literary": "Narrative",
+    "conflict": "Conflict hook",
+    "suspense": "Suspense",
+    "high_concept": "High concept",
+    "default": "Title strategy"
+  }
+}

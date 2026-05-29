@@ -1,0 +1,154 @@
+{
+  "sessions": {
+    "title": "Danh sách phiên",
+    "newSession": "Tạo phiên mới",
+    "newSessionTitle": "Phiên mới",
+    "runMeta": "Lần chạy: {{runId}} · {{count}} mục"
+  },
+  "thread": {
+    "title": "Tin nhắn hội thoại",
+    "panelTitle": "Bảng điều khiển",
+    "greeting": "Xin chào!",
+    "subgreeting": "Hôm nay muốn cùng hoàn thiện đoạn cốt truyện nào?",
+    "suggestion1Prompt": "Giúp tôi rà soát các ràng buộc thế giới quan của \"Người Cứu Thế Xa Xôi V2\" và chỉ ra các điểm xung đột trong dàn ý hiện tại.",
+    "suggestion1Title": "Kiểm tra nhất quán thế giới quan",
+    "suggestion1Description": "Phát hiện nhanh xung đột và đề xuất hướng sửa",
+    "suggestion2Prompt": "Viết lại đoạn kết chương 3, tăng kịch tính và giữ giọng điệu nhân vật nhất quán.",
+    "suggestion2Title": "Bản nháp viết lại chương",
+    "suggestion2Description": "Tập trung vào kịch tính kết chương và nhất quán nhân vật",
+    "inputPlaceholder": "Nhập tin nhắn và Enter để gửi, Shift+Enter để xuống dòng.",
+    "send": "Gửi",
+    "stop": "Dừng",
+    "continueTask": "Tiếp tục tác vụ hiện tại.",
+    "emptyResponse": "(Phản hồi trống)",
+    "requestFailedStatus": "Yêu cầu thất bại, mã trạng thái {{status}}",
+    "sendFailed": "Gửi tin nhắn thất bại.",
+    "novelModeRequired": "Ở chế độ tiểu thuyết, hãy chọn một tiểu thuyết trước.",
+    "toolPart": "[Công cụ: {{name}}]",
+    "dataPart": "[Dữ liệu]",
+    "imagePart": "[Hình ảnh: {{name}}]",
+    "filePart": "[Tệp: {{name}}]",
+    "unnamed": "Chưa đặt tên",
+    "reasoningTitle": "Quá trình suy luận"
+  },
+  "tabs": {
+    "console": "Bảng điều khiển",
+    "trace": "Vết chạy"
+  },
+  "console": {
+    "sessionContext": "Bối cảnh phiên",
+    "chatMode": "Chế độ hội thoại",
+    "chatModeStandard": "Chế độ chuẩn",
+    "chatModeAgent": "Tác nhân thông minh",
+    "contextMode": "Chế độ ngữ cảnh",
+    "contextGlobal": "Toàn cục",
+    "contextNovel": "Tiểu thuyết",
+    "sessionRun": "Lần chạy của phiên",
+    "novel": "Tiểu thuyết",
+    "selectNovel": "Hãy chọn tiểu thuyết",
+    "approval": "Duyệt",
+    "approvalPending": "{{count}} mục cần xử lý",
+    "approvalItemTitle": "Mục duyệt {{index}}",
+    "approvalNotePlaceholder": "Ghi chú duyệt (tùy chọn)",
+    "approve": "Duyệt và tiếp tục",
+    "reject": "Từ chối",
+    "noApproval": "Hiện không có mục duyệt nào.",
+    "approvalHistory": "Lịch sử duyệt",
+    "runConfig": "Cấu hình chạy",
+    "modelTitle": "Mô hình",
+    "providerLabel": "Nhà cung cấp: ",
+    "modelLabel": "Mô hình: ",
+    "temperature": "Nhiệt độ",
+    "maxTokens": "Token tối đa",
+    "systemPrompt": "Câu nhắc hệ thống",
+    "systemPromptPlaceholder": "Ghi đè câu nhắc hệ thống mặc định.",
+    "enableRag": "Bật tìm kiếm tri thức (RAG)",
+    "knowledgeTitle": "Tài liệu tri thức",
+    "knowledgeAutoHint": "Để trống sẽ tự động phân tích, hoặc chọn tài liệu để giới hạn phạm vi tìm kiếm.",
+    "knowledgeDisabledHint": "RAG đang bị tắt, hãy bật ở trên trước khi dùng tìm kiếm tài liệu."
+  },
+  "trace": {
+    "replayControl": "Điều khiển phát lại",
+    "replayHint": "Chỉ hiển thị các bước phía sau còn lệnh gọi công cụ.",
+    "continueFromHere": "Tiếp tục từ đây",
+    "dryRun": "Chạy thử",
+    "noReplayable": "Lần chạy đã chọn không có bước nào để phát lại tiếp.",
+    "stepOrder": "{{seq}}. {{title}}",
+    "input": "Đầu vào",
+    "output": "Đầu ra",
+    "errorLine": "Lỗi: {{value}}",
+    "eventLabel": "Sự kiện {{index}}",
+    "noEvents": "Chưa có sự kiện chạy.",
+    "emptyPreview": "Không có"
+  },
+  "approvalActions": {
+    "submittedApprove": "Đã gửi duyệt, đang tiếp tục thực thi",
+    "submittedReject": "Đã gửi duyệt, đang xử lý"
+  },
+  "errors": {
+    "noPendingApproval": "Hiện không có mục duyệt nào để xử lý.",
+    "noReplayableStep": "Lần chạy hiện tại không có bước nào để phát lại.",
+    "replayFailed": "Phát lại thất bại.",
+    "replayNoToolStepsAfter": "Sau bước đã chọn không có bước công cụ nào để phát lại, hãy chọn bước sớm hơn."
+  },
+  "events": {
+    "toolCall": "Gọi công cụ {{name}}: {{summary}}",
+    "toolResultSuccess": "{{name}} thành công: {{summary}}",
+    "toolResultFailed": "{{name}} thất bại: {{summary}}",
+    "approvalRequired": "Chờ duyệt: {{summary}}",
+    "approvalResultPlain": "Kết quả duyệt: {{action}}",
+    "approvalResultWithNote": "Kết quả duyệt: {{action}} ({{note}})"
+  },
+  "runStatus": {
+    "queued": "Đang chờ",
+    "running": "Đang chạy",
+    "waitingApproval": "Chờ duyệt",
+    "succeeded": "Hoàn tất",
+    "failed": "Thất bại",
+    "cancelled": "Đã hủy"
+  },
+  "approvalActionLabels": {
+    "approved": "Đã duyệt",
+    "rejected": "Đã từ chối"
+  },
+  "stepType": {
+    "planning": "Lập kế hoạch",
+    "toolCall": "Gọi công cụ",
+    "toolResult": "Kết quả công cụ",
+    "approval": "Duyệt",
+    "completion": "Kết thúc",
+    "analysis": "Phân tích",
+    "review": "Rà soát",
+    "repair": "Sửa lỗi",
+    "writing": "Viết",
+    "context": "Ngữ cảnh"
+  },
+  "agentName": {
+    "planner": "Bộ lập kế hoạch",
+    "writer": "Bộ viết",
+    "reviewer": "Bộ rà soát",
+    "continuity": "Kiểm tra tính liền mạch",
+    "repair": "Bộ sửa lỗi"
+  },
+  "stepTitle": "{{agent}} · {{stepType}} · {{status}}",
+  "header": {
+    "waitingApproval": "Lần chạy hiện tại đang chờ duyệt",
+    "running": "Lần chạy hiện tại đang diễn ra",
+    "succeeded": "Lần chạy hiện tại đã hoàn tất",
+    "failed": "Lần chạy hiện tại thất bại",
+    "cancelled": "Lần chạy hiện tại đã hủy"
+  },
+  "creativeHub": {
+    "title": "Trung tâm sáng tạo",
+    "description": "Đây không chỉ là trang chat, mà là cổng vào lệnh, trạng thái, chẩn đoán và duyệt của không gian làm việc tiểu thuyết hiện tại.",
+    "novelBadge": "Tiểu thuyết {{id}}",
+    "runBadge": "Lần chạy {{id}}",
+    "loading": "Đang tải danh mục năng lực...",
+    "category": {
+      "read": "Đọc",
+      "inspect": "Chẩn đoán",
+      "mutate": "Sửa đổi",
+      "run": "Thực thi"
+    }
+  }
+}

@@ -1,6 +1,9 @@
-﻿import type { NovelAutoDirectorTaskSummary } from "@ai-novel/shared/types/novel";
+import type { NovelAutoDirectorTaskSummary } from "@ai-novel/shared/types/novel";
 import type { NovelWorkflowCheckpoint } from "@ai-novel/shared/types/novelWorkflow";
 import type { TaskStatus } from "@ai-novel/shared/types/task";
+import type { TranslateValues } from "@/i18n";
+
+type Translator = (key: string, values?: TranslateValues) => string;
 
 export type WorkflowBadgeVariant = "default" | "outline" | "secondary" | "destructive";
 
@@ -15,48 +18,61 @@ type WorkflowTaskLike = {
 export const LIVE_TASK_STATUSES = new Set<TaskStatus>(["queued", "running", "waiting_approval"]);
 export const BACKGROUND_RUNNING_TASK_STATUSES = new Set<TaskStatus>(["running"]);
 
-function getExecutionScopeLabel(scopeLabel?: string | null, fallback = "第 1-10 章"): string {
-  return scopeLabel?.trim() || fallback;
+function getExecutionScopeLabel(scopeLabel: string | null | undefined, t: Translator): string {
+  return scopeLabel?.trim() || t("lib.novelWorkflowTaskUi.defaultScopeLabel");
 }
 
-function buildAutoExecutionRunningLabel(scopeLabel?: string | null): string {
-  return `${getExecutionScopeLabel(scopeLabel)}自动执行中`;
+function buildAutoExecutionRunningLabel(scopeLabel: string | null | undefined, t: Translator): string {
+  return t("lib.novelWorkflowTaskUi.autoExecutionRunning", {
+    scope: getExecutionScopeLabel(scopeLabel, t),
+  });
 }
 
-function buildAutoExecutionPausedLabel(scopeLabel?: string | null): string {
-  return `${getExecutionScopeLabel(scopeLabel)}自动执行已暂停`;
+function buildAutoExecutionPausedLabel(scopeLabel: string | null | undefined, t: Translator): string {
+  return t("lib.novelWorkflowTaskUi.autoExecutionPaused", {
+    scope: getExecutionScopeLabel(scopeLabel, t),
+  });
 }
 
-function buildAutoExecutionCancelledLabel(scopeLabel?: string | null): string {
-  return `${getExecutionScopeLabel(scopeLabel)}自动执行已取消`;
+function buildAutoExecutionCancelledLabel(scopeLabel: string | null | undefined, t: Translator): string {
+  return t("lib.novelWorkflowTaskUi.autoExecutionCancelled", {
+    scope: getExecutionScopeLabel(scopeLabel, t),
+  });
 }
 
-export function formatWorkflowCheckpoint(checkpoint?: NovelWorkflowCheckpoint | null, scopeLabel?: string | null): string {
+export function formatWorkflowCheckpoint(
+  checkpoint: NovelWorkflowCheckpoint | null | undefined,
+  scopeLabel: string | null | undefined,
+  t: Translator,
+): string {
   if (checkpoint === "candidate_selection_required") {
-    return "等待确认书级方向";
+    return t("lib.novelWorkflowTaskUi.checkpoints.candidateSelectionRequired");
   }
   if (checkpoint === "book_contract_ready") {
-    return "Book Contract 已就绪";
+    return t("lib.novelWorkflowTaskUi.checkpoints.bookContractReady");
   }
   if (checkpoint === "character_setup_required") {
-    return "角色准备待审核";
+    return t("lib.novelWorkflowTaskUi.checkpoints.characterSetupRequired");
   }
   if (checkpoint === "volume_strategy_ready") {
-    return "卷战略待审核";
+    return t("lib.novelWorkflowTaskUi.checkpoints.volumeStrategyReady");
   }
   if (checkpoint === "chapter_batch_ready") {
-    return buildAutoExecutionPausedLabel(scopeLabel);
+    return buildAutoExecutionPausedLabel(scopeLabel, t);
   }
   if (checkpoint === "replan_required") {
-    return "等待重规划";
+    return t("lib.novelWorkflowTaskUi.checkpoints.replanRequired");
   }
   if (checkpoint === "workflow_completed") {
-    return "自动导演已完成";
+    return t("lib.novelWorkflowTaskUi.checkpoints.workflowCompleted");
   }
-  return "自动导演";
+  return t("lib.novelWorkflowTaskUi.checkpoints.fallback");
 }
 
-export function getWorkflowBadge(task?: NovelAutoDirectorTaskSummary | null): {
+export function getWorkflowBadge(
+  task: NovelAutoDirectorTaskSummary | null | undefined,
+  t: Translator,
+): {
   label: string;
   variant: WorkflowBadgeVariant;
 } | null {
@@ -69,57 +85,60 @@ export function getWorkflowBadge(task?: NovelAutoDirectorTaskSummary | null): {
     && task.checkpointType === "chapter_batch_ready"
   ) {
     return {
-      label: displayStatus ?? buildAutoExecutionRunningLabel(task.executionScopeLabel),
+      label: displayStatus ?? buildAutoExecutionRunningLabel(task.executionScopeLabel, t),
       variant: "default",
     };
   }
   if ((task.status === "failed" || task.status === "cancelled") && task.checkpointType === "chapter_batch_ready") {
     return {
       label: displayStatus ?? (task.status === "failed"
-        ? buildAutoExecutionPausedLabel(task.executionScopeLabel)
-        : buildAutoExecutionCancelledLabel(task.executionScopeLabel)),
+        ? buildAutoExecutionPausedLabel(task.executionScopeLabel, t)
+        : buildAutoExecutionCancelledLabel(task.executionScopeLabel, t)),
       variant: task.status === "failed" ? "destructive" : "outline",
     };
   }
   if (task.status === "waiting_approval") {
     return {
-      label: displayStatus ?? formatWorkflowCheckpoint(task.checkpointType, task.executionScopeLabel),
+      label: displayStatus ?? formatWorkflowCheckpoint(task.checkpointType, task.executionScopeLabel, t),
       variant: "secondary",
     };
   }
   if (task.status === "running") {
     return {
-      label: displayStatus ?? "自动导演进行中",
+      label: displayStatus ?? t("lib.novelWorkflowTaskUi.statuses.running"),
       variant: "default",
     };
   }
   if (task.status === "queued") {
     return {
-      label: displayStatus ?? "自动导演排队中",
+      label: displayStatus ?? t("lib.novelWorkflowTaskUi.statuses.queued"),
       variant: "secondary",
     };
   }
   if (task.status === "failed") {
     return {
-      label: displayStatus ?? "自动导演失败",
+      label: displayStatus ?? t("lib.novelWorkflowTaskUi.statuses.failed"),
       variant: "destructive",
     };
   }
   if (task.status === "cancelled") {
     return {
-      label: displayStatus ?? "自动导演已取消",
+      label: displayStatus ?? t("lib.novelWorkflowTaskUi.statuses.cancelled"),
       variant: "outline",
     };
   }
   return {
     label: displayStatus ?? (task.checkpointType === "workflow_completed"
-      ? "自动导演已完成"
-      : formatWorkflowCheckpoint(task.checkpointType, task.executionScopeLabel)),
+      ? t("lib.novelWorkflowTaskUi.checkpoints.workflowCompleted")
+      : formatWorkflowCheckpoint(task.checkpointType, task.executionScopeLabel, t)),
     variant: "outline",
   };
 }
 
-export function getWorkflowDescription(task?: NovelAutoDirectorTaskSummary | null): string | null {
+export function getWorkflowDescription(
+  task: NovelAutoDirectorTaskSummary | null | undefined,
+  t: Translator,
+): string | null {
   if (!task) {
     return null;
   }
@@ -127,10 +146,15 @@ export function getWorkflowDescription(task?: NovelAutoDirectorTaskSummary | nul
     (task.status === "queued" || task.status === "running")
     && task.checkpointType === "chapter_batch_ready"
   ) {
-    return `AI 正在后台继续执行${getExecutionScopeLabel(task.executionScopeLabel)}，当前进度 ${Math.round(task.progress * 100)}%。`;
+    return t("lib.novelWorkflowTaskUi.description.autoRunning", {
+      scope: getExecutionScopeLabel(task.executionScopeLabel, t),
+      percent: Math.round(task.progress * 100),
+    });
   }
   if ((task.status === "failed" || task.status === "cancelled") && task.checkpointType === "chapter_batch_ready") {
-    return `${getExecutionScopeLabel(task.executionScopeLabel)}自动执行在批量阶段暂停了，建议先查看任务，再决定是否继续自动执行。`;
+    return t("lib.novelWorkflowTaskUi.description.autoPaused", {
+      scope: getExecutionScopeLabel(task.executionScopeLabel, t),
+    });
   }
   if (task.blockingReason?.trim()) {
     return task.blockingReason.trim();
@@ -142,10 +166,10 @@ export function getWorkflowDescription(task?: NovelAutoDirectorTaskSummary | nul
     return task.currentItemLabel.trim();
   }
   if (task.resumeAction?.trim()) {
-    return `推荐继续：${task.resumeAction.trim()}`;
+    return t("lib.novelWorkflowTaskUi.description.resumeSuggestion", { label: task.resumeAction.trim() });
   }
   if (task.nextActionLabel?.trim()) {
-    return `下一步：${task.nextActionLabel.trim()}`;
+    return t("lib.novelWorkflowTaskUi.description.nextAction", { label: task.nextActionLabel.trim() });
   }
   return null;
 }

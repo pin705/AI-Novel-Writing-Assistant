@@ -1,6 +1,7 @@
 import type { AntiAiEffectiveRuleItem } from "@ai-novel/shared/types/styleEngine";
 import { Badge } from "@/components/ui/badge";
-import { severityLabels, typeLabels } from "../antiAiRulesPage.shared";
+import { useTranslation } from "@/i18n";
+import { severityLabelKeys, typeLabelKeys } from "../antiAiRulesPage.shared";
 
 interface EffectiveRuleListProps {
   title: string;
@@ -9,6 +10,7 @@ interface EffectiveRuleListProps {
 }
 
 export default function EffectiveRuleList(props: EffectiveRuleListProps) {
+  const { t } = useTranslation();
   return (
     <div className="space-y-2">
       <div className="text-sm font-medium text-foreground">{props.title}</div>
@@ -19,12 +21,14 @@ export default function EffectiveRuleList(props: EffectiveRuleListProps) {
               <div className="flex flex-wrap items-center gap-2">
                 <div className="font-medium text-foreground">{item.rule.name}</div>
                 <Badge variant={item.source === "global_baseline" ? "default" : "secondary"}>
-                  {item.source === "global_baseline" ? "全局默认" : "写法规则"}
+                  {item.source === "global_baseline"
+                    ? t("antiAiRules.effectivePreview.sourceGlobal")
+                    : t("antiAiRules.effectivePreview.sourceStyle")}
                 </Badge>
-                <Badge variant="outline">{typeLabels[item.rule.type]} / {severityLabels[item.rule.severity]}</Badge>
+                <Badge variant="outline">{t(typeLabelKeys[item.rule.type])} / {t(severityLabelKeys[item.rule.severity])}</Badge>
               </div>
               <div className="mt-2 text-xs leading-5 text-muted-foreground">
-                {item.sourceLabel}{item.weight !== 1 ? `，强度 ${item.weight}` : ""}
+                {item.sourceLabel}{item.weight !== 1 ? t("antiAiRules.effectivePreview.weight", { value: item.weight }) : ""}
               </div>
               {item.rule.promptInstruction ? (
                 <div className="mt-2 text-sm leading-6 text-muted-foreground">{item.rule.promptInstruction}</div>

@@ -1,0 +1,35 @@
+{
+  "splash": {
+    "title": "AI 小说创作工作台",
+    "subtitle": "正在准备桌面启动壳和打包后的本地写作引擎。",
+    "documentTitle": "AI 小说创作工作台"
+  },
+  "status": {
+    "starting": "正在启动桌面工作区",
+    "startingDetail": "正在准备桌面运行时和本地工作区。",
+    "appReadyTitle": "正在启动桌面工作区",
+    "appReadyDetail": "Electron 已就绪，正在打开桌面启动壳。",
+    "splashShownTitle": "桌面启动壳已显示",
+    "splashShownDetail": "正在准备桌面运行时环境和随包资源。",
+    "startingServerTitle": "正在启动本地写作引擎",
+    "startingServerDetailAfterRenderer": "桌面启动壳已经显示，正在等待打包后的本地服务进入可用状态。",
+    "startingServerDetail": "正在拉起桌面本地服务，并准备用户数据目录。",
+    "loadingUiTitle": "正在加载桌面工作区",
+    "loadingUiDetail": "本地服务已经可用，正在渲染桌面端首屏工作区。",
+    "workspaceReadyTitle": "桌面工作区已就绪",
+    "workspaceReadyDetail": "启动壳、本地服务和工作区界面都已准备完成。",
+    "mainWindowShownReady": "主窗口已经显示。",
+    "mainWindowShownPending": "主窗口已经显示，本地服务仍在继续启动中。",
+    "importingLegacyTitle": "正在导入旧版本地数据",
+    "importingLegacyDetail": "正在把你选择的旧 web 本地数据库接管到桌面版数据目录。"
+  },
+  "error": {
+    "startupFailedTitle": "AI 小说创作工作台启动失败",
+    "startupFailedMessage": "桌面应用未能完成初始化。",
+    "startupFailedDetail": "{{errorMessage}}\n\n日志目录:\n{{logDir}}\n\n日志文件:\n{{logFilePath}}",
+    "bootstrapErrorTitle": "桌面启动失败",
+    "openLogs": "打开日志目录",
+    "copyLogPath": "复制日志路径",
+    "exit": "退出"
+  }
+}

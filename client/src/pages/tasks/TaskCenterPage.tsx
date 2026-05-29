@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "@/components/ui/toast";
+import { useTranslation } from "@/i18n";
 import { resolveWorkflowContinuationFeedback } from "@/lib/novelWorkflowContinuation";
 import { useDirectorChapterTitleRepair } from "@/hooks/useDirectorChapterTitleRepair";
 import { syncKnownTaskCaches } from "@/lib/taskQueryCache";
@@ -28,12 +29,9 @@ import {
   ACTIVE_STATUSES,
   ANOMALY_STATUSES,
   ARCHIVABLE_STATUSES,
-  formatCheckpoint,
-  formatStatus,
   getTaskListPriority,
   getTimestamp,
   serializeListParams,
-  toStatusVariant,
   type TaskSortMode,
 } from "./taskCenterUtils";
 
@@ -51,6 +49,7 @@ function normalizeTaskSteps(steps: unknown): UnifiedTaskStep[] {
 export default function TaskCenterPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
   const llm = useLLMStore();
   const [searchParams, setSearchParams] = useSearchParams();
   const [kind, setKind] = useState<TaskKind | "">("");
@@ -195,8 +194,11 @@ export default function TaskCenterPage() {
       }
       toast.success(
         variables.llmOverride
-          ? `已切换到 ${variables.llmOverride.provider ?? "当前提供商"} / ${variables.llmOverride.model ?? "当前模型"} 并重试任务`
-          : "任务已重新入队",
+          ? t("tasks.toast.retryWithModel", {
+            provider: variables.llmOverride.provider ?? t("tasks.toast.fallbackProvider"),
+            model: variables.llmOverride.model ?? t("tasks.toast.fallbackModel"),
+          })
+          : t("tasks.toast.retryEnqueued"),
       );
     },
   });
@@ -205,7 +207,7 @@ export default function TaskCenterPage() {
     mutationFn: (payload: { kind: TaskKind; id: string }) => cancelTask(payload.kind, payload.id),
     onSuccess: async () => {
       await invalidateTaskQueries();
-      toast.success("任务取消请求已提交");
+      toast.success(t("tasks.toast.cancelRequested"));
     },
   });
 
@@ -255,7 +257,7 @@ export default function TaskCenterPage() {
         return next;
       });
       await invalidateTaskQueries();
-      toast.success("任务已归档并从任务中心隐藏");
+      toast.success(t("tasks.toast.archived"));
     },
   });
 
@@ -289,16 +291,16 @@ export default function TaskCenterPage() {
     && requiresCandidateSelection(selectedTask),
   );
   const selectedTaskNotice = useMemo(
-    () => parseDirectorTaskNotice(selectedTask ? selectedTaskMeta : null),
-    [selectedTask, selectedTaskMeta],
+    () => parseDirectorTaskNotice(selectedTask ? selectedTaskMeta : null, t),
+    [selectedTask, selectedTaskMeta, t],
   );
   const selectedTaskNoticeRoute = useMemo(
     () => (selectedTask ? buildTaskNoticeRoute(selectedTask, selectedTaskNotice) : null),
     [selectedTask, selectedTaskNotice],
   );
   const selectedTaskChapterTitleWarning = useMemo(
-    () => (isAutoDirectorTask ? resolveChapterTitleWarning(selectedTask ?? null) : null),
-    [isAutoDirectorTask, selectedTask],
+    () => (isAutoDirectorTask ? resolveChapterTitleWarning(selectedTask ?? null, t) : null),
+    [isAutoDirectorTask, selectedTask, t],
   );
   const chapterTitleRepairMutation = useDirectorChapterTitleRepair();
   const selectedTaskFailureRepairRoute = selectedTaskChapterTitleWarning?.route ?? null;
@@ -371,7 +373,7 @@ export default function TaskCenterPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">任务详情</CardTitle>
+            <CardTitle className="text-base">{t("tasks.detail.title")}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3 text-sm">
             {selectedTask ? (
@@ -384,7 +386,7 @@ export default function TaskCenterPage() {
                 {selectedTask.noticeCode || selectedTask.noticeSummary ? (
                   <div className="rounded-md border border-amber-300/50 bg-amber-50/70 p-2 text-amber-900">
                     <div className="font-medium">
-                      {selectedTaskChapterTitleWarning ? "当前提醒" : (selectedTask.noticeCode ?? "结果提醒")}
+                      {selectedTaskChapterTitleWarning ? t("tasks.detail.currentReminder") : (selectedTask.noticeCode ?? t("tasks.detail.noticeFallback"))}
                     </div>
                     {selectedTask.noticeSummary ? (
                       <div className="mt-1 text-sm">{selectedTask.noticeSummary}</div>
@@ -405,7 +407,7 @@ export default function TaskCenterPage() {
                           }}
                           disabled={chapterTitleRepairMutation.isPending}
                         >
-                          {selectedTaskChapterTitleWarning?.label ?? selectedTaskNotice?.action?.label ?? "打开当前卷拆章"}
+                          {selectedTaskChapterTitleWarning?.label ?? selectedTaskNotice?.action?.label ?? t("tasks.detail.noticeFallbackAction")}
                         </Button>
                       </div>
                     ) : null}
@@ -414,7 +416,7 @@ export default function TaskCenterPage() {
                 {selectedTask.failureCode || selectedTask.failureSummary ? (
                   <div className="rounded-md border border-amber-300/50 bg-amber-50/70 p-2 text-amber-900">
                     <div className="font-medium">
-                      {selectedTaskHasChapterTitleFailure ? "当前提醒" : (selectedTask.failureCode ?? "任务异常")}
+                      {selectedTaskHasChapterTitleFailure ? t("tasks.detail.currentReminder") : (selectedTask.failureCode ?? t("tasks.detail.taskAnomaly"))}
                     </div>
                     {selectedTask.failureSummary ? (
                       <div className="mt-1 text-sm">{selectedTask.failureSummary}</div>
@@ -435,7 +437,7 @@ export default function TaskCenterPage() {
                           }}
                           disabled={chapterTitleRepairMutation.isPending}
                         >
-                          {selectedTaskChapterTitleWarning?.label ?? "快速修复章节标题"}
+                          {selectedTaskChapterTitleWarning?.label ?? t("tasks.detail.failureFallbackAction")}
                         </Button>
                       </div>
                     ) : null}
@@ -456,7 +458,7 @@ export default function TaskCenterPage() {
                 ) : null}
                 {isAutoDirectorTask ? (
                   <div className="rounded-md border border-primary/20 bg-primary/5 p-3 text-sm text-muted-foreground">
-                    继续导演、恢复任务、切换模型、推进策略和改动影响检查，请回到小说页面右侧的执行详情面板处理。这里保留任务记录、状态摘要以及取消、归档、打开来源页等基础操作。
+                    {t("tasks.detail.autoDirectorHint")}
                   </div>
                 ) : null}
                 <div className="flex flex-wrap gap-2">
@@ -465,7 +467,7 @@ export default function TaskCenterPage() {
                       size="sm"
                       onClick={() => navigate(getCandidateSelectionLink(selectedTask.id))}
                     >
-                      {selectedTask.resumeAction ?? "继续确认书级方向"}
+                      {selectedTask.resumeAction ?? t("tasks.actions.confirmDirection")}
                     </Button>
                   ) : null}
                   {!isAutoDirectorTask && canResumeFront10AutoExecution ? (
@@ -487,7 +489,7 @@ export default function TaskCenterPage() {
                       }}
                       disabled={continueWorkflowMutation.isPending || retryMutation.isPending || runtimeHardBlocked}
                     >
-                      {selectedTask.resumeAction ?? `继续自动执行${selectedTask.executionScopeLabel ?? "当前章节范围"}`}
+                      {selectedTask.resumeAction ?? t("tasks.actions.continueAutoExecute", { scope: selectedTask.executionScopeLabel ?? t("tasks.actions.defaultScope") })}
                     </Button>
                   ) : null}
                   {!isAutoDirectorTask
@@ -504,7 +506,7 @@ export default function TaskCenterPage() {
                         })}
                       disabled={continueWorkflowMutation.isPending || runtimeHardBlocked}
                     >
-                      {selectedTask.resumeAction ?? (isActiveAutoDirectorTask ? "查看进度" : "继续")}
+                      {selectedTask.resumeAction ?? (isActiveAutoDirectorTask ? t("tasks.actions.viewProgress") : t("tasks.actions.continue"))}
                     </Button>
                   ) : null}
                   {(selectedTask.status === "failed" || selectedTask.status === "cancelled") && !isAutoDirectorTask ? (
@@ -521,7 +523,7 @@ export default function TaskCenterPage() {
                         }
                         disabled={retryMutation.isPending}
                       >
-                        {isAutoDirectorTask ? "按任务原模型重试" : "重试"}
+                        {isAutoDirectorTask ? t("tasks.actions.retryWithTaskModel") : t("tasks.actions.retry")}
                       </Button>
                     </>
                   ) : null}
@@ -542,7 +544,7 @@ export default function TaskCenterPage() {
                         })}
                       disabled={cancelMutation.isPending}
                       >
-                      取消
+                      {t("tasks.actions.cancel")}
                     </Button>
                   ) : null}
                   {ARCHIVABLE_STATUSES.has(selectedTask.status) ? (
@@ -556,17 +558,17 @@ export default function TaskCenterPage() {
                         })}
                       disabled={archiveMutation.isPending}
                     >
-                      归档
+                      {t("tasks.actions.archive")}
                     </Button>
                   ) : null}
                   <Button asChild size="sm" variant="outline">
-                    <Link to={selectedTask!.sourceRoute}>打开来源页面</Link>
+                    <Link to={selectedTask!.sourceRoute}>{t("tasks.actions.openSource")}</Link>
                   </Button>
                 </div>
                 <div className="space-y-2">
-                  <div className="font-medium">步骤状态</div>
+                  <div className="font-medium">{t("tasks.detail.stepsTitle")}</div>
                   {selectedTaskSteps.length === 0 ? (
-                    <div className="rounded-md border border-dashed p-2 text-muted-foreground">暂无步骤状态。</div>
+                    <div className="rounded-md border border-dashed p-2 text-muted-foreground">{t("tasks.detail.stepsEmpty")}</div>
                   ) : selectedTaskSteps.map((step) => (
                     <div key={step.key} className="flex items-center justify-between rounded-md border p-2">
                       <div>{step.label}</div>
@@ -579,7 +581,7 @@ export default function TaskCenterPage() {
                 ) : null}
               </>
             ) : (
-              <div className="text-muted-foreground">请选择任务查看详情。</div>
+              <div className="text-muted-foreground">{t("tasks.detail.selectPrompt")}</div>
             )}
           </CardContent>
         </Card>

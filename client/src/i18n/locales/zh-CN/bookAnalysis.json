@@ -1,0 +1,134 @@
+{
+  "common": {
+    "none": "暂无",
+    "default": "默认",
+    "openInCreativeHubLabel": "拆书结果发往创作中枢"
+  },
+  "status": {
+    "draft": "草稿",
+    "queued": "排队中",
+    "running": "运行中",
+    "succeeded": "成功",
+    "failed": "失败",
+    "archived": "已归档",
+    "idle": "待处理"
+  },
+  "stage": {
+    "loadingCache": "查缓存",
+    "preparingNotes": "准备 notes",
+    "generatingSections": "生成章节"
+  },
+  "sidebar": {
+    "create": {
+      "title": "创建拆书分析",
+      "documentLabel": "知识文档",
+      "selectDocumentPlaceholder": "选择文档",
+      "versionLabel": "文档版本",
+      "useActiveVersionPlaceholder": "使用当前激活版本",
+      "versionLabelFormat": "v{{version}}",
+      "versionLabelActiveFormat": "v{{version}}（当前）",
+      "modelLabel": "模型",
+      "includeTimelineLabel": "生成故事时间线（默认关闭）",
+      "submit": "创建",
+      "sourceSummary": "版本数：{{versions}} | 拆书分析：{{count}}"
+    },
+    "list": {
+      "title": "分析列表",
+      "searchPlaceholder": "搜索标题或关键词",
+      "filterAll": "全部状态",
+      "publishedBadge": "已发布",
+      "documentVersionFormat": "{{title}} | v{{version}}",
+      "progressFormat": "进度 {{percent}}% | 更新于 {{updatedAt}}",
+      "empty": "暂无拆书分析，请先选择知识文档并创建。"
+    }
+  },
+  "detail": {
+    "empty": {
+      "title": "拆书分析工作区",
+      "description": "请先在左侧选择一个分析，或从知识文档创建新分析。"
+    },
+    "header": {
+      "documentInfo": "{{document}} | 源版本 v{{version}}",
+      "activeVersionSuffix": " | 当前激活版本 v{{version}}",
+      "publishedBadge": "已发布",
+      "progress": "进度 {{percent}}%",
+      "copy": "复制",
+      "rebuild": "重新生成",
+      "openInTasks": "在任务中心查看",
+      "exportMarkdown": "导出 Markdown",
+      "exportJson": "导出 JSON",
+      "generateStyleProfile": "从拆书生成写法",
+      "generatingStyleProfile": "生成写法中...",
+      "archive": "归档"
+    },
+    "warnings": {
+      "outdatedSource": "该分析基于旧版源文档，当前激活文档版本为 v{{version}}。"
+    },
+    "publish": {
+      "title": "发布到小说知识库",
+      "selectNovelPlaceholder": "选择目标小说",
+      "publishCta": "发布并绑定",
+      "publishedAt": "发布时间：{{value}}",
+      "feedbackSuccess": "发布完成：文档 {{documentId}}，版本 v{{version}}，绑定 {{count}} 项",
+      "feedbackFailedFallback": "发布失败。"
+    },
+    "styleProfile": {
+      "feedbackStart": "正在根据拆书里的“文风与技法”生成写法资产，完成后会自动跳转到写法引擎。",
+      "feedbackFailedFallback": "从拆书生成写法失败。",
+      "successToast": "已从拆书生成写法，正在打开写法引擎。",
+      "namePattern": "{{title}}-写法资产"
+    },
+    "summary": {
+      "title": "概要",
+      "placeholder": "生成总览后会在此显示概要内容。"
+    },
+    "meta": {
+      "title": "运行元信息",
+      "provider": "提供商：{{value}}",
+      "model": "模型：{{value}}",
+      "temperature": "温度：{{value}}",
+      "maxTokens": "最大 Tokens：{{value}}",
+      "currentStage": "当前阶段：{{value}}",
+      "currentSection": "当前 section：{{value}}",
+      "heartbeatAt": "最近心跳：{{value}}",
+      "lastRunAt": "最近运行：{{value}}",
+      "createdAt": "创建时间：{{value}}"
+    },
+    "lastError": "最近错误：{{value}}",
+    "evidence": {
+      "title": "证据面板",
+      "itemHeading": "{{section}} | [{{source}}] {{label}}",
+      "empty": "当前分析暂无证据内容。"
+    }
+  },
+  "section": {
+    "frozenBadge": "已冻结",
+    "regenerate": "重新生成",
+    "save": "保存",
+    "freezeLabel": "冻结此小节，自动重跑时不覆盖其内容。",
+    "frozenNotice": "当前已冻结：请先取消冻结，才能使用“重新生成”或“AI 优化”。",
+    "draftTitle": "当前草稿",
+    "viewTab": "查看模式",
+    "editTab": "编辑模式",
+    "viewEmpty": "当前小节还没有可展示的内容。",
+    "editPlaceholder": "在此直接编辑当前小节草稿。",
+    "optimize": {
+      "title": "AI 优化 / 修正",
+      "instructionPlaceholder": "输入优化或修正提示词，例如：压缩冗余、突出冲突、保持同样事实。",
+      "preview": "生成优化预览",
+      "previewing": "生成预览中...",
+      "previewLabel": "优化预览",
+      "apply": "应用到当前草稿",
+      "cancel": "取消预览"
+    },
+    "advanced": {
+      "summary": "高级选项：备注",
+      "notesLabel": "备注",
+      "notesPlaceholder": "添加备注、假设或后续行动。"
+    },
+    "evidence": {
+      "title": "证据",
+      "itemHeading": "[{{source}}] {{label}}"
+    }
+  }
+}

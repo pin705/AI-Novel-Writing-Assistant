@@ -1,0 +1,113 @@
+{
+  "overview": {
+    "title": "导演跟进中心",
+    "summaryLine": "今日恢复 {{recovered}} 项，今日完成 {{completed}} 项",
+    "all": "全部",
+    "allDescription": "查看所有需要跟进的导演任务",
+    "needsValidation": "需校验",
+    "needsValidationDescription": "先确认任务和资产是否一致",
+    "exception": "异常",
+    "exceptionDescription": "失败、恢复或取消的任务",
+    "pending": "待处理",
+    "pendingDescription": "需要确认或继续的节点",
+    "autoProgress": "自动推进",
+    "autoProgressDescription": "正在推进的任务和最近自动通过记录",
+    "replaced": "已替代",
+    "replacedDescription": "被新任务接管的旧任务"
+  },
+  "list": {
+    "allSections": "全部分区",
+    "allReasons": "全部原因",
+    "allStatuses": "全部状态",
+    "batchAbility": "批量能力",
+    "all": "全部",
+    "onlyBatch": "仅可批量",
+    "onlyNonBatch": "仅不可批量",
+    "loading": "正在加载跟进项...",
+    "emptyAutoProgress": "当前没有正在推进的任务或最近自动通过记录。",
+    "emptyReplaced": "当前没有被新任务替代的旧任务。",
+    "emptyDefault": "当前没有符合条件的导演跟进项。",
+    "supportsBatchBadge": "可批量",
+    "autoApprovalRecord": "最近自动通过",
+    "inProgress": "正在推进",
+    "metaLine": "当前阶段：{{stage}} · 当前模型：{{model}} · 更新时间：{{updatedAt}}",
+    "channelDingtalk": "钉钉可直达",
+    "channelWecom": "企微可直达",
+    "pageInfo": "第 {{page}} / {{total}} 页，共 {{count}} 条",
+    "prevPage": "上一页",
+    "nextPage": "下一页"
+  },
+  "section": {
+    "needsValidation": "需校验",
+    "exception": "异常",
+    "pending": "待处理",
+    "autoProgress": "自动推进",
+    "replaced": "已替代"
+  },
+  "status": {
+    "waitingApproval": "等待审批",
+    "failed": "失败",
+    "cancelled": "已取消",
+    "running": "运行中",
+    "queued": "排队中",
+    "succeeded": "已完成"
+  },
+  "detail": {
+    "title": "跟进详情",
+    "loading": "正在加载详情...",
+    "selectPrompt": "请选择一个导演跟进项查看详情。",
+    "blockingReason": "阻塞原因：{{value}}",
+    "nextStepSuggestion": "下一步建议：{{value}}",
+    "checkpointSummary": "检查点摘要：{{value}}",
+    "currentModel": "当前模型：{{value}}",
+    "originDetailUrl": "来源页：{{value}}",
+    "noneValue": "暂无",
+    "defaultNextStep": "查看任务详情后再继续。",
+    "validationTitle": "先校验任务和资产状态",
+    "validationDescription": "安全修复只处理状态对账，不会清除正文、重写规划、确认候选、切换模型或替你做创作选择。",
+    "blockingLine": "阻塞：{{value}}",
+    "warningLine": "提示：{{value}}",
+    "revalidate": "一键重新校验",
+    "safeFix": "一键安全修复",
+    "safeFixTooltip": "仅修复校验标记为低风险的状态、检查点、进度、恢复目标、自动执行对账、替代原因、审计和通知记录；不会清除正文、重写资产、重规划、确认候选、切换模型或生成内容。",
+    "availableActions": "可执行动作",
+    "milestonesTitle": "最近里程碑",
+    "milestonesEmpty": "暂无里程碑",
+    "channelsTitle": "通道触达",
+    "channelsEmpty": "暂无通道投递记录",
+    "channelDingtalk": "钉钉",
+    "channelWecom": "企微",
+    "channelMeta": "目标：{{target}} | 响应码：{{response}} | 时间：{{time}}",
+    "channelNoTarget": "未记录",
+    "channelNotDelivered": "未送达",
+    "deliveryDelivered": "已送达",
+    "deliveryPending": "投递中",
+    "deliveryFailed": "投递失败",
+    "eventApprovalRequired": "需要处理",
+    "eventAutoApproved": "AI 已自动通过",
+    "eventException": "任务异常",
+    "eventRecovered": "已恢复",
+    "eventCompleted": "已完成",
+    "eventProgressChanged": "进度变化"
+  },
+  "batchBar": {
+    "selectedCount": "已选择 {{count}} 项",
+    "noCommonAction": "当前所选项没有共同批量动作",
+    "sectionNotAllowed": "该分区不提供批量动作",
+    "continueAutoExecution": "批量低风险继续",
+    "retryWithTaskModel": "批量重试异常任务",
+    "clear": "清空",
+    "execute": "执行批量动作"
+  },
+  "confirm": {
+    "execute": "确认执行“{{label}}”？"
+  },
+  "toast": {
+    "actionSubmitted": "操作已提交",
+    "batchSubmitted": "批量操作已提交",
+    "validationRefreshed": "校验结果已刷新。"
+  },
+  "errors": {
+    "noPendingApproval": "当前没有可处理的审批项。"
+  }
+}

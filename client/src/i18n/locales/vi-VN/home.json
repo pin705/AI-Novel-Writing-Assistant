@@ -1,0 +1,69 @@
+{
+  "metrics": {
+    "liveTitle": "Đang tự động chạy gần đây",
+    "liveHint": "Các dự án gần đây vẫn đang được đạo diễn tự động hoặc thực thi tự động chạy ngầm.",
+    "actionTitle": "Cần bạn xử lý",
+    "actionHint": "Các dự án gần đây đang chờ duyệt, thất bại hoặc bị huỷ và cần bạn quyết định bước tiếp theo.",
+    "readyTitle": "Có thể vào viết chương",
+    "readyHint": "Các dự án gần đây đã sẵn sàng tới giai đoạn bắt đầu viết, có thể vào viết chương ngay.",
+    "failedTitle": "Tác vụ nền thất bại",
+    "failedHint": "Tổng số tác vụ thất bại đến từ Trung tâm tác vụ, có thể xử lý tập trung sau."
+  },
+  "recommend": {
+    "newcomer": "Đề xuất cho người mới",
+    "lowBarrier": "Mở sách dễ dàng",
+    "titleHasNovels": "Muốn nhanh chóng mở cuốn tiếp theo? Hãy giao cho đạo diễn AI.",
+    "titleEmpty": "Lần đầu sử dụng? Hãy để đạo diễn AI dẫn bạn mở một cuốn sách.",
+    "description": "Bạn chỉ cần đưa ra ý tưởng sơ bộ, AI sẽ tạo phương án hướng đi, bộ tiêu đề và phần chuẩn bị mở sách, đồng thời dừng lại để bạn xác nhận ở các giai đoạn then chốt — không cần nghĩ rõ toàn bộ cấu trúc ngay từ đầu.",
+    "hintA": "Phù hợp khi chưa rõ thể loại, điểm bán và cam kết 30 chương đầu",
+    "hintB": "Cũng hợp để dựng nhanh một dự án mới có thể tiếp tục triển khai",
+    "directorCta": "Đạo diễn AI mở sách",
+    "manualCta": "Tạo tiểu thuyết thủ công",
+    "helpCta": "Hướng dẫn nhập môn"
+  },
+  "continueRecent": {
+    "title": "Tiếp tục dự án gần đây",
+    "description": "Trang chủ nên đưa bạn quay lại cuốn sách đáng tiếp tục nhất ngay lúc này.",
+    "errorMessage": "Hiện không thể đọc danh sách dự án, trang chủ chưa thể đề xuất lối vào tiếp theo.",
+    "emptyMessage": "Bạn chưa có dự án tiểu thuyết nào. Lần đầu sử dụng nên đi thẳng với đạo diễn AI để hệ thống dựng sẵn hướng đi và phần chuẩn bị viết.",
+    "openProject": "Mở dự án",
+    "executionDetails": "Chi tiết thực thi",
+    "noAutoDirectorTask": "Không có tác vụ đạo diễn tự động",
+    "progress": "Tiến độ {{percent}}%",
+    "updatedAt": "Cập nhật: {{value}}",
+    "chapterCount": "Số chương: {{value}}",
+    "characterCount": "Số nhân vật: {{value}}",
+    "currentStage": "Giai đoạn hiện tại: {{value}}",
+    "lastHealthyStage": "Giai đoạn ổn định gần nhất: {{value}}",
+    "stage": "Giai đoạn: {{value}}"
+  },
+  "novelLead": {
+    "worldBound": "Dự án hiện đã gắn với thế giới quan «{{world}}», có thể tiếp tục sáng tác ngay.",
+    "noDescription": "Dự án hiện chưa có tóm tắt, có thể vào trang chỉnh sửa để tiếp tục triển khai."
+  },
+  "actions": {
+    "continueExecuting": "Đang tiếp tục...",
+    "continueAutoExecute": "Tiếp tục tự động thực thi {{scope}}",
+    "defaultScope": "phạm vi chương hiện tại",
+    "continuing": "Đang tiếp tục...",
+    "continueDirector": "Tiếp tục đạo diễn",
+    "confirmDirection": "Tiếp tục xác nhận hướng đi cấp sách",
+    "enterChapterExecution": "Vào viết chương",
+    "viewProgress": "Xem trạng thái triển khai",
+    "editNovel": "Chỉnh sửa tiểu thuyết",
+    "continueAutoExecuteFailed": "Tiếp tục tự động thực thi phạm vi chương hiện tại thất bại.",
+    "continueDirectorFailed": "Tiếp tục đạo diễn tự động thất bại."
+  },
+  "quickActions": {
+    "title": "Thao tác nhanh",
+    "description": "Gộp các lối vào thường dùng và cách mở sách dễ tiếp cận nhất cho người mới.",
+    "createBookAnalysis": "Tạo phân tích tác phẩm",
+    "backgroundTasks": "Tác vụ nền"
+  },
+  "recent": {
+    "title": "Dự án gần đây",
+    "description": "Khu vực này không chỉ hiển thị tiêu đề mà còn cho thấy giai đoạn hiện tại và lối khôi phục.",
+    "errorMessage": "Hiện không tải được dự án gần đây, có thể thử lại sau.",
+    "emptyMessage": "Chưa có dự án tiểu thuyết nào, hãy bắt đầu từ \"Tạo tiểu thuyết mới\"."
+  }
+}

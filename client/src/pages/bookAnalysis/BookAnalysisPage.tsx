@@ -1,10 +1,12 @@
 import OpenInCreativeHubButton from "@/components/creativeHub/OpenInCreativeHubButton";
+import { useTranslation } from "@/i18n";
 import BookAnalysisDetailPanel from "./components/BookAnalysisDetailPanel";
 import BookAnalysisSidebar from "./components/BookAnalysisSidebar";
 import { useBookAnalysisWorkspace } from "./hooks/useBookAnalysisWorkspace";
 
 export default function BookAnalysisPage() {
   const workspace = useBookAnalysisWorkspace();
+  const { t } = useTranslation();
 
   return (
     <div className="space-y-4">
@@ -14,7 +16,7 @@ export default function BookAnalysisPage() {
             bookAnalysisId: workspace.selectedAnalysisId || null,
             knowledgeDocumentIds: workspace.selectedDocumentId ? [workspace.selectedDocumentId] : [],
           }}
-          label="拆书结果发往创作中枢"
+          label={t("bookAnalysis.common.openInCreativeHubLabel")}
         />
       </div>
       <div className="grid gap-4 xl:grid-cols-[360px_minmax(0,1fr)]">

@@ -1,0 +1,76 @@
+{
+  "page": {
+    "title": "Genre foundation library",
+    "description": "Maintain the genre foundations of your works as a tree, e.g. cultivation, xuanhuan, urban, alternate history. It answers \"what kind of book is this\" and serves as a formal genre asset of your novel project rather than a throwaway input.",
+    "totalCount": "Current genre foundations: {{count}}",
+    "createRoot": "Create genre tree",
+    "loadingTree": "Loading genre tree...",
+    "emptyTitle": "No genre foundations yet",
+    "emptyDescription": "You can manually create a root genre, or let AI generate a complete hierarchy in one go.",
+    "startCreating": "Start creating"
+  },
+  "toast": {
+    "deleted": "Genre foundation deleted.",
+    "created": "Genre tree created.",
+    "generated": "AI-generated genre tree ready.",
+    "updated": "Genre foundation updated."
+  },
+  "confirm": {
+    "deleteWithDescendants": "Delete genre foundation \"{{name}}\"? This will also remove its {{count}} sub-genres and cannot be undone.",
+    "deleteSingle": "Delete genre foundation \"{{name}}\"? This cannot be undone."
+  },
+  "createDialog": {
+    "title": "Create genre tree",
+    "description": "Pick the parent slot first, then fill in the structure manually or have AI draft one for you. This is where you curate the genre foundations of your work — the answer to \"what kind of book is this\".",
+    "aiSectionTitle": "AI generation",
+    "aiSectionHint": "Best when you want to sketch the main category, sub-category and deeper levels in one pass, then fine-tune.",
+    "aiPromptPlaceholder": "e.g. I want a female-leaning urban supernatural growth arc, with the main hooks being identity reversal, faction management, and high-emotion relationships.",
+    "generating": "Generating...",
+    "generate": "Generate genre tree",
+    "resetDraft": "Reset draft",
+    "parentLabel": "Parent genre",
+    "parentNoneOption": "No parent — create as a root genre",
+    "cancel": "Cancel",
+    "saving": "Saving...",
+    "save": "Save genre tree"
+  },
+  "editDialog": {
+    "title": "Edit genre foundation",
+    "description": "You can change name, description and mount point. Child nodes and bound novels are preserved.",
+    "cancel": "Cancel",
+    "saving": "Saving...",
+    "save": "Save changes",
+    "nameLabel": "Name",
+    "descriptionLabel": "Description",
+    "parentLabel": "Parent genre",
+    "parentNoneOption": "No parent — keep as a root genre",
+    "missingError": "Genre foundation no longer exists."
+  },
+  "treeEditor": {
+    "levelRoot": "Main type",
+    "levelChild": "Sub type",
+    "levelDeeper": "Lower type",
+    "rootHint": "This becomes the root node created in the system.",
+    "childHint": "Stored as a child of the parent type above.",
+    "addChild": "Add sub type",
+    "addDeeper": "Add lower type",
+    "nameLabel": "Name",
+    "namePlaceholderRoot": "e.g. Urban paranormal",
+    "namePlaceholderChild": "e.g. Supernatural workplace",
+    "descriptionLabel": "Description",
+    "descriptionPlaceholder": "Describe the genre's core, payoff beats, common main arcs or reader expectations.",
+    "removeNode": "Remove this node"
+  },
+  "treeItem": {
+    "expand": "Expand",
+    "collapse": "Collapse",
+    "novelBadge": "Novels {{count}}",
+    "childBadge": "Subtypes {{count}}",
+    "noDescription": "No description yet.",
+    "addChild": "Add subtype",
+    "edit": "Edit",
+    "delete": "Delete",
+    "deleting": "Deleting...",
+    "deleteBlockedTitle": "Unbind novels under this category or its sub-categories before deleting."
+  }
+}

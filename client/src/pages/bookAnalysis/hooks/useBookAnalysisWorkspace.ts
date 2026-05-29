@@ -26,6 +26,7 @@ import { createStyleProfileFromBookAnalysis } from "@/api/styleEngine";
 import { queryKeys } from "@/api/queryKeys";
 import { toast } from "@/components/ui/toast";
 import { useLLMStore } from "@/store/llmStore";
+import { useTranslation } from "@/i18n";
 import type { LLMConfigState, SectionDraft } from "../bookAnalysis.types";
 import { buildSectionDraft, createDownload, syncDrafts } from "../bookAnalysis.utils";
 import type { BookAnalysisWorkspace, ExportFormat, NovelOption } from "./bookAnalysisWorkspace.types";
@@ -39,6 +40,7 @@ export function useBookAnalysisWorkspace(): BookAnalysisWorkspace {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const llmStore = useLLMStore();
+  const { t } = useTranslation();
 
   const [keyword, setKeyword] = useState("");
   const [status, setStatus] = useState<BookAnalysisStatus | "">("");
@@ -274,14 +276,20 @@ export function useBookAnalysisWorkspace(): BookAnalysisWorkspace {
       }
       setLastPublishResult(published);
       setPublishFeedback(
-        `发布完成：文档 ${published.knowledgeDocumentId}，版本 v${published.knowledgeDocumentVersionNumber}，绑定 ${published.bindingCount} 项`,
+        t("bookAnalysis.detail.publish.feedbackSuccess", {
+          documentId: published.knowledgeDocumentId,
+          version: published.knowledgeDocumentVersionNumber,
+          count: published.bindingCount,
+        }),
       );
       await queryClient.invalidateQueries({ queryKey: queryKeys.knowledge.documents("book-analysis-source") });
       await queryClient.invalidateQueries({ queryKey: queryKeys.novelsKnowledge.bindings(payload.novelId) });
       await refreshAnalysisData(payload.id);
     },
     onError: (error) => {
-      const message = error instanceof Error ? error.message : "发布失败。";
+      const message = error instanceof Error
+        ? error.message
+        : t("bookAnalysis.detail.publish.feedbackFailedFallback");
       setLastPublishResult(null);
       setPublishFeedback(message);
     },
@@ -295,7 +303,7 @@ export function useBookAnalysisWorkspace(): BookAnalysisWorkspace {
       temperature: llmConfig.temperature,
     }),
     onMutate: () => {
-      setStyleProfileFeedback("正在根据拆书里的“文风与技法”生成写法资产，完成后会自动跳转到写法引擎。");
+      setStyleProfileFeedback(t("bookAnalysis.detail.styleProfile.feedbackStart"));
     },
     onSuccess: async (response) => {
       const createdProfile = response.data;
@@ -303,12 +311,14 @@ export function useBookAnalysisWorkspace(): BookAnalysisWorkspace {
         return;
       }
       setStyleProfileFeedback("");
-      toast.success("已从拆书生成写法，正在打开写法引擎。");
+      toast.success(t("bookAnalysis.detail.styleProfile.successToast"));
       await queryClient.invalidateQueries({ queryKey: queryKeys.styleEngine.profiles });
       navigate(`/style-engine?profileId=${createdProfile.id}&source=book-analysis`);
     },
     onError: (error) => {
-      const message = error instanceof Error ? error.message : "从拆书生成写法失败。";
+      const message = error instanceof Error
+        ? error.message
+        : t("bookAnalysis.detail.styleProfile.feedbackFailedFallback");
       setStyleProfileFeedback(message);
     },
   });
@@ -551,7 +561,7 @@ export function useBookAnalysisWorkspace(): BookAnalysisWorkspace {
     }
     await createStyleProfileMutation.mutateAsync({
       bookAnalysisId: selectedAnalysis.id,
-      name: `${selectedAnalysis.title}-写法资产`,
+      name: t("bookAnalysis.detail.styleProfile.namePattern", { title: selectedAnalysis.title }),
     });
   };
 

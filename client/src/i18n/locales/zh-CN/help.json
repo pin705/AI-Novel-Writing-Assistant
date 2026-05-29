@@ -1,0 +1,107 @@
+{
+  "hero": {
+    "newcomerBadge": "新手上路",
+    "recommendedBadge": "推荐路线",
+    "title": "从一句灵感开始，让 AI 带你写第一本小说",
+    "description": "按这条路线走，不需要先会写大纲、角色表或卷规划。你只负责提供想法和做关键选择，AI 会把整本书拆成能继续推进的步骤。",
+    "startCta": "开始第一本小说",
+    "configureModelCta": "配置模型"
+  },
+  "modelNotice": {
+    "title": "开始写作前先配置模型",
+    "description": "自动导演、正文写作和章节审阅都需要可用模型。先完成模型厂商、API Key 和默认模型配置，再启动开书流程会更顺畅。",
+    "cta": "去配置模型"
+  },
+  "guide": {
+    "title": "推荐路线",
+    "description": "第一次使用时，照着这条路线推进，就能从想法进入可写章节。",
+    "steps": {
+      "configureModel": {
+        "title": "配置模型",
+        "description": "先在系统设置里配置模型厂商、API Key 和默认模型，后续自动导演和章节执行才能顺利运行。"
+      },
+      "inputInspiration": {
+        "title": "输入一句灵感",
+        "description": "只写题材、主角、冲突或一个模糊想法都可以，AI 会先帮你整理成可开书方向。"
+      },
+      "letAutoDirector": {
+        "title": "让 AI 自动导演开书",
+        "description": "系统会生成整本方向、标题组和开书准备，把复杂规划拆成可确认的步骤。"
+      },
+      "confirmDirection": {
+        "title": "确认方向",
+        "description": "从候选方案里选择最想写的一套；不满意时，可以继续生成或只调整选中的方案。"
+      },
+      "advanceToWriting": {
+        "title": "推进到可开写",
+        "description": "让 AI 继续准备故事主线、角色、卷策略和章节拆分，直到项目具备章节执行条件。"
+      },
+      "enterChapterExecution": {
+        "title": "进入章节执行",
+        "description": "按章节写作、审核和修复；想加速时，可以让整本生产任务持续向后推进。"
+      },
+      "reviewTasks": {
+        "title": "查看任务和跟进",
+        "description": "任务中心处理失败、排队和运行状态；导演跟进页集中处理需要回收的质量事项。"
+      }
+    }
+  },
+  "goals": {
+    "title": "按目标选择入口",
+    "description": "不用先理解全部功能，按你要完成的事选择入口。",
+    "entries": {
+      "startFromScratch": {
+        "title": "从零开书",
+        "description": "适合只有一个灵感，还没想清楚题材、卖点、主角和前期剧情。",
+        "action": "开始第一本小说"
+      },
+      "continueProject": {
+        "title": "继续项目",
+        "description": "回到小说列表，选择最值得继续的一本书，接着完成规划或章节写作。",
+        "action": "打开小说列表"
+      },
+      "configureProvider": {
+        "title": "配置模型厂商",
+        "description": "填写厂商接口、API Key 和默认模型，保证写作链路有可用模型。",
+        "action": "打开系统设置"
+      },
+      "handleTasks": {
+        "title": "处理任务",
+        "description": "查看后台运行、排队和失败任务，优先处理会影响继续写作的问题。",
+        "action": "打开任务中心"
+      },
+      "directorFollowUps": {
+        "title": "导演跟进",
+        "description": "集中处理自动导演留下的质量回收事项，让整本书继续向完成推进。",
+        "action": "查看导演跟进"
+      },
+      "tuneStyle": {
+        "title": "调整写法",
+        "description": "把喜欢的文本风格沉淀成写法资产，再绑定到小说里持续复用。",
+        "action": "进入写法引擎"
+      }
+    }
+  },
+  "faq": {
+    "title": "常见问题",
+    "description": "遇到不确定的地方，先看这些判断。",
+    "items": {
+      "needOutline": {
+        "question": "我需要会写大纲吗？",
+        "answer": "不需要。第一次使用时，直接输入一句灵感，让 AI 自动导演先给出整本方向，再按步骤确认。"
+      },
+      "knowledgeBaseRequired": {
+        "question": "知识库是必需的吗？",
+        "answer": "不是必需。先用自动导演把一本书推进到可开写；需要参考资料、拆书结果或长期设定时，再使用知识库。"
+      },
+      "taskFailed": {
+        "question": "任务失败怎么办？",
+        "answer": "先到任务中心查看失败原因。常见的模型、网络或授权问题处理好后，可以回到原项目继续推进。"
+      },
+      "qualityPending": {
+        "question": "质量待回收是什么意思？",
+        "answer": "这表示系统先把普通质量问题记录下来，优先把整本书继续写完，后续再集中修复这些章节。"
+      }
+    }
+  }
+}

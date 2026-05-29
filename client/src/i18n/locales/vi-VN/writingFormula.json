@@ -1,0 +1,726 @@
+{
+  "page": {
+    "kicker": "Style Engine V2",
+    "title": "Bộ máy phong cách viết",
+    "openInCreativeHub": "Mang phong cách này sang Trung tâm sáng tác"
+  },
+  "messages": {
+    "fromBookAnalysis": "Phong cách \"{{name}}\" đến từ kết quả phân tích sách, bạn có thể tiếp tục kiểm tra quy tắc, viết thử hoặc gắn vào mục tiêu.",
+    "extractionTaskQueued": "Tác vụ trích xuất phong cách \"{{title}}\" đã được gửi đi. Hệ thống sẽ tự động trích xuất và lưu trong nền, hoàn tất sẽ tự mở kết quả.",
+    "extractionTaskMissing": "Tác vụ trích xuất phong cách không tồn tại hoặc đã bị dọn dẹp, vui lòng gửi lại.",
+    "extractionTaskAutoSavedNoResult": "Tác vụ trích xuất phong cách đã hoàn tất nhưng không nhận được kết quả tự động lưu.",
+    "extractionTaskCancelled": "Tác vụ trích xuất phong cách đã bị huỷ.",
+    "extractionTaskFailed": "Tác vụ trích xuất phong cách thất bại, vui lòng thử lại sau.",
+    "extractionTaskAutoSaved": "Phong cách \"{{name}}\" đã được tự động lưu, đã mở sẵn trình chỉnh sửa cho bạn.",
+    "extractionTaskSubmittedNoDetail": "Gửi tác vụ trích xuất phong cách thành công nhưng không nhận được chi tiết tác vụ.",
+    "manualCreated": "Phong cách \"{{name}}\" đã được tạo, bạn có thể tiếp tục bổ sung quy tắc, viết thử hoặc gắn vào mục tiêu.",
+    "briefCreated": "Phong cách \"{{name}}\" đã được tạo, bạn có thể tiếp tục bổ sung quy tắc, viết thử hoặc gắn vào mục tiêu.",
+    "templateCreated": "Phong cách mẫu \"{{name}}\" đã được tạo, bạn có thể tiếp tục bổ sung quy tắc, viết thử hoặc gắn vào mục tiêu.",
+    "reextractWithFeatures": "Đã trích xuất lại {{count}} đặc trưng, hãy xác nhận rồi lưu.",
+    "reextractEmpty": "Lần này vẫn không tạo được đặc trưng khả dụng, hãy kiểm tra xem mẫu văn bản đã đủ đầy đủ chưa.",
+    "saved": "Đã lưu phong cách.",
+    "deleted": "Phong cách này đã được xoá.",
+    "bindingCreated": "Phong cách này sẽ tham gia vào quá trình sinh nội dung của mục tiêu.",
+    "rewriteDone": "Bản hiệu chỉnh đã được tạo, bạn có thể tiếp tục kiểm tra và tinh chỉnh trong mục Khử mùi AI.",
+    "deleteConfirm": "Xác nhận xoá \"{{name}}\"? Sau khi xoá sẽ không khôi phục được.",
+    "fallbackProfileName": "phong cách này"
+  },
+  "errors": {
+    "sourceContentRequired": "Hãy chuẩn bị mẫu văn bản gốc trước.",
+    "selectProfileFirst": "Hãy chọn một phong cách trước.",
+    "extractFallbackName": "Phong cách trích xuất từ văn bản",
+    "extractFallbackNewName": "Phong cách mới"
+  },
+  "editorDialog": {
+    "title": "Chỉnh sửa phong cách hiện tại",
+    "description": "Khu vực này chỉ dành cho phần thiết lập của phong cách. Kiểm tra ứng dụng và Khử mùi AI đã được tách thành lối vào riêng để không bị chen lẫn."
+  },
+  "workbenchDialog": {
+    "title": "Ứng dụng và kiểm thử phong cách hiện tại",
+    "description": "Khu vực này chuyên xử lý gắn vào tiểu thuyết, chương và viết thử kiểm chứng, không chỉnh sửa các trường của phong cách."
+  },
+  "cleanDialog": {
+    "title": "Khử mùi AI",
+    "description": "Khu vực này chỉ làm việc với nội dung chính: phát hiện và chỉnh sửa, không động vào các trường của phong cách và cũng không xen lẫn việc gắn hoặc viết thử."
+  },
+  "advancedWorkspace": {
+    "intro": "Đang bảo trì phần thiết lập của phong cách «{{name}}». Kiểm tra ứng dụng và Khử mùi AI đã được tách ra lối vào riêng, ở đây chỉ tập trung gọn gàng cho phong cách.",
+    "introEmpty": "Chưa có phong cách nào có thể chỉnh sửa. Hãy quay lại danh sách phong cách, chọn hoặc tạo mới một bộ."
+  },
+  "bookStyle": {
+    "title": "Đặt phong cách mặc định cấp sách từ thông tin cơ bản của tiểu thuyết",
+    "description": "Bộ máy phong cách chịu trách nhiệm tạo, kiểm thử và sắp xếp tài sản phong cách. Phong cách mặc định cho cuốn hiện tại được chọn ngay trong trang thông tin tiểu thuyết, rồi mang vào các quy trình đạo diễn và sinh nội dung phía sau.",
+    "entryHeading": "Bây giờ nên vào từ đâu",
+    "entryWithNovel": "Phần \"Phong cách mặc định\" của tiểu thuyết{{novelLabel}} đã được đặt trong trang thông tin tiểu thuyết.",
+    "entryWithoutNovel": "Hãy vào trang thông tin của một cuốn tiểu thuyết để xác nhận phong cách mặc định cấp sách.",
+    "novelLabel": " «{{title}}» ",
+    "splitTitle": "Hai lối vào lo việc gì",
+    "splitNovelPage": "Trang tiểu thuyết: chọn phong cách mặc định cho cuốn hiện tại, kích hoạt gợi ý, so sánh phương án và quyết định khi nào đưa vào đạo diễn tự động.",
+    "splitEngine": "Bộ máy phong cách: tiếp tục lo việc sắp xếp tài sản phong cách, viết thử, Khử mùi AI và quản lý quy tắc.",
+    "nextHeading": "Bước tiếp theo",
+    "nextDescription": "Hãy sang trang tiểu thuyết xác nhận phong cách mặc định cho cuốn này. Nếu thư viện chưa có phong cách phù hợp, quay lại Bộ máy phong cách để tạo hoặc sắp xếp.",
+    "goToNovelPage": "Sang trang tiểu thuyết đặt phong cách mặc định",
+    "editCurrent": "Chỉnh sửa phong cách hiện tại",
+    "createNew": "Tạo phong cách mới"
+  },
+  "cleanFlow": {
+    "title": "Khử mùi AI cho đoạn này",
+    "description": "Phát hiện sẽ chỉ ra đoạn nào đang viết kiểu khuôn mẫu, sau đó đưa ra một bản hiệu chỉnh để bạn so sánh trực tiếp. Những lỗi lặp lại sẽ được gom thành gợi ý quy tắc để bạn mang về chỉnh sửa phong cách tiếp.",
+    "inputHeading": "Bản gốc đầu vào",
+    "inputPlaceholder": "Dán đoạn văn bạn muốn khử mùi AI.",
+    "detecting": "Đang phát hiện...",
+    "detect": "Phát hiện trước",
+    "generatingRewrite": "Đang tạo bản hiệu chỉnh...",
+    "generateRewrite": "Tạo bản hiệu chỉnh ngay",
+    "issueHeading": "Thẻ vấn đề & điểm rủi ro",
+    "riskScoreLabel": "Điểm rủi ro",
+    "issueEmpty": "Hãy chạy phát hiện trước. Ở đây sẽ chỉ rõ đoạn nào đang giống AI đang nói và vì sao khiến người đọc bị đứt mạch.",
+    "diffHeading": "Diff trước và sau hiệu chỉnh",
+    "diffHint": "Đối chiếu nhẹ theo dòng đoạn để bạn nhanh chóng đánh giá lần chỉnh này có đang nén mùi khuôn mẫu, hay đang lấy mất luôn giọng văn cũ.",
+    "diffOriginal": "Bản gốc {{index}}",
+    "diffRewrite": "Bản hiệu chỉnh {{index}}",
+    "diffEmpty": "Sau khi hiệu chỉnh một nhịp, đối chiếu trước/sau sẽ xuất hiện ở đây.",
+    "suggestionHeading": "Lỗi lặp đáng tích lại thành quy tắc",
+    "suggestionHint": "Phiên này không ép ghi đè cho bạn, mà chỉ tổng hợp các lỗi lặp thành gợi ý để bạn mang về chỉnh sửa phong cách quyết định có cố định lại không.",
+    "viewEditor": "Xem trình chỉnh sửa phong cách",
+    "suggestionEmpty": "Sau khi phát hiện ra vấn đề, các gợi ý quy tắc đáng tích sẽ xuất hiện ở đây."
+  },
+  "cleanPanel": {
+    "title": "Khử mùi AI",
+    "introWithProfile": "Đang phát hiện và chỉnh sửa theo phong cách «{{name}}». Khu vực này chỉ xử lý mùi AI trong nội dung, không động vào các trường của phong cách.",
+    "introEmpty": "Hãy chọn một phong cách từ danh sách rồi mới kiểm tra nội dung.",
+    "antiAiHeading": "Ràng buộc chống AI sẽ được ưu tiên",
+    "antiAiHint": "Nếu phong cách đã gắn quy tắc chống AI, việc phát hiện và sửa sẽ ưu tiên xét theo các ràng buộc đó.",
+    "antiAiEmpty": "Phong cách này chưa gắn quy tắc chống AI rõ ràng. Phát hiện hiện tại sẽ dựa nhiều vào đánh giá rủi ro chung, kết quả có thể chưa khớp kỳ vọng của bạn.",
+    "detectHeading": "Phát hiện nội dung",
+    "detectHint": "Dán đoạn bạn muốn kiểm tra. Mỗi lần nên đưa một cảnh hoàn chỉnh để dễ nhìn ra giọng kể, giọng đối thoại và giọng giải thích bị lỗi.",
+    "detectPlaceholder": "Dán nội dung cần phát hiện",
+    "runDetect": "Chạy phát hiện",
+    "runRewrite": "Chỉnh sửa nhanh",
+    "riskScore": "Điểm rủi ro: {{score}}",
+    "detectionEmpty": "Kết quả phát hiện sẽ hiển thị tại đây, nêu rõ đoạn nào đang nặng giọng AI, vì sao bị tính rủi ro và có thể chỉnh theo hướng nào.",
+    "rewriteResult": "Kết quả chỉnh sửa"
+  },
+  "createDialog": {
+    "title": "Tạo phong cách",
+    "description": "Chọn cách khởi đầu nhẹ nhàng nhất. Sau khi tạo, hệ thống sẽ mở trình chỉnh sửa phong cách hiện tại để bạn tiếp tục bổ sung quy tắc, viết thử và gắn liên kết.",
+    "tabs": {
+      "quickStart": "Bắt đầu từ mẫu",
+      "blank": "Trống / AI",
+      "extract": "Trích xuất từ tư liệu"
+    },
+    "quickStart": {
+      "intro": "Khi chưa có quy tắc rõ ràng, hãy bắt đầu từ một bộ mẫu cho đỡ tốn sức. Sau này vẫn chỉnh được tiếp.",
+      "templateBadge": "Mẫu",
+      "applicableTo": "Phù hợp: {{value}}",
+      "creating": "Đang tạo...",
+      "createFromTemplate": "Tạo dựa trên mẫu này"
+    },
+    "blank": {
+      "intro": "Bạn có thể tự tạo một phong cách trống, hoặc mô tả cảm nhận đọc mong muốn để AI dựng cho bạn bản khung đầu tiên.",
+      "manualTitle": "Tạo trống thủ công",
+      "manualHint": "Phù hợp khi bạn đã biết mình muốn duy trì loại phong cách nào, chỉ cần một khung trống.",
+      "manualNamePlaceholder": "Ví dụ: Đô thị xung đột mạnh đẩy nhanh",
+      "manualCreating": "Đang tạo...",
+      "manualSubmit": "Tạo phong cách trống",
+      "aiTitle": "Để AI dựng khung trước",
+      "aiHint": "Phù hợp khi bạn chỉ biết muốn cảm nhận thế nào, chưa muốn tự điền các trường quy tắc.",
+      "aiNamePlaceholder": "Tên phong cách (tuỳ chọn)",
+      "aiCategoryPlaceholder": "Phân loại (tuỳ chọn)",
+      "aiBriefPlaceholder": "Ví dụ: nhịp tổng thể nhanh, xung đột dày, đối thoại trực diện, cảm xúc dứt khoát, hợp đô thị và truyện tu luyện nhiệt huyết.",
+      "aiGenerating": "AI đang tạo...",
+      "aiSubmit": "Để AI tạo một bộ phong cách"
+    },
+    "extract": {
+      "intro": "Tạo phong cách từ tư liệu. Văn bản và tài liệu kho tri thức sẽ chuyển vào tác vụ trích xuất nền; kết quả phân tích sách sẽ dùng trực tiếp phần văn phong và kỹ thuật để tạo phong cách.",
+      "namePlaceholder": "Tên phong cách",
+      "categoryPlaceholder": "Phân loại (tuỳ chọn)",
+      "directTextPlaceholder": "Dán đoạn văn bạn muốn trích cảm giác. Tốt nhất đưa ít nhất một cảnh trọn vẹn.",
+      "knowledgeSearchPlaceholder": "Tìm theo tiêu đề hoặc tên tệp tài liệu",
+      "knowledgeLoading": "Đang tra cứu tài liệu kho tri thức...",
+      "knowledgeNotFound": "Không tìm thấy tài liệu khả dụng. Hãy tải bản gốc lên kho tri thức trước rồi quay lại tạo phong cách.",
+      "knowledgeSelected": "Đã chọn",
+      "knowledgeMeta": "Bản đang dùng v{{version}} · {{versionCount}} phiên bản · {{analysisCount}} kết quả phân tích",
+      "knowledgeProcessingTitle": "Cách xử lý văn bản gốc",
+      "knowledgeSnapshot": "Bản chụp nguồn {{value}}",
+      "knowledgeSampleHint": "Tài sản phong cách vẫn giữ bản xem trước đầy đủ; mô hình chỉ đọc mẫu đại diện để tránh nuốt toàn bộ truyện dài vượt sức chứa.",
+      "knowledgeFullTextWarning": "Trích toàn văn sẽ đẩy toàn bộ bản đang dùng cho mô hình. Với bản dài, nên ưu tiên lấy mẫu thông minh trước.",
+      "knowledgePreviewLoading": "Đang đọc bản đang dùng của tài liệu...",
+      "knowledgeActiveVersion": "Bản đang dùng v{{version}} · {{value}}",
+      "knowledgeMissingActive": "Tài liệu được chọn thiếu bản đang dùng, không thể gửi đi.",
+      "knowledgeEmptyContent": "Nội dung bản đang dùng trống, không thể gửi đi.",
+      "knowledgePromptSelect": "Sau khi chọn một tài liệu, hệ thống sẽ đọc toàn văn bản đang dùng và chốt bản chụp khi gửi tác vụ.",
+      "knowledgeTitleSuffix": "Phong cách {{title}}",
+      "bookAnalysisSearchPlaceholder": "Tìm tên phân tích hoặc tài liệu nguồn",
+      "bookAnalysisLoading": "Đang tra cứu kết quả phân tích sách...",
+      "bookAnalysisNotFound": "Không tìm thấy kết quả phân tích khả dụng. Hoàn tất phân tích xong, bạn có thể quay lại tạo phong cách tại đây.",
+      "bookAnalysisAvailable": "Có thể tạo",
+      "bookAnalysisMeta": "Bản nguồn v{{version}} · {{summary}}",
+      "bookAnalysisFallbackSummary": "Kết quả phân tích sẵn sàng tạo phong cách",
+      "bookAnalysisTitleSuffix": "Phong cách {{title}}",
+      "submit": {
+        "bookAnalysis": "Tạo phong cách từ kết quả phân tích",
+        "knowledge": "Trích từ kho tri thức và tự lưu",
+        "directText": "Gửi tác vụ trích xuất và tự lưu",
+        "generating": "Đang tạo...",
+        "submitting": "Đang gửi tác vụ...",
+        "running": "Tác vụ nền đang chạy..."
+      },
+      "bookAnalysisPanel": {
+        "title": "Tạo từ kết quả phân tích",
+        "hint": "Hướng này sẽ đọc thẳng phần văn phong và kỹ thuật trong phân tích, tạo xong sẽ mở ngay trình chỉnh sửa.",
+        "sourceLabel": "Tài liệu nguồn: {{title}} · v{{version}}",
+        "promptSelect": "Sau khi chọn một kết quả phân tích, hệ thống sẽ dùng phần văn phong và kỹ thuật để tạo phong cách, không chạy qua tác vụ nền."
+      },
+      "presetPanel": {
+        "title": "Chiến lược giữ lại",
+        "hint": "Hãy quyết định trước mức giữ lại dấu vân nguyên bản, hệ thống sẽ áp chiến lược này để tự tạo và lưu phong cách.",
+        "currentScheme": "Phương án hiện tại",
+        "presetSubmitHint": "Sẽ gửi tác vụ nền theo \"{{label}}\". Khi xong hệ thống tự lưu, bạn không cần bấm lưu phong cách thủ công."
+      },
+      "task": {
+        "title": "Tác vụ nền",
+        "taskTitle": "Tiêu đề tác vụ: {{title}}",
+        "stage": "Giai đoạn: {{value}}",
+        "stageWaiting": "Chờ điều phối",
+        "progress": "Tiến độ: {{percent}}%",
+        "failure": "Nguyên nhân lỗi: {{reason}}",
+        "openTaskCenter": "Mở Trung tâm tác vụ",
+        "noTaskHint": "Sau khi gửi, hệ thống sẽ hoàn tất trích xuất, áp chiến lược giữ lại và tự lưu phong cách trong nền. Bạn có thể đóng hộp thoại, kết quả sẽ tự mở khi xong."
+      }
+    },
+    "extractionPresets": {
+      "imitate": {
+        "label": "Bám sát bản gốc",
+        "summary": "Giữ tối đa dấu vân mạnh và thói quen biểu đạt, hợp để tạm thời mô phỏng, viết thử phong cách và đối chiếu học hỏi."
+      },
+      "balanced": {
+        "label": "Giữ cảm nhận đọc chính",
+        "summary": "Giữ cảm nhận đọc và nhịp triển khai, làm mờ những dấu vân quá mạnh, hợp với phần lớn dự án dùng ngay."
+      },
+      "transfer": {
+        "label": "Chỉ chuyển khung dùng lại",
+        "summary": "Giữ nhiều hơn nhịp, cấu trúc và logic đối thoại có thể tái sử dụng, hợp dự án dài hơi và phong cách mặc định cho cả sách."
+      }
+    },
+    "materialSources": {
+      "directText": {
+        "label": "Dán văn bản trực tiếp",
+        "summary": "Đưa mẫu văn bản vào tác vụ trích xuất nền, hợp khi đã có sẵn đoạn hoặc chương."
+      },
+      "knowledgeDocument": {
+        "label": "Tài liệu kho tri thức",
+        "summary": "Chọn bản đang dùng của tài liệu kho tri thức; hệ thống chốt bản chụp toàn văn rồi dùng mẫu đại diện để học phong cách."
+      },
+      "bookAnalysis": {
+        "label": "Kết quả phân tích sách",
+        "summary": "Dùng trực tiếp văn phong và kỹ thuật trong phân tích để tạo phong cách."
+      }
+    },
+    "knowledgeProcessing": {
+      "representativeSample": {
+        "label": "Lấy mẫu thông minh",
+        "summary": "Lấy mẫu đại diện từ mở đầu, giữa, cuối và phần kết, hợp truyện dài, tốc độ và độ ổn định tốt hơn.",
+        "badge": "Khuyến nghị"
+      },
+      "fullText": {
+        "label": "Trích toàn văn",
+        "summary": "Đưa toàn bộ bản đang dùng làm đầu vào của mô hình, hợp tài liệu ngắn; truyện dài có thể chậm hơn và dễ chạm ngưỡng ngữ cảnh hoặc thời gian."
+      }
+    },
+    "taskStatus": {
+      "none": "Chưa có tác vụ",
+      "queued": "Đang xếp hàng",
+      "running": "Đang xử lý",
+      "succeeded": "Đã hoàn tất",
+      "failed": "Thất bại",
+      "cancelled": "Đã huỷ",
+      "pending": "Chờ phê duyệt"
+    },
+    "knowledgeStatus": {
+      "enabled": "Khả dụng",
+      "disabled": "Đã tắt",
+      "archived": "Lưu trữ"
+    },
+    "charCount": "{{value}} ký tự",
+    "charCountZero": "0 ký tự"
+  },
+  "editorPanel": {
+    "title": "Chỉnh sửa phong cách hiện tại",
+    "delete": "Xoá",
+    "emptyPrompt": "Hãy quay về danh sách phong cách, chọn một bộ rồi mới vào đây chỉnh sửa.",
+    "starterNotice": "Đây là phong cách khởi đầu hệ thống đã chuẩn bị sẵn. Bạn có thể chỉnh trực tiếp theo dự án, không cần sao chép trước rồi mới sửa.",
+    "primaryGuide": "Nếu chưa muốn đối mặt với hàng loạt trường kỹ thuật, hãy lo bốn phần quan trọng nhất trước: tên phong cách, giới thiệu, thể loại phù hợp, quy tắc chống AI. Bốn nhóm quy tắc nâng cao bên dưới là lớp điều khiển tinh hơn cho hệ thống, chưa quen thì nên giữ nguyên.",
+    "basics": {
+      "title": "Định vị cơ bản",
+      "hint": "Hãy nói rõ phong cách này muốn tạo cảm nhận gì; phần này cũng được ưu tiên hiển thị khi danh sách mở rộng.",
+      "name": {
+        "label": "Tên phong cách",
+        "hint": "Đây là tiêu đề chính để bạn nhận diện phong cách trong danh sách, nên ghi rõ thể loại hoặc cảm nhận."
+      },
+      "category": {
+        "label": "Phân loại",
+        "hint": "Dùng để tự lưu trữ, ví dụ đô thị, huyền huyễn, ngôn tình, nhiệt huyết đẩy nhanh.",
+        "placeholder": "Ví dụ: Đô thị nhiệt huyết"
+      },
+      "description": {
+        "label": "Giới thiệu một câu",
+        "hint": "Dùng một câu hoàn chỉnh để mô tả cảm nhận đọc, cảm nhận triển khai hoặc khí chất nhân vật phong cách này muốn tạo.",
+        "placeholder": "Ví dụ: xung đột dày, nhịp nhanh, đối thoại trực diện, cảm xúc bộc lộ, hợp đô thị tu luyện."
+      },
+      "tags": {
+        "label": "Thẻ",
+        "hint": "Dùng để tra cứu cho chính mình, vài từ ngắn là đủ, phân tách bằng dấu phẩy.",
+        "placeholder": "Ví dụ: phiêu, nhịp nhanh, xung đột mạnh"
+      },
+      "applicableGenres": {
+        "label": "Thể loại phù hợp",
+        "hint": "Cho hệ thống biết phong cách này hợp thể loại hoặc bối cảnh nào, phân tách bằng dấu phẩy.",
+        "placeholder": "Ví dụ: đô thị, nhiệt huyết, tu luyện"
+      }
+    },
+    "source": {
+      "title": "Căn cứ bản gốc và đặc trưng đã trích",
+      "hint": "Phần này là \"lớp chứng cứ\" cho phong cách. Những phong cách trích từ văn bản hoặc tài liệu kho tri thức sẽ phụ thuộc vào đây khi xem lại hoặc trích lại. Phần này gom mô tả đặc trưng, chứng cứ, điểm số, đề xuất preset và quy tắc khuyên dùng vào một chỗ.",
+      "sourceContent": {
+        "label": "Mẫu văn bản gốc",
+        "hint": "Lưu lại đoạn văn đã dùng khi trích xuất phong cách này. Mẫu càng đầy đủ, hệ thống càng dễ rút ra đặc trưng ổn định.",
+        "placeholder": "Mẫu văn bản đã dùng khi trích xuất phong cách"
+      },
+      "featuresTitle": "Bật/tắt đặc trưng đã trích",
+      "featuresHint": "Liệt kê các đặc trưng phong cách đã trích từ văn bản. Đánh dấu nghĩa là giữ lại trong phong cách này.",
+      "featuresCount": " Hiện có {{count}} đặc trưng.",
+      "reextract": "Trích xuất lại đặc trưng",
+      "reextracting": "Đang trích lại...",
+      "evidence": "Chứng cứ: {{value}}",
+      "importance": "Mức quan trọng {{value}}",
+      "imitationValue": "Giá trị mô phỏng {{value}}",
+      "transferability": "Tính chuyển dịch {{value}}",
+      "fingerprintRisk": "Rủi ro dấu vân {{value}}",
+      "rulePatchLabel": "Quy tắc {{label}}",
+      "summaryOnlyRules": "Hiện chỉ có quy tắc cấp tóm tắt",
+      "noExtractedFeatures": "Phong cách văn bản này chưa tạo các mục đặc trưng. Bạn có thể bấm \"Trích xuất lại đặc trưng\" để dựng lại từ mẫu văn bản.",
+      "presetSuggestionTitle": "Đề xuất preset trích xuất",
+      "presetSuggestionHint": "Đây là ba phương án giữ lại do mô hình gợi ý. Phương án hiện đang lưu trong phong cách sẽ được tô riêng, giúp bạn cân nhắc đổi mức giữ lại.",
+      "presetCurrent": "Đang áp",
+      "presetCountKeep": "Giữ {{count}}",
+      "presetCountWeaken": "Làm mờ {{count}}",
+      "presetCountRemove": "Tách bỏ {{count}}",
+      "antiAiSuggestionTitle": "Quy tắc chống AI do mô hình gợi ý",
+      "antiAiSuggestionHint": "Đây là những quy tắc nên gắn kèm khi trích xuất. Quy tắc đã gắn sẽ được tô riêng, quy tắc chưa gắn vẫn giữ tên đề xuất gốc.",
+      "antiAiBound": " · Đã gắn",
+      "antiAiRecommended": " · Khuyên gắn nhưng chưa gắn",
+      "antiAiOriginal": " · Đề xuất gốc"
+    },
+    "decisions": {
+      "keep": "Giữ",
+      "weaken": "Làm mờ",
+      "remove": "Tách bỏ"
+    },
+    "rulePatchLabels": {
+      "narrativeRules": "Triển khai cốt truyện",
+      "characterRules": "Biểu đạt nhân vật",
+      "languageRules": "Chất ngôn ngữ",
+      "rhythmRules": "Mật độ nhịp điệu"
+    },
+    "analysis": {
+      "title": "Bản phân tích nháp cho hệ thống",
+      "hint": "Đây không phải lời quảng bá cho độc giả mà là phần ghi chú để bạn và hệ thống xem lại. Bạn có thể nêu lý do giữ phong cách này, khí chất quan trọng nhất của nó.",
+      "placeholder": "Ví dụ: phong cách này tập trung giữ nhịp nhanh và đối thoại trực diện, không theo đuổi cảm xúc tỉ mỉ."
+    },
+    "rules": {
+      "title": "Khối quy tắc nâng cao",
+      "hint": "Bốn khối này là lớp quy tắc máy mà hệ thống thực sự đọc khi vận hành. Khi chưa rõ ý nghĩa trường, hãy xem tiêu đề và mô tả trước rồi mới quyết định có chỉnh không. Nếu đang chủ yếu hiển thị trường \"tóm tắt\", nghĩa là lần trích này thiên về tóm lược, các trường tương thích chi tiết còn ít.",
+      "compatibilityNotice": "Trường tương thích chủ yếu để hỗ trợ tài sản cũ và một số thử nghiệm: {{fields}}. Khi cần kiểm soát cảm nhận đọc ổn định, ưu tiên giữ tóm tắt lớp biểu đạt và quy tắc chống AI.",
+      "narrative": {
+        "title": "Quy tắc triển khai cốt truyện",
+        "hint": "Quyết định cốt truyện đẩy đi thế nào, cảnh khép ra sao, có đa góc nhìn hay không, có cho phép móc vòng hay không."
+      },
+      "character": {
+        "title": "Quy tắc biểu đạt nhân vật",
+        "hint": "Quyết định nhân vật nói thế nào, cảm xúc bộc lộ ra sao, có nghiêng nội tâm hoá hay không, có ưu tiên giữ thể diện hay không."
+      },
+      "language": {
+        "title": "Quy tắc chất ngôn ngữ",
+        "hint": "Kiểm soát độ thô của câu, mức khẩu ngữ, độ biến hoá câu, có cho câu không đầy đủ hay không."
+      },
+      "rhythm": {
+        "title": "Quy tắc mật độ nhịp",
+        "hint": "Kiểm soát tốc độ triển khai, mật độ đoạn, ưu tiên hành động hay giải thích."
+      },
+      "card": {
+        "empty": "Khối quy tắc này chưa có trường đọc được. Hãy dựa vào phần giới thiệu và quy tắc chống AI bên trên trước; khi thực sự cần kiểm soát tinh, mở phần JSON nâng cao ra.",
+        "showAdvanced": "Xem hoặc chỉnh JSON nâng cao",
+        "advancedHint": "Phần này giữ lối vào JSON gốc, chủ yếu để tương thích tài sản cũ hoặc tinh chỉnh sâu. Thông thường hãy xem trường có thể đọc bên trên là đủ.",
+        "parseError": "Cấu trúc JSON hiện không nhận diện được. Khi lưu hệ thống sẽ cố quay về đối tượng trống; tốt nhất nên sửa định dạng trước rồi mới lưu."
+      }
+    },
+    "antiAi": {
+      "title": "Gắn quy tắc chống AI",
+      "hint": "Phần này quyết định khi phát hiện và chỉnh sửa, hệ thống ưu tiên phòng vấn đề gì. Quy tắc gắn càng rõ thì việc \"Khử mùi AI\" càng có định hướng."
+    },
+    "saveFooter": "Sau khi lưu, phần mở rộng, phát hiện Khử mùi AI và kiểm thử ứng dụng của phong cách này đều đọc lại thiết lập mới.",
+    "save": "Lưu phong cách hiện tại"
+  },
+  "imitateFlow": {
+    "title": "Mô phỏng một phong cách",
+    "description": "Đưa cho tôi đoạn tham khảo rõ ràng, tôi sẽ tách thành phong cách thực thi được, rồi để bạn chọn bám sát mô phỏng, giữ khung hay chỉ chuyển phần dùng lại.",
+    "step1": "1. Nhập văn bản tham khảo",
+    "namePlaceholder": "Tên phong cách, ví dụ: Đối thoại hiện thực lạnh",
+    "categoryPlaceholder": "Phân loại (tuỳ chọn)",
+    "sourceTextPlaceholder": "Dán đoạn tham khảo bạn muốn mô phỏng. Nên đưa ít nhất một cảnh trọn vẹn để hệ thống nắm được khoảng cách kể, cảm đối thoại và nhịp câu.",
+    "extracting": "Đang trích đặc trưng...",
+    "extractButton": "2. Trích xuất đặc trưng trước",
+    "step2": "2. Chọn mức giữ lại",
+    "currentScheme": "Phương án hiện tại",
+    "presetHint": "`imitate` hợp mô phỏng tạm thời, `balanced` hợp đa số dự án, `transfer` hợp gắn cho cả sách, chủ động tránh rủi ro dấu vân cao.",
+    "presetEmpty": "Hoàn tất trích đặc trưng trước, ba chiến lược giữ lại và phần mô tả cảm nhận sẽ xuất hiện ở đây.",
+    "step3": "3. Xem trước khung phong cách sẽ lưu",
+    "step3Hint": "Sau khi lưu, hệ thống sẽ tự mở trình chỉnh sửa, bạn có thể chỉnh tiếp quy tắc, gắn mục tiêu hoặc đem đi viết thử.",
+    "saving": "Đang lưu phong cách...",
+    "saveButton": "4. Lưu thành tài sản phong cách",
+    "previewEmpty": "Chưa có đặc trưng để xem trước. Hoàn tất trích đặc trưng rồi mới quyết định cách lưu."
+  },
+  "landing": {
+    "myAssets": "Tài sản phong cách của tôi",
+    "heroTitle": "Hãy chọn một phong cách trước, rồi quyết định chỉnh sửa, ứng dụng hay Khử mùi AI.",
+    "heroDescription": "Trang chính giúp bạn nắm tổng quan các tài sản phong cách hiện có. Khi mở rộng sẽ hiển thị thẳng cảm nhận đọc, tóm tắt quy tắc, ràng buộc chống AI và mức độ trưởng thành.",
+    "createNew": "Tạo phong cách mới",
+    "bookHint": "Phong cách mặc định cấp sách hãy vào từ phần thông tin tiểu thuyết, để chính cuốn sách chọn tài sản phong cách cần dùng rồi mang vào các quy trình đạo diễn và nội dung sau.",
+    "emptyTitle": "Chưa có tài sản phong cách nào",
+    "emptyDescription": "Hãy tạo bộ phong cách đầu tiên, sau này quay lại bổ sung quy tắc, viết thử và gắn mục tiêu dần.",
+    "emptyCta": "Tạo bộ phong cách đầu tiên",
+    "customHeading": "Phong cách bạn tự tạo",
+    "customHint": "Đây là các tài sản tái sử dụng bạn đã đúc kết, hãy ưu tiên chọn từ đây.",
+    "starterHeading": "Phong cách khởi đầu có thể sửa ngay",
+    "starterHint": "Những tài sản dựng sẵn này hợp để mượn khung trước, rồi điều chỉnh thành phong cách của riêng dự án.",
+    "profileCountSets": "{{count}} bộ",
+    "summaryFallback": "Chưa có tóm tắt phong cách.",
+    "recentBinding": "Gắn gần nhất: {{title}}",
+    "actions": {
+      "edit": "Chỉnh thiết lập",
+      "workbench": "Ứng dụng & kiểm thử",
+      "clean": "Khử mùi AI",
+      "delete": "Xoá",
+      "deleting": "Đang xoá..."
+    },
+    "detail": {
+      "readingFeelTitle": "Cảm nhận & định vị",
+      "readingFeelHint": "Cột này giúp bạn nhanh chóng nhận biết phong cách muốn tạo cảm nhận gì, hợp dùng trước cho dự án nào.",
+      "sourcePreviewLabel": "Trích đoạn mẫu nguồn",
+      "rulesTitle": "Tóm tắt quy tắc",
+      "rulesHint": "Phần này đọc rõ bốn lớp quy tắc thực sự điều khiển cảm nhận của phong cách, giúp bạn hiểu nhanh trong danh sách.",
+      "narrative": "Triển khai cốt",
+      "character": "Biểu đạt nhân vật",
+      "language": "Chất ngôn ngữ",
+      "rhythm": "Kiểm soát nhịp",
+      "antiAiTitle": "Ràng buộc chống AI",
+      "antiAiHint": "Phần này quyết định khi phát hiện và sửa nội dung, hệ thống sẽ ưu tiên rình loại rủi ro nào.",
+      "extractionAntiAiSuggestion": "Phong cách này có thêm {{count}} quy tắc chống AI được đề xuất ở bước trích xuất, hợp để tinh chỉnh tiếp.",
+      "antiAiEmpty": "Phong cách này chưa gắn ràng buộc chống AI rõ ràng, nên \"Khử mùi AI\" sẽ kém định hướng.",
+      "overviewTitle": "Tổng quan tài sản",
+      "overviewHint": "Cột này chủ yếu giúp bạn đánh giá phong cách đang ở mức trưởng thành nào.",
+      "sourceLabel": "Nguồn",
+      "updatedLabel": "Cập nhật gần nhất",
+      "enabledFeatures": "Đặc trưng đang bật",
+      "highRiskFeatures": "Dấu vân rủi ro cao",
+      "currentPreset": "Preset hiện tại",
+      "availablePresets": "Preset khả dụng",
+      "boundTargets": "Mục tiêu đã gắn",
+      "recentNovel": "Tiểu thuyết gần nhất",
+      "applicableGenres": "Thể loại phù hợp",
+      "featureCount": "{{count}} mục",
+      "bindingCount": "{{count}} liên kết",
+      "presetUnlocked": "Chưa khoá",
+      "presetEmpty": "Chưa có",
+      "noBoundNovel": "Chưa gắn vào tiểu thuyết",
+      "genresEmpty": "Chưa điền",
+      "nextStepTitle": "Bước tiếp",
+      "nextStepHint": "Ba nút mỗi nút chỉ lo một việc, không còn nhảy chung vào một khối nội dung nữa.",
+      "nextEdit": "Chỉnh thiết lập: bảo trì phần mô tả, quy tắc và ràng buộc chống AI của phong cách.",
+      "nextWorkbench": "Ứng dụng & kiểm thử: gắn vào tiểu thuyết hoặc chương và viết thử để kiểm chứng.",
+      "nextClean": "Khử mùi AI: chỉ xử lý phát hiện và chỉnh sửa nội dung, không động vào các trường của phong cách."
+    }
+  },
+  "rulesPanel": {
+    "title": "Quy tắc chống AI",
+    "enabledCount": "Đang bật {{enabled}} / {{total}} quy tắc",
+    "intro": "Vào Trung tâm quy tắc để xem, tạo và điều chỉnh quy tắc chống AI; trình chỉnh sửa phong cách vẫn lo việc chọn quy tắc nào sẽ gắn vào phong cách hiện tại.",
+    "goToCenter": "Vào Trung tâm quy tắc"
+  },
+  "sidebar": {
+    "pickFirstTitle": "Chọn một phong cách trước rồi mới tinh chỉnh",
+    "pickFirstIntro": "Lần đầu dùng, đừng cố hiểu mọi trường quy tắc. Hãy chọn từ phong cách dựng sẵn một bộ gần với cảm nhận bạn muốn viết, rồi vào sửa tên, thẻ và quy tắc sẽ trơn hơn nhiều.",
+    "editableTitle": "Tài sản phong cách có thể chỉnh trực tiếp",
+    "editableHint": "Trong đó có {{count}} bộ dựng sẵn, hợp để mượn ý rồi chỉnh.",
+    "templatesTitle": "Mẫu có sẵn",
+    "templatesHint": "Hợp để tạo nhanh phong cách mới, không phải bắt đầu từ trống.",
+    "createOrImport": "Tạo hoặc nhập phong cách",
+    "switchTitle": "Đổi phong cách hiện tại",
+    "switchHint": "Khu vực này chỉ chuyển đối tượng chỉnh sửa trong hộp thoại. Danh sách tài sản đầy đủ ở trang chính.",
+    "yourProfilesHeading": "Phong cách bạn tạo",
+    "starterProfilesHeading": "Phong cách khởi đầu dựng sẵn",
+    "starterBadge": "Dựng sẵn",
+    "emptyPrompt": "Chưa có tài sản phong cách. Bấm \"Tạo hoặc nhập phong cách\" ở trên, dựng nhanh một bộ từ mẫu cho khoẻ.",
+    "dialog": {
+      "title": "Tạo hoặc nhập phong cách",
+      "description": "Khuyến nghị đi qua \"Bắt đầu nhanh\" hoặc phần tạo bằng câu trong \"Trống / AI\". Khi đã có mẫu văn bản ổn định, mới dùng \"Trích từ văn bản\".",
+      "tabs": {
+        "quickStart": "Bắt đầu nhanh",
+        "blank": "Trống / AI",
+        "extract": "Trích từ văn bản"
+      },
+      "quickStart": {
+        "intro": "Bên trái có vài bộ phong cách khởi đầu có thể sửa ngay. Khi muốn mở thêm bộ mới, dùng mẫu sẽ nhẹ hơn rồi tinh chỉnh theo dự án.",
+        "templateBadge": "Mẫu",
+        "applicableTo": "Phù hợp: {{value}}",
+        "creating": "Đang tạo...",
+        "createFromTemplate": "Tạo nhanh dựa trên mẫu"
+      },
+      "blank": {
+        "intro": "Có hai cách khởi đầu nhẹ: nếu rõ muốn duy trì bộ quy tắc nào, hãy tạo trống thủ công; nếu chỉ biết \"muốn viết ra cảm giác gì\", viết một câu để AI dựng khung.",
+        "manualTitle": "Tạo trống thủ công",
+        "manualHint": "Hợp khi bạn rõ muốn duy trì loại quy tắc phong cách nào, chỉ muốn tạo một khung trống rồi bổ sung dần.",
+        "manualNamePlaceholder": "Ví dụ: Phong cách đô thị nữ tần của tôi",
+        "manualCreating": "Đang tạo...",
+        "manualSubmit": "Tạo phong cách trống",
+        "aiTitle": "Để AI dựng khung trước",
+        "aiHint": "Khi chưa muốn nghiên cứu các trường quy tắc, hãy mô tả cảm nhận đọc, khí chất hoặc hướng tham khảo, AI sẽ dựng sẵn bản phong cách có thể chỉnh.",
+        "aiNamePlaceholder": "Tên phong cách (tuỳ chọn, bỏ trống để AI tự đặt)",
+        "aiCategoryPlaceholder": "Phân loại (tuỳ chọn)",
+        "aiBriefPlaceholder": "Ví dụ: phong cách tương tự « Cứu Thế Chủ Phương Xa », tổng thể kiềm chế, đậm chất tư biện, đối thoại sắc bén, ít súp gà, nhiều ma sát đời thực.",
+        "aiGenerating": "AI đang tạo...",
+        "aiSubmit": "Để AI tạo một bộ phong cách"
+      },
+      "extract": {
+        "intro": "Hợp khi bạn có sẵn đoạn tham khảo ổn định và muốn hệ thống trích đặc trưng trước khi vào chỉnh. Nếu chưa có mẫu, nên khởi đầu từ mẫu hoặc AI trước.",
+        "namePlaceholder": "Tên phong cách",
+        "categoryPlaceholder": "Phân loại (tuỳ chọn)",
+        "sourcePlaceholder": "Dán văn bản tham khảo",
+        "extracting": "Đang trích xuất...",
+        "submit": "Để AI trích đặc trưng và tạo"
+      }
+    }
+  },
+  "workbench": {
+    "title": "Ứng dụng và kiểm thử phong cách hiện tại",
+    "intro": "Khu vực này chỉ lo hai việc: gắn phong cách vào tiểu thuyết/chương/tác vụ và viết thử một đoạn để xem hiệu quả. \"Khử mùi AI\" đã được tách thành lối vào riêng, không còn lẫn vào đây.",
+    "bindingTitle": "Gắn vào mục tiêu",
+    "bindingHint": "Sau khi gắn, phong cách sẽ tham gia sinh nội dung trong tiểu thuyết, chương hoặc tác vụ tương ứng. Ưu tiên càng cao thì ảnh hưởng càng đi trước; trọng số càng cao thì mức tham gia càng mạnh.",
+    "bindingLevel": "Cấp gắn",
+    "bindingTargets": {
+      "novel": "Cả quyển",
+      "chapter": "Chương",
+      "task": "Tác vụ lần này"
+    },
+    "selectNovel": "Tiểu thuyết",
+    "selectChapter": "Chọn chương",
+    "selectChapterPlaceholder": "Chọn chương",
+    "chapterOptionLabel": "{{order}}. {{title}}",
+    "taskTargetLabel": "Định danh tác vụ",
+    "taskTargetPlaceholder": "Ví dụ: chapter-draft-001",
+    "priority": "Ưu tiên",
+    "weight": "Trọng số",
+    "createBinding": "Tạo liên kết",
+    "bindingLine": "{{type}} / {{id}} / P{{priority}} / W{{weight}}",
+    "deleteBinding": "Xoá",
+    "bindingsEmpty": "Phong cách này chưa gắn vào mục tiêu nào. Hãy gắn vào tiểu thuyết hoặc chương trước, các đường sinh nội dung sau mới tự động mang theo.",
+    "testWriteTitle": "Viết thử một đoạn",
+    "testWriteHint": "Khi chưa chắc phong cách đã chạy thật sự hay chưa, viết thử một đoạn hoặc sửa lại một đoạn là cách kiểm chứng trực quan nhất.",
+    "testWriteMode": "Kiểu viết thử",
+    "testModes": {
+      "generate": "Sinh nội dung",
+      "rewrite": "Sửa văn bản"
+    },
+    "topicLabel": "Chủ đề viết thử",
+    "topicPlaceholder": "Ví dụ: lần đầu nhân vật chính lật ngược thế cờ công khai",
+    "rewriteLabel": "Văn bản cần sửa",
+    "rewritePlaceholder": "Dán đoạn nội dung bạn muốn dùng phong cách này để sửa",
+    "runTestWrite": "Chạy viết thử",
+    "testWriteEmpty": "Kết quả viết thử sẽ hiển thị tại đây. Bạn có thể dùng để đánh giá cảm nhận triển khai, đối thoại và giọng tổng thể đã đạt chưa."
+  },
+  "rulePresentation": {
+    "narrativeEmpty": "Chưa có tóm tắt rõ về triển khai cốt truyện.",
+    "characterEmpty": "Chưa có tóm tắt rõ về biểu đạt nhân vật.",
+    "languageEmpty": "Chưa có tóm tắt rõ về chất ngôn ngữ.",
+    "rhythmEmpty": "Chưa có tóm tắt rõ về kiểm soát nhịp.",
+    "fieldLabels": {
+      "narrativeRules": {
+        "summary": "Cảm nhận triển khai tổng thể",
+        "progressionMode": "Cách triển khai",
+        "sceneUnitPattern": "Đơn vị cảnh",
+        "multiPov": "Đa góc nhìn",
+        "looping": "Móc vòng",
+        "endingStyle": "Cách khép",
+        "povSwitchStyle": "Chuyển góc nhìn"
+      },
+      "characterRules": {
+        "summary": "Tổng quan biểu đạt nhân vật",
+        "dialogueStyle": "Phong cách đối thoại",
+        "emotionExpression": "Bộc lộ cảm xúc",
+        "defenseMechanisms": "Cơ chế phòng vệ",
+        "allowSelfReflection": "Tự vấn",
+        "facePriority": "Ưu tiên thể diện"
+      },
+      "languageRules": {
+        "summary": "Tổng quan chất ngôn ngữ",
+        "register": "Tông ngôn ngữ",
+        "roughness": "Độ thô",
+        "sentenceVariation": "Biến hoá câu",
+        "allowIncompleteSentences": "Câu không đầy đủ",
+        "allowSwearing": "Khẩu ngữ thô",
+        "allowUselessDetails": "Chi tiết đời thường"
+      },
+      "rhythmRules": {
+        "summary": "Tổng quan kiểm soát nhịp",
+        "pace": "Tốc độ triển khai",
+        "paragraphDensity": "Mật độ đoạn",
+        "allowFragmentedFlow": "Triển khai mảnh ghép",
+        "actionOverExplanation": "Hành động ưu tiên"
+      }
+    },
+    "fieldValues": {
+      "progressionMode": {
+        "time_sequence": "Theo trình tự thời gian",
+        "goal_driven": "Mục tiêu dẫn dắt",
+        "mystery_escalation": "Bí ẩn tăng áp dần",
+        "relationship_push_pull": "Quan hệ kéo đẩy",
+        "multi_thread": "Đa tuyến đan xen",
+        "scene_immersion": "Nhập cảnh đắm chìm",
+        "fact_driven": "Sự kiện dẫn dắt",
+        "contrast_driven": "Tương phản dẫn dắt"
+      },
+      "endingStyle": {
+        "unresolved": "Không khép khó khăn trung tâm",
+        "hook": "Quăng móc câu kết",
+        "suspense": "Khép kiểu hồi hộp",
+        "emotional_hook": "Móc cảm xúc khép",
+        "cross_hook": "Móc tuyến chéo khép",
+        "soft_open": "Khép mở mềm",
+        "pressure_continue": "Khép kéo dài áp lực",
+        "bitter_aftertaste": "Khép dư vị đắng"
+      },
+      "povSwitchStyle": {
+        "controlled": "Chuyển có kiểm soát"
+      },
+      "emotionExpression": {
+        "behavior_only": "Chỉ qua hành động",
+        "dialogue_and_action": "Qua cả đối thoại và hành động",
+        "reaction_only": "Chủ yếu qua phản ứng",
+        "subtext": "Qua hàm ý ngầm",
+        "mixed": "Kết hợp đối thoại, hành động và phản ứng",
+        "light_behavior": "Bằng hành động và phản ứng nhẹ",
+        "suppressed": "Nén lại không nói thẳng",
+        "deadpan": "Bộc lộ kiểu lạnh"
+      },
+      "dialogueStyle": {
+        "short_colloquial": "Câu ngắn khẩu ngữ",
+        "direct": "Trực diện sắc lạnh",
+        "restrained": "Kiềm chế nói thu",
+        "subtext_heavy": "Nặng hàm ý ngầm",
+        "distinct_by_role": "Phân biệt giọng rõ theo vai",
+        "daily_natural": "Tự nhiên thường ngày",
+        "informational": "Đối thoại kiểu thông tin",
+        "deadpan_colloquial": "Khẩu ngữ kiểu lạnh"
+      },
+      "register": {
+        "colloquial": "Khẩu ngữ",
+        "direct": "Trực diện rõ ràng",
+        "restrained": "Kiềm chế thu lại",
+        "natural": "Tự nhiên thường nhật",
+        "flexible": "Linh hoạt theo vai",
+        "professional": "Chuyên nghiệp kiềm chế"
+      },
+      "sentenceVariation": {
+        "high": "Biến hoá nhiều",
+        "medium": "Biến hoá vừa",
+        "medium_high": "Biến hoá khá nhiều"
+      },
+      "pace": {
+        "medium_fast": "Trung bình nhanh",
+        "fast": "Nhanh",
+        "medium": "Trung bình",
+        "medium_slow": "Trung bình chậm",
+        "balanced": "Cân bằng",
+        "slow": "Chậm"
+      },
+      "paragraphDensity": {
+        "high": "Mật độ cao",
+        "medium": "Mật độ trung bình",
+        "medium_high": "Mật độ trung bình cao"
+      }
+    },
+    "booleanValues": {
+      "multiPov": {
+        "true": "Cho phép chuyển đa góc nhìn",
+        "false": "Cố giữ một góc nhìn"
+      },
+      "looping": {
+        "true": "Cho phép móc vòng",
+        "false": "Cố triển khai thẳng"
+      },
+      "allowSelfReflection": {
+        "true": "Cho phép tự vấn rõ",
+        "false": "Hạn chế tự vấn thẳng thừng"
+      },
+      "facePriority": {
+        "true": "Ưu tiên giữ thể diện",
+        "false": "Không cố giữ thể diện"
+      },
+      "allowIncompleteSentences": {
+        "true": "Cho phép câu không đầy đủ",
+        "false": "Cố giữ câu đầy đủ"
+      },
+      "allowSwearing": {
+        "true": "Cho phép một chút thô tục",
+        "false": "Hạn chế thô tục"
+      },
+      "allowUselessDetails": {
+        "true": "Cho giữ tạp âm đời sống",
+        "false": "Hạn chế tạp âm thừa"
+      },
+      "allowFragmentedFlow": {
+        "true": "Cho phép triển khai mảnh ghép",
+        "false": "Cố giữ triển khai liền mạch"
+      },
+      "actionOverExplanation": {
+        "true": "Hành động đi trước giải thích",
+        "false": "Giải thích quan trọng hơn hành động"
+      },
+      "default": {
+        "true": "Có",
+        "false": "Không"
+      }
+    },
+    "roughnessValue": "{{value}} / 100"
+  },
+  "landingItems": {
+    "sourceTypes": {
+      "manual": "Sắp xếp thủ công",
+      "from_text": "Trích từ văn bản",
+      "from_book_analysis": "Tạo từ phân tích sách",
+      "from_knowledge_document": "Bản gốc trong kho tri thức",
+      "from_current_work": "Đúc kết từ tác phẩm hiện tại",
+      "other": "Nguồn khác"
+    },
+    "readingFeelLine": "Cam kết cảm nhận: {{value}}",
+    "languageLine": "Chất ngôn ngữ: {{value}}",
+    "dialogueLine": "Phong cách đối thoại: {{value}}",
+    "emotionLine": "Bộc lộ cảm xúc: {{value}}",
+    "antiAiLine": "Ràng buộc chống AI: {{value}}",
+    "antiAiSeparator": "; ",
+    "summaryFallback": "Chưa có tóm tắt phong cách.",
+    "readingFeelFallback": "Phong cách này chưa nêu rõ định vị cảm nhận.",
+    "originLabels": {
+      "starter": "Dựng sẵn",
+      "aiGenerated": "AI tạo",
+      "fromText": "Trích từ văn bản",
+      "fromBookAnalysis": "Từ phân tích sách",
+      "fromKnowledge": "Bản gốc kho tri thức",
+      "fromCurrentWork": "Tác phẩm hiện tại",
+      "manual": "Tạo thủ công"
+    },
+    "ruleSummarySeparator": "; ",
+    "ruleSummaryEntry": "{{label}}: {{value}}"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "expand": "展开导航栏",
+  "collapse": "收起导航栏",
+  "groups": {
+    "creation": "创作",
+    "assets": "资产",
+    "system": "系统"
+  },
+  "items": {
+    "home": "首页",
+    "help": "新手上路",
+    "novels": "小说列表",
+    "creativeHub": "创作中枢",
+    "bookAnalysis": "拆书",
+    "tasks": "任务中心",
+    "autoDirectorFollowUps": "导演跟进",
+    "genres": "题材基底库",
+    "storyModes": "推进模式库",
+    "titles": "标题工坊",
+    "knowledge": "知识库",
+    "worlds": "世界观",
+    "writingFormula": "写法引擎",
+    "antiAiRules": "反 AI 规则",
+    "baseCharacters": "基础角色库",
+    "promptWorkbench": "提示词管理",
+    "modelRoutes": "模型路由",
+    "settings": "系统设置"
+  }
+}

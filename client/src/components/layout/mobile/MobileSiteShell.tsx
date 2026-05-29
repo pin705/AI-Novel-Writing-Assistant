@@ -14,6 +14,7 @@ import {
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import DesktopBrandMark from "../DesktopBrandMark";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "@/i18n";
 import { cn } from "@/lib/utils";
 import {
   getMobileMoreNavGroups,
@@ -39,9 +40,10 @@ interface MobileSiteShellProps {
 export default function MobileSiteShell({ children }: MobileSiteShellProps) {
   const location = useLocation();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [moreOpen, setMoreOpen] = useState(false);
   const activeGroup = getMobileNavGroupForPath(location.pathname);
-  const pageTitle = getMobilePageTitle(location.pathname);
+  const pageTitle = getMobilePageTitle(location.pathname, t);
   const primaryNavItems = getMobilePrimaryNavItems();
   const moreNavGroups = getMobileMoreNavGroups();
 
@@ -61,7 +63,7 @@ export default function MobileSiteShell({ children }: MobileSiteShellProps) {
           <Link to="/" className="flex min-w-0 items-center gap-2" onClick={() => setMoreOpen(false)}>
             <DesktopBrandMark className="h-8 w-8 shrink-0 drop-shadow-none" />
             <div className="min-w-0 leading-tight">
-              <div className="truncate text-sm font-semibold">AI 小说创作工作台</div>
+              <div className="truncate text-sm font-semibold">{t("components.layout.mobileSiteShell.appTitle")}</div>
               <div className="truncate text-[11px] text-muted-foreground">{pageTitle}</div>
             </div>
           </Link>
@@ -69,7 +71,7 @@ export default function MobileSiteShell({ children }: MobileSiteShellProps) {
             <Button asChild size="sm" className="h-8 px-3">
               <Link to="/novels/create?mode=director" onClick={() => setMoreOpen(false)}>
                 <Plus className="h-3.5 w-3.5" />
-                开书
+                {t("components.layout.mobileSiteShell.openBook")}
               </Link>
             </Button>
             <Button
@@ -78,7 +80,9 @@ export default function MobileSiteShell({ children }: MobileSiteShellProps) {
               size="icon"
               className="h-8 w-8"
               onClick={() => setMoreOpen((current) => !current)}
-              aria-label={moreOpen ? "关闭更多入口" : "打开更多入口"}
+              aria-label={moreOpen
+                ? t("components.layout.mobileSiteShell.closeMore")
+                : t("components.layout.mobileSiteShell.openMore")}
             >
               {moreOpen ? <X className="h-4 w-4" /> : <LayoutGrid className="h-4 w-4" />}
             </Button>
@@ -95,8 +99,8 @@ export default function MobileSiteShell({ children }: MobileSiteShellProps) {
           <div className="max-h-full overflow-y-auto rounded-3xl border bg-background p-4 shadow-2xl">
             <div className="mb-3 flex items-center justify-between gap-2">
               <div>
-                <div className="text-base font-semibold">更多入口</div>
-                <div className="text-xs text-muted-foreground">选择要继续处理的工作区。</div>
+                <div className="text-base font-semibold">{t("components.layout.mobileSiteShell.moreTitle")}</div>
+                <div className="text-xs text-muted-foreground">{t("components.layout.mobileSiteShell.moreDescription")}</div>
               </div>
               <Button type="button" variant="ghost" size="icon" onClick={() => setMoreOpen(false)}>
                 <X className="h-4 w-4" />
@@ -104,9 +108,9 @@ export default function MobileSiteShell({ children }: MobileSiteShellProps) {
             </div>
             <div className="space-y-4">
               {moreNavGroups.map((group) => (
-                <section key={group.title} className="space-y-2">
+                <section key={group.titleKey} className="space-y-2">
                   <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                    {group.title}
+                    {t(group.titleKey)}
                   </div>
                   <div className="grid gap-2">
                     {group.items.map((item) => (
@@ -119,7 +123,7 @@ export default function MobileSiteShell({ children }: MobileSiteShellProps) {
                         )}
                         onClick={() => setMoreOpen(false)}
                       >
-                        <span>{item.label}</span>
+                        <span>{t(item.labelKey)}</span>
                         <ChevronRight className="h-4 w-4 text-muted-foreground" />
                       </Link>
                     ))}
@@ -147,7 +151,7 @@ export default function MobileSiteShell({ children }: MobileSiteShellProps) {
                 onClick={() => openPrimaryItem(item.key as MobilePrimaryNavKey, item.to)}
               >
                 <Icon className="h-4 w-4" />
-                <span className="truncate">{item.label}</span>
+                <span className="truncate">{t(item.labelKey)}</span>
               </button>
             );
           })}

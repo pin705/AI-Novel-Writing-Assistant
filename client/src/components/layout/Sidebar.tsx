@@ -28,51 +28,52 @@ import { getAutoDirectorFollowUpOverview } from "@/api/autoDirectorFollowUps";
 import { getTaskOverview } from "@/api/tasks";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "@/i18n";
 import { cn } from "@/lib/utils";
 
 interface NavItem {
   to: string;
-  label: string;
+  labelKey: string;
   icon: LucideIcon;
 }
 
 interface NavGroup {
-  title: string;
+  titleKey: string;
   items: NavItem[];
 }
 
 const navGroups: NavGroup[] = [
   {
-    title: "创作",
+    titleKey: "sidebar.groups.creation",
     items: [
-      { to: "/", label: "首页", icon: House },
-      { to: "/help", label: "新手上路", icon: CircleHelp },
-      { to: "/novels", label: "小说列表", icon: BookOpenText },
-      { to: "/creative-hub", label: "创作中枢", icon: LayoutDashboard },
-      { to: "/book-analysis", label: "拆书", icon: ScanSearch },
-      { to: "/tasks", label: "任务中心", icon: ListTodo },
-      { to: "/auto-director/follow-ups", label: "导演跟进", icon: Workflow },
+      { to: "/", labelKey: "sidebar.items.home", icon: House },
+      { to: "/help", labelKey: "sidebar.items.help", icon: CircleHelp },
+      { to: "/novels", labelKey: "sidebar.items.novels", icon: BookOpenText },
+      { to: "/creative-hub", labelKey: "sidebar.items.creativeHub", icon: LayoutDashboard },
+      { to: "/book-analysis", labelKey: "sidebar.items.bookAnalysis", icon: ScanSearch },
+      { to: "/tasks", labelKey: "sidebar.items.tasks", icon: ListTodo },
+      { to: "/auto-director/follow-ups", labelKey: "sidebar.items.autoDirectorFollowUps", icon: Workflow },
     ],
   },
   {
-    title: "资产",
+    titleKey: "sidebar.groups.assets",
     items: [
-      { to: "/genres", label: "题材基底库", icon: Tags },
-      { to: "/story-modes", label: "推进模式库", icon: Workflow },
-      { to: "/titles", label: "标题工坊", icon: SquarePen },
-      { to: "/knowledge", label: "知识库", icon: Database },
-      { to: "/worlds", label: "世界观", icon: Globe2 },
-      { to: "/style-engine", label: "写法引擎", icon: WandSparkles },
-      { to: "/anti-ai-rules", label: "反 AI 规则", icon: ShieldCheck },
-      { to: "/base-characters", label: "基础角色库", icon: UsersRound },
+      { to: "/genres", labelKey: "sidebar.items.genres", icon: Tags },
+      { to: "/story-modes", labelKey: "sidebar.items.storyModes", icon: Workflow },
+      { to: "/titles", labelKey: "sidebar.items.titles", icon: SquarePen },
+      { to: "/knowledge", labelKey: "sidebar.items.knowledge", icon: Database },
+      { to: "/worlds", labelKey: "sidebar.items.worlds", icon: Globe2 },
+      { to: "/style-engine", labelKey: "sidebar.items.writingFormula", icon: WandSparkles },
+      { to: "/anti-ai-rules", labelKey: "sidebar.items.antiAiRules", icon: ShieldCheck },
+      { to: "/base-characters", labelKey: "sidebar.items.baseCharacters", icon: UsersRound },
     ],
   },
   {
-    title: "系统",
+    titleKey: "sidebar.groups.system",
     items: [
-      { to: "/prompt-workbench", label: "提示词管理", icon: Braces },
-      { to: "/settings/model-routes", label: "模型路由", icon: Route },
-      { to: "/settings", label: "系统设置", icon: Settings2 },
+      { to: "/prompt-workbench", labelKey: "sidebar.items.promptWorkbench", icon: Braces },
+      { to: "/settings/model-routes", labelKey: "sidebar.items.modelRoutes", icon: Route },
+      { to: "/settings", labelKey: "sidebar.items.settings", icon: Settings2 },
     ],
   },
 ];
@@ -83,6 +84,8 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
+  const { t } = useTranslation();
+
   const taskQuery = useQuery({
     queryKey: queryKeys.tasks.overview,
     queryFn: getTaskOverview,
@@ -186,8 +189,8 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
           size="icon"
           className="h-8 w-8 text-muted-foreground"
           onClick={onToggle}
-          aria-label={collapsed ? "展开导航栏" : "收起导航栏"}
-          title={collapsed ? "展开导航栏" : "收起导航栏"}
+          aria-label={collapsed ? t("sidebar.expand") : t("sidebar.collapse")}
+          title={collapsed ? t("sidebar.expand") : t("sidebar.collapse")}
         >
           {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
         </Button>
@@ -195,10 +198,10 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
 
       <nav className="space-y-4">
         {navGroups.map((group) => (
-          <div key={group.title} className="space-y-1">
+          <div key={group.titleKey} className="space-y-1">
             {!collapsed ? (
               <div className="px-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground/80">
-                {group.title}
+                {t(group.titleKey)}
               </div>
             ) : (
               <div className="mx-auto h-px w-8 bg-border/70" />
@@ -207,9 +210,10 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
             {group.items.map((item) => {
               const Icon = item.icon;
               const isNovelEntry = item.to === "/novels";
+              const label = t(item.labelKey);
 
               return (
-                <NavLink key={item.to} to={item.to} title={collapsed ? item.label : undefined}>
+                <NavLink key={item.to} to={item.to} title={collapsed ? label : undefined}>
                   {({ isActive }) => (
                     <div
                       className={cn(
@@ -239,7 +243,7 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
 
                       {!collapsed ? (
                         <span className={cn("truncate", isNovelEntry && "font-semibold")}>
-                          {item.label}
+                          {label}
                         </span>
                       ) : null}
 

@@ -1,0 +1,99 @@
+{
+  "page": {
+    "title": "Thư viện mô thức triển khai",
+    "description": "Nơi quản lý mô thức triển khai của tác phẩm, ví dụ dòng hệ thống, dòng vô địch, dòng điền viên, đời thường chữa lành. Nó trả lời câu hỏi “sách này dựa vào điều gì để tiếp tục triển khai và trả thưởng cho độc giả”, và sẽ là ràng buộc cứng cho quy hoạch lẫn sinh nội dung sau này.",
+    "totalCount": "Số mô thức hiện có: {{count}}",
+    "createRoot": "Tạo cây mô thức",
+    "loadingTree": "Đang tải cây mô thức triển khai...",
+    "emptyTitle": "Chưa có mô thức triển khai nào",
+    "emptyDescription": "Bạn có thể tự tạo một mô thức gốc, hoặc để AI sinh sẵn một bản nháp có cấu trúc.",
+    "startCreating": "Bắt đầu tạo"
+  },
+  "toast": {
+    "created": "Đã tạo mô thức triển khai.",
+    "createdChildren": "Đã tạo hàng loạt {{count}} mô thức con.",
+    "updated": "Đã cập nhật mô thức triển khai.",
+    "deleted": "Đã xoá mô thức triển khai.",
+    "childCandidatesGenerated": "AI đã sinh xong {{count}} bản nháp mô thức con.",
+    "treeGenerated": "AI đã sinh xong bản nháp cây mô thức."
+  },
+  "confirm": {
+    "deleteWithDescendants": "Xác nhận xoá mô thức triển khai «{{name}}»? Sẽ xoá luôn {{count}} mô thức con bên dưới và không thể khôi phục.",
+    "deleteSingle": "Xác nhận xoá mô thức triển khai «{{name}}»? Thao tác này không thể khôi phục."
+  },
+  "errors": {
+    "missingParent": "Mô thức cha không tồn tại.",
+    "selectChildCandidate": "Hãy chọn ít nhất một bản nháp mô thức con.",
+    "missingStoryMode": "Mô thức triển khai không tồn tại."
+  },
+  "createDialog": {
+    "titleChild": "Thêm mô thức con",
+    "titleRoot": "Tạo mô thức triển khai",
+    "descriptionChild": "Hiện sẽ tạo mô thức con dưới mô thức cha đã chọn. Bạn có thể tự nhập, hoặc để AI dựa trên mô thức cha và các nhánh hiện có để sinh nhiều bản nháp con, rồi tích chọn để lưu hàng loạt.",
+    "descriptionRoot": "Chọn vị trí gắn trước, rồi tự nhập profile, hoặc để AI sinh sẵn một bản nháp cây hai cấp.",
+    "mountLabel": "Vị trí gắn hiện tại",
+    "rootMountLabel": "Tạo làm mô thức gốc",
+    "aiSectionTitleChild": "AI sinh bản nháp mô thức con",
+    "aiSectionTitleRoot": "AI sinh bản nháp",
+    "aiHintChild": "AI sẽ dựa vào mô thức cha và các nhánh hiện có để sinh một hoặc nhiều bản nháp mô thức con, không sinh lại cả cây. Phần định hướng có thể bỏ trống. Trước khi lưu vẫn sẽ kiểm tra cấu trúc profile.",
+    "aiHintRoot": "AI sẽ trả về một bản nháp cây mô thức có thể chỉnh sửa ngay; trước khi lưu vẫn sẽ kiểm tra cấu trúc profile.",
+    "derivationCountLabel": "Số bản phái sinh",
+    "derivationOption": "{{count}} bản",
+    "generatingPlaceholderChild": "Tuỳ chọn: bổ sung hướng nhánh con bạn muốn nhấn vào. Bỏ trống thì AI sẽ phái sinh trực tiếp từ mô thức cha và các nhánh hiện có.",
+    "generatingPlaceholderRoot": "Nhập định hướng cho cây mô thức bạn muốn sinh.",
+    "generating": "Đang sinh...",
+    "generateChild": "Sinh bản nháp mô thức con",
+    "generateRoot": "Sinh bản nháp mô thức",
+    "resetDraft": "Đặt lại bản nháp",
+    "candidatesTitle": "Các bản nháp mô thức con đã sinh",
+    "candidatesCount": "Đã chọn {{selected}} / {{total}}",
+    "candidatesHint": "Tích chọn để lưu hàng loạt; bấm vào thẻ bản nháp để chuyển sang form bên dưới chỉnh sửa riêng.",
+    "candidateCurrent": "Đang chỉnh sửa",
+    "candidateLabel": "Bản nháp {{index}}",
+    "nameLabel": "Tên",
+    "descriptionLabel": "Mô tả",
+    "templateLabel": "Bổ sung mẫu thủ công",
+    "cancel": "Huỷ",
+    "savingBatch": "Đang lưu hàng loạt...",
+    "saveBatch": "Lưu hàng loạt các bản đã chọn ({{count}})",
+    "saving": "Đang lưu...",
+    "saveChild": "Lưu mô thức con",
+    "saveRoot": "Lưu mô thức triển khai"
+  },
+  "editDialog": {
+    "title": "Chỉnh sửa mô thức triển khai",
+    "description": "Có thể chỉnh tên, mô tả, mẫu và profile. Giới hạn cây hai cấp vẫn được giữ.",
+    "currentParent": "Cha hiện tại: {{value}}",
+    "rootParent": "Nút gốc",
+    "notFoundParent": "Không tìm thấy",
+    "nameLabel": "Tên",
+    "descriptionLabel": "Mô tả",
+    "templateLabel": "Bổ sung mẫu thủ công",
+    "cancel": "Huỷ",
+    "saving": "Đang lưu...",
+    "save": "Lưu thay đổi"
+  },
+  "treeCard": {
+    "novelBadge": "Tiểu thuyết {{count}}",
+    "childBadge": "Mô thức con {{count}}",
+    "coreDriveLine": "Động lực lõi: {{value}}",
+    "addChild": "Thêm mô thức con",
+    "edit": "Sửa",
+    "delete": "Xoá",
+    "deleting": "Đang xoá...",
+    "deleteBlockedTitle": "Hãy gỡ liên kết các tiểu thuyết đang dùng mô thức này hoặc mô thức con trước khi xoá."
+  },
+  "profile": {
+    "coreDrive": "Động lực lõi",
+    "readerReward": "Phần thưởng cho độc giả",
+    "progressionUnits": "Đơn vị triển khai theo chương",
+    "allowedConflictForms": "Hình thức xung đột cho phép",
+    "forbiddenConflictForms": "Hình thức xung đột cấm",
+    "conflictCeiling": "Trần xung đột",
+    "resolutionStyle": "Cách giải quyết",
+    "chapterUnit": "Cỡ hạt chương",
+    "volumeReward": "Phần thưởng cuối quyển",
+    "mandatorySignals": "Tín hiệu bắt buộc phải có",
+    "antiSignals": "Tín hiệu lệch hướng phải tránh"
+  }
+}

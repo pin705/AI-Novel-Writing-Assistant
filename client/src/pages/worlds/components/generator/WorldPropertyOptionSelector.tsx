@@ -1,4 +1,5 @@
 import type { WorldPropertyOption } from "@ai-novel/shared/types/worldWizard";
+import { useTranslation } from "@/i18n";
 
 interface WorldPropertyOptionSelectorProps {
   options: WorldPropertyOption[];
@@ -10,13 +11,13 @@ interface WorldPropertyOptionSelectorProps {
   onDetailChange: (optionId: string, detail: string) => void;
 }
 
-const WORLD_LAYER_LABELS: Record<WorldPropertyOption["targetLayer"], string> = {
-  foundation: "基础层",
-  power: "力量层",
-  society: "社会层",
-  culture: "文化层",
-  history: "历史层",
-  conflict: "冲突层",
+const WORLD_LAYER_KEY_MAP: Record<WorldPropertyOption["targetLayer"], string> = {
+  foundation: "layerFoundation",
+  power: "layerPower",
+  society: "layerSociety",
+  culture: "layerCulture",
+  history: "layerHistory",
+  conflict: "layerConflict",
 };
 
 export default function WorldPropertyOptionSelector({
@@ -28,10 +29,12 @@ export default function WorldPropertyOptionSelector({
   onChoiceSelect,
   onDetailChange,
 }: WorldPropertyOptionSelectorProps) {
+  const { t } = useTranslation();
+
   if (options.length === 0) {
     return (
       <div className="rounded-md border border-dashed p-4 text-sm text-muted-foreground">
-        当前还没有拿到可用的关键方向。通常说明上一步分析失败了，可以返回第 1 步重新生成。
+        {t("worlds.generator.property.empty")}
       </div>
     );
   }
@@ -53,16 +56,16 @@ export default function WorldPropertyOptionSelector({
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="font-medium">{option.name}</span>
                   <span className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
-                    {WORLD_LAYER_LABELS[option.targetLayer]}
+                    {t(`worlds.generator.layers.${WORLD_LAYER_KEY_MAP[option.targetLayer]}`)}
                   </span>
                   <span className="rounded-full bg-secondary px-2 py-0.5 text-xs text-secondary-foreground">
-                    {option.source === "library" ? "素材库" : "系统建议"}
+                    {option.source === "library" ? t("worlds.generator.propertySelector.sourceLibrary") : t("worlds.generator.propertySelector.sourceSystem")}
                   </span>
                 </div>
                 <div className="text-muted-foreground">{option.description}</div>
                 {option.reason ? (
                   <div className="text-xs text-muted-foreground">
-                    为什么建议先定它：{option.reason}
+                    {t("worlds.generator.propertySelector.reasonPrefix")}{option.reason}
                   </div>
                 ) : null}
               </div>

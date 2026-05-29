@@ -8,6 +8,8 @@ import type {
 
 export type InspirationMode = "free" | "reference" | "random";
 
+export type WorldsTranslator = (key: string, values?: Record<string, string | number>) => string;
+
 export interface WorldGeneratorConceptCard {
   worldType: string;
   templateKey: string;
@@ -34,27 +36,21 @@ export interface WorldGeneratorTemplateOption {
   pitfalls: string[];
 }
 
-export const REFERENCE_MODE_OPTIONS: Array<{
+export interface WorldReferenceModeOption {
   value: WorldReferenceMode;
   label: string;
   description: string;
-}> = [
-  {
-    value: "adapt_world",
-    label: "基于原作做架空改造",
-    description: "保留原作世界基底，再决定哪些规则、势力和地点结构可以改造。",
-  },
-  {
-    value: "extract_base",
-    label: "提取原作世界基底",
-    description: "先稳定抽出原作世界骨架，后续扩写尽量围绕原作事实展开。",
-  },
-  {
-    value: "tone_rebuild",
-    label: "只借原作气质与结构重建",
-    description: "保留氛围、关系结构与生活手感，但允许较大幅度重建世界事实。",
-  },
-];
+}
+
+export const REFERENCE_MODE_KEYS: WorldReferenceMode[] = ["adapt_world", "extract_base", "tone_rebuild"];
+
+export function buildReferenceModeOptions(t: WorldsTranslator): WorldReferenceModeOption[] {
+  return REFERENCE_MODE_KEYS.map((value) => ({
+    value,
+    label: t(`worlds.generator.referenceModes.${value}.label`),
+    description: t(`worlds.generator.referenceModes.${value}.description`),
+  }));
+}
 
 export const DEFAULT_DIMENSIONS: Record<string, boolean> = {
   foundation: true,
@@ -65,14 +61,7 @@ export const DEFAULT_DIMENSIONS: Record<string, boolean> = {
   conflict: true,
 };
 
-const DIMENSION_LABELS: Record<string, string> = {
-  foundation: "基础层",
-  power: "力量层",
-  society: "社会层",
-  culture: "文化层",
-  history: "历史层",
-  conflict: "冲突层",
-};
+const DIMENSION_KEYS = ["foundation", "power", "society", "culture", "history", "conflict"] as const;
 
 export const REFERENCE_SEED_SELECTION_KEYS: Record<
   keyof WorldReferenceSeedBundle,
@@ -84,8 +73,11 @@ export const REFERENCE_SEED_SELECTION_KEYS: Record<
   locations: "locationIds",
 };
 
-export function getDimensionLabel(key: string): string {
-  return DIMENSION_LABELS[key] ?? key;
+export function getDimensionLabel(key: string, t: WorldsTranslator): string {
+  if ((DIMENSION_KEYS as readonly string[]).includes(key)) {
+    return t(`worlds.generator.dimensions.${key}`);
+  }
+  return key;
 }
 
 export function normalizeAxiomTexts(items: unknown): string[] {
@@ -112,8 +104,9 @@ export function parseReferenceControlText(value: string): string[] {
   );
 }
 
-export function getReferenceModeLabel(mode: WorldReferenceMode): string {
-  return REFERENCE_MODE_OPTIONS.find((item) => item.value === mode)?.label ?? "基于原作做架空改造";
+export function getReferenceModeLabel(mode: WorldReferenceMode, t: WorldsTranslator): string {
+  const knownMode = REFERENCE_MODE_KEYS.includes(mode) ? mode : "adapt_world";
+  return t(`worlds.generator.referenceModes.${knownMode}.label`);
 }
 
 export function buildDefaultPropertySelectionState(options: WorldPropertyOption[]) {

@@ -1,0 +1,154 @@
+{
+  "sessions": {
+    "title": "会话列表",
+    "newSession": "新建对话",
+    "newSessionTitle": "新对话",
+    "runMeta": "运行: {{runId}} · {{count}}条"
+  },
+  "thread": {
+    "title": "对话消息",
+    "panelTitle": "运行面板",
+    "greeting": "你好！",
+    "subgreeting": "今天想一起完善哪段剧情？",
+    "suggestion1Prompt": "帮我梳理《遥远的救世主V2》的世界观硬约束，并指出当前大纲冲突点。",
+    "suggestion1Title": "世界观一致性检查",
+    "suggestion1Description": "快速识别硬冲突并给出修复方向",
+    "suggestion2Prompt": "重写第3章结尾，增强戏剧张力，并保持角色口吻一致。",
+    "suggestion2Title": "章节重写草案",
+    "suggestion2Description": "聚焦结尾张力与角色一致性",
+    "inputPlaceholder": "输入消息并回车发送，Shift+Enter 换行。",
+    "send": "发送",
+    "stop": "停止",
+    "continueTask": "继续当前任务。",
+    "emptyResponse": "（空响应）",
+    "requestFailedStatus": "请求失败，状态码 {{status}}",
+    "sendFailed": "消息发送失败。",
+    "novelModeRequired": "小说模式下必须先选择小说。",
+    "toolPart": "[工具:{{name}}]",
+    "dataPart": "[数据]",
+    "imagePart": "[图片:{{name}}]",
+    "filePart": "[文件:{{name}}]",
+    "unnamed": "未命名",
+    "reasoningTitle": "推理过程"
+  },
+  "tabs": {
+    "console": "控制台",
+    "trace": "轨迹"
+  },
+  "console": {
+    "sessionContext": "会话上下文",
+    "chatMode": "对话模式",
+    "chatModeStandard": "标准模式",
+    "chatModeAgent": "智能代理",
+    "contextMode": "上下文模式",
+    "contextGlobal": "全局",
+    "contextNovel": "小说",
+    "sessionRun": "会话运行",
+    "novel": "小说",
+    "selectNovel": "请选择小说",
+    "approval": "审批",
+    "approvalPending": "{{count}} 项待处理",
+    "approvalItemTitle": "审批项 {{index}}",
+    "approvalNotePlaceholder": "审批备注（可选）",
+    "approve": "同意并继续",
+    "reject": "拒绝",
+    "noApproval": "当前没有待处理审批。",
+    "approvalHistory": "审批历史",
+    "runConfig": "运行配置",
+    "modelTitle": "模型",
+    "providerLabel": "提供方: ",
+    "modelLabel": "模型: ",
+    "temperature": "温度",
+    "maxTokens": "最大 Token",
+    "systemPrompt": "系统提示词",
+    "systemPromptPlaceholder": "覆盖默认系统提示词。",
+    "enableRag": "启用知识检索（RAG）",
+    "knowledgeTitle": "知识文档",
+    "knowledgeAutoHint": "留空将自动解析，也可手动选择文档限制检索范围。",
+    "knowledgeDisabledHint": "RAG 当前已禁用，请先在上方启用后再使用文档检索。"
+  },
+  "trace": {
+    "replayControl": "重放控制",
+    "replayHint": "仅显示后续仍有工具调用的步骤。",
+    "continueFromHere": "从这里继续",
+    "dryRun": "干运行",
+    "noReplayable": "当前所选运行没有可继续重放的步骤。",
+    "stepOrder": "{{seq}}. {{title}}",
+    "input": "输入",
+    "output": "输出",
+    "errorLine": "错误: {{value}}",
+    "eventLabel": "事件 {{index}}",
+    "noEvents": "暂无运行事件。",
+    "emptyPreview": "无"
+  },
+  "approvalActions": {
+    "submittedApprove": "审批已提交，继续执行中",
+    "submittedReject": "审批已提交，处理中"
+  },
+  "errors": {
+    "noPendingApproval": "当前没有可处理的审批项。",
+    "noReplayableStep": "当前运行没有可重放的步骤。",
+    "replayFailed": "重放失败。",
+    "replayNoToolStepsAfter": "所选步骤之后没有可重放的工具步骤，请选择更早的步骤。"
+  },
+  "events": {
+    "toolCall": "调用工具 {{name}}: {{summary}}",
+    "toolResultSuccess": "{{name}} 成功: {{summary}}",
+    "toolResultFailed": "{{name}} 失败: {{summary}}",
+    "approvalRequired": "等待审批: {{summary}}",
+    "approvalResultPlain": "审批结果: {{action}}",
+    "approvalResultWithNote": "审批结果: {{action}} ({{note}})"
+  },
+  "runStatus": {
+    "queued": "排队中",
+    "running": "运行中",
+    "waitingApproval": "待审批",
+    "succeeded": "已完成",
+    "failed": "失败",
+    "cancelled": "已取消"
+  },
+  "approvalActionLabels": {
+    "approved": "已通过",
+    "rejected": "已拒绝"
+  },
+  "stepType": {
+    "planning": "规划",
+    "toolCall": "工具调用",
+    "toolResult": "工具结果",
+    "approval": "审批",
+    "completion": "收尾",
+    "analysis": "分析",
+    "review": "审校",
+    "repair": "修复",
+    "writing": "写作",
+    "context": "上下文"
+  },
+  "agentName": {
+    "planner": "规划器",
+    "writer": "写作器",
+    "reviewer": "审校器",
+    "continuity": "连续性检查",
+    "repair": "修复器"
+  },
+  "stepTitle": "{{agent}} · {{stepType}} · {{status}}",
+  "header": {
+    "waitingApproval": "当前运行等待审批",
+    "running": "当前运行中",
+    "succeeded": "当前运行已完成",
+    "failed": "当前运行失败",
+    "cancelled": "当前运行已取消"
+  },
+  "creativeHub": {
+    "title": "创作中枢",
+    "description": "这里不是单纯聊天页，而是当前小说工作区的命令、状态、诊断和审批入口。",
+    "novelBadge": "小说 {{id}}",
+    "runBadge": "运行 {{id}}",
+    "loading": "正在加载能力目录...",
+    "category": {
+      "read": "读取",
+      "inspect": "诊断",
+      "mutate": "修改",
+      "run": "执行"
+    }
+  }
+}

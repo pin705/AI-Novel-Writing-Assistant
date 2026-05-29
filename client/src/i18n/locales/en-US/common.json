@@ -1,0 +1,12 @@
+{
+  "none": "None",
+  "loading": "Loading...",
+  "retry": "Retry",
+  "reload": "Reload",
+  "reloadList": "Reload project list",
+  "draft": "Draft",
+  "published": "Published",
+  "original": "Original",
+  "continuation": "Continuation",
+  "language": "Language"
+}

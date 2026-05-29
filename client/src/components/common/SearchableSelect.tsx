@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Check, ChevronDown, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { useTranslation } from "@/i18n";
 import { cn } from "@/lib/utils";
 
 export interface SearchableSelectOption {
@@ -31,14 +32,18 @@ export default function SearchableSelect({
   value,
   onValueChange,
   options,
-  placeholder = "请选择",
-  searchPlaceholder = "搜索",
-  emptyText = "没有可选项",
+  placeholder,
+  searchPlaceholder,
+  emptyText,
   disabled = false,
   className,
   triggerClassName,
   contentClassName,
 }: SearchableSelectProps) {
+  const { t } = useTranslation();
+  const resolvedPlaceholder = placeholder ?? t("components.common.searchableSelect.placeholder");
+  const resolvedSearchPlaceholder = searchPlaceholder ?? t("components.common.searchableSelect.searchPlaceholder");
+  const resolvedEmptyText = emptyText ?? t("components.common.searchableSelect.empty");
   const rootRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [open, setOpen] = useState(false);
@@ -115,7 +120,7 @@ export default function SearchableSelect({
         onClick={() => setOpen((prev) => !prev)}
       >
         <span className={cn("min-w-0 flex-1 truncate text-left", !displayLabel && "text-muted-foreground")}>
-          {displayLabel || placeholder}
+          {displayLabel || resolvedPlaceholder}
         </span>
         <ChevronDown className={cn(
           "h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-150",
@@ -137,7 +142,7 @@ export default function SearchableSelect({
               <Input
                 ref={inputRef}
                 value={query}
-                placeholder={searchPlaceholder}
+                placeholder={resolvedSearchPlaceholder}
                 className="h-9 rounded-lg border-border/70 bg-background/80 pl-8"
                 onChange={(event) => setQuery(event.target.value)}
                 onKeyDown={(event) => {
@@ -187,7 +192,7 @@ export default function SearchableSelect({
                 );
               })
             ) : (
-              <div className="px-3 py-4 text-sm text-muted-foreground">{emptyText}</div>
+              <div className="px-3 py-4 text-sm text-muted-foreground">{resolvedEmptyText}</div>
             )}
           </div>
         </div>

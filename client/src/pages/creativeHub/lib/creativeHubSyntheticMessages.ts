@@ -5,31 +5,29 @@ import type { LangChainMessage } from "@assistant-ui/react-langgraph";
 import type { CreativeHubDebugTraceEntry } from "../components/CreativeHubDebugTraceCard";
 import { getIntentDisplayLabel, getPlannerSourceDisplayLabel } from "./plannerLabels";
 
+type Translator = (key: string, values?: Record<string, string | number | undefined | null>) => string;
+
 function compactArgs(record: Record<string, string | boolean | null | undefined>) {
   return Object.fromEntries(
     Object.entries(record).filter((entry): entry is [string, string | boolean | null] => entry[1] !== undefined),
   );
 }
 
-function toStatusLabel(status: string): string {
-  switch (status) {
-    case "running":
-      return "运行中";
-    case "queued":
-      return "排队中";
-    case "waiting_approval":
-      return "等待审批";
-    case "succeeded":
-      return "已完成";
-    case "failed":
-      return "失败";
-    case "cancelled":
-      return "已取消";
-    case "interrupted":
-      return "待确认";
-    default:
-      return status;
+const RUN_STATUS_LABEL_KEYS = new Set([
+  "running",
+  "queued",
+  "waiting_approval",
+  "succeeded",
+  "failed",
+  "cancelled",
+  "interrupted",
+]);
+
+function statusWord(status: string, t: Translator): string {
+  if (RUN_STATUS_LABEL_KEYS.has(status)) {
+    return t(`creativeHub.activityFeed.statusLabel.${status}`);
   }
+  return status;
 }
 
 function createTurnSummaryMessage(summary: CreativeHubTurnSummary): LangChainMessage {
@@ -159,6 +157,7 @@ function buildDebugTraceEntry(
   frame: CreativeHubStreamFrame,
   fallbackRunId: string | null,
   sequence: number,
+  t: Translator,
 ): { runId: string; entry: CreativeHubDebugTraceEntry } | null {
   if (frame.event === "creative_hub/turn_summary" || frame.event === "creative_hub/interrupt") {
     return null;
@@ -173,10 +172,11 @@ function buildDebugTraceEntry(
       runId,
       entry: {
         id: `run_status_${sequence}`,
-        kind: "运行状态",
-        title: "运行状态",
-        summary: frame.data.message || `当前状态：${toStatusLabel(frame.data.status)}`,
-        meta: [toStatusLabel(frame.data.status), `Run ${runId.slice(0, 8)}`],
+        kind: t("creativeHub.debugTrace.kind.runStatus"),
+        title: t("creativeHub.debugTrace.entry.runStatusTitle"),
+        summary: frame.data.message
+          || t("creativeHub.debugTrace.entry.runStatusFallback", { status: statusWord(frame.data.status, t) }),
+        meta: [statusWord(frame.data.status, t), t("creativeHub.debugTrace.runLabel", { value: runId.slice(0, 8) })],
         tone: frame.data.status === "failed" || frame.data.status === "cancelled"
           ? "destructive"
           : frame.data.status === "waiting_approval"
@@ -195,11 +195,11 @@ function buildDebugTraceEntry(
       runId,
       entry: {
         id: `tool_call_${sequence}`,
-        kind: "工具调用",
+        kind: t("creativeHub.debugTrace.kind.toolCall"),
         title: frame.data.toolName,
-        summary: frame.data.inputSummary || "正在准备工具输入。",
+        summary: frame.data.inputSummary || t("creativeHub.debugTrace.entry.toolInputFallback"),
         meta: [
-          `Run ${runId.slice(0, 8)}`,
+          t("creativeHub.debugTrace.runLabel", { value: runId.slice(0, 8) }),
           frame.data.stepId ? `Step ${frame.data.stepId.slice(0, 8)}` : "",
         ].filter(Boolean),
       },
@@ -215,12 +215,14 @@ function buildDebugTraceEntry(
       runId,
       entry: {
         id: `tool_result_${sequence}`,
-        kind: frame.data.success ? "工具完成" : "工具失败",
+        kind: frame.data.success
+          ? t("creativeHub.debugTrace.kind.toolCompleted")
+          : t("creativeHub.debugTrace.kind.toolFailed"),
         title: frame.data.toolName,
-        summary: frame.data.outputSummary || "工具返回了空结果。",
+        summary: frame.data.outputSummary || t("creativeHub.debugTrace.entry.toolOutputFallback"),
         meta: [
-          frame.data.success ? "成功" : "失败",
-          `Run ${runId.slice(0, 8)}`,
+          frame.data.success ? t("creativeHub.common.successLabel") : t("creativeHub.common.failedLabel"),
+          t("creativeHub.debugTrace.runLabel", { value: runId.slice(0, 8) }),
         ],
         tone: frame.data.success ? "default" : "destructive",
       },
@@ -236,9 +238,11 @@ function buildDebugTraceEntry(
       runId,
       entry: {
         id: `approval_${sequence}`,
-        kind: "审批结果",
-        title: frame.data.action === "approved" ? "审批通过" : "审批拒绝",
-        summary: frame.data.note?.trim() || "当前审批动作已记录。",
+        kind: t("creativeHub.debugTrace.kind.approval"),
+        title: frame.data.action === "approved"
+          ? t("creativeHub.debugTrace.entry.approvedTitle")
+          : t("creativeHub.debugTrace.entry.rejectedTitle"),
+        summary: frame.data.note?.trim() || t("creativeHub.debugTrace.entry.approvalNoteFallback"),
         meta: [
           `Approval ${frame.data.approvalId.slice(0, 8)}`,
         ],
@@ -256,10 +260,10 @@ function buildDebugTraceEntry(
       runId,
       entry: {
         id: `error_${sequence}`,
-        kind: "运行异常",
-        title: "运行异常",
+        kind: t("creativeHub.debugTrace.kind.runError"),
+        title: t("creativeHub.debugTrace.entry.errorTitle"),
         summary: frame.data.message,
-        meta: [`Run ${runId.slice(0, 8)}`],
+        meta: [t("creativeHub.debugTrace.runLabel", { value: runId.slice(0, 8) })],
         tone: "destructive",
       },
     };
@@ -274,10 +278,10 @@ function buildDebugTraceEntry(
       runId,
       entry: {
         id: `reasoning_${sequence}`,
-        kind: "推理更新",
-        title: "推理更新",
+        kind: t("creativeHub.debugTrace.kind.reasoning"),
+        title: t("creativeHub.debugTrace.entry.reasoningTitle"),
         summary: frame.data.reasoning,
-        meta: [`Run ${runId.slice(0, 8)}`],
+        meta: [t("creativeHub.debugTrace.runLabel", { value: runId.slice(0, 8) })],
       },
     };
   }
@@ -292,12 +296,17 @@ function buildDebugTraceEntry(
       runId,
       entry: {
         id: `planner_${sequence}`,
-        kind: "意图识别",
-        title: "意图识别",
-        summary: `来源：${getPlannerSourceDisplayLabel(planner.source)}；意图：${getIntentDisplayLabel(planner.intent)}`,
+        kind: t("creativeHub.debugTrace.kind.planner"),
+        title: t("creativeHub.debugTrace.entry.plannerTitle"),
+        summary: t("creativeHub.debugTrace.entry.plannerSummary", {
+          source: getPlannerSourceDisplayLabel(planner.source, t),
+          intent: getIntentDisplayLabel(planner.intent, t),
+        }),
         meta: [
-          "confidence" in planner ? `置信度 ${String(planner.confidence ?? "-")}` : "",
-          `Run ${runId.slice(0, 8)}`,
+          "confidence" in planner
+            ? t("creativeHub.debugTrace.entry.confidence", { value: String(planner.confidence ?? "-") })
+            : "",
+          t("creativeHub.debugTrace.runLabel", { value: runId.slice(0, 8) }),
         ].filter(Boolean),
       },
     };
@@ -314,10 +323,10 @@ function buildDebugTraceEntry(
       runId,
       entry: {
         id: `checkpoint_${sequence}`,
-        kind: "Checkpoint",
-        title: "检查点已写回",
-        summary: `Checkpoint ${frame.data.checkpointId.slice(0, 8)} 已写回线程历史。`,
-        meta: [`Run ${runId.slice(0, 8)}`],
+        kind: t("creativeHub.debugTrace.kind.checkpoint"),
+        title: t("creativeHub.debugTrace.entry.checkpointTitle"),
+        summary: t("creativeHub.debugTrace.entry.checkpointSummary", { value: frame.data.checkpointId.slice(0, 8) }),
+        meta: [t("creativeHub.debugTrace.runLabel", { value: runId.slice(0, 8) })],
       },
     };
   }
@@ -329,8 +338,9 @@ export function createRunArtifactEvent(
   frame: CreativeHubStreamFrame,
   fallbackRunId: string | null,
   sequence: number,
+  t: Translator,
 ) {
-  return buildDebugTraceEntry(frame, fallbackRunId, sequence);
+  return buildDebugTraceEntry(frame, fallbackRunId, sequence, t);
 }
 
 export function buildInlineStateMessages(

@@ -6,7 +6,11 @@ import {
   type DirectorAutoApprovalPoint,
 } from "@ai-novel/shared/types/autoDirectorApproval";
 import { Badge } from "@/components/ui/badge";
+import { useTranslation } from "@/i18n";
+import type { TranslateValues } from "@/i18n";
 import { AUTO_DIRECTOR_MOBILE_CLASSES } from "@/mobile/autoDirector";
+
+type Translator = (key: string, values?: TranslateValues) => string;
 
 interface AutoDirectorApprovalPointMultiSelectProps {
   value: string[];
@@ -16,10 +20,10 @@ interface AutoDirectorApprovalPointMultiSelectProps {
   compact?: boolean;
 }
 
-function riskLabel(riskLevel: DirectorAutoApprovalPoint["riskLevel"]): string {
-  if (riskLevel === "high") return "高风险";
-  if (riskLevel === "medium") return "中风险";
-  return "低风险";
+function riskLabel(riskLevel: DirectorAutoApprovalPoint["riskLevel"], t: Translator): string {
+  if (riskLevel === "high") return t("components.autoDirector.approvalPoints.risk.high");
+  if (riskLevel === "medium") return t("components.autoDirector.approvalPoints.risk.medium");
+  return t("components.autoDirector.approvalPoints.risk.low");
 }
 
 function riskClassName(riskLevel: DirectorAutoApprovalPoint["riskLevel"]): string {
@@ -38,10 +42,10 @@ function toggleCodes(current: string[], targetCodes: string[], checked: boolean)
   return normalizeDirectorAutoApprovalPointCodes(Array.from(currentSet), []);
 }
 
-export function summarizeDirectorAutoApprovalPoints(codes: string[]): string {
+export function summarizeDirectorAutoApprovalPoints(codes: string[], t: Translator): string {
   const normalized = normalizeDirectorAutoApprovalPointCodes(codes, []);
   if (normalized.length === 0) {
-    return "不会自动通过审批点";
+    return t("components.autoDirector.approvalPoints.summaryNone");
   }
   const labels: string[] = normalized
     .map((code) => DIRECTOR_AUTO_APPROVAL_POINTS.find((item) => item.code === code)?.label)
@@ -49,7 +53,10 @@ export function summarizeDirectorAutoApprovalPoints(codes: string[]): string {
   if (labels.length <= 2) {
     return labels.join("、");
   }
-  return `${labels.slice(0, 2).join("、")} 等 ${labels.length} 项`;
+  return t("components.autoDirector.approvalPoints.summaryEtc", {
+    labels: labels.slice(0, 2).join("、"),
+    count: labels.length,
+  });
 }
 
 export default function AutoDirectorApprovalPointMultiSelect({
@@ -59,6 +66,7 @@ export default function AutoDirectorApprovalPointMultiSelect({
   approvalPoints = DIRECTOR_AUTO_APPROVAL_POINTS.map((item) => ({ ...item })),
   compact = false,
 }: AutoDirectorApprovalPointMultiSelectProps) {
+  const { t } = useTranslation();
   const selected = normalizeDirectorAutoApprovalPointCodes(value, []);
 
   return (
@@ -104,7 +112,7 @@ export default function AutoDirectorApprovalPointMultiSelect({
                       <div className="flex min-w-0 flex-wrap items-center gap-2">
                         <span className={`${AUTO_DIRECTOR_MOBILE_CLASSES.wrapText} text-sm font-medium text-foreground`}>{point.label}</span>
                         <Badge variant="outline" className={riskClassName(point.riskLevel)}>
-                          {riskLabel(point.riskLevel)}
+                          {riskLabel(point.riskLevel, t)}
                         </Badge>
                       </div>
                       <div className={`text-xs leading-5 text-muted-foreground ${AUTO_DIRECTOR_MOBILE_CLASSES.wrapText}`}>{point.description}</div>

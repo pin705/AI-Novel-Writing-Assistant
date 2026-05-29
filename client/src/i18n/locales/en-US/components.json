@@ -1,0 +1,508 @@
+{
+  "layout": {
+    "taskRecovery": {
+      "title": "Recoverable tasks detected",
+      "description": "On startup we found background tasks that were interrupted before the server restarted. They will not auto-resume — review each one and decide whether to resume.",
+      "later": "Handle later",
+      "resumeAll": "Resume all",
+      "resumeAllPending": "Resuming all...",
+      "resumeSingle": "Resume this",
+      "resumeSinglePending": "Resuming...",
+      "openLocation": "Open task location",
+      "ownerLabel": "Owner: {{value}}",
+      "currentStage": "Current stage: {{value}}",
+      "currentItem": "Interrupted at: {{value}}",
+      "resumeAction": "Suggested action: {{value}}",
+      "recoveryHint": "Recovery hint: {{value}}",
+      "statusRunning": "Interrupted while running",
+      "statusQueued": "Interrupted while queued",
+      "kinds": {
+        "novel_workflow": "Novel main workflow",
+        "novel_pipeline": "Chapter pipeline",
+        "book_analysis": "Book analysis",
+        "style_extraction": "Style extraction",
+        "image": "Image task"
+      },
+      "toasts": {
+        "resumeStarted": "Task recovery started.",
+        "resumeFailed": "Failed to recover the task.",
+        "resumeAllStarted": "Started recovering {{count}} tasks.",
+        "resumeAllEmpty": "There are no tasks to recover.",
+        "resumeAllFailed": "Bulk task recovery failed."
+      }
+    },
+    "desktopBootstrap": {
+      "appTitle": "AI Novel Writing Workspace",
+      "betaBadge": "Desktop Beta",
+      "shellNote": "This screen only appears briefly while the desktop app starts, bridging the local-service launch so you don't see a blank window.",
+      "currentProgress": "Current progress",
+      "status": "Status",
+      "lastUpdated": "Last updated",
+      "logsTitle": "Logs & diagnostics",
+      "logsHint": "If startup hangs, the local service quits early, or you want to measure startup time, check the desktop logs directly.",
+      "openLogs": "Open log folder",
+      "copyLogPath": "Copy log path",
+      "restart": "Restart",
+      "states": {
+        "launching": "Preparing",
+        "startingServer": "Starting local engine",
+        "loadingUi": "Loading workspace",
+        "ready": "Ready",
+        "error": "Startup blocked"
+      },
+      "stages": {
+        "launching": "Preparing to launch",
+        "appReady": "App ready",
+        "splashShown": "Splash shown",
+        "serverStarting": "Starting local service",
+        "serverHealthy": "Local service healthy",
+        "rendererReady": "UI ready",
+        "mainWindowShown": "Main window shown",
+        "error": "Startup failed"
+      },
+      "progressHints": {
+        "launching": "Preparing the desktop runtime and startup resources.",
+        "startingServer": "The desktop app needs to start the local service first before entering the main workspace.",
+        "loadingUi": "Local service is available — switching to the main workspace.",
+        "ready": "Startup chain completed.",
+        "error": "Something went wrong during startup. Check the logs before retrying."
+      },
+      "updater": {
+        "sectionTitle": "Version check",
+        "currentVersion": "Installed version",
+        "availableVersion": "Available version",
+        "checkedAt": "Last checked",
+        "checking": "Checking",
+        "recheck": "Check again",
+        "check": "Check for updates",
+        "download": "Download update",
+        "installRestart": "Restart to install",
+        "progress": " Download progress {{percent}}%.",
+        "status": {
+          "disabled": "Disabled",
+          "idle": "Pending check",
+          "checking": "Checking",
+          "updateAvailable": "Update available",
+          "downloading": "Downloading",
+          "downloaded": "Ready to install",
+          "notAvailable": "Up to date",
+          "error": "Check failed"
+        },
+        "hints": {
+          "portable": "Portable builds need a fresh installer downloaded and replaced manually.",
+          "devBuild": "Dev runs don't connect to the release channel; packaged installs check the desktop version automatically.",
+          "idleError": "When startup is blocked, the desktop version is checked in parallel so you can install a fix first.",
+          "idleDefault": "Before entering the workspace we check the desktop version — any available release shows up here.",
+          "checking": "Checking the version — we'll prompt you to download when an update is available.",
+          "updateAvailable": "Desktop {{version}} is available. We recommend downloading the update first.",
+          "fallbackVersion": "newer version",
+          "downloading": "Downloading the update — please keep the app open.",
+          "downloaded": "Update downloaded — restart the app to finish installing.",
+          "notAvailable": "Your installed version matches the release channel.",
+          "errorFallback": "Version check failed — try again later."
+        }
+      }
+    },
+    "desktopLegacyImport": {
+      "titleSuggested": "Legacy local database detected",
+      "titleManual": "Import legacy local database",
+      "descriptionSuggested": "The desktop app detected the local database from your previous web/dev build. Import it in one click to keep your existing novels, API keys, and knowledge data.",
+      "descriptionManual": "The desktop app uses its own data directory by default. If you already have local data from the web/dev build, you can pick the old dev.db and import it.",
+      "freshBadge": "Current desktop database looks empty",
+      "detectedPath": "Detected old database: {{path}}",
+      "detectedPathWithLabel": "Detected old database: {{path}} ({{label}})",
+      "backupNote": "Before import we'll back up your current desktop database to: {{path}}",
+      "closeOldProcess": "Close any running web/dev processes before importing so the SQLite file isn't being written to.",
+      "importDetected": "Import detected legacy data",
+      "chooseAnotherDb": "Pick a different dev.db",
+      "chooseDb": "Pick legacy dev.db to import",
+      "preparing": "Preparing...",
+      "detectFailed": "Legacy data detection failed.",
+      "importFailed": "Legacy data import failed.",
+      "importScheduled": "Preparing to import legacy data. The app will restart once."
+    },
+    "desktopModelSetup": {
+      "settingsTitle": "Complete Desktop Setup",
+      "settingsBadge": "Desktop install",
+      "settingsDescription": "Finish at least one active model provider and default model here before returning to the main workspace.",
+      "settingsBody": "The packaged desktop app is running normally, but it still needs a usable provider configuration.",
+      "usableProviders": "Current usable providers: {{count}}",
+      "blockerTitle": "Set Up A Model Provider First",
+      "blockerDescription": "The Windows desktop app is installed correctly, but it cannot start the writing workflow until at least one model provider and default model are configured.",
+      "blockerHint": "Open the existing settings page, fill in an API key or local endpoint, choose a default model, and save it.",
+      "openSettings": "Open model settings",
+      "openHelp": "View getting started"
+    },
+    "novelWorkspaceRail": {
+      "creationWorkspace": "Writing workspace",
+      "defaultNovelTitle": "Novel writing workspace",
+      "expand": "Expand writing navigation",
+      "collapse": "Collapse writing navigation",
+      "backToList": "Back to novel list",
+      "flowProgress": "Flow: {{stage}}",
+      "history": "Version history",
+      "openProgressTitle": "View director progress: {{status}}",
+      "openProgress": "View director progress",
+      "switchProjectNav": "Switch to project navigation",
+      "progressDialogTitle": "AI auto-director progress",
+      "progressDialogDescription": "See the advancement steps, recent progress, and AI usage for this book.",
+      "stepStatus": {
+        "current": "Current step",
+        "inFlow": "In flow",
+        "viewing": "Viewing",
+        "done": "Done",
+        "pending": "Pending"
+      },
+      "taskStatus": {
+        "running": "Running",
+        "queued": "Queued",
+        "waitingApproval": "Waiting approval",
+        "failed": "Failure",
+        "succeeded": "Completed",
+        "idle": "Idle"
+      },
+      "summary": {
+        "interrupted": "The background task was interrupted — open execution details to see why.",
+        "waitingFor": "Waiting on: {{stage}}",
+        "aiAdvancing": "AI is advancing {{stage}}",
+        "noActiveTask": "No background director task — feel free to keep writing manually.",
+        "pleaseHandlePoint": "Check the current stopping point",
+        "nextStep": "Next step: {{label}}",
+        "needsAttention": "Needs attention: {{reason}}"
+      },
+      "errors": {
+        "noActiveTask": "There's no auto-director task to resume.",
+        "continueFailed": "Failed to resume the auto-director."
+      }
+    },
+    "serverStartup": {
+      "title": "Connecting to the local writing service",
+      "description": "The page is ready — it'll switch to the workspace as soon as the service is available.",
+      "recheck": "Check again"
+    },
+    "mobileSiteShell": {
+      "appTitle": "AI Novel Writing Workspace",
+      "openBook": "Start a book",
+      "openMore": "Open more entries",
+      "closeMore": "Close more entries",
+      "moreTitle": "More entries",
+      "moreDescription": "Pick the workspace you want to continue with.",
+      "fallbackTitle": "More features",
+      "routes": {
+        "home": "Home",
+        "help": "Getting started",
+        "novels": "Novels",
+        "novelCreate": "Create novel",
+        "novelPreview": "Novel preview",
+        "novelEdit": "Novel workspace",
+        "chapterEdit": "Chapter content",
+        "creativeHub": "Creative hub",
+        "chatLegacy": "Legacy chat",
+        "bookAnalysis": "Book analysis",
+        "tasks": "Tasks",
+        "autoDirectorFollowUps": "Director follow-ups",
+        "knowledge": "Knowledge base",
+        "genres": "Genre baselines",
+        "storyModes": "Story modes",
+        "titles": "Title workshop",
+        "promptWorkbench": "Prompt workbench",
+        "modelRoutes": "Model routes",
+        "settings": "System settings",
+        "worlds": "Worlds",
+        "worldGenerator": "World generator",
+        "worldWorkspace": "World workspace",
+        "styleEngine": "Style engine",
+        "antiAiRules": "Anti-AI rules",
+        "baseCharacters": "Base characters"
+      },
+      "primary": {
+        "home": "Home",
+        "novels": "Novels",
+        "creation": "Create",
+        "tasks": "Tasks",
+        "more": "More"
+      },
+      "moreGroups": {
+        "creationAid": "Writing aids",
+        "assets": "Asset library",
+        "worldsAndSystem": "Worlds & system"
+      }
+    }
+  },
+  "common": {
+    "selectField": {
+      "placeholder": "Select an option",
+      "empty": "No options"
+    },
+    "searchableSelect": {
+      "placeholder": "Select an option",
+      "searchPlaceholder": "Search",
+      "empty": "No options"
+    },
+    "llmSelector": {
+      "badge": "Model",
+      "providerPlaceholder": "Select provider",
+      "providerNoneAvailable": "Configure a usable provider first",
+      "modelPlaceholder": "Select model",
+      "modelUnavailable": "No models available",
+      "searchModel": "Search models",
+      "noModels": "No models available",
+      "noProvidersHelper": "No active model providers are configured. Open System Settings to set an API key and choose a model.",
+      "temperatureLabel": "Temperature (0–2)",
+      "maxTokensLabel": "Max tokens (empty = unlimited)"
+    },
+    "aiRevisionWorkspace": {
+      "instructionTitle": "AI revision instructions",
+      "instructionPlaceholder": "Describe the revision — e.g. trim filler, raise conflict, keep existing facts intact.",
+      "selectionTitle": "Current selection (used for targeted optimization)",
+      "selectionHint": "With no selection, only full-text optimization is available.",
+      "optimizing": "Optimizing...",
+      "previewFull": "Preview full-text revision",
+      "previewSelection": "Revise only the selection",
+      "previewTitle": "Revision preview",
+      "applyPreview": "Apply preview",
+      "cancelPreview": "Discard preview"
+    },
+    "streamOutput": {
+      "defaultTitle": "AI output",
+      "defaultEmpty": "Waiting for stream...",
+      "generating": "Generating...",
+      "wordCount": "Characters: {{count}}",
+      "stop": "Stop"
+    }
+  },
+  "autoDirector": {
+    "approvalPoints": {
+      "risk": {
+        "high": "High risk",
+        "medium": "Medium risk",
+        "low": "Low risk"
+      },
+      "summaryNone": "No approval points will be auto-passed",
+      "summaryEtc": "{{labels}} and {{count}} items"
+    },
+    "approvalStrategy": {
+      "panelTitle": "Auto-advance mode",
+      "fullAutoTitle": "Full AI auto-advance",
+      "fullAutoDescription": "Auto-advance across the target scope; only stops for unavailable models, service errors, protected content, or unrecoverable risks.",
+      "copilotTitle": "AI copilot confirmation",
+      "copilotDescription": "Use advanced approval authorizations to let low-risk nodes through; everything else waits for your judgment.",
+      "summaryFullAuto": "Auto-advance: the system will auto-confirm planning, chapter execution, quality repair, and required replanning inside the target scope.",
+      "summaryCopilot": "Copilot confirmation boundary: {{summary}}. Other approval points wait for your confirmation.",
+      "advancedTitle": "Advanced approval authorization"
+    },
+    "cockpit": {
+      "title": "AI cockpit",
+      "view": "View",
+      "fallbackReason": "No AI auto-advance task needs your attention.",
+      "fallbackStatus": "Not active",
+      "states": {
+        "processing": "AI is processing",
+        "needsConfirmation": "Awaiting your confirmation",
+        "paused": "Paused",
+        "needsAttention": "Error needs attention",
+        "completed": "Completed",
+        "idle": "Not active"
+      },
+      "datePlaceholder": "—",
+      "lessThanOneSecond": "<1 s",
+      "secondsUnit": "{{count}} s",
+      "minutesUnit": "{{count}} min",
+      "minutesSecondsUnit": "{{minutes}} min {{seconds}} s",
+      "usageLine": {
+        "callCount": "{{count}} calls",
+        "promptTokens": "In {{count}}",
+        "completionTokens": "Out {{count}}",
+        "totalTokens": "Total {{count}} tokens",
+        "duration": "Cumulative call time {{duration}}"
+      },
+      "renderAction": {
+        "confirmContinue": "Confirm and continue",
+        "fallback": "Continue",
+        "openNovel": "Open novel"
+      },
+      "artifactTypes": {
+        "book_contract": "Book contract",
+        "story_macro": "Story macro",
+        "character_cast": "Cast",
+        "volume_strategy": "Volume strategy",
+        "chapter_task_sheet": "Task sheet",
+        "chapter_draft": "Chapter draft",
+        "audit_report": "Audit",
+        "repair_ticket": "Repair",
+        "reader_promise": "Reader promise",
+        "character_governance_state": "Character state",
+        "world_skeleton": "World skeleton",
+        "source_knowledge_pack": "Knowledge pack",
+        "chapter_retention_contract": "Retention contract",
+        "continuity_state": "Continuity",
+        "rolling_window_review": "Recent review"
+      },
+      "recoveryActions": {
+        "retry": "Retry current step",
+        "resume_after_review": "Review reason then resume",
+        "switch_model": "Switch model then resume",
+        "confirm_protected_content": "Confirm protected-content boundary",
+        "manual_repair": "Resolve chapter issues first"
+      },
+      "workerStates": {
+        "idle": "Not running",
+        "queued_waiting_worker": "Waiting for pickup",
+        "leased_starting": "Picking up",
+        "running_step": "Auto-advancing",
+        "waiting_gate": "Waiting for confirmation",
+        "auto_recovering": "Recovering",
+        "cancelled": "Stopped",
+        "failed_recoverable": "Awaiting recovery",
+        "failed_hard": "Needs attention",
+        "succeeded": "Completed"
+      },
+      "workerDetail": {
+        "queued": "Queued — the background worker will continue once it picks up.",
+        "running": "The background worker is processing the current task.",
+        "stale": "After an interruption, the worker will try to resume from the latest progress.",
+        "noBackgroundAction": "No background actions are queued or running.",
+        "label": "Background worker",
+        "queueCount": "Queued",
+        "leasedCount": "Leased",
+        "runningCount": "Running",
+        "recoveringCount": "Recovering",
+        "waitingForLease": "Waiting for pickup: {{duration}}"
+      },
+      "circuitBreaker": {
+        "title": "Auto-advance paused",
+        "fallback": "The system detected that continuing auto-advance may keep failing.",
+        "recovery": "Suggestion: {{action}}."
+      },
+      "usagePanel": {
+        "title": "AI usage",
+        "stagesTitle": "Stage usage",
+        "stepsTitle": "Advancement steps"
+      },
+      "artifacts": {
+        "title": "Artifacts",
+        "affectedChapters": "Affects {{count}} chapters",
+        "needsReview": "{{count}} artifacts need review",
+        "recentRepairs": "{{count}} repair records",
+        "newVersions": "{{count}} artifacts have new versions"
+      },
+      "nextAction": "Next step: {{label}}",
+      "historyTitle": "Automation log",
+      "historyDuration": "Took {{duration}}",
+      "processing": "Processing...",
+      "executionDetails": "Execution details"
+    },
+    "directorBookAutomationCard": {
+      "projectNav": "Project nav"
+    },
+    "runtimeProjection": {
+      "title": "Director progress",
+      "primaryFallback": "Waiting to sync current progress",
+      "attentionFallback": "Please handle the current stopping point.",
+      "needsAttention": "Needs your attention: {{text}}",
+      "pausedReason": "Pause reason: {{text}}",
+      "policy": "Mode: {{mode}}",
+      "updatedAt": "Updated: {{value}}",
+      "recentEvents": "Recent activity",
+      "datePlaceholder": "—",
+      "policyModes": {
+        "suggest_only": "Suggestions only",
+        "run_next_step": "Run next step",
+        "auto_safe_scope": "Auto-advance safe scope",
+        "default": "Advance to checkpoint"
+      },
+      "statuses": {
+        "running": "Running",
+        "waiting_approval": "Awaiting confirmation",
+        "blocked": "Paused",
+        "failed": "Failed",
+        "completed": "Completed",
+        "default": "Pending start"
+      },
+      "qualityDebt": "Quality debt to recover{{detail}}. The system will keep writing future chapters and recover these issues during the quality repair stage.",
+      "qualityDebtChapters": ": chapters {{chapters}}",
+      "qualityBudget": "{{chapter}} quality budget: local repair {{patch}}/1, full rewrite {{rewrite}}/1, window replan {{replan}}/1. {{nextAction}}",
+      "qualityBudgetCurrentChapter": "Current chapter",
+      "qualityBudgetSpecificChapter": "Chapter {{order}}",
+      "rootCauses": {
+        "replan": "The current issue stems from misaligned chapter responsibilities — nearby chapters need adjusting first.",
+        "obligation": "The draft is written, but obligations for this chapter are still unmet.",
+        "repairExhausted": "The draft is written, but after auto repair there are still blocking issues to resolve.",
+        "draftMissing": "The draft was not produced successfully — the current chapter needs to run again."
+      },
+      "obligationsLine": "Still pending: {{summaries}}",
+      "activeExecution": "Background worker: {{label}}",
+      "activeExecutionWithClass": "Background worker: {{label}} · {{class}}",
+      "activeExecutionFallback": "Auto-director task",
+      "waitingReason": "Waiting reason: {{reason}}",
+      "executionQueue": "Execution queue: {{queued}} waiting",
+      "executionProcessing": "{{count}} in progress",
+      "executor": "Worker: {{id}}",
+      "nextAction": "Next step: {{label}}",
+      "recommendedReason": "Recommendation reason: {{reason}}",
+      "autopilotRecoverable": "The AI can resume from the current progress.",
+      "metrics": {
+        "planning": "Planning",
+        "chapters": "Chapters",
+        "quality": "Quality",
+        "currentAction": "Current action"
+      },
+      "usagePanel": {
+        "title": "AI usage",
+        "stages": "Stage usage",
+        "steps": "Advancement steps"
+      },
+      "usageLine": {
+        "callCount": "{{count}} calls",
+        "promptTokens": "In {{count}}",
+        "completionTokens": "Out {{count}}",
+        "totalTokens": "Total {{count}} tokens",
+        "duration": "Cumulative call time {{duration}}",
+        "lessThanOneSecond": "<1 s",
+        "secondsUnit": "{{count}} s",
+        "minutesUnit": "{{count}} min",
+        "minutesSecondsUnit": "{{minutes}} min {{seconds}} s"
+      }
+    }
+  },
+  "creativeHub": {
+    "openButton": "Continue in Creative Hub"
+  },
+  "knowledge": {
+    "bindingPanel": {
+      "defaultTitle": "Reference knowledge",
+      "documentDescription": "Once bound, these will be the default knowledge source for this entity.",
+      "saving": "Saving...",
+      "save": "Save bindings"
+    },
+    "documentPicker": {
+      "auto": "Auto",
+      "custom": "Custom",
+      "autoHint": "Using the auto rule: prefer documents bound to the entity, otherwise fall back to all enabled documents.",
+      "searchPlaceholder": "Search knowledge documents",
+      "loading": "Loading...",
+      "empty": "No selectable documents.",
+      "selectedCount": "Selected {{count}} documents. Leaving this empty explicitly disables knowledge retrieval."
+    }
+  },
+  "workflow": {
+    "aiTakeover": {
+      "modeLabels": {
+        "loading": "Loading",
+        "running": "AI is handling",
+        "waiting": "Awaiting confirmation",
+        "actionRequired": "Needs handling",
+        "failed": "Execution error"
+      },
+      "progressStatus": {
+        "running": "Advancing live",
+        "waiting": "Awaiting your confirmation",
+        "actionRequired": "Needs your action",
+        "failed": "Interrupted"
+      },
+      "taskTag": "Task #{{id}}",
+      "progressLabel": "Flow progress",
+      "checkpointLabel": "Latest checkpoint: {{label}}"
+    }
+  }
+}

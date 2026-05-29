@@ -6,6 +6,7 @@ import {
 import {
   buildReadableRuleEntries,
   buildReadableRuleSummary,
+  type Translator,
 } from "./writingFormulaRulePresentation";
 import { getStyleProfileOriginLabel, isStarterStyleProfile } from "./writingFormulaV2.shared";
 
@@ -39,9 +40,11 @@ export interface LandingProfileItem {
 }
 
 interface BuildLandingProfileItemsParams {
+  t: Translator;
   profiles: StyleProfile[];
   allBindings: StyleBinding[];
   novelTitleMap: Record<string, string>;
+  locale?: string;
 }
 
 function compactText(value: unknown): string {
@@ -63,30 +66,30 @@ function firstNonEmptyText(...values: unknown[]): string {
   return "";
 }
 
-function formatSourceTypeLabel(sourceType: StyleProfile["sourceType"]): string {
+function formatSourceTypeLabel(t: Translator, sourceType: StyleProfile["sourceType"]): string {
   switch (sourceType) {
     case "manual":
-      return "手动整理";
+      return t("writingFormula.landingItems.sourceTypes.manual");
     case "from_text":
-      return "从文本提取";
+      return t("writingFormula.landingItems.sourceTypes.from_text");
     case "from_book_analysis":
-      return "拆书生成";
+      return t("writingFormula.landingItems.sourceTypes.from_book_analysis");
     case "from_knowledge_document":
-      return "知识库原文";
+      return t("writingFormula.landingItems.sourceTypes.from_knowledge_document");
     case "from_current_work":
-      return "当前工作提炼";
+      return t("writingFormula.landingItems.sourceTypes.from_current_work");
     default:
-      return "其他来源";
+      return t("writingFormula.landingItems.sourceTypes.other");
   }
 }
 
-function formatUpdatedAtLabel(value: string): string {
+function formatUpdatedAtLabel(value: string, locale: string): string {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) {
     return value.slice(0, 10);
   }
 
-  return new Intl.DateTimeFormat("zh-CN", {
+  return new Intl.DateTimeFormat(locale, {
     month: "numeric",
     day: "numeric",
     hour: "2-digit",
@@ -95,20 +98,40 @@ function formatUpdatedAtLabel(value: string): string {
   }).format(date);
 }
 
-function buildNarrativeSummary(profile: StyleProfile): string {
-  return buildReadableRuleSummary("narrativeRules", profile.narrativeRules, "还没有明确剧情推进摘要。");
+function buildNarrativeSummary(t: Translator, profile: StyleProfile): string {
+  return buildReadableRuleSummary(
+    t,
+    "narrativeRules",
+    profile.narrativeRules,
+    t("writingFormula.rulePresentation.narrativeEmpty"),
+  );
 }
 
-function buildCharacterSummary(profile: StyleProfile): string {
-  return buildReadableRuleSummary("characterRules", profile.characterRules, "还没有明确人物表达摘要。");
+function buildCharacterSummary(t: Translator, profile: StyleProfile): string {
+  return buildReadableRuleSummary(
+    t,
+    "characterRules",
+    profile.characterRules,
+    t("writingFormula.rulePresentation.characterEmpty"),
+  );
 }
 
-function buildLanguageSummary(profile: StyleProfile): string {
-  return buildReadableRuleSummary("languageRules", profile.languageRules, "还没有明确语言质感摘要。");
+function buildLanguageSummary(t: Translator, profile: StyleProfile): string {
+  return buildReadableRuleSummary(
+    t,
+    "languageRules",
+    profile.languageRules,
+    t("writingFormula.rulePresentation.languageEmpty"),
+  );
 }
 
-function buildRhythmSummary(profile: StyleProfile): string {
-  return buildReadableRuleSummary("rhythmRules", profile.rhythmRules, "还没有明确节奏控制摘要。");
+function buildRhythmSummary(t: Translator, profile: StyleProfile): string {
+  return buildReadableRuleSummary(
+    t,
+    "rhythmRules",
+    profile.rhythmRules,
+    t("writingFormula.rulePresentation.rhythmEmpty"),
+  );
 }
 
 function buildSourceContentPreview(sourceContent?: string | null): string | null {
@@ -121,7 +144,7 @@ function buildSourceContentPreview(sourceContent?: string | null): string | null
 }
 
 export function buildLandingProfileItems(params: BuildLandingProfileItemsParams): LandingProfileItem[] {
-  const { profiles, allBindings, novelTitleMap } = params;
+  const { t, profiles, allBindings, novelTitleMap, locale = "zh-CN" } = params;
   const recentNovelBindingsByProfileId = allBindings
     .filter((binding) => binding.targetType === "novel")
     .reduce<Map<string, StyleBinding>>((result, binding) => {
@@ -150,18 +173,26 @@ export function buildLandingProfileItems(params: BuildLandingProfileItemsParams)
     })
     .map((profile) => {
       const profileSummary = buildStyleIntentSummary({ styleProfile: profile });
-      const characterEntries = buildReadableRuleEntries("characterRules", profile.characterRules);
+      const characterEntries = buildReadableRuleEntries(t, "characterRules", profile.characterRules);
       const dialogueEntry = characterEntries.find((entry) => entry.key === "dialogueStyle");
       const emotionEntry = characterEntries.find((entry) => entry.key === "emotionExpression");
+      const antiAiSeparator = t("writingFormula.landingItems.antiAiSeparator");
+      const readingFeelText = firstNonEmptyText(profile.description, profileSummary?.readingFeel);
       const detailLines = [
-        firstNonEmptyText(profile.description, profileSummary?.readingFeel)
-          ? `读感承诺：${firstNonEmptyText(profile.description, profileSummary?.readingFeel)}`
+        readingFeelText
+          ? t("writingFormula.landingItems.readingFeelLine", { value: readingFeelText })
           : "",
-        `语言质感：${buildLanguageSummary(profile)}`,
-        dialogueEntry ? `对白风格：${dialogueEntry.value}` : "",
-        emotionEntry ? `情绪外显：${emotionEntry.value}` : "",
+        t("writingFormula.landingItems.languageLine", { value: buildLanguageSummary(t, profile) }),
+        dialogueEntry
+          ? t("writingFormula.landingItems.dialogueLine", { value: dialogueEntry.value })
+          : "",
+        emotionEntry
+          ? t("writingFormula.landingItems.emotionLine", { value: emotionEntry.value })
+          : "",
         profileSummary?.antiAiFocus.length
-          ? `反 AI 约束：${profileSummary.antiAiFocus.join("；")}`
+          ? t("writingFormula.landingItems.antiAiLine", {
+              value: profileSummary.antiAiFocus.join(antiAiSeparator),
+            })
           : "",
       ].filter(Boolean);
       const recentNovelBinding = recentNovelBindingsByProfileId.get(profile.id);
@@ -175,23 +206,27 @@ export function buildLandingProfileItems(params: BuildLandingProfileItemsParams)
       return {
         id: profile.id,
         name: profile.name,
-        originLabel: getStyleProfileOriginLabel(profile),
-        summaryLine: detailLines[0] ?? profile.description ?? "暂无写法摘要。",
+        originLabel: getStyleProfileOriginLabel(t, profile),
+        summaryLine: detailLines[0] ?? profile.description ?? t("writingFormula.landingItems.summaryFallback"),
         detailLines,
-        description: firstNonEmptyText(profile.description, profileSummary?.readingFeel, "这套写法还没有写清楚读感定位。"),
+        description: firstNonEmptyText(
+          profile.description,
+          profileSummary?.readingFeel,
+          t("writingFormula.landingItems.readingFeelFallback"),
+        ),
         recentNovelTitle: recentNovelBinding
           ? (novelTitleMap[recentNovelBinding.targetId] ?? recentNovelBinding.targetId)
           : null,
         category: profile.category,
         tags: Array.from(new Set([...profile.tags, ...profile.applicableGenres].filter(Boolean))).slice(0, 6),
         applicableGenres: profile.applicableGenres.filter(Boolean),
-        narrativeSummary: buildNarrativeSummary(profile),
-        characterSummary: buildCharacterSummary(profile),
-        languageSummary: buildLanguageSummary(profile),
-        rhythmSummary: buildRhythmSummary(profile),
+        narrativeSummary: buildNarrativeSummary(t, profile),
+        characterSummary: buildCharacterSummary(t, profile),
+        languageSummary: buildLanguageSummary(t, profile),
+        rhythmSummary: buildRhythmSummary(t, profile),
         antiAiFocus: profileSummary?.antiAiFocus ?? [],
         antiAiRuleNames: profile.antiAiRules.map((rule) => rule.name).slice(0, 6),
-        sourceTypeLabel: formatSourceTypeLabel(profile.sourceType),
+        sourceTypeLabel: formatSourceTypeLabel(t, profile.sourceType),
         sourceContentPreview: buildSourceContentPreview(profile.sourceContent),
         extractedFeatureCount: profile.extractedFeatures.filter((feature) => feature.enabled).length,
         highRiskFeatureCount: profile.extractedFeatures.filter((feature) => feature.fingerprintRisk >= 0.7).length,
@@ -199,7 +234,7 @@ export function buildLandingProfileItems(params: BuildLandingProfileItemsParams)
         presetLabels: profile.extractionPresets.map((preset) => preset.label).slice(0, 3),
         extractionAntiAiRecommendationCount: profile.extractionAntiAiRuleKeys.length,
         bindingCount: bindingCountByProfileId[profile.id] ?? 0,
-        updatedAtLabel: formatUpdatedAtLabel(profile.updatedAt),
+        updatedAtLabel: formatUpdatedAtLabel(profile.updatedAt, locale),
         isStarter: isStarterStyleProfile(profile),
       };
     });

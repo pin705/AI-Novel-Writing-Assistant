@@ -1,6 +1,7 @@
 import type { CreativeHubNovelSetupStatus } from "@ai-novel/shared/types/creativeHub";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "@/i18n";
 import { cn } from "@/lib/utils";
 
 interface CreativeHubNovelSetupCardProps {
@@ -8,14 +9,14 @@ interface CreativeHubNovelSetupCardProps {
   onQuickAction?: (prompt: string) => void;
 }
 
-function stageLabel(stage: CreativeHubNovelSetupStatus["stage"]): string {
+function stageLabelKey(stage: CreativeHubNovelSetupStatus["stage"]): string {
   switch (stage) {
     case "ready_for_production":
-      return "可进入生产";
+      return "creativeHub.novelSetup.stage.readyForProduction";
     case "ready_for_planning":
-      return "可进入规划";
+      return "creativeHub.novelSetup.stage.readyForPlanning";
     default:
-      return "初始化中";
+      return "creativeHub.novelSetup.stage.default";
   }
 }
 
@@ -34,13 +35,16 @@ export default function CreativeHubNovelSetupCard({
   setup,
   onQuickAction,
 }: CreativeHubNovelSetupCardProps) {
+  const { t } = useTranslation();
   const pendingItems = setup.checklist.filter((item) => item.status !== "ready");
+  const pendingNames = pendingItems.slice(0, 4).map((item) => item.label).join(t("creativeHub.novelSetup.pendingNamesSeparator"));
+  const pendingEnding = pendingItems.length > 4 ? t("creativeHub.novelSetup.pendingEnding") : "";
 
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-3">
       <div className="mb-3 flex items-center justify-between gap-2">
-        <div className="text-xs font-medium text-slate-500">新书初始化</div>
-        <Badge variant="outline">{stageLabel(setup.stage)}</Badge>
+        <div className="text-xs font-medium text-slate-500">{t("creativeHub.novelSetup.title")}</div>
+        <Badge variant="outline">{t(stageLabelKey(setup.stage))}</Badge>
       </div>
 
       <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
@@ -48,12 +52,19 @@ export default function CreativeHubNovelSetupCard({
           <div>
             <div className="text-sm font-medium text-slate-900">{setup.title}</div>
             <div className="mt-1 text-xs text-slate-500">
-              已就绪 {setup.completedCount}/{setup.totalCount} 项
+              {t("creativeHub.novelSetup.progressLabel", {
+                completed: setup.completedCount,
+                total: setup.totalCount,
+              })}
             </div>
           </div>
           <div className="text-right">
-            <div className="text-lg font-semibold text-slate-900">{setup.completionRatio}%</div>
-            <div className="text-[11px] uppercase tracking-[0.16em] text-slate-500">progress</div>
+            <div className="text-lg font-semibold text-slate-900">
+              {t("creativeHub.novelSetup.progressFormat", { percent: setup.completionRatio })}
+            </div>
+            <div className="text-[11px] uppercase tracking-[0.16em] text-slate-500">
+              {t("creativeHub.novelSetup.progressBadge")}
+            </div>
           </div>
         </div>
         <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-200">
@@ -75,16 +86,22 @@ export default function CreativeHubNovelSetupCard({
               <div className="flex items-center gap-2 text-[11px] uppercase tracking-[0.14em]">
                 {item.requiredForProduction ? (
                   <span className="rounded-full border border-current/20 bg-white/70 px-2 py-0.5 tracking-normal">
-                    生产前确认
+                    {t("creativeHub.novelSetup.checklist.requiredForProduction")}
                   </span>
                 ) : null}
                 <span>
-                  {item.status === "ready" ? "ready" : item.status === "partial" ? "partial" : "missing"}
+                  {item.status === "ready"
+                    ? t("creativeHub.novelSetup.checklist.statusReady")
+                    : item.status === "partial"
+                      ? t("creativeHub.novelSetup.checklist.statusPartial")
+                      : t("creativeHub.novelSetup.checklist.statusMissing")}
                 </span>
               </div>
             </div>
             {item.currentValue ? (
-              <div className="mt-1 text-[11px] text-slate-500">当前：{item.currentValue}</div>
+              <div className="mt-1 text-[11px] text-slate-500">
+                {t("creativeHub.novelSetup.checklist.currentPrefix", { value: item.currentValue })}
+              </div>
             ) : null}
             <div className="mt-1 text-xs leading-5">{item.summary}</div>
             {item.status !== "ready" && (item.recommendedAction || item.optionPrompt) ? (
@@ -96,7 +113,7 @@ export default function CreativeHubNovelSetupCard({
                     variant="outline"
                     onClick={() => onQuickAction?.(item.recommendedAction!)}
                   >
-                    补这项
+                    {t("creativeHub.novelSetup.checklist.fillThis")}
                   </Button>
                 ) : null}
                 {item.optionPrompt ? (
@@ -106,7 +123,7 @@ export default function CreativeHubNovelSetupCard({
                     variant="outline"
                     onClick={() => onQuickAction?.(item.optionPrompt!)}
                   >
-                    给我备选
+                    {t("creativeHub.novelSetup.checklist.giveAlternatives")}
                   </Button>
                 ) : null}
               </div>
@@ -117,33 +134,37 @@ export default function CreativeHubNovelSetupCard({
 
       {pendingItems.length > 0 ? (
         <div className="mt-3 rounded-xl border border-amber-200 bg-amber-50 p-3">
-          <div className="text-[11px] font-medium uppercase tracking-[0.16em] text-amber-700">生产前待确认</div>
+          <div className="text-[11px] font-medium uppercase tracking-[0.16em] text-amber-700">
+            {t("creativeHub.novelSetup.pendingHeading")}
+          </div>
           <div className="mt-2 text-sm leading-6 text-slate-900">
-            {pendingItems.slice(0, 4).map((item) => item.label).join("、")}
-            {pendingItems.length > 4 ? " 等" : ""}
+            {pendingNames}
+            {pendingEnding}
           </div>
           <div className="mt-3 flex flex-wrap gap-2">
             <Button
               type="button"
               size="sm"
-              onClick={() => onQuickAction?.("总结当前小说进入整本生产前仍需确认的条件，并按优先级给出补齐顺序。")}
+              onClick={() => onQuickAction?.(t("creativeHub.novelSetup.generateChecklistPrompt"))}
             >
-              生成确认清单
+              {t("creativeHub.novelSetup.generateChecklist")}
             </Button>
             <Button
               type="button"
               size="sm"
               variant="outline"
-              onClick={() => onQuickAction?.("根据当前小说信息，为生产前缺失的关键条件各给出 3 个备选答案，方便我逐项选择。")}
+              onClick={() => onQuickAction?.(t("creativeHub.novelSetup.batchAlternativesPrompt"))}
             >
-              批量给我备选
+              {t("creativeHub.novelSetup.batchAlternatives")}
             </Button>
           </div>
         </div>
       ) : null}
 
       <div className="mt-3 rounded-xl border border-sky-200 bg-sky-50 p-3">
-        <div className="text-[11px] font-medium uppercase tracking-[0.16em] text-sky-700">下一问</div>
+        <div className="text-[11px] font-medium uppercase tracking-[0.16em] text-sky-700">
+          {t("creativeHub.novelSetup.nextQuestionHeading")}
+        </div>
         <div className="mt-2 text-sm leading-6 text-slate-900">{setup.nextQuestion}</div>
       </div>
 
@@ -153,15 +174,15 @@ export default function CreativeHubNovelSetupCard({
           size="sm"
           onClick={() => onQuickAction?.(setup.recommendedAction)}
         >
-          按引导继续
+          {t("creativeHub.novelSetup.continueGuided")}
         </Button>
         <Button
           type="button"
           size="sm"
           variant="outline"
-          onClick={() => onQuickAction?.("总结当前这本书的初始化完成度，并告诉我还缺哪些关键信息。")}
+          onClick={() => onQuickAction?.(t("creativeHub.novelSetup.viewSummaryPrompt"))}
         >
-          查看初始化摘要
+          {t("creativeHub.novelSetup.viewSummary")}
         </Button>
       </div>
     </div>

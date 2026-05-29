@@ -7,8 +7,9 @@ import { deleteWorld, getWorldList } from "@/api/world";
 import { queryKeys } from "@/api/queryKeys";
 import { featureFlags } from "@/config/featureFlags";
 import { toast } from "@/components/ui/toast";
+import { useTranslation } from "@/i18n";
 
-function extractStructuredPreview(raw: string): string | null {
+function extractStructuredPreview(raw: string, structuredPreviewFallback: string): string | null {
   const text = raw.trim();
   if (!text || (!text.startsWith("[") && !text.startsWith("{"))) {
     return null;
@@ -44,7 +45,7 @@ function extractStructuredPreview(raw: string): string | null {
       if (parts.length > 0) {
         return parts.join("；");
       }
-      return "包含结构化设定，进入工作台查看详情。";
+      return structuredPreviewFallback;
     }
     if (parsed && typeof parsed === "object") {
       const record = parsed as Record<string, unknown>;
@@ -52,7 +53,7 @@ function extractStructuredPreview(raw: string): string | null {
       if (typeof summary === "string" && summary.trim()) {
         return summary.trim();
       }
-      return "包含结构化设定，进入工作台查看详情。";
+      return structuredPreviewFallback;
     }
   } catch {
     return null;
@@ -61,13 +62,13 @@ function extractStructuredPreview(raw: string): string | null {
   return null;
 }
 
-function buildPreview(raw: string | null | undefined, fallback: string, limit: number): string {
+function buildPreview(raw: string | null | undefined, fallback: string, limit: number, structuredPreviewFallback: string): string {
   if (!raw?.trim()) {
     return fallback;
   }
 
   const normalized = raw.replace(/\s+/g, " ").trim();
-  const structured = extractStructuredPreview(normalized);
+  const structured = extractStructuredPreview(normalized, structuredPreviewFallback);
   const preview = (structured ?? normalized).slice(0, limit);
   return preview.length < (structured ?? normalized).length ? `${preview}...` : preview;
 }
@@ -105,6 +106,7 @@ function buildStructuredWorldPreview(structureJson: string | null | undefined): 
 
 export default function WorldList() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
   const worldListQuery = useQuery({
     queryKey: queryKeys.worlds.all,
     queryFn: getWorldList,
@@ -114,30 +116,32 @@ export default function WorldList() {
     mutationFn: (id: string) => deleteWorld(id),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: queryKeys.worlds.all });
-      toast.success("世界观已删除。");
+      toast.success(t("worlds.list.toast.deleted"));
     },
     onError: (error) => {
-      toast.error(error instanceof Error ? error.message : "删除世界观失败。");
+      toast.error(error instanceof Error ? error.message : t("worlds.list.toast.deleteFailed"));
     },
   });
 
   const worlds = worldListQuery.data?.data ?? [];
 
   const handleDelete = (worldId: string, worldName: string) => {
-    const confirmed = window.confirm(`确认删除世界观「${worldName}」？此操作不可恢复。`);
+    const confirmed = window.confirm(t("worlds.list.confirmDelete", { name: worldName }));
     if (!confirmed) {
       return;
     }
     deleteWorldMutation.mutate(worldId);
   };
 
+  const structuredPreviewFallback = t("worlds.list.structuredPreview");
+
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap justify-end gap-2">
-        <OpenInCreativeHubButton bindings={{}} label="创作中枢总览" />
+        <OpenInCreativeHubButton bindings={{}} label={t("worlds.list.hubAll")} />
         {featureFlags.worldWizardEnabled ? (
           <Button asChild>
-            <Link to="/worlds/generator">生成新世界观</Link>
+            <Link to="/worlds/generator">{t("worlds.list.createCta")}</Link>
           </Button>
         ) : null}
       </div>
@@ -145,19 +149,20 @@ export default function WorldList() {
       {worlds.length === 0 ? (
         <Card>
           <CardHeader>
-            <CardTitle>暂无世界观</CardTitle>
-            <CardDescription>点击“生成新世界观”开始创建。</CardDescription>
+            <CardTitle>{t("worlds.list.emptyTitle")}</CardTitle>
+            <CardDescription>{t("worlds.list.emptyDescription")}</CardDescription>
           </CardHeader>
         </Card>
       ) : (
         <div className="grid gap-3 md:grid-cols-2">
           {worlds.map((world) => {
             const structuredPreview = buildStructuredWorldPreview(world.structureJson);
-            const summary = buildPreview(structuredPreview.summary ?? world.description, "暂无描述", 120);
+            const summary = buildPreview(structuredPreview.summary ?? world.description, t("worlds.list.noDescription"), 120, structuredPreviewFallback);
             const detail = buildPreview(
               structuredPreview.detail ?? world.overviewSummary ?? world.conflicts ?? world.geography ?? world.background,
-              "暂无详细信息",
+              t("worlds.list.noDetail"),
               180,
+              structuredPreviewFallback,
             );
 
             return (
@@ -165,7 +170,7 @@ export default function WorldList() {
                 <CardHeader>
                   <CardTitle>{world.name}</CardTitle>
                   <CardDescription>
-                    {summary} | 状态：{world.status} | v{world.version}
+                    {t("worlds.list.statusLine", { summary, status: world.status, version: world.version })}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="text-sm text-muted-foreground">
@@ -173,11 +178,11 @@ export default function WorldList() {
                   <div className="flex flex-wrap gap-2">
                     <OpenInCreativeHubButton
                       bindings={{ worldId: world.id }}
-                      label="在创作中枢中继续"
+                      label={t("worlds.list.hubContinue")}
                     />
                     {featureFlags.worldWizardEnabled ? (
                       <Button asChild size="sm">
-                        <Link to={`/worlds/${world.id}/workspace`}>进入工作台</Link>
+                        <Link to={`/worlds/${world.id}/workspace`}>{t("worlds.list.enterWorkspace")}</Link>
                       </Button>
                     ) : null}
                     <Button
@@ -186,7 +191,7 @@ export default function WorldList() {
                       onClick={() => handleDelete(world.id, world.name)}
                       disabled={deleteWorldMutation.isPending && deleteWorldMutation.variables === world.id}
                     >
-                      {deleteWorldMutation.isPending && deleteWorldMutation.variables === world.id ? "删除中..." : "删除"}
+                      {deleteWorldMutation.isPending && deleteWorldMutation.variables === world.id ? t("worlds.list.deleting") : t("worlds.list.delete")}
                     </Button>
                   </div>
                 </CardContent>

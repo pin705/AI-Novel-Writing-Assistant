@@ -1,0 +1,237 @@
+{
+  "filters": {
+    "all": "Tất cả",
+    "draft": "Bản nháp",
+    "published": "Đã xuất bản",
+    "writingModeAll": "Loại sáng tác: Tất cả",
+    "original": "Sáng tác gốc",
+    "continuation": "Viết tiếp"
+  },
+  "common": {
+    "progress": "Tiến độ {{percent}}%",
+    "backgroundRunning": "Đang chạy nền",
+    "noIntro": "Chưa có tóm tắt",
+    "noAutoDirectorTask": "Hiện chưa phát hiện tác vụ đạo diễn tự động, danh sách hiển thị theo tài sản cơ bản của tiểu thuyết.",
+    "currentStage": "Giai đoạn hiện tại: {{stage}}",
+    "currentStageWithAction": "Giai đoạn hiện tại: {{stage}}{{action}}",
+    "lastHealthyStage": "Giai đoạn ổn định gần nhất: {{stage}}",
+    "suggestedContinue": "Gợi ý tiếp tục: {{action}}",
+    "project": "Dự án: {{value}}",
+    "storyline": "Mạch chính: {{value}}",
+    "outline": "Đề cương: {{value}}",
+    "resource": "Tài nguyên: {{value}}",
+    "world": "Thế giới quan: {{name}}",
+    "chapterCount": "Số chương: {{value}}",
+    "characterCount": "Số nhân vật: {{value}}",
+    "tokenUsage": "Tổng Token: {{value}}",
+    "stats": "Số chương: {{chapters}}, Số nhân vật: {{characters}}, Tổng Token: {{tokens}}",
+    "autoDirectorRunning": "AI đang tiếp tục triển khai ở nền",
+    "directorStageDefault": "Đạo diễn tự động"
+  },
+  "progressStatus": {
+    "completed": "Đã hoàn thành",
+    "inProgress": "Đang tiến hành",
+    "rework": "Cần làm lại",
+    "blocked": "Bị chặn",
+    "notStarted": "Chưa bắt đầu"
+  },
+  "actions": {
+    "directorCreate": "Đạo diễn AI mở sách",
+    "manualCreate": "Tạo tiểu thuyết thủ công",
+    "recoveryPending": "Tác vụ chờ khôi phục",
+    "aiCockpit": "Buồng lái AI",
+    "continueExecuting": "Đang tiếp tục thực thi...",
+    "continueAutoExecute": "Tiếp tục tự động thực thi {{scope}}",
+    "defaultScope": "phạm vi chương hiện tại",
+    "continuing": "Đang tiếp tục...",
+    "continueDirector": "Tiếp tục đạo diễn",
+    "confirmDirection": "Tiếp tục xác nhận hướng đi cấp sách",
+    "enterChapterExecution": "Vào viết chương",
+    "viewProgress": "Xem trạng thái triển khai",
+    "executionDetails": "Chi tiết thực thi",
+    "preview": "Xem trước",
+    "exporting": "Đang xuất...",
+    "export": "Xuất",
+    "deleting": "Đang xoá...",
+    "delete": "Xoá",
+    "reload": "Tải lại",
+    "reread": "Đọc lại",
+    "continueAutoExecuteFailed": "Tiếp tục tự động thực thi phạm vi chương hiện tại thất bại.",
+    "continueAutoExecuteScopeFailed": "Tiếp tục tự động thực thi {{scope}} thất bại.",
+    "continueDirectorFailed": "Tiếp tục đạo diễn tự động thất bại.",
+    "editNovel": "Chỉnh sửa tiểu thuyết"
+  },
+  "list": {
+    "loadErrorTitle": "Tải danh sách tiểu thuyết thất bại",
+    "loadErrorDescription": "Hiện không đọc được danh sách dự án, bạn có thể thử lại.",
+    "emptyTitle": "Chưa có tiểu thuyết",
+    "emptyFilteredTitle": "Không có tiểu thuyết khớp với bộ lọc",
+    "emptyDescription": "Lần đầu sử dụng, hãy nhấn \"Đạo diễn AI mở sách\" ở góc phải để hệ thống dựng sẵn hướng đi và phần chuẩn bị viết.",
+    "emptyFilteredDescription": "Hãy điều chỉnh bộ lọc ở trên, hoặc tạo trực tiếp một dự án tiểu thuyết mới.",
+    "confirmDelete": "Xác nhận xoá «{{title}}»? Thao tác này sẽ xoá tiểu thuyết hiện tại ngay lập tức.",
+    "deleteSuccess": "Đã xoá tiểu thuyết.",
+    "deleteFailed": "Xoá tiểu thuyết thất bại.",
+    "exportStarted": "Đã bắt đầu xuất.",
+    "exportFailed": "Xuất tiểu thuyết thất bại.",
+    "cockpitTitle": "Buồng lái AI",
+    "cockpitDescription": "Xem trạng thái triển khai AI và bước tiếp theo của «{{title}}».",
+    "cockpitDescriptionGeneric": "Xem trạng thái triển khai AI và bước tiếp theo của cuốn này.",
+    "cockpitLoading": "Đang đọc trạng thái AI của cuốn này...",
+    "cockpitError": "Không đọc được trạng thái AI, vui lòng thử lại sau.",
+    "cockpitFallback": "Cuốn này không có tác vụ AI tự động cần xử lý."
+  },
+  "create": {
+    "title": "Tạo dự án tiểu thuyết",
+    "description": "Hãy xác định trước cuốn sách viết cho ai, dựa vào điều gì để giữ chân độc giả và 30 chương đầu cần thực hiện điều gì. Các thiết lập ở đây sẽ ảnh hưởng trực tiếp đến quy hoạch mạch chính, biên giới thế giới, gợi ý lối viết và hành vi sinh nội dung AI — sau khi tạo vẫn có thể tiếp tục điều chỉnh.",
+    "submitLabel": "Tạo và vào dự án"
+  },
+  "preview": {
+    "title": "Xem trước tiểu thuyết",
+    "fallbackTitle": "Xem trước tiểu thuyết",
+    "loading": "Đang tải...",
+    "error": "Không thể tải bản xem trước.",
+    "empty": "Chưa có chương để xem trước.",
+    "back": "Quay lại",
+    "backToList": "Quay lại danh sách tiểu thuyết",
+    "downloadTxt": "Tải TXT",
+    "downloadMd": "Tải Markdown",
+    "missingNovelTitle": "Thiếu thông tin tiểu thuyết",
+    "missingNovelDescription": "Hãy quay lại danh sách và chọn tác phẩm muốn xem trước.",
+    "subtitle": "Đọc theo chương phần đã sinh nội dung, phù hợp để kiểm tra mạch lạc, nhịp truyện và phần đã viết.",
+    "openWorkspace": "Mở khu làm việc",
+    "editChapter": "Chỉnh sửa chương này",
+    "loadErrorTitle": "Tải bản xem trước thất bại",
+    "loadErrorDescription": "Hiện không đọc được các chương, bạn có thể tải lại.",
+    "noChaptersTitle": "Chưa có chương nào",
+    "noChaptersDescription": "Hãy vào khu làm việc để sinh đề mục chương hoặc nội dung, rồi quay lại đây để xem trước toàn bộ.",
+    "enterWorkspace": "Vào khu làm việc",
+    "tocTitle": "Mục lục chương",
+    "tocSummary": "Đã sinh {{generated}}/{{total}} chương, khoảng {{words}} chữ.",
+    "chapterOrder": "Chương {{order}}",
+    "chapterTitleWithOrder": "Chương {{order}}: {{title}}",
+    "selectChapter": "Chọn chương",
+    "untitledChapter": "Chương chưa đặt tên",
+    "hasContent": "Có nội dung",
+    "noContent": "Chưa có nội dung",
+    "wordsSuffix": "{{value}} chữ",
+    "chapterStatusDotWords": "{{status}} · {{words}} chữ",
+    "copied": "Đã sao chép",
+    "copyChapter": "Sao chép nội dung",
+    "noChapterContentTitle": "Chương này chưa có nội dung",
+    "noChapterContentDescription": "Hãy vào trang chỉnh sửa để sinh hoặc bổ sung nội dung, sau đó quay lại đây để xem.",
+    "copyEmptyError": "Chương hiện tại chưa có nội dung để sao chép.",
+    "copySuccess": "Đã sao chép nội dung vào clipboard.",
+    "copyFailed": "Sao chép thất bại, hãy chọn nội dung và sao chép thủ công."
+  },
+  "chapterStatus": {
+    "completed": "Hoàn thành nội dung",
+    "pendingReview": "Chờ duyệt",
+    "needsRepair": "Cần sửa",
+    "generating": "Đang sinh",
+    "pendingGeneration": "Chờ sinh",
+    "unplanned": "Chưa lên kế hoạch",
+    "unmarked": "Chưa gắn nhãn"
+  },
+  "chapterEdit": {
+    "loadingEditor": "Đang tải trình chỉnh sửa chương...",
+    "loadError": "Tải dữ liệu chương thất bại, vui lòng làm mới và thử lại.",
+    "notFound": "Không tìm thấy chương tương ứng, có thể đã bị xoá hoặc liên kết không đầy đủ."
+  },
+  "editor": {
+    "exportFullStarted": "Đã bắt đầu xuất toàn bộ sách.",
+    "exportStepStarted": "Đã bắt đầu xuất bước hiện tại.",
+    "exportFailed": "Xuất thất bại.",
+    "takeoverDismissed": "Đã thu gọn nhắc nhở đạo diễn tiếp quản. Khi cần vẫn có thể tiếp tục xử lý từ Chi tiết thực thi.",
+    "noContinuableDirectorTask": "Hiện không có tác vụ đạo diễn tự động nào để tiếp tục.",
+    "noAutoExecuteDirectorTask": "Hiện không có tác vụ đạo diễn tự động nào để tiếp tục tự động thực thi.",
+    "noExecutableAction": "Hiện không có hành động nào để thực thi.",
+    "actionExecuted": "Đã thực thi hành động.",
+    "actionFailed": "Thực thi hành động thất bại."
+  },
+  "chapter": {
+    "loading": "Đang tải...",
+    "saving": "Đang lưu...",
+    "saved": "Đã lưu",
+    "saveFailed": "Lưu thất bại.",
+    "title": "Tiêu đề chương",
+    "content": "Nội dung chương",
+    "back": "Quay lại",
+    "wordCount": "Số chữ: {{value}}"
+  },
+  "characterDefault": {
+    "protagonist": "Nhân vật chính"
+  },
+  "roles": {
+    "protagonist": "Nhân vật chính",
+    "antagonist": "Phản diện"
+  },
+  "worldInjection": {
+    "injected": "Đã chèn ngữ cảnh quy tắc thế giới",
+    "notBound": "Hiện chưa gắn thế giới quan, quá trình sinh nội dung sẽ không chèn quy tắc thế giới."
+  },
+  "mobile": {
+    "stepNavAriaLabel": "Các bước sáng tác tiểu thuyết",
+    "flowRecommend": "Quy trình đề xuất"
+  },
+  "basicTab": {
+    "takeoverTitle": "Để AI tiếp tục tiếp quản từ dự án hiện tại",
+    "takeoverDescription": "Nếu bạn đã điền thông tin cơ bản, có thể bắt đầu tiếp quản tự động ngay từ bước hiện tại, và chọn tiếp tục tiến độ đã có hoặc làm lại bước hiện tại.",
+    "positioningTitle": "Định vị cấp sách và thông tin cơ bản",
+    "saveBasicInfo": "Lưu thông tin cơ bản",
+    "supplementTitle": "Bổ sung lối viết và thế giới",
+    "supplementDescription": "Lựa chọn tiêu đề nhanh đã đặt ngay cạnh trường tiêu đề ở trên. Phần này dành cho việc xác nhận lối viết trước khi viết và sắp xếp biên giới thế giới của sách.",
+    "supplementMeta": "Gợi ý lối viết / Sử dụng thế giới"
+  },
+  "collapsibleSummary": {
+    "expand": "Mở rộng để xem",
+    "collapse": "Thu gọn nội dung"
+  },
+  "directorTakeoverPanel": {
+    "intro": "Trước khi tiếp quản, hệ thống sẽ đọc tiến độ thực tế của dự án, sau đó nói rõ lần này sẽ bỏ qua, tiếp tục hay chạy lại bước nào."
+  },
+  "characterDiagnostics": {
+    "title": "Chẩn đoán đội hình nhân vật và quan hệ",
+    "description": "Phần này phù hợp khi cần bổ sung nhân vật, kiểm tra lỗ hổng hoặc sắp xếp quan hệ. Việc chỉnh sửa hàng ngày hãy xem ở khu làm việc tài sản nhân vật phía dưới."
+  },
+  "candidateDialog": {
+    "title": "Xác nhận phương án cấp sách",
+    "description": "So sánh các hướng cho cả cuốn sách do AI đưa ra. Bạn có thể tinh chỉnh tiêu đề hoặc phương án trước, sau đó chọn một bộ để tạo dự án."
+  },
+  "chapterStatusFlow": {
+    "currentStage": "Giai đoạn hiện tại: ",
+    "notStarted": "Chưa bắt đầu"
+  },
+  "worldSlice": {
+    "refreshed": "Đã sắp xếp lại các thiết lập thế giới mà cuốn sách này sẽ dùng.",
+    "saved": "Đã lưu các mục thiết lập thế giới giữ lại cho cuốn sách này."
+  },
+  "chapterPlanning": {
+    "hasBlockingIssues": "Có vấn đề kiểm tra ưu tiên cao chưa được giải quyết, nên quy hoạch lại các chương tiếp theo.",
+    "noBlockingIssues": "Hiện không có vấn đề kiểm tra gây cản trở, không cần quy hoạch lại các chương tiếp theo."
+  },
+  "chapterDetailMode": {
+    "purpose": "Mục tiêu chương",
+    "boundary": "Biên giới thực thi",
+    "taskSheet": "Phiếu công việc"
+  },
+  "basicInfoForm": {
+    "recommend": "Đề xuất"
+  },
+  "characterFocus": {
+    "currentProtagonist": "Đang chỉnh sửa nhân vật chính: {{name}}",
+    "currentRole": "Đang chỉnh sửa nhân vật: {{name}}",
+    "currentGoalPending": "Cần bổ sung mục tiêu nhân vật chính",
+    "relationPending": "Cần bổ sung quan hệ với nhân vật chính",
+    "protagonistBadge": "Nhân vật chính",
+    "currentGoal": "Mục tiêu hiện tại: {{value}}",
+    "relationToProtagonist": "Quan hệ với nhân vật chính: {{value}}",
+    "identity": "Vai trò: {{value}}",
+    "identityUndefined": "Chưa xác định",
+    "lastAppearance": "Lần xuất hiện gần nhất: {{value}}",
+    "lastAppearanceChapter": "Chương {{order}}",
+    "lastAppearanceNone": "Chưa có",
+    "storyFunction": "Chức năng trong truyện: {{value}}",
+    "currentState": "Trạng thái hiện tại: {{value}}",
+    "valuePending": "Cần bổ sung"
+  }
+}

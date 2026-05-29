@@ -37,11 +37,18 @@ const routedPaths = [
   "/base-characters",
 ];
 
+// Identity translator: returns the key unchanged so we can assert on the key
+// rather than locale-specific strings.
+const identityT = (key) => key;
+
 test("mobile route metadata covers every registered page", () => {
   assert.equal(MOBILE_ROUTE_PATTERNS.length, routedPaths.length);
 
   for (const path of routedPaths) {
-    assert.notEqual(getMobilePageTitle(path), "更多功能");
+    assert.notEqual(
+      getMobilePageTitle(path, identityT),
+      "components.layout.mobileSiteShell.fallbackTitle",
+    );
     assert.match(getMobileNavGroupForPath(path), /^(home|novels|creation|tasks|more)$/);
     assert.match(getMobileRouteClassName(path), /^mobile-route-[a-z0-9-]+$/);
   }
@@ -49,13 +56,13 @@ test("mobile route metadata covers every registered page", () => {
 
 test("mobile primary nav keeps core beginner actions visible", () => {
   assert.deepEqual(
-    getMobilePrimaryNavItems().map((item) => [item.key, item.to, item.label]),
+    getMobilePrimaryNavItems().map((item) => [item.key, item.to, item.labelKey]),
     [
-      ["home", "/", "首页"],
-      ["novels", "/novels", "小说"],
-      ["creation", "/creative-hub", "创作"],
-      ["tasks", "/tasks", "任务"],
-      ["more", "", "更多"],
+      ["home", "/", "components.layout.mobileSiteShell.primary.home"],
+      ["novels", "/novels", "components.layout.mobileSiteShell.primary.novels"],
+      ["creation", "/creative-hub", "components.layout.mobileSiteShell.primary.creation"],
+      ["tasks", "/tasks", "components.layout.mobileSiteShell.primary.tasks"],
+      ["more", "", "components.layout.mobileSiteShell.primary.more"],
     ],
   );
 });

@@ -92,5 +92,6 @@ interface Window {
       cancelled: boolean;
       sourcePath?: string;
     } | null>;
+    setLocale?: (locale: string) => void;
   };
 }

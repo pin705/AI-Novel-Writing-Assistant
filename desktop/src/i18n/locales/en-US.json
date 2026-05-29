@@ -1,0 +1,35 @@
+{
+  "splash": {
+    "title": "AI Novel Writing Studio",
+    "subtitle": "Preparing the desktop shell and the bundled local writing engine.",
+    "documentTitle": "AI Novel Writing Studio"
+  },
+  "status": {
+    "starting": "Starting the desktop workspace",
+    "startingDetail": "Preparing the desktop runtime and local workspace.",
+    "appReadyTitle": "Starting the desktop workspace",
+    "appReadyDetail": "Electron is ready. Opening the desktop launch shell.",
+    "splashShownTitle": "Desktop launch shell is visible",
+    "splashShownDetail": "Preparing the desktop runtime and bundled assets.",
+    "startingServerTitle": "Starting the local writing engine",
+    "startingServerDetailAfterRenderer": "The launch shell is visible; waiting for the bundled local service to become ready.",
+    "startingServerDetail": "Bringing up the local desktop service and preparing the user data directory.",
+    "loadingUiTitle": "Loading the desktop workspace",
+    "loadingUiDetail": "The local service is ready; rendering the first workspace screen.",
+    "workspaceReadyTitle": "Desktop workspace is ready",
+    "workspaceReadyDetail": "The launch shell, local service, and workspace interface are all ready.",
+    "mainWindowShownReady": "The main window is now visible.",
+    "mainWindowShownPending": "The main window is visible; the local service is still starting up.",
+    "importingLegacyTitle": "Importing legacy local data",
+    "importingLegacyDetail": "Migrating the legacy web local database into the desktop data directory."
+  },
+  "error": {
+    "startupFailedTitle": "AI Novel Writing Studio failed to start",
+    "startupFailedMessage": "The desktop app was unable to finish initialization.",
+    "startupFailedDetail": "{{errorMessage}}\n\nLog directory:\n{{logDir}}\n\nLog file:\n{{logFilePath}}",
+    "bootstrapErrorTitle": "Desktop startup failed",
+    "openLogs": "Open log directory",
+    "copyLogPath": "Copy log path",
+    "exit": "Exit"
+  }
+}

@@ -32,6 +32,7 @@ import { AutoDirectorFollowUpListPanel } from "./components/AutoDirectorFollowUp
 import { AutoDirectorFollowUpOverviewCards } from "./components/AutoDirectorFollowUpOverview";
 import { reconcileSelectedTaskIds } from "./selectionState";
 import { toast } from "@/components/ui/toast";
+import { useTranslation } from "@/i18n";
 import { resolveInternalNavigationTarget } from "@/lib/internalNavigation";
 import { AUTO_DIRECTOR_MOBILE_CLASSES } from "@/mobile/autoDirector";
 
@@ -88,13 +89,6 @@ function getSelectedSection(items: AutoDirectorFollowUpItem[]): AutoDirectorFoll
   return sections.length === 1 ? sections[0] : null;
 }
 
-function shouldConfirmAction(action: AutoDirectorAction): boolean {
-  if (!action.requiresConfirm) {
-    return false;
-  }
-  return window.confirm(`确认执行“${action.label}”？`);
-}
-
 function formatActionFeedbackMessage(message: string, fallback: string): string {
   const trimmed = message.trim();
   return trimmed || fallback;
@@ -111,8 +105,16 @@ function parseEnumParam<T extends string>(value: string | null, candidates: read
 export default function AutoDirectorFollowUpCenterPage() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
   const [selectedDirectorTaskIds, setSelectedDirectorTaskIds] = useState<string[]>([]);
+
+  const shouldConfirmAction = (action: AutoDirectorAction): boolean => {
+    if (!action.requiresConfirm) {
+      return false;
+    }
+    return window.confirm(t("autoDirectorFollowUps.confirm.execute", { label: action.label }));
+  };
 
   const selectedDirectorTaskId = searchParams.get("directorTaskId")?.trim() || searchParams.get("taskId")?.trim() || "";
   const section = parseEnumParam(searchParams.get("section"), AUTO_DIRECTOR_FOLLOW_UP_SECTIONS);
@@ -246,7 +248,7 @@ export default function AutoDirectorFollowUpCenterPage() {
     }),
     onSuccess: async (response) => {
       await invalidateFollowUps();
-      toast.success(formatActionFeedbackMessage(response.message ?? "", "操作已提交"));
+      toast.success(formatActionFeedbackMessage(response.message ?? "", t("autoDirectorFollowUps.toast.actionSubmitted")));
     },
   });
 
@@ -261,7 +263,7 @@ export default function AutoDirectorFollowUpCenterPage() {
     }),
     onSuccess: async (response) => {
       await invalidateFollowUps();
-      toast.success(formatActionFeedbackMessage(response.message ?? "", "批量操作已提交"));
+      toast.success(formatActionFeedbackMessage(response.message ?? "", t("autoDirectorFollowUps.toast.batchSubmitted")));
       setSelectedDirectorTaskIds([]);
     },
   });
@@ -273,7 +275,7 @@ export default function AutoDirectorFollowUpCenterPage() {
         queryKeys.autoDirectorFollowUps.detail(directorTaskId),
         response,
       );
-      toast.success("校验结果已刷新。");
+      toast.success(t("autoDirectorFollowUps.toast.validationRefreshed"));
     },
   });
 

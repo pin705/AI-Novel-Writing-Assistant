@@ -1,0 +1,35 @@
+{
+  "splash": {
+    "title": "Xưởng Sáng Tác Tiểu Thuyết AI",
+    "subtitle": "Đang chuẩn bị vỏ khởi động và bộ máy viết cục bộ đã đóng gói.",
+    "documentTitle": "Xưởng Sáng Tác Tiểu Thuyết AI"
+  },
+  "status": {
+    "starting": "Đang khởi động không gian làm việc",
+    "startingDetail": "Đang chuẩn bị môi trường chạy và không gian làm việc cục bộ.",
+    "appReadyTitle": "Đang khởi động không gian làm việc",
+    "appReadyDetail": "Electron đã sẵn sàng, đang mở vỏ khởi động.",
+    "splashShownTitle": "Vỏ khởi động đã hiển thị",
+    "splashShownDetail": "Đang chuẩn bị môi trường chạy và tài nguyên đi kèm.",
+    "startingServerTitle": "Đang khởi động bộ máy viết cục bộ",
+    "startingServerDetailAfterRenderer": "Vỏ khởi động đã hiển thị, đang chờ dịch vụ cục bộ sẵn sàng.",
+    "startingServerDetail": "Đang khởi chạy dịch vụ cục bộ và chuẩn bị thư mục dữ liệu người dùng.",
+    "loadingUiTitle": "Đang tải không gian làm việc",
+    "loadingUiDetail": "Dịch vụ cục bộ đã sẵn sàng, đang dựng giao diện đầu tiên.",
+    "workspaceReadyTitle": "Không gian làm việc đã sẵn sàng",
+    "workspaceReadyDetail": "Vỏ khởi động, dịch vụ cục bộ và giao diện đều đã sẵn sàng.",
+    "mainWindowShownReady": "Cửa sổ chính đã hiển thị.",
+    "mainWindowShownPending": "Cửa sổ chính đã hiển thị, dịch vụ cục bộ vẫn đang khởi động.",
+    "importingLegacyTitle": "Đang nhập dữ liệu phiên bản cũ",
+    "importingLegacyDetail": "Đang chuyển cơ sở dữ liệu cục bộ phiên bản web cũ sang thư mục dữ liệu của ứng dụng."
+  },
+  "error": {
+    "startupFailedTitle": "Không thể khởi động Xưởng Sáng Tác Tiểu Thuyết AI",
+    "startupFailedMessage": "Ứng dụng máy tính không thể hoàn tất khởi tạo.",
+    "startupFailedDetail": "{{errorMessage}}\n\nThư mục nhật ký:\n{{logDir}}\n\nTệp nhật ký:\n{{logFilePath}}",
+    "bootstrapErrorTitle": "Khởi động thất bại",
+    "openLogs": "Mở thư mục nhật ký",
+    "copyLogPath": "Sao chép đường dẫn nhật ký",
+    "exit": "Thoát"
+  }
+}

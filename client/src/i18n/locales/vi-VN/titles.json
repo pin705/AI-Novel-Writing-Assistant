@@ -1,0 +1,92 @@
+{
+  "page": {
+    "title": "Xưởng đặt tiêu đề",
+    "description": "Hợp nhất “sinh tiêu đề” và “lưu trữ tiêu đề” thành một module tài sản chính thức. Xưởng phụ trách tạo ra các phương án, còn thư viện phụ trách tái sử dụng và thống kê.",
+    "tabFactory": "Xưởng tiêu đề",
+    "tabLibrary": "Thư viện tiêu đề"
+  },
+  "factory": {
+    "modelSection": "Cấu hình mô hình",
+    "modeNovel": "Sinh theo tiểu thuyết",
+    "modeBrief": "Xưởng tự do",
+    "modeAdapt": "Phỏng theo tiêu đề mẫu",
+    "selectNovel": "Chọn dự án tiểu thuyết",
+    "selectNovelPlaceholder": "Vui lòng chọn dự án",
+    "selectNovelHint": "Tái sử dụng trực tiếp năng lực “sinh tiêu đề theo ngữ cảnh dự án” đã có sẵn, phù hợp với tác phẩm đã định hình tóm tắt và thể loại.",
+    "briefLabel": "Bản tóm tắt sáng tác",
+    "briefPlaceholder": "Mô tả thể loại, điểm bán của nhân vật chính, xung đột, văn phong và kỳ vọng độc giả. Càng cụ thể, tiêu đề càng có dấu ấn riêng.",
+    "genreFilterLabel": "Lọc thể loại",
+    "genreFilterNone": "Không chọn thể loại",
+    "referenceLabel": "Tiêu đề tham khảo",
+    "referencePlaceholder": "Ví dụ: Ta nhặt thuộc tính ở đất hoang",
+    "adaptBriefLabel": "Bản tóm tắt tác phẩm hiện tại",
+    "adaptBriefPlaceholder": "Mô tả thể loại, nhân vật và điểm bán của tác phẩm. Hệ thống sẽ tham khảo nhịp tiêu đề chứ không sao chép nguyên văn.",
+    "countLabel": "Số lượng sinh",
+    "generating": "Đang sinh...",
+    "generate": "Sinh các phương án tiêu đề",
+    "emptyMessage": "Chọn một chế độ xưởng rồi bắt đầu sinh, kết quả sẽ hiện ở đây.",
+    "primaryAction": "Sao chép tiêu đề",
+    "errors": {
+      "selectNovel": "Hãy chọn một dự án tiểu thuyết trước."
+    },
+    "toast": {
+      "generated": "Đã sinh {{count}} phương án tiêu đề.",
+      "saved": "Đã thêm tiêu đề vào thư viện.",
+      "copied": "Đã sao chép tiêu đề vào clipboard."
+    },
+    "saveDescription": {
+      "novel": "Dự án nguồn: {{title}}",
+      "novelFallback": "Dự án chưa đặt tên",
+      "adapt": "Tiêu đề tham khảo: {{reference}}"
+    },
+    "saveKeywords": {
+      "adapt": "Cảm hứng phỏng theo / {{reference}}"
+    }
+  },
+  "library": {
+    "searchLabel": "Tìm kiếm",
+    "searchPlaceholder": "Khớp với tiêu đề, mô tả hoặc từ khoá",
+    "genreLabel": "Thể loại",
+    "genreAll": "Tất cả thể loại",
+    "sortLabel": "Sắp xếp",
+    "sortNewest": "Mới thêm",
+    "sortHot": "Số lần dùng",
+    "sortClickRate": "Tiềm năng click",
+    "loading": "Đang tải thư viện tiêu đề...",
+    "emptyTitle": "Thư viện tiêu đề đang trống",
+    "emptyHint": "Hãy vào xưởng sinh một loạt phương án trước, rồi đưa các tiêu đề đáng tái sử dụng vào đây.",
+    "estimate": "Dự đoán {{value}}",
+    "usedBadge": "Đã dùng {{count}}",
+    "keywordsLine": "Từ khoá: {{value}}",
+    "addedAt": "Thêm vào: {{value}}",
+    "copy": "Sao chép",
+    "markUsed": "Đánh dấu đã dùng",
+    "marking": "Đang cập nhật...",
+    "delete": "Xoá",
+    "deleting": "Đang xoá...",
+    "confirmDelete": "Xác nhận xoá tiêu đề «{{title}}»?",
+    "pagination": "Trang {{page}} / {{totalPages}}, tổng cộng {{total}} mục",
+    "prev": "Trang trước",
+    "next": "Trang sau",
+    "toast": {
+      "deleted": "Đã xoá tiêu đề.",
+      "marked": "Đã cập nhật số lần dùng của tiêu đề.",
+      "copied": "Đã sao chép tiêu đề vào clipboard."
+    }
+  },
+  "suggestion": {
+    "estimate": "Dự đoán {{value}}",
+    "selected": "Đang chọn",
+    "copy": "Sao chép",
+    "save": "Thêm vào thư viện",
+    "saving": "Đang lưu...",
+    "emptyDefault": "Chưa có tiêu đề nào được sinh."
+  },
+  "styles": {
+    "literary": "Chất tự sự",
+    "conflict": "Móc câu xung đột",
+    "suspense": "Hồi hộp",
+    "high_concept": "Ý tưởng cao",
+    "default": "Chiến lược tiêu đề"
+  }
+}

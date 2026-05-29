@@ -11,6 +11,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useTranslation } from "@/i18n";
 import { getStyleProfileOriginLabel, isStarterStyleProfile } from "../writingFormulaV2.shared";
 import WritingFormulaRulesPanel from "./WritingFormulaRulesPanel";
 
@@ -44,6 +45,7 @@ interface WritingFormulaSidebarProps {
 }
 
 export default function WritingFormulaSidebar(props: WritingFormulaSidebarProps) {
+  const { t } = useTranslation();
   const {
     createForm,
     onCreateFormChange,
@@ -132,7 +134,7 @@ export default function WritingFormulaSidebar(props: WritingFormulaSidebarProps)
                       <div className="truncate font-medium text-foreground">{profile.name}</div>
                     </div>
                     <Badge variant="secondary" className="shrink-0">
-                      {getStyleProfileOriginLabel(profile)}
+                      {getStyleProfileOriginLabel(t, profile)}
                     </Badge>
                   </div>
                 </button>

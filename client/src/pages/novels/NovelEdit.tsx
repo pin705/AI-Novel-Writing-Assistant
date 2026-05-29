@@ -50,6 +50,7 @@ import { flattenStoryModeTreeOptions, getStoryModeTree } from "@/api/storyMode";
 import { getWorldList } from "@/api/world";
 import { queryKeys } from "@/api/queryKeys";
 import { toast } from "@/components/ui/toast";
+import { useTranslation } from "@/i18n";
 import { useSSE } from "@/hooks/useSSE";
 import { useDirectorChapterTitleRepair } from "@/hooks/useDirectorChapterTitleRepair";
 import { useLLMStore } from "@/store/llmStore";
@@ -231,6 +232,7 @@ function resolveActiveStructuredOutlineChapterId(snapshot: DirectorTaskSnapshot 
 export default function NovelEdit() {
   const { id = "" } = useParams();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const llm = useLLMStore();
   const queryClient = useQueryClient();
   const {
@@ -726,8 +728,8 @@ export default function NovelEdit() {
   const visibleAutoExecutionScopeLabel = resolveAutoExecutionScopeLabel(visibleDirectorTask);
   const activeAutoExecutionScopeLabel = visibleAutoExecutionScopeLabel;
   const activeChapterTitleWarning = useMemo(
-    () => resolveChapterTitleWarning(displayAutoDirectorTask),
-    [displayAutoDirectorTask],
+    () => resolveChapterTitleWarning(displayAutoDirectorTask, t),
+    [displayAutoDirectorTask, t],
   );
   const directorTaskSnapshotQuery = useQuery({
     queryKey: queryKeys.tasks.directorTaskSnapshot(selectedDirectorTaskId || "none"),

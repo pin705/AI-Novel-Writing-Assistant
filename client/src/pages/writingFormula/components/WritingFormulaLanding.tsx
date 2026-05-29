@@ -2,6 +2,7 @@ import type { KeyboardEvent, ReactNode } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { useTranslation } from "@/i18n";
 import type { LandingProfileItem } from "../writingFormulaLandingItems";
 
 interface WritingFormulaLandingProps {
@@ -65,6 +66,7 @@ function SummaryCard(props: { title: string; summary: string }) {
 }
 
 export default function WritingFormulaLanding(props: WritingFormulaLandingProps) {
+  const { t } = useTranslation();
   const {
     onOpenCreate,
     onSelectProfile,
@@ -118,7 +120,7 @@ export default function WritingFormulaLanding(props: WritingFormulaLandingProps)
               </Badge>
             </div>
             <div className="text-sm leading-6 text-slate-600">
-              {truncateText(profile.summaryLine, 120) || "暂无写法摘要。"}
+              {truncateText(profile.summaryLine, 120) || t("writingFormula.landing.summaryFallback")}
             </div>
             <div className="flex flex-wrap gap-2">
               {profile.tags.slice(0, 4).map((tag) => (
@@ -128,7 +130,7 @@ export default function WritingFormulaLanding(props: WritingFormulaLandingProps)
               ))}
               {profile.recentNovelTitle ? (
                 <Badge variant="secondary" className="h-6 bg-amber-50 text-amber-800">
-                  最近绑定：{profile.recentNovelTitle}
+                  {t("writingFormula.landing.recentBinding", { title: profile.recentNovelTitle })}
                 </Badge>
               ) : null}
             </div>
@@ -144,7 +146,7 @@ export default function WritingFormulaLanding(props: WritingFormulaLandingProps)
                 onEditProfile(profile.id);
               }}
             >
-              编辑设定
+              {t("writingFormula.landing.actions.edit")}
             </Button>
             <Button
               type="button"
@@ -155,7 +157,7 @@ export default function WritingFormulaLanding(props: WritingFormulaLandingProps)
                 onOpenWorkbench(profile.id);
               }}
             >
-              应用与测试
+              {t("writingFormula.landing.actions.workbench")}
             </Button>
             <Button
               type="button"
@@ -166,7 +168,7 @@ export default function WritingFormulaLanding(props: WritingFormulaLandingProps)
                 onUseProfileForClean(profile.id);
               }}
             >
-              去 AI 味
+              {t("writingFormula.landing.actions.clean")}
             </Button>
             <Button
               type="button"
@@ -178,7 +180,7 @@ export default function WritingFormulaLanding(props: WritingFormulaLandingProps)
                 onDeleteProfile(profile.id);
               }}
             >
-              {deletePending ? "删除中..." : "删除"}
+              {deletePending ? t("writingFormula.landing.actions.deleting") : t("writingFormula.landing.actions.delete")}
             </Button>
           </div>
         </div>
@@ -187,8 +189,8 @@ export default function WritingFormulaLanding(props: WritingFormulaLandingProps)
           <div className="mt-4 space-y-4 border-t border-slate-200/80 pt-4">
             <div className="grid gap-4 xl:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)_280px]">
               <DetailPanel
-                title="读感与定位"
-                description="这一列帮助你快速判断这套写法想写成什么感觉，适合先拿来做哪类项目。"
+                title={t("writingFormula.landing.detail.readingFeelTitle")}
+                description={t("writingFormula.landing.detail.readingFeelHint")}
               >
                 <div className="rounded-xl border bg-slate-50/80 p-4 text-sm leading-7 text-slate-700">
                   {profile.description}
@@ -204,7 +206,7 @@ export default function WritingFormulaLanding(props: WritingFormulaLandingProps)
                 ) : null}
                 {profile.sourceContentPreview ? (
                   <div className="rounded-xl border bg-slate-950 px-4 py-4 text-sm leading-7 text-slate-100">
-                    <div className="mb-2 text-xs font-medium uppercase tracking-[0.18em] text-slate-400">原文样本片段</div>
+                    <div className="mb-2 text-xs font-medium uppercase tracking-[0.18em] text-slate-400">{t("writingFormula.landing.detail.sourcePreviewLabel")}</div>
                     <div>{profile.sourceContentPreview}</div>
                   </div>
                 ) : null}

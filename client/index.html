@@ -70,11 +70,53 @@
       <div class="app-startup-shell">
         <div class="app-startup-content">
           <div class="app-startup-spinner" aria-hidden="true"></div>
-          <h1 class="app-startup-title">正在加载创作工作台</h1>
-          <p class="app-startup-copy">系统会在界面和本地创作服务准备好后自动进入。</p>
+          <h1 class="app-startup-title" data-i18n="app.startupTitle">正在加载创作工作台</h1>
+          <p class="app-startup-copy" data-i18n="app.startupCopy">系统会在界面和本地创作服务准备好后自动进入。</p>
         </div>
       </div>
     </div>
+    <script>
+      (function () {
+        var STARTUP_COPY = {
+          "zh-CN": {
+            "app.startupTitle": "正在加载创作工作台",
+            "app.startupCopy": "系统会在界面和本地创作服务准备好后自动进入。",
+            "htmlLang": "zh-CN"
+          },
+          "vi-VN": {
+            "app.startupTitle": "Đang khởi động bàn làm việc",
+            "app.startupCopy": "Hệ thống sẽ tự động vào sau khi giao diện và dịch vụ sáng tác cục bộ sẵn sàng.",
+            "htmlLang": "vi"
+          },
+          "en-US": {
+            "app.startupTitle": "Loading the workspace",
+            "app.startupCopy": "We'll drop you in as soon as the UI and local creation services are ready.",
+            "htmlLang": "en"
+          }
+        };
+        try {
+          var stored = window.localStorage.getItem("ai-novel.locale");
+          var nav = (window.navigator && window.navigator.language || "").toLowerCase();
+          var locale =
+            (stored && STARTUP_COPY[stored] && stored) ||
+            (nav.indexOf("vi") === 0 && "vi-VN") ||
+            (nav.indexOf("zh") === 0 && "zh-CN") ||
+            (nav.indexOf("en") === 0 && "en-US") ||
+            "zh-CN";
+          var dict = STARTUP_COPY[locale];
+          document.documentElement.lang = dict.htmlLang;
+          var nodes = document.querySelectorAll("[data-i18n]");
+          for (var i = 0; i < nodes.length; i++) {
+            var key = nodes[i].getAttribute("data-i18n");
+            if (key && dict[key]) {
+              nodes[i].textContent = dict[key];
+            }
+          }
+        } catch (e) {
+          /* localStorage may be unavailable; fall back to default markup. */
+        }
+      })();
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

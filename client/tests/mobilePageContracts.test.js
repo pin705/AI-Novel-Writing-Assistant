@@ -459,7 +459,7 @@ test("mobile novel workspace keeps step navigation horizontal and recommendation
   assert.match(mobileNovelStepNav, /NOVEL_WORKSPACE_TOOL_TABS/);
   assert.match(mobileNovelStepNav, /mobile-novel-step-nav/);
   assert.match(mobileNovelStepNav, /overflow-x-auto/);
-  assert.match(mobileNovelStepNav, /流程推荐/);
+  assert.match(mobileNovelStepNav, /novels\.mobile\.flowRecommend/);
   assert.match(mobileNovelStepNav, /aria-current/);
 });
 

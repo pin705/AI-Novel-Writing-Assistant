@@ -1,0 +1,539 @@
+{
+  "common": {
+    "title": "创作中枢",
+    "defaultThreadTitle": "新对话",
+    "unboundLabel": "未绑定",
+    "unknown": "未知",
+    "default": "默认",
+    "successLabel": "成功",
+    "failedLabel": "失败",
+    "needsConfirmation": "需要确认"
+  },
+  "page": {
+    "novelLabel": "小说 {{value}}",
+    "worldLabel": "世界观 {{value}}",
+    "taskLabel": "任务 {{value}}",
+    "bookAnalysisLabel": "拆书 {{value}}",
+    "formulaLabel": "公式 {{value}}",
+    "baseCharacterLabel": "角色 {{value}}",
+    "styleProfileLabel": "写法 {{value}}",
+    "knowledgeDocumentsLabel": "知识文档 {{count}} 份",
+    "checkpointLabel": "Checkpoint {{value}}",
+    "draftNoticeTitle": "待完善",
+    "draftNoticeDescription": "当前模块还在开发中，尚未完善；可先用于创作问题诊断、方案讨论和轻量推进。",
+    "createNovelPrompt": "创建一本小说《{{title}}》。",
+    "errors": {
+      "threadNotInitialized": "创作中枢线程尚未初始化。",
+      "missingCheckpoint": "未能匹配到对应的历史检查点，当前消息无法生成新分支。",
+      "savePreflightFailed": "生产前条件保存失败。",
+      "createThreadMessage": "Creative Hub thread list updated."
+    }
+  },
+  "threadList": {
+    "title": "线程列表",
+    "create": "新建线程",
+    "empty": "还没有创作中枢线程。",
+    "status": {
+      "busy": "运行中",
+      "interrupted": "待处理",
+      "error": "异常",
+      "idle": "空闲"
+    },
+    "archive": "归档",
+    "unarchive": "取消归档",
+    "delete": "删除"
+  },
+  "conversation": {
+    "emptyTitle": "创作中枢",
+    "emptyHint": "先把你卡住的创作问题抛进来，我会先帮你判断、拆解，再决定是否进入执行。",
+    "composerPlaceholder": "描述你现在的作品问题、犹豫点或想推进的一轮创作；Enter 发送，Shift+Enter 换行。",
+    "send": "发送",
+    "stop": "停止",
+    "quickActions": {
+      "setDirection": "给我设定方向",
+      "diagnose": "先做诊断",
+      "askPromise": "要故事承诺",
+      "converge": "收敛初始化",
+      "setDirectionPrompt": "基于当前信息，给我 3 套这本书的一句话设定方向。",
+      "diagnosePrompt": "帮我判断当前设定最大的短板是什么，并告诉我先补哪一块。",
+      "askPromisePrompt": "给我 3 套更有吸引力的故事承诺，要求气质差异明显。",
+      "convergePrompt": "别急着执行，先根据当前信息帮我收敛成一个可生产的初始化方案。"
+    }
+  },
+  "message": {
+    "previousBranch": "上一支",
+    "nextBranch": "下一支",
+    "edit": "编辑",
+    "regenerate": "重新生成",
+    "editComposerPlaceholder": "编辑这条消息后生成新的分支",
+    "cancel": "取消",
+    "sendNewBranch": "发送新分支",
+    "reasoningLabel": "推理过程"
+  },
+  "inlineTool": {
+    "approval": {
+      "defaultTitle": "等待审批",
+      "defaultSummary": "当前高影响操作等待确认。",
+      "unknownTarget": "未知目标",
+      "notePlaceholder": "审批备注（可选）",
+      "approve": "同意并继续",
+      "reject": "拒绝"
+    },
+    "generic": {
+      "title": "工具调用 · {{toolName}}",
+      "showArgs": "查看参数",
+      "hideArgs": "收起参数",
+      "argsCollapsed": "请求参数默认已收起，点击“查看参数”展开。",
+      "fallbackSummary": "工具已返回结果。"
+    }
+  },
+  "toolResult": {
+    "expand": "展开详情",
+    "collapse": "收起详情",
+    "collapsedHint": "默认已收起详细执行结果与完整摘要，点击“展开详情”查看。",
+    "fallbackSummary": "工具已返回结果。",
+    "parsedBadge": "已解析结果",
+    "unnamedItem": "未命名条目",
+    "novelStatus": {
+      "in_progress": "在写中",
+      "not_started": "未开始",
+      "completed": "已完成",
+      "rework": "返工中",
+      "blocked": "已阻塞"
+    },
+    "novels": {
+      "totalFound": "已发现 {{total}} 本小说",
+      "totalFoundShown": "已发现 {{total}} 本小说，当前展示前 {{shown}} 本",
+      "chapterCount": "{{count}} 章",
+      "chapterUnknown": "章节未知",
+      "setAsWorkspace": "设为当前工作区",
+      "setAsWorkspacePrompt": "把《{{title}}》设为当前工作区"
+    },
+    "workspace": {
+      "createdMessage": "新小说已创建并绑定到当前线程。",
+      "selectedMessage": "当前线程已切换到该小说工作区。",
+      "currentChapterCount": "当前章节数：{{count}}",
+      "viewProgress": "查看当前进度",
+      "designFirstChapter": "开始设计第一章",
+      "viewFirstChapters": "查看前两章",
+      "viewProgressPrompt": "这本书当前写到哪一章",
+      "designFirstChapterPrompt": "为这本书规划第一章",
+      "viewFirstChaptersPrompt": "前两章都写了什么",
+      "untitledNovel": "未命名小说"
+    },
+    "world": {
+      "boundMessage": "已绑定世界观《{{world}}》。",
+      "untitledWorld": "未命名世界观",
+      "currentNovelFallback": "当前小说",
+      "viewRules": "查看世界观约束",
+      "checkConflicts": "检查世界观冲突",
+      "viewRulesPrompt": "查看当前小说的世界观规则",
+      "checkConflictsPrompt": "检查当前小说和世界观是否存在冲突",
+      "generatedTitle": "世界观已生成",
+      "generatedDescription": "已生成世界观《{{world}}》。"
+    },
+    "production": {
+      "continueGeneration": "继续整本生成",
+      "viewProgress": "查看整本进度",
+      "viewBlockers": "查看阻塞",
+      "viewTaskStatus": "查看任务状态",
+      "continueGenerationPrompt": "继续生成当前小说",
+      "viewProgressPrompt": "整本生成到哪一步了",
+      "viewBlockersPrompt": "为什么整本生成没有启动",
+      "viewTaskStatusPrompt": "列出当前系统任务状态",
+      "viewCharacterStatus": "查看角色状态",
+      "viewCharacterStatusPrompt": "查看当前小说角色状态",
+      "syncChapterDirectory": "同步章节目录",
+      "startGeneration": "启动整本生成",
+      "currentNovelFallback": "当前小说",
+      "currentStage": "当前阶段：{{value}}",
+      "chapterCatalog": "章节目录：{{chapters}} 章",
+      "chapterCatalogWithTarget": "章节目录：{{chapters}}/{{target}} 章",
+      "pipelineStatus": "整本写作：{{value}}",
+      "pipelineStatusFallback": "未启动",
+      "failureSummary": "失败摘要：{{value}}",
+      "stageLabel": "阶段",
+      "stageStatus": "状态：{{value}}",
+      "unknownStage": "未知阶段",
+      "characterGeneratedTitle": "核心角色已生成",
+      "characterGeneratedDescription": "已生成 {{count}} 个核心角色。",
+      "storyBibleGeneratedTitle": "小说圣经已生成",
+      "storyBibleGeneratedFallback": "当前小说圣经已生成。",
+      "outlineGeneratedTitle": "发展走向已生成",
+      "outlineGeneratedFallback": "当前小说发展走向已生成。",
+      "structuredOutlineTitle": "结构化大纲已生成",
+      "structuredOutlineWithCount": "已生成 {{count}} 章结构化大纲。",
+      "structuredOutlineFallback": "当前小说结构化大纲已生成。",
+      "chaptersSyncedTitle": "章节目录已同步",
+      "chaptersSyncedWithCount": "已同步 {{count}} 个章节目录。",
+      "chaptersSyncedFallback": "已同步章节目录。"
+    },
+    "pipeline": {
+      "previewTitle": "整本写作预览",
+      "queueTitle": "整本写作任务",
+      "scopeSingleChapter": "第 {{value}} 章",
+      "scopeChapterRange": "第 {{start}} 到第 {{end}} 章",
+      "scopeFallback": "当前章节范围",
+      "previewDescription": "{{scope}} 的整本写作预览已完成，当前可进入审批或继续诊断。",
+      "queueDescriptionWithJob": "{{scope}} 的整本写作任务已启动（任务 {{jobId}}）。",
+      "queueDescription": "{{scope}} 的整本写作任务已启动。"
+    },
+    "diagnostic": {
+      "detailsPrefix": "详情：{{value}}",
+      "advicePrefix": "建议：{{value}}",
+      "continueDiagnose": "继续诊断",
+      "continueDiagnosePrompt": "继续解释失败原因和恢复建议"
+    },
+    "list": {
+      "empty": "当前没有可展示的结果。",
+      "statusPrefix": "状态：{{value}}",
+      "refine": "继续筛选",
+      "refinePrompt": "继续细化这个列表结果"
+    },
+    "chapter": {
+      "chapterOrder": "第{{order}}章",
+      "fallbackTitle": "章节内容",
+      "titleSuffix": "《{{title}}》",
+      "empty": "当前没有可显示的章节内容。",
+      "summarize": "继续总结",
+      "checkConflict": "检查冲突",
+      "summarizePrompt": "总结这一段内容的关键剧情",
+      "checkConflictPrompt": "检查这一章是否和世界观或前文冲突"
+    }
+  },
+  "activityFeed": {
+    "statusLabel": {
+      "running": "运行中",
+      "queued": "排队中",
+      "waiting_approval": "等待审批",
+      "succeeded": "已完成",
+      "failed": "失败",
+      "cancelled": "已取消",
+      "interrupted": "待确认"
+    },
+    "runStatusTitle": "运行状态",
+    "runStatusFallback": "当前状态：{{status}}",
+    "toolCallTitle": "调用工具 · {{toolName}}",
+    "toolInputFallback": "正在准备工具输入。",
+    "toolResultSuccessTitle": "{{toolName}} 执行成功",
+    "toolResultFailedTitle": "{{toolName}} 执行失败",
+    "toolOutputFallback": "工具返回了空结果。",
+    "interruptTitleFallback": "等待审批",
+    "approvedTitle": "审批已通过",
+    "rejectedTitle": "审批已拒绝",
+    "approvalRecorded": "当前审批动作已记录。",
+    "errorTitle": "运行异常",
+    "reasoningTitle": "推理更新",
+    "plannerTitle": "意图识别",
+    "plannerSummary": "本次请求被识别为 {{intent}}，来源 {{source}}",
+    "plannerConfidence": "置信度 {{value}}",
+    "checkpointTitle": "检查点已保存",
+    "checkpointSummary": "Checkpoint {{value}} 已写回线程历史。",
+    "fallbackEventTitle": "系统事件",
+    "plannerSourceLabel": "来源",
+    "plannerIntentLabel": "意图",
+    "plannerConfidenceLabel": "置信度"
+  },
+  "debugTrace": {
+    "title": "运行细节",
+    "runLabel": "Run {{value}}",
+    "currentRun": "当前回合调试信息",
+    "entryCount": "{{count}} 条",
+    "expand": "展开细节",
+    "collapse": "收起细节",
+    "empty": "当前回合还没有可展示的调试信息。",
+    "collapsedNote": "默认已折叠底层运行、工具与 checkpoint 细节；展开后可查看完整调试轨迹.",
+    "kind": {
+      "runStatus": "运行状态",
+      "toolCall": "工具调用",
+      "toolCompleted": "工具完成",
+      "toolFailed": "工具失败",
+      "approval": "审批结果",
+      "runError": "运行异常",
+      "reasoning": "推理更新",
+      "planner": "意图识别",
+      "checkpoint": "Checkpoint"
+    },
+    "entry": {
+      "runStatusTitle": "运行状态",
+      "runStatusFallback": "当前状态：{{status}}",
+      "toolInputFallback": "正在准备工具输入。",
+      "toolOutputFallback": "工具返回了空结果。",
+      "approvedTitle": "审批通过",
+      "rejectedTitle": "审批拒绝",
+      "approvalNoteFallback": "当前审批动作已记录。",
+      "errorTitle": "运行异常",
+      "reasoningTitle": "推理更新",
+      "plannerTitle": "意图识别",
+      "plannerSummary": "来源：{{source}}；意图：{{intent}}",
+      "confidence": "置信度 {{value}}",
+      "checkpointTitle": "检查点已写回",
+      "checkpointSummary": "Checkpoint {{value}} 已写回线程历史。"
+    }
+  },
+  "turnSummary": {
+    "title": "创作推进摘要",
+    "currentStage": "当前阶段：{{value}}",
+    "status": {
+      "succeeded": "已完成",
+      "interrupted": "待确认",
+      "failed": "失败",
+      "cancelled": "已取消",
+      "running": "进行中"
+    },
+    "intent": "本轮判断",
+    "action": "本轮推进",
+    "impact": "已确认变化",
+    "next": "建议下一轮",
+    "continueAlongSuggestion": "沿这个方向继续"
+  },
+  "novelSetup": {
+    "title": "新书初始化",
+    "stage": {
+      "readyForProduction": "可进入生产",
+      "readyForPlanning": "可进入规划",
+      "default": "初始化中"
+    },
+    "progressLabel": "已就绪 {{completed}}/{{total}} 项",
+    "progressFormat": "{{percent}}%",
+    "progressBadge": "progress",
+    "checklist": {
+      "requiredForProduction": "生产前确认",
+      "statusReady": "ready",
+      "statusPartial": "partial",
+      "statusMissing": "missing",
+      "currentPrefix": "当前：{{value}}",
+      "fillThis": "补这项",
+      "giveAlternatives": "给我备选"
+    },
+    "pendingHeading": "生产前待确认",
+    "pendingList": "{{names}}",
+    "pendingEnding": " 等",
+    "pendingNamesSeparator": "、",
+    "generateChecklist": "生成确认清单",
+    "generateChecklistPrompt": "总结当前小说进入整本生产前仍需确认的条件，并按优先级给出补齐顺序。",
+    "batchAlternatives": "批量给我备选",
+    "batchAlternativesPrompt": "根据当前小说信息，为生产前缺失的关键条件各给出 3 个备选答案，方便我逐项选择。",
+    "nextQuestionHeading": "下一问",
+    "continueGuided": "按引导继续",
+    "viewSummary": "查看初始化摘要",
+    "viewSummaryPrompt": "总结当前这本书的初始化完成度，并告诉我还缺哪些关键信息。"
+  },
+  "sidebar": {
+    "workspaceTitle": "创作工作区",
+    "currentFocus": "当前焦点",
+    "unnamedThread": "未命名线程",
+    "resourceBindings": "资源绑定",
+    "currentNovel": "当前小说",
+    "unboundNovel": "未绑定小说",
+    "newNovelPlaceholder": "输入新小说标题",
+    "listNovels": "查看小说",
+    "listNovelsPrompt": "列出当前可用的小说工作区",
+    "createAndAttach": "创建并接入",
+    "chapter": "章节",
+    "world": "世界观",
+    "task": "任务",
+    "bookAnalysis": "拆书分析",
+    "formula": "写作公式",
+    "baseCharacter": "基础角色",
+    "knowledgeDocuments": "知识文档：{{count}} 份",
+    "thread": {
+      "status": {
+        "busy": "执行中",
+        "interrupted": "待处理",
+        "error": "异常",
+        "idle": "空闲",
+        "uninitialized": "未初始化"
+      }
+    },
+    "turnStatus": {
+      "succeeded": "已完成",
+      "interrupted": "待确认",
+      "failed": "失败",
+      "cancelled": "已取消",
+      "running": "进行中"
+    },
+    "focus": {
+      "novelSetupInProgress": "当前正在补齐《{{title}}》的初始信息。",
+      "fallback": "绑定作品或直接发起一个创作目标后，中枢会围绕当前线程持续推进。"
+    },
+    "stageFallback": {
+      "setupCompleted": "初始化完成",
+      "setupPendingPlanning": "初始化待规划",
+      "setupInProgress": "初始化中",
+      "notStarted": "未开始"
+    },
+    "blocker": {
+      "title": "当前阻塞",
+      "risk": "当前风险",
+      "focus": "当前关注点",
+      "status": "当前状态",
+      "details": {
+        "waitingApproval": "等待确认: {{title}}",
+        "targetType": "目标类型: {{value}}",
+        "targetId": "目标对象: {{value}}",
+        "errorCode": "错误码: {{value}}",
+        "recoveryHint": "恢复建议: {{value}}",
+        "currentStage": "当前阶段: {{value}}",
+        "stage": "阶段: {{value}}",
+        "status": "状态: {{value}}",
+        "nextSuggestion": "建议下一步: {{value}}"
+      },
+      "actions": {
+        "viewPending": "查看待确认项",
+        "viewPendingPrompt": "总结当前待确认的创作决策，并说明推荐处理方式",
+        "generateRecovery": "生成恢复方案",
+        "generateRecoveryPrompt": "分析当前失败原因并给出恢复步骤",
+        "handleBlocker": "处理当前阻塞",
+        "handleBlockerPrompt": "分析当前生产阻塞并继续推进",
+        "followSuggestion": "按建议继续"
+      },
+      "summary": {
+        "noBlocker": "当前没有需要立即处理的阻塞项，可以继续推进创作。"
+      }
+    },
+    "progress": {
+      "title": "当前推进",
+      "actionDone": "已执行动作",
+      "impact": "影响与变化",
+      "nextStep": "建议下一步",
+      "followSuggestion": "按建议继续",
+      "empty": "当前线程还没有完成的回合摘要。发起一次创作请求后，这里会显示本轮推进和下一步建议。"
+    },
+    "production": {
+      "title": "创作阶段",
+      "currentStage": "当前阶段",
+      "chapterProgress": "章节进度",
+      "assetCompletion": "资产完成",
+      "pipelineStatus": "生产流水线",
+      "pipelineStatusFallback": "未启动",
+      "empty": "当前线程还没有整本生产状态。选择一本小说并发起整本创作后，这里会显示阶段与进度。"
+    },
+    "debug": {
+      "title": "调试信息",
+      "runtimeDetails": "运行细节显示",
+      "currentRuntime": "当前默认",
+      "collapsed": "折叠",
+      "expanded": "展开",
+      "runtimeDetailsContext": "{{state}}消息内的运行细节",
+      "switchToExpand": "切换为默认展开",
+      "switchToCollapse": "切换为默认折叠",
+      "threadState": "线程状态",
+      "threadId": "线程 ID",
+      "threadStatusLabel": "线程状态",
+      "latestRun": "最新 Run",
+      "currentCheckpoint": "当前 Checkpoint",
+      "modelRouting": "模型路由",
+      "provider": "Provider",
+      "model": "Model",
+      "temperature": "Temperature",
+      "maxTokens": "Max tokens",
+      "default": "默认",
+      "recentTurn": "最近回合",
+      "turnStatusLabel": "回合状态",
+      "turnStage": "回合阶段",
+      "summaryCheckpoint": "摘要 Checkpoint"
+    }
+  },
+  "productionStarter": {
+    "title": "整本生产",
+    "currentNovelContinue": "当前将继续生产《{{title}}》。",
+    "currentNovelFallback": "当前小说",
+    "globalMode": "当前处于全局模式，可直接创建新书并启动整本生产。",
+    "hint": "建议先确认：题材、风格、视角、节奏、章长、AI 自由度。条件越完整，整本生产偏差越小。",
+    "novelTitlePlaceholder": "小说标题",
+    "descriptionPlaceholder": "简介 / 核心设定",
+    "genrePlaceholder": "题材类型，例如：东方玄幻 / 都市悬疑",
+    "styleTonePlaceholder": "风格基调，例如：冷峻压抑 / 轻快热血",
+    "narrativePovPlaceholder": "叙事视角",
+    "pacePlaceholder": "推进节奏",
+    "projectModePlaceholder": "协作模式",
+    "emotionPlaceholder": "情绪强度",
+    "aiFreedomPlaceholder": "AI 自由度",
+    "narrativePov": {
+      "firstPerson": "第一人称",
+      "thirdPerson": "第三人称",
+      "mixed": "混合视角"
+    },
+    "pace": {
+      "slow": "慢节奏",
+      "balanced": "均衡节奏",
+      "fast": "快节奏"
+    },
+    "projectMode": {
+      "aiLed": "AI 主导",
+      "coPilot": "人机协作",
+      "draftMode": "草稿优先",
+      "autoPipeline": "自动流水线"
+    },
+    "level": {
+      "low": "低",
+      "medium": "中",
+      "high": "高"
+    },
+    "targetChapterPlaceholder": "目标章节数",
+    "defaultChapterLengthPlaceholder": "默认章长（字）",
+    "worldTypePlaceholder": "可选世界观类型",
+    "submitting": "处理中...",
+    "submitContinue": "继续整本生产",
+    "submitStart": "启动整本生产",
+    "viewProgress": "查看进度",
+    "viewProgressPrompt": "整本生成到哪一步了",
+    "viewBlockers": "查看阻塞",
+    "viewBlockersPrompt": "为什么整本生成没有启动",
+    "generateAlternatives": "生成备选",
+    "generateAlternativesPrompt": "基于当前小说信息，为生产前的题材、风格、视角、节奏、章长和 AI 自由度各给出 3 个备选答案。",
+    "prompt": {
+      "continueHeader": "继续生成当前小说。目标章节数：{{count}}。",
+      "createHeader": "创建一本{{count}}章小说《{{title}}》，并开始整本生成。",
+      "description": "补充设定：{{value}}。",
+      "descriptionCreate": "简介：{{value}}。",
+      "genre": "题材偏好：{{value}}。",
+      "genreCreate": "题材：{{value}}。",
+      "styleTone": "风格基调：{{value}}。",
+      "narrativePov": "叙事视角：{{value}}。",
+      "pace": "推进节奏：{{value}}。",
+      "projectMode": "协作模式：{{value}}。",
+      "emotionIntensity": "情绪强度：{{value}}。",
+      "aiFreedom": "AI 自由度：{{value}}。",
+      "chapterLength": "默认章长：约 {{value}} 字。",
+      "worldType": "世界观类型偏好：{{value}}。",
+      "worldTypeCreate": "世界观类型：{{value}}。"
+    }
+  },
+  "plannerLabels": {
+    "intent": {
+      "social_opening": "轻度开场",
+      "list_novels": "列出小说",
+      "list_worlds": "列出世界观",
+      "query_task_status": "查询任务状态",
+      "create_novel": "创建小说",
+      "select_novel_workspace": "切换小说工作区",
+      "bind_world_to_novel": "绑定世界观到小说",
+      "unbind_world_from_novel": "解除小说世界观绑定",
+      "produce_novel": "整本生产",
+      "query_novel_production_status": "查询整本生产状态",
+      "query_novel_title": "查询小说标题",
+      "query_chapter_content": "查询章节内容",
+      "query_progress": "查询创作进度",
+      "inspect_failure_reason": "诊断失败原因",
+      "write_chapter": "写作章节",
+      "rewrite_chapter": "重写章节",
+      "save_chapter_draft": "保存章节草稿",
+      "start_pipeline": "启动流水线",
+      "inspect_characters": "查看角色规划",
+      "inspect_timeline": "查看时间线",
+      "inspect_world": "查看世界观",
+      "search_knowledge": "检索知识库",
+      "ideate_novel_setup": "生成设定备选",
+      "general_chat": "一般对话",
+      "unknown": "未识别意图",
+      "unmapped": "未映射意图"
+    },
+    "source": {
+      "llm": "大模型识别",
+      "unknown": "未知来源",
+      "unmapped": "未映射来源"
+    }
+  }
+}

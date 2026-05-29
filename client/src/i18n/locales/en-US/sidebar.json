@@ -1,0 +1,29 @@
+{
+  "expand": "Expand sidebar",
+  "collapse": "Collapse sidebar",
+  "groups": {
+    "creation": "Creation",
+    "assets": "Assets",
+    "system": "System"
+  },
+  "items": {
+    "home": "Home",
+    "help": "Getting started",
+    "novels": "Novels",
+    "creativeHub": "Creative hub",
+    "bookAnalysis": "Book analysis",
+    "tasks": "Task center",
+    "autoDirectorFollowUps": "Director follow-ups",
+    "genres": "Genre library",
+    "storyModes": "Story modes",
+    "titles": "Title studio",
+    "knowledge": "Knowledge base",
+    "worlds": "Worlds",
+    "writingFormula": "Style engine",
+    "antiAiRules": "Anti-AI rules",
+    "baseCharacters": "Character library",
+    "promptWorkbench": "Prompt workbench",
+    "modelRoutes": "Model routes",
+    "settings": "System settings"
+  }
+}

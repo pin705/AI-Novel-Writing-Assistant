@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { Character } from "@ai-novel/shared/types/novel";
 import type { LLMProvider } from "@ai-novel/shared/types/llm";
+import { useTranslation } from "@/i18n";
 import CharacterCastOptionsSection from "./CharacterCastOptionsSection";
 import CharacterDynamicsSection from "./CharacterDynamicsSection";
 import CollapsibleSummary from "./CollapsibleSummary";
@@ -28,6 +29,7 @@ export default function CharacterDiagnosticsSection(props: CharacterDiagnosticsS
     defaultOpen = true,
   } = props;
 
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
   useEffect(() => {
@@ -42,8 +44,8 @@ export default function CharacterDiagnosticsSection(props: CharacterDiagnosticsS
     >
       <summary className="cursor-pointer list-none">
         <CollapsibleSummary
-          title="角色阵容与关系诊断"
-          description="这些内容更适合在需要补位、查缺口或梳理关系时再展开。日常编辑先看下方角色资产工作台。"
+          title={t("novels.characterDiagnostics.title")}
+          description={t("novels.characterDiagnostics.description")}
         />
       </summary>
 

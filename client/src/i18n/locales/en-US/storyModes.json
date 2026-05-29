@@ -1,0 +1,99 @@
+{
+  "page": {
+    "title": "Progression mode library",
+    "description": "Curate your work's progression modes here — e.g. system-driven, invincible MC, slice-of-life cultivation, healing slice-of-life. It answers \"what keeps this book moving and paying off\" and feeds as a hard constraint into later planning and generation.",
+    "totalCount": "Current progression modes: {{count}}",
+    "createRoot": "Create progression mode tree",
+    "loadingTree": "Loading progression mode tree...",
+    "emptyTitle": "No progression modes yet",
+    "emptyDescription": "You can hand-build a root mode, or let AI draft a structured starter for you.",
+    "startCreating": "Start creating"
+  },
+  "toast": {
+    "created": "Progression mode created.",
+    "createdChildren": "Created {{count}} child progression modes in bulk.",
+    "updated": "Progression mode updated.",
+    "deleted": "Progression mode deleted.",
+    "childCandidatesGenerated": "AI drafted {{count}} child progression mode candidates.",
+    "treeGenerated": "AI progression mode tree draft is ready."
+  },
+  "confirm": {
+    "deleteWithDescendants": "Delete progression mode \"{{name}}\"? This also removes its {{count}} sub-modes and cannot be undone.",
+    "deleteSingle": "Delete progression mode \"{{name}}\"? This cannot be undone."
+  },
+  "errors": {
+    "missingParent": "Parent progression mode no longer exists.",
+    "selectChildCandidate": "Please pick at least one child candidate.",
+    "missingStoryMode": "Progression mode no longer exists."
+  },
+  "createDialog": {
+    "titleChild": "Add child progression mode",
+    "titleRoot": "Create progression mode",
+    "descriptionChild": "Adds a child under the chosen parent. You can either fill it in manually or let AI draft multiple child candidates based on the parent and its existing siblings, then bulk-save your picks.",
+    "descriptionRoot": "Pick the mount point first, then fill in the profile manually or let AI draft a two-level tree.",
+    "mountLabel": "Current mount point",
+    "rootMountLabel": "Create as a root progression mode",
+    "aiSectionTitleChild": "AI child draft generation",
+    "aiSectionTitleRoot": "AI draft generation",
+    "aiHintChild": "AI will produce one or more child node drafts based on the parent and existing siblings — it will not regenerate the whole tree. Direction prompt is optional. Profile structure is still validated before saving.",
+    "aiHintRoot": "AI returns an editable progression mode tree draft. Profile structure is still validated before saving.",
+    "derivationCountLabel": "Number of variants",
+    "derivationOption": "{{count}}",
+    "generatingPlaceholderChild": "Optional: nudge the direction you want for the child. Leave blank to let AI derive purely from the parent and existing siblings.",
+    "generatingPlaceholderRoot": "Describe the progression mode tree direction you want to generate.",
+    "generating": "Generating...",
+    "generateChild": "Generate child draft",
+    "generateRoot": "Generate progression mode draft",
+    "resetDraft": "Reset draft",
+    "candidatesTitle": "Generated child candidates",
+    "candidatesCount": "Selected {{selected}} / {{total}}",
+    "candidatesHint": "Tick to bulk-save; click a candidate card to load it into the form below for individual editing.",
+    "candidateCurrent": "Editing now",
+    "candidateLabel": "Candidate {{index}}",
+    "nameLabel": "Name",
+    "descriptionLabel": "Description",
+    "templateLabel": "Manual template addition",
+    "cancel": "Cancel",
+    "savingBatch": "Bulk saving...",
+    "saveBatch": "Bulk save selected children ({{count}})",
+    "saving": "Saving...",
+    "saveChild": "Save current child",
+    "saveRoot": "Save progression mode"
+  },
+  "editDialog": {
+    "title": "Edit progression mode",
+    "description": "Adjust name, description, template and profile. The two-level tree constraint still applies.",
+    "currentParent": "Current parent: {{value}}",
+    "rootParent": "Root node",
+    "notFoundParent": "Not found",
+    "nameLabel": "Name",
+    "descriptionLabel": "Description",
+    "templateLabel": "Manual template addition",
+    "cancel": "Cancel",
+    "saving": "Saving...",
+    "save": "Save changes"
+  },
+  "treeCard": {
+    "novelBadge": "Novels {{count}}",
+    "childBadge": "Children {{count}}",
+    "coreDriveLine": "Core drive: {{value}}",
+    "addChild": "Add child",
+    "edit": "Edit",
+    "delete": "Delete",
+    "deleting": "Deleting...",
+    "deleteBlockedTitle": "Unbind novels referencing this mode or its children before deleting."
+  },
+  "profile": {
+    "coreDrive": "Core drive",
+    "readerReward": "Reader reward",
+    "progressionUnits": "Per-chapter progression units",
+    "allowedConflictForms": "Allowed conflict forms",
+    "forbiddenConflictForms": "Forbidden conflict forms",
+    "conflictCeiling": "Conflict ceiling",
+    "resolutionStyle": "Resolution style",
+    "chapterUnit": "Chapter granularity",
+    "volumeReward": "End-of-volume reward",
+    "mandatorySignals": "Must-include signals",
+    "antiSignals": "Must-avoid drift signals"
+  }
+}

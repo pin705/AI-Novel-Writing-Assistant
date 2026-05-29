@@ -1,0 +1,539 @@
+{
+  "common": {
+    "title": "Creative Hub",
+    "defaultThreadTitle": "New conversation",
+    "unboundLabel": "Unbound",
+    "unknown": "Unknown",
+    "default": "Default",
+    "successLabel": "Success",
+    "failedLabel": "Failed",
+    "needsConfirmation": "Needs confirmation"
+  },
+  "page": {
+    "novelLabel": "Novel {{value}}",
+    "worldLabel": "World {{value}}",
+    "taskLabel": "Task {{value}}",
+    "bookAnalysisLabel": "Analysis {{value}}",
+    "formulaLabel": "Formula {{value}}",
+    "baseCharacterLabel": "Character {{value}}",
+    "styleProfileLabel": "Style {{value}}",
+    "knowledgeDocumentsLabel": "{{count}} knowledge docs",
+    "checkpointLabel": "Checkpoint {{value}}",
+    "draftNoticeTitle": "Work in progress",
+    "draftNoticeDescription": "This module is still under development. For now, use it for diagnosing creative blockers, discussing options, and gentle nudges forward.",
+    "createNovelPrompt": "Create a novel titled \"{{title}}\".",
+    "errors": {
+      "threadNotInitialized": "Creative Hub thread has not been initialized.",
+      "missingCheckpoint": "No matching checkpoint was found — cannot branch from this message.",
+      "savePreflightFailed": "Saving the pre-production settings failed.",
+      "createThreadMessage": "Creative Hub thread list updated."
+    }
+  },
+  "threadList": {
+    "title": "Threads",
+    "create": "New thread",
+    "empty": "No Creative Hub threads yet.",
+    "status": {
+      "busy": "Running",
+      "interrupted": "Needs attention",
+      "error": "Error",
+      "idle": "Idle"
+    },
+    "archive": "Archive",
+    "unarchive": "Unarchive",
+    "delete": "Delete"
+  },
+  "conversation": {
+    "emptyTitle": "Creative Hub",
+    "emptyHint": "Toss in whatever creative problem you're stuck on. I'll help you diagnose and break it down before deciding whether to execute.",
+    "composerPlaceholder": "Describe the work problem, hesitation, or creative round you want to push. Enter to send, Shift+Enter for a new line.",
+    "send": "Send",
+    "stop": "Stop",
+    "quickActions": {
+      "setDirection": "Give me a direction",
+      "diagnose": "Run a diagnosis",
+      "askPromise": "I need a story promise",
+      "converge": "Converge to setup",
+      "setDirectionPrompt": "Based on what we know, give me 3 one-sentence directions for this book.",
+      "diagnosePrompt": "Tell me the biggest gap in the current setup and which part I should patch first.",
+      "askPromisePrompt": "Give me 3 more compelling story promises with clearly different tones.",
+      "convergePrompt": "Don't execute yet — converge what we have into one production-ready setup proposal."
+    }
+  },
+  "message": {
+    "previousBranch": "Prev branch",
+    "nextBranch": "Next branch",
+    "edit": "Edit",
+    "regenerate": "Regenerate",
+    "editComposerPlaceholder": "Edit this message to generate a new branch",
+    "cancel": "Cancel",
+    "sendNewBranch": "Send new branch",
+    "reasoningLabel": "Reasoning"
+  },
+  "inlineTool": {
+    "approval": {
+      "defaultTitle": "Pending approval",
+      "defaultSummary": "This high-impact action is waiting for confirmation.",
+      "unknownTarget": "Unknown target",
+      "notePlaceholder": "Approval note (optional)",
+      "approve": "Approve and continue",
+      "reject": "Reject"
+    },
+    "generic": {
+      "title": "Tool call · {{toolName}}",
+      "showArgs": "Show args",
+      "hideArgs": "Hide args",
+      "argsCollapsed": "Args are hidden by default — click \"Show args\" to expand.",
+      "fallbackSummary": "Tool returned a result."
+    }
+  },
+  "toolResult": {
+    "expand": "Show details",
+    "collapse": "Hide details",
+    "collapsedHint": "Detailed execution output and full summary are hidden by default — click \"Show details\" to view.",
+    "fallbackSummary": "Tool returned a result.",
+    "parsedBadge": "Parsed",
+    "unnamedItem": "Untitled item",
+    "novelStatus": {
+      "in_progress": "Writing",
+      "not_started": "Not started",
+      "completed": "Completed",
+      "rework": "Reworking",
+      "blocked": "Blocked"
+    },
+    "novels": {
+      "totalFound": "Found {{total}} novels",
+      "totalFoundShown": "Found {{total}} novels — showing the first {{shown}}",
+      "chapterCount": "{{count}} chapters",
+      "chapterUnknown": "Chapter count unknown",
+      "setAsWorkspace": "Set as current workspace",
+      "setAsWorkspacePrompt": "Set \"{{title}}\" as the current workspace"
+    },
+    "workspace": {
+      "createdMessage": "New novel created and bound to this thread.",
+      "selectedMessage": "Thread switched to this novel's workspace.",
+      "currentChapterCount": "Current chapter count: {{count}}",
+      "viewProgress": "View current progress",
+      "designFirstChapter": "Plan chapter 1",
+      "viewFirstChapters": "Review first two chapters",
+      "viewProgressPrompt": "Which chapter is this book up to?",
+      "designFirstChapterPrompt": "Plan chapter 1 for this book",
+      "viewFirstChaptersPrompt": "What happens in the first two chapters?",
+      "untitledNovel": "Untitled novel"
+    },
+    "world": {
+      "boundMessage": "Bound to world \"{{world}}\".",
+      "untitledWorld": "Untitled world",
+      "currentNovelFallback": "Current novel",
+      "viewRules": "View world rules",
+      "checkConflicts": "Check world conflicts",
+      "viewRulesPrompt": "Show the world rules for the current novel",
+      "checkConflictsPrompt": "Check whether the current novel and its world have any conflicts",
+      "generatedTitle": "World generated",
+      "generatedDescription": "Generated world \"{{world}}\"."
+    },
+    "production": {
+      "continueGeneration": "Continue whole-book generation",
+      "viewProgress": "View whole-book progress",
+      "viewBlockers": "View blockers",
+      "viewTaskStatus": "View task status",
+      "continueGenerationPrompt": "Continue generating the current novel",
+      "viewProgressPrompt": "Where is whole-book generation right now?",
+      "viewBlockersPrompt": "Why hasn't whole-book generation started?",
+      "viewTaskStatusPrompt": "List the current system task statuses",
+      "viewCharacterStatus": "View character status",
+      "viewCharacterStatusPrompt": "Show the character status for the current novel",
+      "syncChapterDirectory": "Sync chapter directory",
+      "startGeneration": "Start whole-book generation",
+      "currentNovelFallback": "Current novel",
+      "currentStage": "Current stage: {{value}}",
+      "chapterCatalog": "Chapter catalog: {{chapters}} chapters",
+      "chapterCatalogWithTarget": "Chapter catalog: {{chapters}}/{{target}} chapters",
+      "pipelineStatus": "Whole-book writing: {{value}}",
+      "pipelineStatusFallback": "Not started",
+      "failureSummary": "Failure summary: {{value}}",
+      "stageLabel": "Stage",
+      "stageStatus": "Status: {{value}}",
+      "unknownStage": "Unknown stage",
+      "characterGeneratedTitle": "Core characters generated",
+      "characterGeneratedDescription": "Generated {{count}} core characters.",
+      "storyBibleGeneratedTitle": "Story bible generated",
+      "storyBibleGeneratedFallback": "Story bible for the current novel is ready.",
+      "outlineGeneratedTitle": "Development arc generated",
+      "outlineGeneratedFallback": "Development arc for the current novel is ready.",
+      "structuredOutlineTitle": "Structured outline generated",
+      "structuredOutlineWithCount": "Generated a {{count}}-chapter structured outline.",
+      "structuredOutlineFallback": "Structured outline for the current novel is ready.",
+      "chaptersSyncedTitle": "Chapter directory synced",
+      "chaptersSyncedWithCount": "Synced {{count}} chapter entries.",
+      "chaptersSyncedFallback": "Chapter directory synced."
+    },
+    "pipeline": {
+      "previewTitle": "Whole-book writing preview",
+      "queueTitle": "Whole-book writing task",
+      "scopeSingleChapter": "Chapter {{value}}",
+      "scopeChapterRange": "Chapters {{start}} to {{end}}",
+      "scopeFallback": "Current chapter range",
+      "previewDescription": "Whole-book writing preview for {{scope}} is complete — you can review and approve or keep diagnosing.",
+      "queueDescriptionWithJob": "Whole-book writing task for {{scope}} has started (task {{jobId}}).",
+      "queueDescription": "Whole-book writing task for {{scope}} has started."
+    },
+    "diagnostic": {
+      "detailsPrefix": "Details: {{value}}",
+      "advicePrefix": "Advice: {{value}}",
+      "continueDiagnose": "Keep diagnosing",
+      "continueDiagnosePrompt": "Keep explaining the failure cause and the recovery suggestion"
+    },
+    "list": {
+      "empty": "No results to display.",
+      "statusPrefix": "Status: {{value}}",
+      "refine": "Refine further",
+      "refinePrompt": "Refine this list result further"
+    },
+    "chapter": {
+      "chapterOrder": "Chapter {{order}}",
+      "fallbackTitle": "Chapter content",
+      "titleSuffix": " — \"{{title}}\"",
+      "empty": "No chapter content available yet.",
+      "summarize": "Summarize further",
+      "checkConflict": "Check for conflicts",
+      "summarizePrompt": "Summarize the key plot points of this passage",
+      "checkConflictPrompt": "Check this chapter for conflicts with the world or earlier text"
+    }
+  },
+  "activityFeed": {
+    "statusLabel": {
+      "running": "Running",
+      "queued": "Queued",
+      "waiting_approval": "Awaiting approval",
+      "succeeded": "Succeeded",
+      "failed": "Failed",
+      "cancelled": "Cancelled",
+      "interrupted": "Needs confirmation"
+    },
+    "runStatusTitle": "Run status",
+    "runStatusFallback": "Current status: {{status}}",
+    "toolCallTitle": "Tool call · {{toolName}}",
+    "toolInputFallback": "Preparing tool input...",
+    "toolResultSuccessTitle": "{{toolName}} succeeded",
+    "toolResultFailedTitle": "{{toolName}} failed",
+    "toolOutputFallback": "Tool returned an empty result.",
+    "interruptTitleFallback": "Awaiting approval",
+    "approvedTitle": "Approved",
+    "rejectedTitle": "Rejected",
+    "approvalRecorded": "Approval action recorded.",
+    "errorTitle": "Run error",
+    "reasoningTitle": "Reasoning update",
+    "plannerTitle": "Intent recognition",
+    "plannerSummary": "This request was identified as {{intent}}, source {{source}}",
+    "plannerConfidence": "Confidence {{value}}",
+    "checkpointTitle": "Checkpoint saved",
+    "checkpointSummary": "Checkpoint {{value}} written back to thread history.",
+    "fallbackEventTitle": "System event",
+    "plannerSourceLabel": "Source",
+    "plannerIntentLabel": "Intent",
+    "plannerConfidenceLabel": "Confidence"
+  },
+  "debugTrace": {
+    "title": "Run details",
+    "runLabel": "Run {{value}}",
+    "currentRun": "Current turn debug info",
+    "entryCount": "{{count}} entries",
+    "expand": "Expand details",
+    "collapse": "Collapse details",
+    "empty": "No debug entries for this turn yet.",
+    "collapsedNote": "Underlying run, tool, and checkpoint details are collapsed by default — expand to see the full debug trace.",
+    "kind": {
+      "runStatus": "Run status",
+      "toolCall": "Tool call",
+      "toolCompleted": "Tool completed",
+      "toolFailed": "Tool failed",
+      "approval": "Approval",
+      "runError": "Run error",
+      "reasoning": "Reasoning update",
+      "planner": "Intent recognition",
+      "checkpoint": "Checkpoint"
+    },
+    "entry": {
+      "runStatusTitle": "Run status",
+      "runStatusFallback": "Current status: {{status}}",
+      "toolInputFallback": "Preparing tool input...",
+      "toolOutputFallback": "Tool returned an empty result.",
+      "approvedTitle": "Approved",
+      "rejectedTitle": "Rejected",
+      "approvalNoteFallback": "Approval action recorded.",
+      "errorTitle": "Run error",
+      "reasoningTitle": "Reasoning update",
+      "plannerTitle": "Intent recognition",
+      "plannerSummary": "Source: {{source}}; intent: {{intent}}",
+      "confidence": "Confidence {{value}}",
+      "checkpointTitle": "Checkpoint written",
+      "checkpointSummary": "Checkpoint {{value}} written back to thread history."
+    }
+  },
+  "turnSummary": {
+    "title": "Creative turn summary",
+    "currentStage": "Current stage: {{value}}",
+    "status": {
+      "succeeded": "Succeeded",
+      "interrupted": "Needs confirmation",
+      "failed": "Failed",
+      "cancelled": "Cancelled",
+      "running": "Running"
+    },
+    "intent": "This turn's call",
+    "action": "This turn's push",
+    "impact": "Confirmed changes",
+    "next": "Suggested next turn",
+    "continueAlongSuggestion": "Continue in this direction"
+  },
+  "novelSetup": {
+    "title": "New book setup",
+    "stage": {
+      "readyForProduction": "Ready for production",
+      "readyForPlanning": "Ready for planning",
+      "default": "Setup in progress"
+    },
+    "progressLabel": "Ready {{completed}}/{{total}} items",
+    "progressFormat": "{{percent}}%",
+    "progressBadge": "progress",
+    "checklist": {
+      "requiredForProduction": "Required before production",
+      "statusReady": "ready",
+      "statusPartial": "partial",
+      "statusMissing": "missing",
+      "currentPrefix": "Currently: {{value}}",
+      "fillThis": "Fill in this item",
+      "giveAlternatives": "Give me alternatives"
+    },
+    "pendingHeading": "Confirm before production",
+    "pendingList": "{{names}}",
+    "pendingEnding": ", and more",
+    "pendingNamesSeparator": ", ",
+    "generateChecklist": "Generate confirmation list",
+    "generateChecklistPrompt": "Summarize the conditions this book still needs to confirm before whole-book production, sorted by priority.",
+    "batchAlternatives": "Generate alternatives in bulk",
+    "batchAlternativesPrompt": "Based on the current novel info, give 3 alternative answers for each key missing pre-production condition so I can choose one by one.",
+    "nextQuestionHeading": "Next question",
+    "continueGuided": "Continue along the guide",
+    "viewSummary": "View setup summary",
+    "viewSummaryPrompt": "Summarize how complete this book's setup is and tell me which key info is still missing."
+  },
+  "sidebar": {
+    "workspaceTitle": "Creative workspace",
+    "currentFocus": "Current focus",
+    "unnamedThread": "Untitled thread",
+    "resourceBindings": "Resource bindings",
+    "currentNovel": "Current novel",
+    "unboundNovel": "No novel bound",
+    "newNovelPlaceholder": "Enter a new novel title",
+    "listNovels": "Browse novels",
+    "listNovelsPrompt": "List the novel workspaces available right now",
+    "createAndAttach": "Create and attach",
+    "chapter": "Chapter",
+    "world": "World",
+    "task": "Task",
+    "bookAnalysis": "Book analysis",
+    "formula": "Writing formula",
+    "baseCharacter": "Base character",
+    "knowledgeDocuments": "Knowledge documents: {{count}}",
+    "thread": {
+      "status": {
+        "busy": "Executing",
+        "interrupted": "Needs attention",
+        "error": "Error",
+        "idle": "Idle",
+        "uninitialized": "Uninitialized"
+      }
+    },
+    "turnStatus": {
+      "succeeded": "Succeeded",
+      "interrupted": "Needs confirmation",
+      "failed": "Failed",
+      "cancelled": "Cancelled",
+      "running": "Running"
+    },
+    "focus": {
+      "novelSetupInProgress": "Filling in the initial info for \"{{title}}\".",
+      "fallback": "Bind a work or set a creative goal, and the Hub will keep pushing forward in the current thread."
+    },
+    "stageFallback": {
+      "setupCompleted": "Setup complete",
+      "setupPendingPlanning": "Setup pending planning",
+      "setupInProgress": "Setup in progress",
+      "notStarted": "Not started"
+    },
+    "blocker": {
+      "title": "Current blocker",
+      "risk": "Current risk",
+      "focus": "Current focus",
+      "status": "Current state",
+      "details": {
+        "waitingApproval": "Awaiting confirmation: {{title}}",
+        "targetType": "Target type: {{value}}",
+        "targetId": "Target: {{value}}",
+        "errorCode": "Error code: {{value}}",
+        "recoveryHint": "Recovery hint: {{value}}",
+        "currentStage": "Current stage: {{value}}",
+        "stage": "Stage: {{value}}",
+        "status": "Status: {{value}}",
+        "nextSuggestion": "Suggested next step: {{value}}"
+      },
+      "actions": {
+        "viewPending": "Review pending items",
+        "viewPendingPrompt": "Summarize the creative decisions waiting for confirmation and the recommended way to handle them",
+        "generateRecovery": "Generate recovery plan",
+        "generateRecoveryPrompt": "Analyze the current failure and provide recovery steps",
+        "handleBlocker": "Handle this blocker",
+        "handleBlockerPrompt": "Analyze the current production blocker and continue forward",
+        "followSuggestion": "Follow the suggestion"
+      },
+      "summary": {
+        "noBlocker": "No immediate blockers — you can keep pushing the work forward."
+      }
+    },
+    "progress": {
+      "title": "Current push",
+      "actionDone": "Actions taken",
+      "impact": "Impact & changes",
+      "nextStep": "Suggested next step",
+      "followSuggestion": "Follow the suggestion",
+      "empty": "No completed turn summary yet for this thread. After your first creative request, this panel will show what was pushed and what to do next."
+    },
+    "production": {
+      "title": "Creative stages",
+      "currentStage": "Current stage",
+      "chapterProgress": "Chapter progress",
+      "assetCompletion": "Asset completion",
+      "pipelineStatus": "Production pipeline",
+      "pipelineStatusFallback": "Not started",
+      "empty": "This thread doesn't have a whole-book production state yet. Pick a novel and kick off whole-book creation to see stages and progress here."
+    },
+    "debug": {
+      "title": "Debug info",
+      "runtimeDetails": "Runtime detail display",
+      "currentRuntime": "Default is now",
+      "collapsed": "collapsed",
+      "expanded": "expanded",
+      "runtimeDetailsContext": "in-message runtime details: {{state}}",
+      "switchToExpand": "Switch default to expanded",
+      "switchToCollapse": "Switch default to collapsed",
+      "threadState": "Thread state",
+      "threadId": "Thread ID",
+      "threadStatusLabel": "Thread status",
+      "latestRun": "Latest run",
+      "currentCheckpoint": "Current checkpoint",
+      "modelRouting": "Model routing",
+      "provider": "Provider",
+      "model": "Model",
+      "temperature": "Temperature",
+      "maxTokens": "Max tokens",
+      "default": "Default",
+      "recentTurn": "Recent turn",
+      "turnStatusLabel": "Turn status",
+      "turnStage": "Turn stage",
+      "summaryCheckpoint": "Summary checkpoint"
+    }
+  },
+  "productionStarter": {
+    "title": "Whole-book production",
+    "currentNovelContinue": "Will continue producing \"{{title}}\".",
+    "currentNovelFallback": "Current novel",
+    "globalMode": "You're in global mode — you can create a new book and kick off whole-book production directly.",
+    "hint": "Confirm these first: genre, tone, POV, pace, chapter length, AI freedom. The more complete the inputs, the less drift in whole-book production.",
+    "novelTitlePlaceholder": "Novel title",
+    "descriptionPlaceholder": "Synopsis / core setup",
+    "genrePlaceholder": "Genre, e.g. eastern fantasy / urban mystery",
+    "styleTonePlaceholder": "Tone, e.g. cold and heavy / bright and energetic",
+    "narrativePovPlaceholder": "Narrative POV",
+    "pacePlaceholder": "Pace",
+    "projectModePlaceholder": "Collaboration mode",
+    "emotionPlaceholder": "Emotional intensity",
+    "aiFreedomPlaceholder": "AI freedom",
+    "narrativePov": {
+      "firstPerson": "First person",
+      "thirdPerson": "Third person",
+      "mixed": "Mixed POV"
+    },
+    "pace": {
+      "slow": "Slow pace",
+      "balanced": "Balanced pace",
+      "fast": "Fast pace"
+    },
+    "projectMode": {
+      "aiLed": "AI-led",
+      "coPilot": "Human + AI co-pilot",
+      "draftMode": "Draft first",
+      "autoPipeline": "Auto pipeline"
+    },
+    "level": {
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High"
+    },
+    "targetChapterPlaceholder": "Target chapter count",
+    "defaultChapterLengthPlaceholder": "Default chapter length (chars)",
+    "worldTypePlaceholder": "Optional world type",
+    "submitting": "Working...",
+    "submitContinue": "Continue whole-book production",
+    "submitStart": "Start whole-book production",
+    "viewProgress": "View progress",
+    "viewProgressPrompt": "Where is whole-book generation right now?",
+    "viewBlockers": "View blockers",
+    "viewBlockersPrompt": "Why hasn't whole-book generation started?",
+    "generateAlternatives": "Generate alternatives",
+    "generateAlternativesPrompt": "Based on the current novel info, give 3 alternative answers for each pre-production input — genre, tone, POV, pace, chapter length, and AI freedom.",
+    "prompt": {
+      "continueHeader": "Continue generating the current novel. Target chapter count: {{count}}.",
+      "createHeader": "Create a {{count}}-chapter novel titled \"{{title}}\" and start whole-book generation.",
+      "description": "Additional setup: {{value}}.",
+      "descriptionCreate": "Synopsis: {{value}}.",
+      "genre": "Genre preference: {{value}}.",
+      "genreCreate": "Genre: {{value}}.",
+      "styleTone": "Tone: {{value}}.",
+      "narrativePov": "POV: {{value}}.",
+      "pace": "Pace: {{value}}.",
+      "projectMode": "Collaboration mode: {{value}}.",
+      "emotionIntensity": "Emotional intensity: {{value}}.",
+      "aiFreedom": "AI freedom: {{value}}.",
+      "chapterLength": "Default chapter length: about {{value}} characters.",
+      "worldType": "World type preference: {{value}}.",
+      "worldTypeCreate": "World type: {{value}}."
+    }
+  },
+  "plannerLabels": {
+    "intent": {
+      "social_opening": "Light opening",
+      "list_novels": "List novels",
+      "list_worlds": "List worlds",
+      "query_task_status": "Query task status",
+      "create_novel": "Create novel",
+      "select_novel_workspace": "Switch novel workspace",
+      "bind_world_to_novel": "Bind world to novel",
+      "unbind_world_from_novel": "Unbind world from novel",
+      "produce_novel": "Whole-book production",
+      "query_novel_production_status": "Query whole-book production status",
+      "query_novel_title": "Query novel title",
+      "query_chapter_content": "Query chapter content",
+      "query_progress": "Query creative progress",
+      "inspect_failure_reason": "Diagnose failure cause",
+      "write_chapter": "Write chapter",
+      "rewrite_chapter": "Rewrite chapter",
+      "save_chapter_draft": "Save chapter draft",
+      "start_pipeline": "Start pipeline",
+      "inspect_characters": "Inspect character plan",
+      "inspect_timeline": "Inspect timeline",
+      "inspect_world": "Inspect world",
+      "search_knowledge": "Search knowledge base",
+      "ideate_novel_setup": "Generate setup alternatives",
+      "general_chat": "General chat",
+      "unknown": "Unrecognized intent",
+      "unmapped": "Unmapped intent"
+    },
+    "source": {
+      "llm": "LLM recognition",
+      "unknown": "Unknown source",
+      "unmapped": "Unmapped source"
+    }
+  }
+}

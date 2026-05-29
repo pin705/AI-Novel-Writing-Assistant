@@ -1,0 +1,103 @@
+{
+  "header": {
+    "eyebrow": "Quản lý prompt",
+    "title": "Prompt Workbench",
+    "subtitle": "Xem các prompt tích hợp sẵn và bổ sung yêu cầu tuỳ chỉnh cho các luồng viết chính; hiện chỉ mở một phần prompt viết chương, kiểm duyệt và sửa chương.",
+    "refresh": "Làm mới danh mục"
+  },
+  "list": {
+    "searchPlaceholder": "Tìm theo id, loại tác vụ, ngữ cảnh hoặc slot",
+    "loading": "Đang đọc danh mục prompt...",
+    "empty": "Không có prompt nào khớp.",
+    "canAddendum": "Có thể bổ sung"
+  },
+  "managementStatus": {
+    "complete": "Metadata đầy đủ",
+    "missing_context_requirements": "Thiếu yêu cầu ngữ cảnh",
+    "missing_editable_slots": "Thiếu slot biên tập"
+  },
+  "materialImportance": {
+    "must": "Bắt buộc",
+    "high": "Quan trọng",
+    "medium": "Bổ trợ",
+    "low": "Tham khảo"
+  },
+  "entrypoint": {
+    "creative_hub": "Trung tâm sáng tác",
+    "auto_director": "Đạo diễn tự động",
+    "chapter_pipeline": "Pipeline chương",
+    "manual_test": "Kiểm thử thủ công"
+  },
+  "detail": {
+    "purpose": "Mục đích prompt",
+    "basicInfo": "Thông tin cơ bản",
+    "capabilities": "Năng lực",
+    "noCapabilities": "Prompt này chưa khai báo năng lực cấu trúc.",
+    "contextRequirements": "Yêu cầu ngữ cảnh",
+    "noContextRequirements": "Chưa khai báo yêu cầu ngữ cảnh.",
+    "required": "Bắt buộc",
+    "optional": "Bổ trợ",
+    "safeEditBoundary": "Phạm vi chỉnh sửa an toàn",
+    "editableSlots": "Slot có thể chỉnh",
+    "noEditableSlots": "Chưa mở slot biểu đạt.",
+    "lockedFields": "Trường khoá",
+    "addendumSectionTitle": "Yêu cầu bổ sung tuỳ chỉnh",
+    "debugTitle": "Xem chế độ debug",
+    "selectPromptHint": "Vui lòng chọn một prompt."
+  },
+  "preview": {
+    "placeholder": "Sau khi chọn prompt, bấm xem trước để xem tin nhắn cuối cùng, ngữ cảnh được chọn và kết quả chẩn đoán.",
+    "entrypointLabel": "Điểm vào",
+    "estimatedTokens": "Token ước tính",
+    "selectedContext": "Ngữ cảnh đã chọn",
+    "missingCount": "Mục thiếu",
+    "finalMessages": "Tin nhắn cuối cùng",
+    "contextDiagnosis": "Chẩn đoán ngữ cảnh"
+  },
+  "materials": {
+    "title": "Kiểm tra tư liệu",
+    "subtitle": "Tải tư liệu tiểu thuyết theo các nhóm mà prompt hiện tại yêu cầu để xác nhận đã đủ chưa.",
+    "loading": "Đang tải...",
+    "load": "Tải tư liệu",
+    "novelIdPlaceholder": "novelId",
+    "chapterIdPlaceholder": "chapterId",
+    "taskIdPlaceholder": "taskId",
+    "budgetPlaceholder": "Ngân sách tư liệu",
+    "requiredGroups": "Nhóm tư liệu cần thiết",
+    "noRequiredGroups": "Prompt này chưa khai báo yêu cầu tư liệu, sẽ tải các nhóm cốt lõi mặc định.",
+    "received": "Đã có",
+    "missingGroups": "Nhóm thiếu",
+    "missingInputs": "Đầu vào thiếu",
+    "warnings": "Cảnh báo cắt giảm",
+    "missingInputsList": "Cần bổ sung đầu vào: {{value}}",
+    "missingGroupsList": "Chưa lấy được: {{value}}",
+    "tokensSuffix": "tokens",
+    "placeholder": "Nhập ID tiểu thuyết để tải tư liệu, kiểm tra xem tư liệu đã sẵn sàng trước khi prompt chạy chưa.",
+    "joinSeparator": ", "
+  },
+  "previewActions": {
+    "title": "Chẩn đoán xem trước",
+    "subtitle": "Xem tin nhắn cuối cùng, ngữ cảnh được chọn và kết quả chẩn đoán.",
+    "previewing": "Đang xem trước...",
+    "generate": "Tạo bản xem trước"
+  },
+  "addendum": {
+    "unsupportedNotice": "Prompt này không nhận yêu cầu bổ sung tuỳ chỉnh. Bạn vẫn có thể xem prompt tích hợp, nhưng cuộc gọi thực tế sẽ không đọc phần bổ sung ở đây.",
+    "orderHeader": "Thứ tự áp dụng thực tế",
+    "orderDescription": "Khi bật, hệ thống sẽ thêm yêu cầu bổ sung toàn cục trước, rồi mới đến phần bổ sung riêng cho truyện. Prompt nội bộ, đầu ra cấu trúc và ranh giới công cụ giữ nguyên.",
+    "globalTitle": "Yêu cầu bổ sung toàn cục",
+    "globalDescription": "Phù hợp cho các sở thích văn phong, cấm từ và trọng tâm kiểm duyệt áp dụng cho mọi truyện.",
+    "novelTitle": "Yêu cầu bổ sung cho truyện này",
+    "novelDescription": "Phù hợp cho sở thích viết riêng, điều cấm kỵ, ranh giới biểu đạt nhân vật và nguyên tắc giữ nguyên khi sửa truyện hiện tại.",
+    "enabled": "Đã bật",
+    "disabled": "Chưa bật",
+    "stop": "Tắt",
+    "enable": "Bật",
+    "delete": "Xoá",
+    "titlePlaceholder": "Tiêu đề yêu cầu bổ sung",
+    "contentPlaceholder": "Viết các yêu cầu bổ sung muốn mô hình tuân thủ lâu dài: sở thích văn phong, cấm từ, trọng tâm kiểm duyệt hoặc nguyên tắc giữ nguyên khi sửa.",
+    "charCountHint": "{{count}}/4000 ký tự. Yêu cầu bổ sung được thêm vào ngữ cảnh, không chỉnh sửa prompt nội bộ.",
+    "save": "Lưu",
+    "selectNovel": "Chọn truyện để chỉnh phần bổ sung riêng"
+  }
+}

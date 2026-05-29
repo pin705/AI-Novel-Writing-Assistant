@@ -1,0 +1,113 @@
+{
+  "overview": {
+    "title": "Trung tâm theo dõi đạo diễn",
+    "summaryLine": "Hôm nay khôi phục {{recovered}} mục, hoàn tất {{completed}} mục",
+    "all": "Tất cả",
+    "allDescription": "Xem mọi tác vụ đạo diễn cần theo dõi",
+    "needsValidation": "Cần kiểm chứng",
+    "needsValidationDescription": "Xác nhận tác vụ và tài sản có nhất quán không",
+    "exception": "Bất thường",
+    "exceptionDescription": "Tác vụ thất bại, khôi phục hoặc bị hủy",
+    "pending": "Chờ xử lý",
+    "pendingDescription": "Các điểm cần xác nhận hoặc tiếp tục",
+    "autoProgress": "Tự động chạy",
+    "autoProgressDescription": "Tác vụ đang chạy và bản ghi tự động duyệt gần đây",
+    "replaced": "Đã thay thế",
+    "replacedDescription": "Tác vụ cũ đã được tác vụ mới tiếp quản"
+  },
+  "list": {
+    "allSections": "Tất cả phân vùng",
+    "allReasons": "Tất cả lý do",
+    "allStatuses": "Tất cả trạng thái",
+    "batchAbility": "Khả năng hàng loạt",
+    "all": "Tất cả",
+    "onlyBatch": "Chỉ có thể hàng loạt",
+    "onlyNonBatch": "Chỉ không hàng loạt",
+    "loading": "Đang tải các mục theo dõi...",
+    "emptyAutoProgress": "Hiện không có tác vụ đang chạy hoặc bản ghi tự động duyệt gần đây.",
+    "emptyReplaced": "Hiện không có tác vụ cũ bị thay thế bởi tác vụ mới.",
+    "emptyDefault": "Hiện không có mục theo dõi nào khớp với bộ lọc.",
+    "supportsBatchBadge": "Có thể hàng loạt",
+    "autoApprovalRecord": "Tự động duyệt gần đây",
+    "inProgress": "Đang chạy",
+    "metaLine": "Giai đoạn hiện tại: {{stage}} · Mô hình hiện tại: {{model}} · Cập nhật: {{updatedAt}}",
+    "channelDingtalk": "DingTalk khả dụng",
+    "channelWecom": "WeCom khả dụng",
+    "pageInfo": "Trang {{page}} / {{total}}, tổng cộng {{count}} mục",
+    "prevPage": "Trang trước",
+    "nextPage": "Trang sau"
+  },
+  "section": {
+    "needsValidation": "Cần kiểm chứng",
+    "exception": "Bất thường",
+    "pending": "Chờ xử lý",
+    "autoProgress": "Tự động chạy",
+    "replaced": "Đã thay thế"
+  },
+  "status": {
+    "waitingApproval": "Chờ duyệt",
+    "failed": "Thất bại",
+    "cancelled": "Đã hủy",
+    "running": "Đang chạy",
+    "queued": "Đang chờ",
+    "succeeded": "Hoàn tất"
+  },
+  "detail": {
+    "title": "Chi tiết theo dõi",
+    "loading": "Đang tải chi tiết...",
+    "selectPrompt": "Chọn một mục theo dõi đạo diễn để xem chi tiết.",
+    "blockingReason": "Lý do chặn: {{value}}",
+    "nextStepSuggestion": "Gợi ý bước kế tiếp: {{value}}",
+    "checkpointSummary": "Tóm tắt điểm kiểm tra: {{value}}",
+    "currentModel": "Mô hình hiện tại: {{value}}",
+    "originDetailUrl": "Trang nguồn: {{value}}",
+    "noneValue": "Chưa có",
+    "defaultNextStep": "Hãy xem chi tiết tác vụ rồi mới tiếp tục.",
+    "validationTitle": "Kiểm chứng trạng thái tác vụ và tài sản trước",
+    "validationDescription": "Sửa an toàn chỉ đối chiếu trạng thái, không xóa nội dung, không viết lại kế hoạch, không xác nhận ứng viên, không đổi mô hình hay quyết định sáng tác thay bạn.",
+    "blockingLine": "Chặn: {{value}}",
+    "warningLine": "Gợi ý: {{value}}",
+    "revalidate": "Kiểm chứng lại",
+    "safeFix": "Sửa an toàn",
+    "safeFixTooltip": "Chỉ sửa các trạng thái, điểm kiểm tra, tiến độ, mục tiêu khôi phục, đối chiếu tự động chạy, lý do thay thế, audit và thông báo được kiểm chứng là rủi ro thấp; không xóa nội dung, không viết lại tài sản, không lập kế hoạch lại, không xác nhận ứng viên, không đổi mô hình hay tạo nội dung.",
+    "availableActions": "Hành động khả dụng",
+    "milestonesTitle": "Cột mốc gần đây",
+    "milestonesEmpty": "Chưa có cột mốc",
+    "channelsTitle": "Kênh thông báo",
+    "channelsEmpty": "Chưa có bản ghi gửi qua kênh",
+    "channelDingtalk": "DingTalk",
+    "channelWecom": "WeCom",
+    "channelMeta": "Đích: {{target}} | Mã phản hồi: {{response}} | Thời gian: {{time}}",
+    "channelNoTarget": "Chưa ghi nhận",
+    "channelNotDelivered": "Chưa gửi",
+    "deliveryDelivered": "Đã gửi",
+    "deliveryPending": "Đang gửi",
+    "deliveryFailed": "Gửi thất bại",
+    "eventApprovalRequired": "Cần xử lý",
+    "eventAutoApproved": "AI đã tự duyệt",
+    "eventException": "Tác vụ bất thường",
+    "eventRecovered": "Đã khôi phục",
+    "eventCompleted": "Đã hoàn tất",
+    "eventProgressChanged": "Tiến độ thay đổi"
+  },
+  "batchBar": {
+    "selectedCount": "Đã chọn {{count}} mục",
+    "noCommonAction": "Các mục đã chọn không có hành động hàng loạt chung",
+    "sectionNotAllowed": "Phân vùng này không hỗ trợ hành động hàng loạt",
+    "continueAutoExecution": "Hàng loạt tiếp tục mức rủi ro thấp",
+    "retryWithTaskModel": "Hàng loạt thử lại tác vụ bất thường",
+    "clear": "Xóa chọn",
+    "execute": "Chạy hành động hàng loạt"
+  },
+  "confirm": {
+    "execute": "Xác nhận thực hiện \"{{label}}\"?"
+  },
+  "toast": {
+    "actionSubmitted": "Đã gửi yêu cầu",
+    "batchSubmitted": "Đã gửi yêu cầu hàng loạt",
+    "validationRefreshed": "Đã làm mới kết quả kiểm chứng."
+  },
+  "errors": {
+    "noPendingApproval": "Hiện không có mục duyệt nào để xử lý."
+  }
+}

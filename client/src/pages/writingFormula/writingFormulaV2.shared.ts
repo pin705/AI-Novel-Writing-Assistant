@@ -4,6 +4,7 @@ import type {
   StyleFeatureDecision,
   StyleProfile,
 } from "@ai-novel/shared/types/styleEngine";
+import type { Translator } from "./writingFormulaRulePresentation";
 
 export const WRITING_FORMULA_V2_MODES = ["imitate", "clean", "book-style"] as const;
 export const STARTER_STYLE_PROFILE_SOURCE_PREFIX = "starter-style-profile:";
@@ -77,25 +78,26 @@ export function isStarterStyleProfile(profile: Pick<StyleProfile, "sourceRefId">
 }
 
 export function getStyleProfileOriginLabel(
+  t: Translator,
   profile: Pick<StyleProfile, "sourceRefId" | "sourceType">,
 ): string {
   if (isStarterStyleProfile(profile)) {
-    return "预置";
+    return t("writingFormula.landingItems.originLabels.starter");
   }
   if (profile.sourceRefId?.startsWith(AI_STYLE_BRIEF_SOURCE_PREFIX)) {
-    return "AI生成";
+    return t("writingFormula.landingItems.originLabels.aiGenerated");
   }
   if (profile.sourceType === "from_text") {
-    return "文本提取";
+    return t("writingFormula.landingItems.originLabels.fromText");
   }
   if (profile.sourceType === "from_book_analysis") {
-    return "拆书生成";
+    return t("writingFormula.landingItems.originLabels.fromBookAnalysis");
   }
   if (profile.sourceType === "from_knowledge_document") {
-    return "知识库原文";
+    return t("writingFormula.landingItems.originLabels.fromKnowledge");
   }
   if (profile.sourceType === "from_current_work") {
-    return "当前作品";
+    return t("writingFormula.landingItems.originLabels.fromCurrentWork");
   }
-  return "手动创建";
+  return t("writingFormula.landingItems.originLabels.manual");
 }

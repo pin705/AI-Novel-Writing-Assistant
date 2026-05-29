@@ -9,6 +9,7 @@ import {
   Dialog,
 } from "@/components/ui/dialog";
 import { toast } from "@/components/ui/toast";
+import { useTranslation } from "@/i18n";
 
 interface GenreEditDialogProps {
   open: boolean;
@@ -26,6 +27,7 @@ export default function GenreEditDialog({
   blockedParentIds,
 }: GenreEditDialogProps) {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [parentId, setParentId] = useState("");
@@ -47,7 +49,7 @@ export default function GenreEditDialog({
   const updateMutation = useMutation({
     mutationFn: () => {
       if (!genre) {
-        throw new Error("题材基底不存在。");
+        throw new Error(t("genres.editDialog.missingError"));
       }
       return updateGenre(genre.id, {
         name: name.trim(),
@@ -57,7 +59,7 @@ export default function GenreEditDialog({
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: queryKeys.genres.all });
-      toast.success("题材基底已更新。");
+      toast.success(t("genres.toast.updated"));
       onOpenChange(false);
     },
   });
@@ -66,15 +68,15 @@ export default function GenreEditDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <AppDialogContent
         className="max-w-2xl"
-        title="编辑题材基底"
-        description="可以修改名称、说明和挂载位置。子节点与已绑定小说会继续保留。"
+        title={t("genres.editDialog.title")}
+        description={t("genres.editDialog.description")}
         footer={(
           <>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              取消
+              {t("genres.editDialog.cancel")}
             </Button>
             <Button type="button" onClick={() => updateMutation.mutate()} disabled={updateMutation.isPending || !name.trim()}>
-              {updateMutation.isPending ? "保存中..." : "保存修改"}
+              {updateMutation.isPending ? t("genres.editDialog.saving") : t("genres.editDialog.save")}
             </Button>
           </>
         )}
@@ -82,12 +84,12 @@ export default function GenreEditDialog({
       >
         <div className="space-y-4">
           <label className="space-y-2 text-sm">
-            <span className="font-medium text-foreground">名称</span>
+            <span className="font-medium text-foreground">{t("genres.editDialog.nameLabel")}</span>
             <Input value={name} onChange={(event) => setName(event.target.value)} />
           </label>
 
           <label className="space-y-2 text-sm">
-            <span className="font-medium text-foreground">描述</span>
+            <span className="font-medium text-foreground">{t("genres.editDialog.descriptionLabel")}</span>
             <textarea
               rows={4}
               className="min-h-[120px] w-full rounded-md border bg-background px-3 py-2 text-sm outline-none transition focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
@@ -97,13 +99,13 @@ export default function GenreEditDialog({
           </label>
 
           <label className="space-y-2 text-sm">
-            <span className="font-medium text-foreground">父级题材基底</span>
+            <span className="font-medium text-foreground">{t("genres.editDialog.parentLabel")}</span>
             <select
               className="w-full rounded-md border bg-background p-2 text-sm"
               value={parentId}
               onChange={(event) => setParentId(event.target.value)}
             >
-              <option value="">无父级，作为根题材基底</option>
+              <option value="">{t("genres.editDialog.parentNoneOption")}</option>
               {filteredParentOptions.map((option) => (
                 <option key={option.id} value={option.id}>
                   {option.path}

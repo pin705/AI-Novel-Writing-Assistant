@@ -22,6 +22,7 @@ import type {
 import type { CreativeHubStreamFrame } from "@ai-novel/shared/types/api";
 import { toast } from "@/components/ui/toast";
 import { streamCreativeHubRun } from "@/api/creativeHub";
+import { useTranslation } from "@/i18n";
 import {
   buildInlineStateMessages,
   buildRunArtifactMessages,
@@ -129,7 +130,8 @@ function normalizeStreamFrame(frame: CreativeHubStreamFrame) {
 async function requireCheckpointIdForBranch(
   threadId: string,
   parentMessages: LangChainMessage[],
-  getCheckpointId?: (threadId: string, parentMessages: LangChainMessage[]) => Promise<string | null>,
+  getCheckpointId: ((threadId: string, parentMessages: LangChainMessage[]) => Promise<string | null>) | undefined,
+  missingCheckpointMessage: string,
 ): Promise<string | null> {
   if (!getCheckpointId) {
     return null;
@@ -138,9 +140,8 @@ async function requireCheckpointIdForBranch(
   if (checkpointId || parentMessages.length === 0) {
     return checkpointId;
   }
-  const message = "未能匹配到对应的历史检查点，当前消息无法生成新分支。";
-  toast.error(message);
-  throw new Error(message);
+  toast.error(missingCheckpointMessage);
+  throw new Error(missingCheckpointMessage);
 }
 
 export function useCreativeHubRuntime({
@@ -155,6 +156,7 @@ export function useCreativeHubRuntime({
   diagnostics,
   defaultRuntimeDetailsCollapsed,
 }: UseCreativeHubRuntimeOptions) {
+  const { t } = useTranslation();
   const checkpointRef = useRef<string | null>(null);
   const streamSessionRef = useRef(0);
   const latestThreadIdRef = useRef(threadId);
@@ -189,7 +191,7 @@ export function useCreativeHubRuntime({
     () =>
       async function* streamCallback(messages, config) {
         if (!isThreadReady) {
-          throw new Error("创作中枢线程尚未初始化。");
+          throw new Error(t("creativeHub.page.errors.threadNotInitialized"));
         }
         const streamSessionId = streamSessionRef.current;
         const streamThreadId = threadId;
@@ -219,7 +221,7 @@ export function useCreativeHubRuntime({
               turnSummary: frame.data,
             }));
           }
-          const runArtifactEvent = createRunArtifactEvent(frame, currentRunIdRef.current, debugEntrySeqRef.current + 1);
+          const runArtifactEvent = createRunArtifactEvent(frame, currentRunIdRef.current, debugEntrySeqRef.current + 1, t);
           if (runArtifactEvent) {
             debugEntrySeqRef.current += 1;
             updateRunArtifacts(runArtifactEvent.runId, (existing) => ({
@@ -242,7 +244,7 @@ export function useCreativeHubRuntime({
           yield normalizeStreamFrame(frame);
         }
       },
-    [isThreadReady, onCheckpointChange, onEvent, resourceBindings, runSettings.maxTokens, runSettings.model, runSettings.provider, runSettings.temperature, threadId],
+    [isThreadReady, onCheckpointChange, onEvent, resourceBindings, runSettings.maxTokens, runSettings.model, runSettings.provider, runSettings.temperature, t, threadId],
   );
 
   const {
@@ -358,7 +360,7 @@ export function useCreativeHubRuntime({
     onEdit: getCheckpointId
       ? async (msg) => {
         const truncated = truncateLangChainMessages(threadMessagesRef.current, msg.parentId);
-        const checkpointId = await requireCheckpointIdForBranch(threadId, truncated, getCheckpointId);
+        const checkpointId = await requireCheckpointIdForBranch(threadId, truncated, getCheckpointId, t("creativeHub.page.errors.missingCheckpoint"));
         setMessages(truncated);
         setInterrupt(undefined);
         setRunArtifacts([]);
@@ -377,7 +379,7 @@ export function useCreativeHubRuntime({
     onReload: getCheckpointId
       ? async (parentId, config) => {
         const truncated = truncateLangChainMessages(threadMessagesRef.current, parentId);
-        const checkpointId = await requireCheckpointIdForBranch(threadId, truncated, getCheckpointId);
+        const checkpointId = await requireCheckpointIdForBranch(threadId, truncated, getCheckpointId, t("creativeHub.page.errors.missingCheckpoint"));
         setMessages(truncated);
         setInterrupt(undefined);
         setRunArtifacts([]);

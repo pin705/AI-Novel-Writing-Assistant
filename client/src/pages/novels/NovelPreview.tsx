@@ -9,6 +9,7 @@ import { queryKeys } from "@/api/queryKeys";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useTranslation } from "@/i18n";
 import { cn } from "@/lib/utils";
 
 function countWords(content: string | null | undefined): number {
@@ -17,34 +18,15 @@ function countWords(content: string | null | undefined): number {
     return 0;
   }
 
-  const cjkMatches = text.match(/[\u3400-\u9fff]/g)?.length ?? 0;
+  const cjkMatches = text.match(/[㐀-鿿]/g)?.length ?? 0;
   const wordMatches = text
-    .replace(/[\u3400-\u9fff]/g, " ")
+    .replace(/[㐀-鿿]/g, " ")
     .match(/[A-Za-z0-9]+(?:[-'][A-Za-z0-9]+)*/g)?.length ?? 0;
   return cjkMatches + wordMatches;
 }
 
 function formatCount(value: number): string {
   return new Intl.NumberFormat("zh-CN").format(value);
-}
-
-function formatChapterStatus(status?: ChapterStatus | null): string {
-  switch (status) {
-    case "completed":
-      return "正文完成";
-    case "pending_review":
-      return "待审校";
-    case "needs_repair":
-      return "待修复";
-    case "generating":
-      return "生成中";
-    case "pending_generation":
-      return "待生成";
-    case "unplanned":
-      return "未规划";
-    default:
-      return "未标记";
-  }
 }
 
 function normalizeChapterText(content: string | null | undefined): string {
@@ -80,9 +62,29 @@ async function writeTextToClipboard(text: string): Promise<void> {
 
 export default function NovelPreview() {
   const { id = "" } = useParams();
+  const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
   const [copiedChapterId, setCopiedChapterId] = useState<string | null>(null);
   const selectedChapterId = searchParams.get("chapterId") ?? "";
+
+  const formatChapterStatus = (status?: ChapterStatus | null): string => {
+    switch (status) {
+      case "completed":
+        return t("novels.chapterStatus.completed");
+      case "pending_review":
+        return t("novels.chapterStatus.pendingReview");
+      case "needs_repair":
+        return t("novels.chapterStatus.needsRepair");
+      case "generating":
+        return t("novels.chapterStatus.generating");
+      case "pending_generation":
+        return t("novels.chapterStatus.pendingGeneration");
+      case "unplanned":
+        return t("novels.chapterStatus.unplanned");
+      default:
+        return t("novels.chapterStatus.unmarked");
+    }
+  };
 
   const novelQuery = useQuery({
     queryKey: queryKeys.novels.detail(id),
@@ -139,19 +141,19 @@ export default function NovelPreview() {
 
   const copyActiveChapter = async () => {
     if (!activeChapter || !activeContent) {
-      toast.error("当前章节还没有可复制的正文。");
+      toast.error(t("novels.preview.copyEmptyError"));
       return;
     }
 
     try {
       await writeTextToClipboard(activeContent);
       setCopiedChapterId(activeChapter.id);
-      toast.success("正文已复制到剪贴板。");
+      toast.success(t("novels.preview.copySuccess"));
       window.setTimeout(() => {
         setCopiedChapterId((current) => (current === activeChapter.id ? null : current));
       }, 1600);
     } catch {
-      toast.error("复制失败，请手动选择正文后复制。");
+      toast.error(t("novels.preview.copyFailed"));
     }
   };
 
@@ -159,12 +161,12 @@ export default function NovelPreview() {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>缺少小说信息</CardTitle>
-          <CardDescription>返回小说列表后重新选择要预览的作品。</CardDescription>
+          <CardTitle>{t("novels.preview.missingNovelTitle")}</CardTitle>
+          <CardDescription>{t("novels.preview.missingNovelDescription")}</CardDescription>
         </CardHeader>
         <CardContent>
           <Button asChild>
-            <Link to="/novels">返回小说列表</Link>
+            <Link to="/novels">{t("novels.preview.backToList")}</Link>
           </Button>
         </CardContent>
       </Card>
@@ -181,22 +183,22 @@ export default function NovelPreview() {
           <Button asChild variant="ghost" size="sm" className="px-0 text-muted-foreground">
             <Link to="/novels">
               <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-              返回小说列表
+              {t("novels.preview.backToList")}
             </Link>
           </Button>
           <div>
             <div className="flex flex-wrap items-center gap-2">
               <h1 className="break-words text-2xl font-semibold tracking-tight">
-                {novel?.title ?? "小说预览"}
+                {novel?.title ?? t("novels.preview.fallbackTitle")}
               </h1>
               {novel?.status ? (
                 <Badge variant={novel.status === "published" ? "default" : "secondary"}>
-                  {novel.status === "published" ? "已发布" : "草稿"}
+                  {novel.status === "published" ? t("common.published") : t("common.draft")}
                 </Badge>
               ) : null}
             </div>
             <p className="mt-2 max-w-3xl text-sm leading-6 text-muted-foreground">
-              按章节阅读已生成正文，适合检查连贯性、节奏和已经写出的内容。
+              {t("novels.preview.subtitle")}
             </p>
           </div>
         </div>
@@ -204,14 +206,14 @@ export default function NovelPreview() {
           <Button asChild variant="outline">
             <Link to={`/novels/${id}/edit`}>
               <Edit3 className="h-4 w-4" aria-hidden="true" />
-              打开工作区
+              {t("novels.preview.openWorkspace")}
             </Link>
           </Button>
           {activeChapter ? (
             <Button asChild>
               <Link to={`/novels/${id}/chapters/${activeChapter.id}`}>
                 <FileText className="h-4 w-4" aria-hidden="true" />
-                编辑本章
+                {t("novels.preview.editChapter")}
               </Link>
             </Button>
           ) : null}
@@ -246,8 +248,8 @@ export default function NovelPreview() {
       ) : isError ? (
         <Card>
           <CardHeader>
-            <CardTitle>加载预览失败</CardTitle>
-            <CardDescription>当前无法读取小说章节，可以重新加载。</CardDescription>
+            <CardTitle>{t("novels.preview.loadErrorTitle")}</CardTitle>
+            <CardDescription>{t("novels.preview.loadErrorDescription")}</CardDescription>
           </CardHeader>
           <CardContent>
             <Button onClick={() => {
@@ -255,19 +257,19 @@ export default function NovelPreview() {
               void chaptersQuery.refetch();
             }}
             >
-              重新加载
+              {t("novels.actions.reload")}
             </Button>
           </CardContent>
         </Card>
       ) : chapters.length === 0 ? (
         <Card>
           <CardHeader>
-            <CardTitle>还没有章节</CardTitle>
-            <CardDescription>先进入小说工作区生成章节目录或正文，再回到这里预览整本内容。</CardDescription>
+            <CardTitle>{t("novels.preview.noChaptersTitle")}</CardTitle>
+            <CardDescription>{t("novels.preview.noChaptersDescription")}</CardDescription>
           </CardHeader>
           <CardContent>
             <Button asChild>
-              <Link to={`/novels/${id}/edit`}>进入小说工作区</Link>
+              <Link to={`/novels/${id}/edit`}>{t("novels.preview.enterWorkspace")}</Link>
             </Button>
           </CardContent>
         </Card>
@@ -277,10 +279,14 @@ export default function NovelPreview() {
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-2 text-base">
                 <ListTree className="h-4 w-4" aria-hidden="true" />
-                章节目录
+                {t("novels.preview.tocTitle")}
               </CardTitle>
               <CardDescription>
-                已生成正文 {generatedChapters.length}/{chapters.length} 章，约 {formatCount(totalWordCount)} 字。
+                {t("novels.preview.tocSummary", {
+                  generated: generatedChapters.length,
+                  total: chapters.length,
+                  words: formatCount(totalWordCount),
+                })}
               </CardDescription>
             </CardHeader>
             <CardContent className="min-h-0 space-y-2 overflow-y-auto pr-2 lg:max-h-[calc(100vh-20rem)]">
@@ -300,19 +306,19 @@ export default function NovelPreview() {
                     <div className="flex items-start justify-between gap-2">
                       <div className="min-w-0">
                         <div className="font-medium text-foreground">
-                          第 {chapter.order} 章
+                          {t("novels.preview.chapterOrder", { order: chapter.order })}
                         </div>
                         <div className="mt-1 line-clamp-2 break-words text-muted-foreground">
-                          {chapter.title || "未命名章节"}
+                          {chapter.title || t("novels.preview.untitledChapter")}
                         </div>
                       </div>
                       <Badge variant={chapterContent ? "outline" : "secondary"}>
-                        {chapterContent ? "有正文" : "无正文"}
+                        {chapterContent ? t("novels.preview.hasContent") : t("novels.preview.noContent")}
                       </Badge>
                     </div>
                     <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted-foreground">
                       <span>{formatChapterStatus(chapter.chapterStatus)}</span>
-                      <span>{formatCount(countWords(chapter.content))} 字</span>
+                      <span>{t("novels.preview.wordsSuffix", { value: formatCount(countWords(chapter.content)) })}</span>
                     </div>
                   </button>
                 );
@@ -327,12 +333,20 @@ export default function NovelPreview() {
                   <CardTitle className="flex items-center gap-2 text-xl">
                     <BookOpen className="h-5 w-5 shrink-0" aria-hidden="true" />
                     <span className="break-words">
-                      {activeChapter ? `第 ${activeChapter.order} 章：${activeChapter.title || "未命名章节"}` : "选择章节"}
+                      {activeChapter
+                        ? t("novels.preview.chapterTitleWithOrder", {
+                            order: activeChapter.order,
+                            title: activeChapter.title || t("novels.preview.untitledChapter"),
+                          })
+                        : t("novels.preview.selectChapter")}
                     </span>
                   </CardTitle>
                   {activeChapter ? (
                     <CardDescription className="mt-2">
-                      {formatChapterStatus(activeChapter.chapterStatus)} · {formatCount(countWords(activeChapter.content))} 字
+                      {t("novels.preview.chapterStatusDotWords", {
+                        status: formatChapterStatus(activeChapter.chapterStatus),
+                        words: formatCount(countWords(activeChapter.content)),
+                      })}
                     </CardDescription>
                   ) : null}
                 </div>
@@ -350,12 +364,12 @@ export default function NovelPreview() {
                       ) : (
                         <Copy className="h-4 w-4" aria-hidden="true" />
                       )}
-                      {copiedChapterId === activeChapter.id ? "已复制" : "复制正文"}
+                      {copiedChapterId === activeChapter.id ? t("novels.preview.copied") : t("novels.preview.copyChapter")}
                     </Button>
                     <Button asChild variant="outline" size="sm">
                       <Link to={`/novels/${id}/chapters/${activeChapter.id}`}>
                         <Edit3 className="h-4 w-4" aria-hidden="true" />
-                        编辑本章
+                        {t("novels.preview.editChapter")}
                       </Link>
                     </Button>
                   </div>
@@ -371,13 +385,13 @@ export default function NovelPreview() {
                 <div className="flex min-h-[420px] items-center justify-center px-6 text-center">
                   <div className="max-w-md space-y-3">
                     <FileText className="mx-auto h-10 w-10 text-muted-foreground" aria-hidden="true" />
-                    <div className="text-lg font-medium">本章还没有正文</div>
+                    <div className="text-lg font-medium">{t("novels.preview.noChapterContentTitle")}</div>
                     <p className="text-sm leading-6 text-muted-foreground">
-                      进入章节编辑页生成或补写正文后，这里会显示完整内容。
+                      {t("novels.preview.noChapterContentDescription")}
                     </p>
                     {activeChapter ? (
                       <Button asChild>
-                        <Link to={`/novels/${id}/chapters/${activeChapter.id}`}>编辑本章</Link>
+                        <Link to={`/novels/${id}/chapters/${activeChapter.id}`}>{t("novels.preview.editChapter")}</Link>
                       </Button>
                     ) : null}
                   </div>

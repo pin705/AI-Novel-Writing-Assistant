@@ -1,0 +1,99 @@
+{
+  "page": {
+    "title": "推进模式库",
+    "description": "这里维护作品的推进模式，例如系统流、无敌流、种田流、治愈日常。它回答的是“这本书靠什么持续推进和兑现”，会作为后续规划和生成的硬约束输入。",
+    "totalCount": "当前推进模式数：{{count}}",
+    "createRoot": "新建推进模式树",
+    "loadingTree": "正在加载推进模式树...",
+    "emptyTitle": "还没有任何推进模式",
+    "emptyDescription": "可以先手动建一个根推进模式，也可以直接让 AI 生成一份结构化草稿。",
+    "startCreating": "开始创建"
+  },
+  "toast": {
+    "created": "推进模式已创建。",
+    "createdChildren": "已批量创建 {{count}} 个推进模式子类。",
+    "updated": "推进模式已更新。",
+    "deleted": "推进模式已删除。",
+    "childCandidatesGenerated": "AI 已生成 {{count}} 个推进模式子类草稿。",
+    "treeGenerated": "AI 推进模式树草稿已生成。"
+  },
+  "confirm": {
+    "deleteWithDescendants": "确认删除推进模式「{{name}}」吗？这会同时删除其下 {{count}} 个子类，此操作不可恢复。",
+    "deleteSingle": "确认删除推进模式「{{name}}」吗？此操作不可恢复。"
+  },
+  "errors": {
+    "missingParent": "父级推进模式不存在。",
+    "selectChildCandidate": "请至少选择一个子类候选。",
+    "missingStoryMode": "推进模式不存在。"
+  },
+  "createDialog": {
+    "titleChild": "新增推进模式子类",
+    "titleRoot": "新建推进模式",
+    "descriptionChild": "当前会在指定父类下新增子类。你可以手动填写，也可以先让 AI 基于父类和现有兄弟节点生成多个子类候选，再多选批量保存。",
+    "descriptionRoot": "先确定挂载位置，再手动填写 profile，或者先让 AI 生成一份两级树草稿。",
+    "mountLabel": "当前挂载位置",
+    "rootMountLabel": "作为根推进模式创建",
+    "aiSectionTitleChild": "AI 生成子类草稿",
+    "aiSectionTitleRoot": "AI 生成草稿",
+    "aiHintChild": "AI 会基于当前父类和现有兄弟节点输出一个或多个子类节点草稿，不会再生成整棵树。补充方向可以留空。保存前仍然会校验 profile 结构。",
+    "aiHintRoot": "AI 会输出一个可直接编辑的推进模式树草稿，保存前仍然会校验 profile 结构。",
+    "derivationCountLabel": "衍生数量",
+    "derivationOption": "{{count}} 个",
+    "generatingPlaceholderChild": "可选：补充你想偏向的子类方向。不填则 AI 会直接基于父类和现有兄弟节点衍生。",
+    "generatingPlaceholderRoot": "请输入你希望生成的推进模式树方向。",
+    "generating": "生成中...",
+    "generateChild": "生成子类草稿",
+    "generateRoot": "生成推进模式草稿",
+    "resetDraft": "重置草稿",
+    "candidatesTitle": "已生成的子类候选",
+    "candidatesCount": "已选 {{selected}} / {{total}}",
+    "candidatesHint": "勾选后可批量保存；点击候选卡片会切换到下方表单进行单独编辑。",
+    "candidateCurrent": "当前编辑",
+    "candidateLabel": "候选 {{index}}",
+    "nameLabel": "名称",
+    "descriptionLabel": "描述",
+    "templateLabel": "人工模板补充",
+    "cancel": "取消",
+    "savingBatch": "批量保存中...",
+    "saveBatch": "批量保存选中子类 ({{count}})",
+    "saving": "保存中...",
+    "saveChild": "保存当前子类",
+    "saveRoot": "保存推进模式"
+  },
+  "editDialog": {
+    "title": "编辑推进模式",
+    "description": "可以修改名称、描述、模板和 profile。两级树限制仍会保留。",
+    "currentParent": "当前父级：{{value}}",
+    "rootParent": "根节点",
+    "notFoundParent": "未找到",
+    "nameLabel": "名称",
+    "descriptionLabel": "描述",
+    "templateLabel": "人工模板补充",
+    "cancel": "取消",
+    "saving": "保存中...",
+    "save": "保存修改"
+  },
+  "treeCard": {
+    "novelBadge": "小说 {{count}}",
+    "childBadge": "子类 {{count}}",
+    "coreDriveLine": "核心驱动：{{value}}",
+    "addChild": "新增子类",
+    "edit": "编辑",
+    "delete": "删除",
+    "deleting": "删除中...",
+    "deleteBlockedTitle": "请先解绑当前推进模式或其子类下引用的小说后再删除。"
+  },
+  "profile": {
+    "coreDrive": "核心驱动",
+    "readerReward": "读者奖励",
+    "progressionUnits": "章节推进单位",
+    "allowedConflictForms": "允许冲突形式",
+    "forbiddenConflictForms": "禁止冲突形式",
+    "conflictCeiling": "冲突上限",
+    "resolutionStyle": "化解方式",
+    "chapterUnit": "章节颗粒",
+    "volumeReward": "卷末奖励",
+    "mandatorySignals": "必须出现的信号",
+    "antiSignals": "必须避免的跑偏信号"
+  }
+}

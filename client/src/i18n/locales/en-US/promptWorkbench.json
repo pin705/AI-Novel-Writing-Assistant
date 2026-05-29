@@ -1,0 +1,103 @@
+{
+  "header": {
+    "eyebrow": "Prompt management",
+    "title": "Prompt Workbench",
+    "subtitle": "Browse the built-in prompts and attach custom addenda to the main writing flows; currently only some chapter writing, review and repair prompts are open here.",
+    "refresh": "Refresh catalog"
+  },
+  "list": {
+    "searchPlaceholder": "Search by id, task type, context or slot",
+    "loading": "Loading prompt catalog...",
+    "empty": "No prompts match the search.",
+    "canAddendum": "Addendum"
+  },
+  "managementStatus": {
+    "complete": "Metadata complete",
+    "missing_context_requirements": "Missing context requirements",
+    "missing_editable_slots": "Missing editable slots"
+  },
+  "materialImportance": {
+    "must": "Must",
+    "high": "High",
+    "medium": "Helpful",
+    "low": "Reference"
+  },
+  "entrypoint": {
+    "creative_hub": "Creative hub",
+    "auto_director": "Auto director",
+    "chapter_pipeline": "Chapter pipeline",
+    "manual_test": "Manual test"
+  },
+  "detail": {
+    "purpose": "Prompt purpose",
+    "basicInfo": "Basics",
+    "capabilities": "Capabilities",
+    "noCapabilities": "This prompt declares no structured capability flags yet.",
+    "contextRequirements": "Context requirements",
+    "noContextRequirements": "No context requirements declared.",
+    "required": "Required",
+    "optional": "Optional",
+    "safeEditBoundary": "Safe edit boundary",
+    "editableSlots": "Editable slots",
+    "noEditableSlots": "No expressive slots opened up.",
+    "lockedFields": "Locked fields",
+    "addendumSectionTitle": "Custom addenda",
+    "debugTitle": "Debug view",
+    "selectPromptHint": "Pick a prompt to view its detail."
+  },
+  "preview": {
+    "placeholder": "Pick a prompt and click Preview to inspect the final messages, context selection and diagnostics.",
+    "entrypointLabel": "Entrypoint",
+    "estimatedTokens": "Estimated tokens",
+    "selectedContext": "Selected context",
+    "missingCount": "Missing items",
+    "finalMessages": "Final messages",
+    "contextDiagnosis": "Context diagnosis"
+  },
+  "materials": {
+    "title": "Material check",
+    "subtitle": "Pull novel materials matching this prompt's groups to verify whether everything is in place.",
+    "loading": "Loading...",
+    "load": "Load materials",
+    "novelIdPlaceholder": "novelId",
+    "chapterIdPlaceholder": "chapterId",
+    "taskIdPlaceholder": "taskId",
+    "budgetPlaceholder": "Material budget",
+    "requiredGroups": "Required material groups",
+    "noRequiredGroups": "This prompt declares no material requirements; the default core groups will be loaded.",
+    "received": "Received",
+    "missingGroups": "Missing groups",
+    "missingInputs": "Missing inputs",
+    "warnings": "Trim notes",
+    "missingInputsList": "Inputs needed: {{value}}",
+    "missingGroupsList": "Not retrieved: {{value}}",
+    "tokensSuffix": "tokens",
+    "placeholder": "Enter a novel ID to load materials and verify they're ready before the prompt runs.",
+    "joinSeparator": ", "
+  },
+  "previewActions": {
+    "title": "Preview diagnostics",
+    "subtitle": "See the final messages, context selection and diagnostics together.",
+    "previewing": "Previewing...",
+    "generate": "Generate preview"
+  },
+  "addendum": {
+    "unsupportedNotice": "This prompt doesn't accept custom addenda. You can still browse the built-in prompt, but real calls will not read additions here.",
+    "orderHeader": "Effective order",
+    "orderDescription": "Once enabled, the global addendum is appended first, followed by the per-novel addendum. The built-in prompt, structured output and tool boundaries stay unchanged.",
+    "globalTitle": "Global addendum",
+    "globalDescription": "Use this for voice preferences, banned expressions or review focus you want to apply to every novel.",
+    "novelTitle": "Per-novel addendum",
+    "novelDescription": "Use this for writing preferences, taboos, character expression limits and repair principles unique to the current novel.",
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "stop": "Disable",
+    "enable": "Enable",
+    "delete": "Delete",
+    "titlePlaceholder": "Addendum title",
+    "contentPlaceholder": "Write addenda you want the model to follow long-term: voice preferences, banned expressions, review focus or repair principles to preserve.",
+    "charCountHint": "{{count}}/4000 chars. Addenda are appended as context; the built-in prompt is never modified.",
+    "save": "Save",
+    "selectNovel": "Pick a novel to edit its addendum"
+  }
+}

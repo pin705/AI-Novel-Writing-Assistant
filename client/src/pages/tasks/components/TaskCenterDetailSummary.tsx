@@ -1,5 +1,6 @@
 import type { UnifiedTaskDetail } from "@ai-novel/shared/types/task";
 import { Badge } from "@/components/ui/badge";
+import { useTranslation } from "@/i18n";
 import {
   formatCheckpoint,
   formatDate,
@@ -21,50 +22,52 @@ export default function TaskCenterDetailSummary({
   isAutoDirectorTask,
   currentModelLabel,
 }: TaskCenterDetailSummaryProps) {
+  const { t } = useTranslation();
+  const noneLabel = t("tasks.common.none");
   return (
     <>
       <div className="space-y-1">
         <div className="font-medium">{task.title}</div>
         <div className="text-xs text-muted-foreground">
-          {formatKind(task.kind)} | 归属：{task.ownerLabel}
+          {t("tasks.detail.ownershipLine", { kind: formatKind(t, task.kind), owner: task.ownerLabel })}
         </div>
       </div>
       <div className="flex flex-wrap gap-2">
-        <Badge variant={toStatusVariant(task.status)}>{formatStatus(task.status)}</Badge>
-        <Badge variant="outline">进度 {Math.round(task.progress * 100)}%</Badge>
+        <Badge variant={toStatusVariant(task.status)}>{formatStatus(t, task.status)}</Badge>
+        <Badge variant="outline">{t("tasks.detail.progressBadge", { percent: Math.round(task.progress * 100) })}</Badge>
       </div>
       <div className="space-y-1 text-muted-foreground">
-        <div>展示状态：{task.displayStatus ?? formatStatus(task.status)}</div>
-        <div>当前阶段：{task.currentStage ?? "暂无"}</div>
-        <div>当前项：{task.currentItemLabel ?? "暂无"}</div>
+        <div>{t("tasks.detail.displayStatus", { value: task.displayStatus ?? formatStatus(t, task.status) })}</div>
+        <div>{t("tasks.detail.currentStage", { value: task.currentStage ?? noneLabel })}</div>
+        <div>{t("tasks.detail.currentItem", { value: task.currentItemLabel ?? noneLabel })}</div>
         {task.kind === "novel_workflow" ? (
           <>
-            <div>最近检查点：{formatCheckpoint(task.checkpointType, task.executionScopeLabel)}</div>
-            <div>恢复目标页：{formatResumeTarget(task.resumeTarget)}</div>
-            <div>建议继续：{task.resumeAction ?? task.nextActionLabel ?? "继续小说主流程"}</div>
-            <div>最近健康阶段：{task.lastHealthyStage ?? "暂无"}</div>
+            <div>{t("tasks.detail.lastCheckpoint", { value: formatCheckpoint(t, task.checkpointType, task.executionScopeLabel) })}</div>
+            <div>{t("tasks.detail.resumeTarget", { value: formatResumeTarget(t, task.resumeTarget) })}</div>
+            <div>{t("tasks.detail.suggestedContinue", { value: task.resumeAction ?? task.nextActionLabel ?? t("tasks.detail.fallbackContinue") })}</div>
+            <div>{t("tasks.detail.lastHealthyStage", { value: task.lastHealthyStage ?? noneLabel })}</div>
           </>
         ) : null}
         {task.blockingReason ? (
-          <div>阻塞原因：{task.blockingReason}</div>
+          <div>{t("tasks.detail.blockingReason", { value: task.blockingReason })}</div>
         ) : null}
-        <div>最近心跳：{formatDate(task.heartbeatAt)}</div>
-        <div>开始时间：{formatDate(task.startedAt)}</div>
-        <div>结束时间：{formatDate(task.finishedAt)}</div>
-        <div>重试计数：{task.retryCountLabel}</div>
+        <div>{t("tasks.detail.heartbeat", { value: formatDate(t, task.heartbeatAt) })}</div>
+        <div>{t("tasks.detail.startedAt", { value: formatDate(t, task.startedAt) })}</div>
+        <div>{t("tasks.detail.finishedAt", { value: formatDate(t, task.finishedAt) })}</div>
+        <div>{t("tasks.detail.retryCount", { value: task.retryCountLabel })}</div>
         {(task.provider || task.model) ? (
-          <div>调用模型：{task.provider ?? "暂无"} / {task.model ?? "暂无"}</div>
+          <div>{t("tasks.detail.model", { provider: task.provider ?? noneLabel, model: task.model ?? noneLabel })}</div>
         ) : null}
         {isAutoDirectorTask ? (
-          <div>当前界面模型：{currentModelLabel}</div>
+          <div>{t("tasks.detail.currentUiModel", { value: currentModelLabel })}</div>
         ) : null}
         {(task.tokenUsage || task.provider || task.model) ? (
           <>
-            <div>累计调用：{formatTokenCount(task.tokenUsage?.llmCallCount ?? 0)}</div>
-            <div>输入 Tokens：{formatTokenCount(task.tokenUsage?.promptTokens ?? 0)}</div>
-            <div>输出 Tokens：{formatTokenCount(task.tokenUsage?.completionTokens ?? 0)}</div>
-            <div>累计总 Tokens：{formatTokenCount(task.tokenUsage?.totalTokens ?? 0)}</div>
-            <div>最近记录：{formatDate(task.tokenUsage?.lastRecordedAt)}</div>
+            <div>{t("tasks.detail.totalCalls", { value: formatTokenCount(task.tokenUsage?.llmCallCount ?? 0) })}</div>
+            <div>{t("tasks.detail.promptTokens", { value: formatTokenCount(task.tokenUsage?.promptTokens ?? 0) })}</div>
+            <div>{t("tasks.detail.completionTokens", { value: formatTokenCount(task.tokenUsage?.completionTokens ?? 0) })}</div>
+            <div>{t("tasks.detail.totalTokens", { value: formatTokenCount(task.tokenUsage?.totalTokens ?? 0) })}</div>
+            <div>{t("tasks.detail.lastRecorded", { value: formatDate(t, task.tokenUsage?.lastRecordedAt) })}</div>
           </>
         ) : null}
       </div>

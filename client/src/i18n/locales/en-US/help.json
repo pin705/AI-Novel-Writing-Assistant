@@ -1,0 +1,107 @@
+{
+  "hero": {
+    "newcomerBadge": "Getting Started",
+    "recommendedBadge": "Recommended path",
+    "title": "Start from a single spark of inspiration and let AI guide your first novel",
+    "description": "Follow this path and you won't need to write an outline, build a character sheet, or plan volumes up front. You just supply the idea and make the key calls — AI breaks the whole book into steps that can keep moving.",
+    "startCta": "Start your first novel",
+    "configureModelCta": "Configure model"
+  },
+  "modelNotice": {
+    "title": "Configure a model before you start writing",
+    "description": "Auto Director, drafting, and chapter review all need a working model. Set up the provider, API key, and default model first — the rest of the workflow will run far more smoothly.",
+    "cta": "Configure model now"
+  },
+  "guide": {
+    "title": "Recommended path",
+    "description": "On your first run, follow this path and you'll go from idea to writable chapter.",
+    "steps": {
+      "configureModel": {
+        "title": "Configure your model",
+        "description": "In system settings, set up the provider, API key, and default model first — Auto Director and chapter execution depend on it."
+      },
+      "inputInspiration": {
+        "title": "Type a one-line spark",
+        "description": "A genre, a protagonist, a conflict, or even a fuzzy idea is enough — AI will shape it into a workable direction for the book."
+      },
+      "letAutoDirector": {
+        "title": "Let Auto Director open the book",
+        "description": "The system generates a whole-book direction, title set, and opening prep, breaking complex planning into steps you can confirm."
+      },
+      "confirmDirection": {
+        "title": "Confirm the direction",
+        "description": "Pick the candidate you most want to write; if nothing fits, generate more or refine just the one you chose."
+      },
+      "advanceToWriting": {
+        "title": "Advance to writable state",
+        "description": "Let AI keep building the main storyline, characters, volume strategy, and chapter breakdown until the project is ready to draft."
+      },
+      "enterChapterExecution": {
+        "title": "Enter chapter execution",
+        "description": "Write, review, and fix chapter by chapter; when you want to move faster, let the whole-book pipeline keep pushing forward."
+      },
+      "reviewTasks": {
+        "title": "Track tasks and follow-ups",
+        "description": "Task Center handles failed, queued, and running jobs; the Director follow-up page consolidates quality issues that need cleanup."
+      }
+    }
+  },
+  "goals": {
+    "title": "Pick an entry point by goal",
+    "description": "You don't need to understand every feature — pick the entry that matches what you want to get done.",
+    "entries": {
+      "startFromScratch": {
+        "title": "Start from scratch",
+        "description": "For when you only have an idea — no clear genre, hook, protagonist, or opening arc yet.",
+        "action": "Start your first novel"
+      },
+      "continueProject": {
+        "title": "Continue a project",
+        "description": "Jump back to your novel list, pick the book most worth continuing, then finish the plan or write the next chapter.",
+        "action": "Open novel list"
+      },
+      "configureProvider": {
+        "title": "Configure model provider",
+        "description": "Fill in the provider endpoint, API key, and default model so the writing pipeline always has a model to call.",
+        "action": "Open system settings"
+      },
+      "handleTasks": {
+        "title": "Handle tasks",
+        "description": "Review running, queued, and failed background tasks — prioritize anything blocking your next chapter.",
+        "action": "Open Task Center"
+      },
+      "directorFollowUps": {
+        "title": "Director follow-ups",
+        "description": "Work through the quality items Auto Director set aside so the whole book can keep moving toward done.",
+        "action": "View follow-ups"
+      },
+      "tuneStyle": {
+        "title": "Tune the writing style",
+        "description": "Distill the prose you like into a reusable style asset, then bind it to a novel to keep that voice consistent.",
+        "action": "Open Style Engine"
+      }
+    }
+  },
+  "faq": {
+    "title": "Frequently asked questions",
+    "description": "When something feels unclear, start here.",
+    "items": {
+      "needOutline": {
+        "question": "Do I need to know how to outline?",
+        "answer": "No. On your first run, just type a one-line spark and let Auto Director propose a whole-book direction — then confirm step by step."
+      },
+      "knowledgeBaseRequired": {
+        "question": "Is the knowledge base required?",
+        "answer": "Not required. Use Auto Director first to push the book to a writable state; reach for the knowledge base when you need references, book analyses, or long-term lore."
+      },
+      "taskFailed": {
+        "question": "What if a task fails?",
+        "answer": "Open Task Center to see why it failed. Once you've handled the usual model, network, or auth issues, return to the project and continue."
+      },
+      "qualityPending": {
+        "question": "What does \"quality pending\" mean?",
+        "answer": "It means the system logged a minor quality issue but kept writing the whole book first, so those chapters can be polished together later."
+      }
+    }
+  }
+}

@@ -1,0 +1,113 @@
+{
+  "overview": {
+    "title": "Director follow-up center",
+    "summaryLine": "{{recovered}} recovered today, {{completed}} completed today",
+    "all": "All",
+    "allDescription": "All director tasks needing follow-up",
+    "needsValidation": "Needs validation",
+    "needsValidationDescription": "Confirm whether task and assets are consistent",
+    "exception": "Exceptions",
+    "exceptionDescription": "Failed, recovered, or cancelled tasks",
+    "pending": "Pending",
+    "pendingDescription": "Gates that need confirmation or continuation",
+    "autoProgress": "Auto-progress",
+    "autoProgressDescription": "Running tasks and recent auto-approved records",
+    "replaced": "Replaced",
+    "replacedDescription": "Old tasks taken over by newer ones"
+  },
+  "list": {
+    "allSections": "All sections",
+    "allReasons": "All reasons",
+    "allStatuses": "All statuses",
+    "batchAbility": "Batch capability",
+    "all": "All",
+    "onlyBatch": "Batch-only",
+    "onlyNonBatch": "Non-batch only",
+    "loading": "Loading follow-up items...",
+    "emptyAutoProgress": "No running tasks or recent auto-approved records.",
+    "emptyReplaced": "No older tasks have been replaced.",
+    "emptyDefault": "No director follow-up items match the filter.",
+    "supportsBatchBadge": "Batchable",
+    "autoApprovalRecord": "Recent auto-approval",
+    "inProgress": "In progress",
+    "metaLine": "Current stage: {{stage}} · Current model: {{model}} · Updated: {{updatedAt}}",
+    "channelDingtalk": "DingTalk reachable",
+    "channelWecom": "WeCom reachable",
+    "pageInfo": "Page {{page}} of {{total}}, {{count}} items total",
+    "prevPage": "Previous",
+    "nextPage": "Next"
+  },
+  "section": {
+    "needsValidation": "Needs validation",
+    "exception": "Exception",
+    "pending": "Pending",
+    "autoProgress": "Auto-progress",
+    "replaced": "Replaced"
+  },
+  "status": {
+    "waitingApproval": "Waiting approval",
+    "failed": "Failed",
+    "cancelled": "Cancelled",
+    "running": "Running",
+    "queued": "Queued",
+    "succeeded": "Succeeded"
+  },
+  "detail": {
+    "title": "Follow-up detail",
+    "loading": "Loading detail...",
+    "selectPrompt": "Select a director follow-up item to see details.",
+    "blockingReason": "Blocking reason: {{value}}",
+    "nextStepSuggestion": "Next-step suggestion: {{value}}",
+    "checkpointSummary": "Checkpoint summary: {{value}}",
+    "currentModel": "Current model: {{value}}",
+    "originDetailUrl": "Source page: {{value}}",
+    "noneValue": "None",
+    "defaultNextStep": "Review task details before continuing.",
+    "validationTitle": "Validate task and asset state first",
+    "validationDescription": "Safe fix only reconciles state; it never clears content, rewrites plans, confirms candidates, switches models, or makes creative choices for you.",
+    "blockingLine": "Blocking: {{value}}",
+    "warningLine": "Note: {{value}}",
+    "revalidate": "Revalidate now",
+    "safeFix": "Run safe fix",
+    "safeFixTooltip": "Only fixes states, checkpoints, progress, resume targets, auto-execution reconciliation, replacement reasons, audits, and notification records that validation marked low risk. Never clears content, rewrites assets, replans, confirms candidates, switches models, or generates content.",
+    "availableActions": "Available actions",
+    "milestonesTitle": "Recent milestones",
+    "milestonesEmpty": "No milestones yet",
+    "channelsTitle": "Channel deliveries",
+    "channelsEmpty": "No channel delivery records yet",
+    "channelDingtalk": "DingTalk",
+    "channelWecom": "WeCom",
+    "channelMeta": "Target: {{target}} | Response: {{response}} | Time: {{time}}",
+    "channelNoTarget": "Not recorded",
+    "channelNotDelivered": "Not delivered",
+    "deliveryDelivered": "Delivered",
+    "deliveryPending": "Delivering",
+    "deliveryFailed": "Delivery failed",
+    "eventApprovalRequired": "Needs action",
+    "eventAutoApproved": "AI auto-approved",
+    "eventException": "Task anomaly",
+    "eventRecovered": "Recovered",
+    "eventCompleted": "Completed",
+    "eventProgressChanged": "Progress changed"
+  },
+  "batchBar": {
+    "selectedCount": "{{count}} selected",
+    "noCommonAction": "Selected items share no common batch action",
+    "sectionNotAllowed": "This section does not support batch actions",
+    "continueAutoExecution": "Batch low-risk continue",
+    "retryWithTaskModel": "Batch retry exceptions",
+    "clear": "Clear",
+    "execute": "Run batch action"
+  },
+  "confirm": {
+    "execute": "Confirm running \"{{label}}\"?"
+  },
+  "toast": {
+    "actionSubmitted": "Action submitted",
+    "batchSubmitted": "Batch action submitted",
+    "validationRefreshed": "Validation result refreshed."
+  },
+  "errors": {
+    "noPendingApproval": "No pending approval to handle."
+  }
+}

@@ -1,0 +1,134 @@
+{
+  "common": {
+    "none": "Chưa có",
+    "default": "Mặc định",
+    "openInCreativeHubLabel": "Gửi kết quả phân tích sang Trung tâm sáng tác"
+  },
+  "status": {
+    "draft": "Bản nháp",
+    "queued": "Đang xếp hàng",
+    "running": "Đang chạy",
+    "succeeded": "Thành công",
+    "failed": "Thất bại",
+    "archived": "Đã lưu trữ",
+    "idle": "Chờ xử lý"
+  },
+  "stage": {
+    "loadingCache": "Truy bộ nhớ đệm",
+    "preparingNotes": "Chuẩn bị notes",
+    "generatingSections": "Sinh các phần"
+  },
+  "sidebar": {
+    "create": {
+      "title": "Tạo phân tích sách",
+      "documentLabel": "Tài liệu tri thức",
+      "selectDocumentPlaceholder": "Chọn tài liệu",
+      "versionLabel": "Phiên bản tài liệu",
+      "useActiveVersionPlaceholder": "Dùng phiên bản đang kích hoạt",
+      "versionLabelFormat": "v{{version}}",
+      "versionLabelActiveFormat": "v{{version}} (đang dùng)",
+      "modelLabel": "Mô hình",
+      "includeTimelineLabel": "Sinh dòng thời gian (mặc định tắt)",
+      "submit": "Tạo",
+      "sourceSummary": "Số phiên bản: {{versions}} | Phân tích sách: {{count}}"
+    },
+    "list": {
+      "title": "Danh sách phân tích",
+      "searchPlaceholder": "Tìm theo tiêu đề hoặc từ khoá",
+      "filterAll": "Mọi trạng thái",
+      "publishedBadge": "Đã phát hành",
+      "documentVersionFormat": "{{title}} | v{{version}}",
+      "progressFormat": "Tiến độ {{percent}}% | Cập nhật {{updatedAt}}",
+      "empty": "Chưa có phân tích sách nào — hãy chọn một tài liệu tri thức và tạo mới."
+    }
+  },
+  "detail": {
+    "empty": {
+      "title": "Không gian phân tích sách",
+      "description": "Hãy chọn một phân tích ở bên trái hoặc tạo phân tích mới từ tài liệu tri thức."
+    },
+    "header": {
+      "documentInfo": "{{document}} | Phiên bản nguồn v{{version}}",
+      "activeVersionSuffix": " | Phiên bản đang kích hoạt v{{version}}",
+      "publishedBadge": "Đã phát hành",
+      "progress": "Tiến độ {{percent}}%",
+      "copy": "Sao chép",
+      "rebuild": "Tái sinh",
+      "openInTasks": "Xem trong Trung tâm tác vụ",
+      "exportMarkdown": "Xuất Markdown",
+      "exportJson": "Xuất JSON",
+      "generateStyleProfile": "Sinh văn phong từ phân tích",
+      "generatingStyleProfile": "Đang sinh văn phong...",
+      "archive": "Lưu trữ"
+    },
+    "warnings": {
+      "outdatedSource": "Phân tích này dựa trên phiên bản tài liệu cũ; phiên bản đang dùng là v{{version}}."
+    },
+    "publish": {
+      "title": "Phát hành lên kho tri thức tiểu thuyết",
+      "selectNovelPlaceholder": "Chọn tiểu thuyết mục tiêu",
+      "publishCta": "Phát hành và liên kết",
+      "publishedAt": "Phát hành lúc: {{value}}",
+      "feedbackSuccess": "Phát hành xong: tài liệu {{documentId}}, phiên bản v{{version}}, liên kết {{count}} mục",
+      "feedbackFailedFallback": "Phát hành thất bại."
+    },
+    "styleProfile": {
+      "feedbackStart": "Đang sinh tài sản văn phong từ phần \"Văn phong & kỹ thuật\" của phân tích; xong sẽ tự chuyển sang công cụ văn phong.",
+      "feedbackFailedFallback": "Sinh văn phong từ phân tích thất bại.",
+      "successToast": "Đã sinh văn phong từ phân tích, đang mở công cụ văn phong.",
+      "namePattern": "{{title}} — Tài sản văn phong"
+    },
+    "summary": {
+      "title": "Tóm tắt",
+      "placeholder": "Sau khi sinh tổng quan, nội dung tóm tắt sẽ hiển thị ở đây."
+    },
+    "meta": {
+      "title": "Thông tin chạy",
+      "provider": "Nhà cung cấp: {{value}}",
+      "model": "Mô hình: {{value}}",
+      "temperature": "Nhiệt độ: {{value}}",
+      "maxTokens": "Tokens tối đa: {{value}}",
+      "currentStage": "Giai đoạn hiện tại: {{value}}",
+      "currentSection": "Section hiện tại: {{value}}",
+      "heartbeatAt": "Nhịp cuối: {{value}}",
+      "lastRunAt": "Lần chạy gần nhất: {{value}}",
+      "createdAt": "Thời điểm tạo: {{value}}"
+    },
+    "lastError": "Lỗi gần nhất: {{value}}",
+    "evidence": {
+      "title": "Bảng dẫn chứng",
+      "itemHeading": "{{section}} | [{{source}}] {{label}}",
+      "empty": "Phân tích hiện chưa có dẫn chứng."
+    }
+  },
+  "section": {
+    "frozenBadge": "Đã đóng băng",
+    "regenerate": "Tái sinh",
+    "save": "Lưu",
+    "freezeLabel": "Đóng băng phần này — khi tái chạy tự động sẽ không ghi đè nội dung.",
+    "frozenNotice": "Đang đóng băng: hãy bỏ đóng băng trước khi dùng \"Tái sinh\" hoặc \"Tối ưu bằng AI\".",
+    "draftTitle": "Bản nháp hiện tại",
+    "viewTab": "Chế độ xem",
+    "editTab": "Chế độ chỉnh sửa",
+    "viewEmpty": "Phần này hiện chưa có nội dung để hiển thị.",
+    "editPlaceholder": "Chỉnh sửa trực tiếp bản nháp của phần này tại đây.",
+    "optimize": {
+      "title": "Tối ưu / Hiệu chỉnh bằng AI",
+      "instructionPlaceholder": "Nhập gợi ý tối ưu hoặc chỉnh sửa, ví dụ: rút gọn dư thừa, làm nổi bật xung đột, giữ nguyên sự kiện.",
+      "preview": "Sinh bản xem trước",
+      "previewing": "Đang sinh bản xem trước...",
+      "previewLabel": "Bản xem trước sau tối ưu",
+      "apply": "Áp dụng vào bản nháp hiện tại",
+      "cancel": "Huỷ xem trước"
+    },
+    "advanced": {
+      "summary": "Tuỳ chọn nâng cao: ghi chú",
+      "notesLabel": "Ghi chú",
+      "notesPlaceholder": "Thêm ghi chú, giả định hoặc hành động tiếp theo."
+    },
+    "evidence": {
+      "title": "Dẫn chứng",
+      "itemHeading": "[{{source}}] {{label}}"
+    }
+  }
+}

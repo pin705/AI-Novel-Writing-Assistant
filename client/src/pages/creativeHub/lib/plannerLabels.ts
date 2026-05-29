@@ -1,48 +1,51 @@
-const INTENT_LABELS: Record<string, string> = {
-  social_opening: "轻度开场",
-  list_novels: "列出小说",
-  list_worlds: "列出世界观",
-  query_task_status: "查询任务状态",
-  create_novel: "创建小说",
-  select_novel_workspace: "切换小说工作区",
-  bind_world_to_novel: "绑定世界观到小说",
-  unbind_world_from_novel: "解除小说世界观绑定",
-  produce_novel: "整本生产",
-  query_novel_production_status: "查询整本生产状态",
-  query_novel_title: "查询小说标题",
-  query_chapter_content: "查询章节内容",
-  query_progress: "查询创作进度",
-  inspect_failure_reason: "诊断失败原因",
-  write_chapter: "写作章节",
-  rewrite_chapter: "重写章节",
-  save_chapter_draft: "保存章节草稿",
-  start_pipeline: "启动流水线",
-  inspect_characters: "查看角色规划",
-  inspect_timeline: "查看时间线",
-  inspect_world: "查看世界观",
-  search_knowledge: "检索知识库",
-  ideate_novel_setup: "生成设定备选",
-  general_chat: "一般对话",
-  unknown: "未识别意图",
-};
+type Translator = (key: string, values?: Record<string, string | number | undefined | null>) => string;
 
-const PLANNER_SOURCE_LABELS: Record<string, string> = {
-  llm: "大模型识别",
-  unknown: "未知来源",
-};
+const INTENT_KEYS = new Set([
+  "social_opening",
+  "list_novels",
+  "list_worlds",
+  "query_task_status",
+  "create_novel",
+  "select_novel_workspace",
+  "bind_world_to_novel",
+  "unbind_world_from_novel",
+  "produce_novel",
+  "query_novel_production_status",
+  "query_novel_title",
+  "query_chapter_content",
+  "query_progress",
+  "inspect_failure_reason",
+  "write_chapter",
+  "rewrite_chapter",
+  "save_chapter_draft",
+  "start_pipeline",
+  "inspect_characters",
+  "inspect_timeline",
+  "inspect_world",
+  "search_knowledge",
+  "ideate_novel_setup",
+  "general_chat",
+  "unknown",
+]);
+
+const SOURCE_KEYS = new Set(["llm", "unknown"]);
 
 function formatBilingualLabel(label: string, rawValue: string) {
   return `${label}（${rawValue}）`;
 }
 
-export function getIntentDisplayLabel(intent: unknown): string {
+export function getIntentDisplayLabel(intent: unknown, t: Translator): string {
   const rawValue = typeof intent === "string" && intent.trim() ? intent.trim() : "unknown";
-  const label = INTENT_LABELS[rawValue] ?? "未映射意图";
+  const label = INTENT_KEYS.has(rawValue)
+    ? t(`creativeHub.plannerLabels.intent.${rawValue}`)
+    : t("creativeHub.plannerLabels.intent.unmapped");
   return formatBilingualLabel(label, rawValue);
 }
 
-export function getPlannerSourceDisplayLabel(source: unknown): string {
+export function getPlannerSourceDisplayLabel(source: unknown, t: Translator): string {
   const rawValue = typeof source === "string" && source.trim() ? source.trim() : "unknown";
-  const label = PLANNER_SOURCE_LABELS[rawValue] ?? "未映射来源";
+  const label = SOURCE_KEYS.has(rawValue)
+    ? t(`creativeHub.plannerLabels.source.${rawValue}`)
+    : t("creativeHub.plannerLabels.source.unmapped");
   return formatBilingualLabel(label, rawValue);
 }

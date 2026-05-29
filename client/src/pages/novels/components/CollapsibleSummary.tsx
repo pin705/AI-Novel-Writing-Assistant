@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { ChevronDown } from "lucide-react";
+import { useTranslation } from "@/i18n";
 import { cn } from "@/lib/utils";
 
 interface CollapsibleSummaryProps {
@@ -12,13 +13,14 @@ interface CollapsibleSummaryProps {
 }
 
 export default function CollapsibleSummary(props: CollapsibleSummaryProps) {
+  const { t } = useTranslation();
   const {
     title,
     description,
     meta,
     className,
-    collapsedLabel = "展开查看",
-    expandedLabel = "收起内容",
+    collapsedLabel = t("novels.collapsibleSummary.expand"),
+    expandedLabel = t("novels.collapsibleSummary.collapse"),
   } = props;
 
   return (

@@ -1,0 +1,154 @@
+{
+  "sessions": {
+    "title": "Sessions",
+    "newSession": "New session",
+    "newSessionTitle": "New conversation",
+    "runMeta": "Run: {{runId}} · {{count}} entries"
+  },
+  "thread": {
+    "title": "Conversation",
+    "panelTitle": "Run panel",
+    "greeting": "Hi!",
+    "subgreeting": "Which story beat should we polish together today?",
+    "suggestion1Prompt": "Help me review the world-building hard constraints in \"Distant Savior V2\" and point out conflicts with the current outline.",
+    "suggestion1Title": "World-building consistency check",
+    "suggestion1Description": "Spot hard conflicts and suggest a fix direction",
+    "suggestion2Prompt": "Rewrite the ending of Chapter 3 to raise dramatic tension while keeping each character's voice consistent.",
+    "suggestion2Title": "Chapter rewrite draft",
+    "suggestion2Description": "Focus on closing tension and character voice consistency",
+    "inputPlaceholder": "Type a message and press Enter to send, Shift+Enter for a new line.",
+    "send": "Send",
+    "stop": "Stop",
+    "continueTask": "Continue with the current task.",
+    "emptyResponse": "(empty response)",
+    "requestFailedStatus": "Request failed, status code {{status}}",
+    "sendFailed": "Failed to send message.",
+    "novelModeRequired": "Pick a novel first before using novel mode.",
+    "toolPart": "[tool:{{name}}]",
+    "dataPart": "[data]",
+    "imagePart": "[image:{{name}}]",
+    "filePart": "[file:{{name}}]",
+    "unnamed": "untitled",
+    "reasoningTitle": "Reasoning trace"
+  },
+  "tabs": {
+    "console": "Console",
+    "trace": "Trace"
+  },
+  "console": {
+    "sessionContext": "Session context",
+    "chatMode": "Chat mode",
+    "chatModeStandard": "Standard",
+    "chatModeAgent": "Smart agent",
+    "contextMode": "Context mode",
+    "contextGlobal": "Global",
+    "contextNovel": "Novel",
+    "sessionRun": "Session run",
+    "novel": "Novel",
+    "selectNovel": "Please select a novel",
+    "approval": "Approvals",
+    "approvalPending": "{{count}} pending",
+    "approvalItemTitle": "Approval {{index}}",
+    "approvalNotePlaceholder": "Approval note (optional)",
+    "approve": "Approve and continue",
+    "reject": "Reject",
+    "noApproval": "No pending approvals.",
+    "approvalHistory": "Approval history",
+    "runConfig": "Run config",
+    "modelTitle": "Model",
+    "providerLabel": "Provider: ",
+    "modelLabel": "Model: ",
+    "temperature": "Temperature",
+    "maxTokens": "Max tokens",
+    "systemPrompt": "System prompt",
+    "systemPromptPlaceholder": "Override the default system prompt.",
+    "enableRag": "Enable knowledge retrieval (RAG)",
+    "knowledgeTitle": "Knowledge documents",
+    "knowledgeAutoHint": "Leave empty to auto-resolve, or pick documents to limit the search scope.",
+    "knowledgeDisabledHint": "RAG is currently disabled. Enable it above to use document retrieval."
+  },
+  "trace": {
+    "replayControl": "Replay control",
+    "replayHint": "Only shows steps followed by another tool call.",
+    "continueFromHere": "Continue from here",
+    "dryRun": "Dry run",
+    "noReplayable": "The selected run has no replayable steps.",
+    "stepOrder": "{{seq}}. {{title}}",
+    "input": "Input",
+    "output": "Output",
+    "errorLine": "Error: {{value}}",
+    "eventLabel": "Event {{index}}",
+    "noEvents": "No run events yet.",
+    "emptyPreview": "none"
+  },
+  "approvalActions": {
+    "submittedApprove": "Approval submitted, continuing run",
+    "submittedReject": "Approval submitted, processing"
+  },
+  "errors": {
+    "noPendingApproval": "No pending approval to handle.",
+    "noReplayableStep": "The current run has no replayable steps.",
+    "replayFailed": "Replay failed.",
+    "replayNoToolStepsAfter": "No replayable tool steps after the selected step. Please pick an earlier one."
+  },
+  "events": {
+    "toolCall": "Calling tool {{name}}: {{summary}}",
+    "toolResultSuccess": "{{name}} succeeded: {{summary}}",
+    "toolResultFailed": "{{name}} failed: {{summary}}",
+    "approvalRequired": "Awaiting approval: {{summary}}",
+    "approvalResultPlain": "Approval result: {{action}}",
+    "approvalResultWithNote": "Approval result: {{action}} ({{note}})"
+  },
+  "runStatus": {
+    "queued": "Queued",
+    "running": "Running",
+    "waitingApproval": "Waiting approval",
+    "succeeded": "Succeeded",
+    "failed": "Failed",
+    "cancelled": "Cancelled"
+  },
+  "approvalActionLabels": {
+    "approved": "Approved",
+    "rejected": "Rejected"
+  },
+  "stepType": {
+    "planning": "Planning",
+    "toolCall": "Tool call",
+    "toolResult": "Tool result",
+    "approval": "Approval",
+    "completion": "Wrap-up",
+    "analysis": "Analysis",
+    "review": "Review",
+    "repair": "Repair",
+    "writing": "Writing",
+    "context": "Context"
+  },
+  "agentName": {
+    "planner": "Planner",
+    "writer": "Writer",
+    "reviewer": "Reviewer",
+    "continuity": "Continuity check",
+    "repair": "Repair agent"
+  },
+  "stepTitle": "{{agent}} · {{stepType}} · {{status}}",
+  "header": {
+    "waitingApproval": "Current run is waiting for approval",
+    "running": "Current run is in progress",
+    "succeeded": "Current run completed",
+    "failed": "Current run failed",
+    "cancelled": "Current run was cancelled"
+  },
+  "creativeHub": {
+    "title": "Creative hub",
+    "description": "Not just a chat page — this is the command, status, diagnostics, and approval hub for the current novel workspace.",
+    "novelBadge": "Novel {{id}}",
+    "runBadge": "Run {{id}}",
+    "loading": "Loading capability catalog...",
+    "category": {
+      "read": "Read",
+      "inspect": "Inspect",
+      "mutate": "Mutate",
+      "run": "Run"
+    }
+  }
+}

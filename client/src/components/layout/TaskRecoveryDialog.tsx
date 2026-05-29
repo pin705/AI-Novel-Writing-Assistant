@@ -7,25 +7,29 @@ import {
   Dialog,
 } from "@/components/ui/dialog";
 import { Card, CardContent } from "@/components/ui/card";
+import { useTranslation } from "@/i18n";
 import { useTaskRecovery } from "./TaskRecoveryContext";
 
-function formatTaskKind(kind: RecoverableTaskSummary["kind"]): string {
-  if (kind === "novel_workflow") {
-    return "小说主流程";
+function formatTaskKind(
+  kind: RecoverableTaskSummary["kind"],
+  t: (key: string) => string,
+): string {
+  switch (kind) {
+    case "novel_workflow":
+      return t("components.layout.taskRecovery.kinds.novel_workflow");
+    case "novel_pipeline":
+      return t("components.layout.taskRecovery.kinds.novel_pipeline");
+    case "book_analysis":
+      return t("components.layout.taskRecovery.kinds.book_analysis");
+    case "style_extraction":
+      return t("components.layout.taskRecovery.kinds.style_extraction");
+    default:
+      return t("components.layout.taskRecovery.kinds.image");
   }
-  if (kind === "novel_pipeline") {
-    return "章节流水线";
-  }
-  if (kind === "book_analysis") {
-    return "拆书任务";
-  }
-  if (kind === "style_extraction") {
-    return "写法提取";
-  }
-  return "图片任务";
 }
 
 export default function TaskRecoveryDialog() {
+  const { t } = useTranslation();
   const {
     items,
     isOpen,
@@ -40,15 +44,17 @@ export default function TaskRecoveryDialog() {
   return (
     <Dialog open={isOpen} onOpenChange={(nextOpen) => { if (!nextOpen) closeDialog(); }}>
       <AppDialogContent
-        title="检测到待恢复任务"
-        description="系统启动时发现有后台任务在服务重启前中断了。现在不会自动继续执行，你可以先逐个确认，再决定是否恢复。"
+        title={t("components.layout.taskRecovery.title")}
+        description={t("components.layout.taskRecovery.description")}
         footer={(
           <>
             <Button variant="outline" onClick={closeDialog}>
-              稍后处理
+              {t("components.layout.taskRecovery.later")}
             </Button>
             <Button onClick={resumeAll} disabled={isResumeSinglePending || isResumeAllPending}>
-              {isResumeAllPending ? "恢复全部中..." : "继续全部"}
+              {isResumeAllPending
+                ? t("components.layout.taskRecovery.resumeAllPending")
+                : t("components.layout.taskRecovery.resumeAll")}
             </Button>
           </>
         )}
@@ -60,13 +66,17 @@ export default function TaskRecoveryDialog() {
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="space-y-2">
                     <div className="flex flex-wrap items-center gap-2">
-                      <Badge variant="outline">{formatTaskKind(item.kind)}</Badge>
+                      <Badge variant="outline">{formatTaskKind(item.kind, t)}</Badge>
                       <Badge variant={item.status === "running" ? "default" : "secondary"}>
-                        {item.status === "running" ? "运行中断" : "排队中断"}
+                        {item.status === "running"
+                          ? t("components.layout.taskRecovery.statusRunning")
+                          : t("components.layout.taskRecovery.statusQueued")}
                       </Badge>
                     </div>
                     <div className="text-base font-semibold">{item.title}</div>
-                    <div className="text-sm text-muted-foreground">所属对象：{item.ownerLabel}</div>
+                    <div className="text-sm text-muted-foreground">
+                      {t("components.layout.taskRecovery.ownerLabel", { value: item.ownerLabel })}
+                    </div>
                   </div>
                   <div className="flex flex-wrap items-center gap-2">
                     <Button
@@ -74,19 +84,31 @@ export default function TaskRecoveryDialog() {
                       onClick={() => resumeSingle({ kind: item.kind, id: item.id })}
                       disabled={isResumeAllPending || (isResumeSinglePending && busyTaskId !== item.id)}
                     >
-                      {isResumeSinglePending && busyTaskId === item.id ? "恢复中..." : "继续单个"}
+                      {isResumeSinglePending && busyTaskId === item.id
+                        ? t("components.layout.taskRecovery.resumeSinglePending")
+                        : t("components.layout.taskRecovery.resumeSingle")}
                     </Button>
                     <Button asChild size="sm" variant="outline">
-                      <Link to={item.sourceRoute} onClick={closeDialog}>打开任务位置</Link>
+                      <Link to={item.sourceRoute} onClick={closeDialog}>
+                        {t("components.layout.taskRecovery.openLocation")}
+                      </Link>
                     </Button>
                   </div>
                 </div>
 
                 <div className="grid gap-2 text-sm text-muted-foreground">
-                  {item.currentStage ? <div>当前阶段：{item.currentStage}</div> : null}
-                  {item.currentItemLabel ? <div>中断位置：{item.currentItemLabel}</div> : null}
-                  {item.resumeAction ? <div>建议动作：{item.resumeAction}</div> : null}
-                  {item.recoveryHint ? <div>恢复建议：{item.recoveryHint}</div> : null}
+                  {item.currentStage
+                    ? <div>{t("components.layout.taskRecovery.currentStage", { value: item.currentStage })}</div>
+                    : null}
+                  {item.currentItemLabel
+                    ? <div>{t("components.layout.taskRecovery.currentItem", { value: item.currentItemLabel })}</div>
+                    : null}
+                  {item.resumeAction
+                    ? <div>{t("components.layout.taskRecovery.resumeAction", { value: item.resumeAction })}</div>
+                    : null}
+                  {item.recoveryHint
+                    ? <div>{t("components.layout.taskRecovery.recoveryHint", { value: item.recoveryHint })}</div>
+                    : null}
                 </div>
               </CardContent>
             </Card>

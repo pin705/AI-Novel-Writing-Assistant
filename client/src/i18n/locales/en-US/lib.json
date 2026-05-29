@@ -1,0 +1,33 @@
+{
+  "directorTaskNotice": {
+    "defaultActionLabel": "Quick-fix chapter titles",
+    "chapterTitleWarningLabel": "Quick-fix chapter titles"
+  },
+  "novelWorkflowTaskUi": {
+    "defaultScopeLabel": "Chapters 1-10",
+    "autoExecutionRunning": "Auto-executing {{scope}}",
+    "autoExecutionPaused": "Auto-execution paused for {{scope}}",
+    "autoExecutionCancelled": "Auto-execution cancelled for {{scope}}",
+    "checkpoints": {
+      "candidateSelectionRequired": "Waiting for book-level direction confirmation",
+      "bookContractReady": "Book contract ready",
+      "characterSetupRequired": "Character setup awaiting review",
+      "volumeStrategyReady": "Volume strategy awaiting review",
+      "replanRequired": "Awaiting replan",
+      "workflowCompleted": "Auto-director completed",
+      "fallback": "Auto-director"
+    },
+    "statuses": {
+      "running": "Auto-director running",
+      "queued": "Auto-director queued",
+      "failed": "Auto-director failed",
+      "cancelled": "Auto-director cancelled"
+    },
+    "description": {
+      "autoRunning": "AI is continuing {{scope}} in the background — {{percent}}% complete.",
+      "autoPaused": "Auto-execution for {{scope}} paused during batching. Review the task before deciding to resume.",
+      "resumeSuggestion": "Recommended next: {{label}}",
+      "nextAction": "Next step: {{label}}"
+    }
+  }
+}

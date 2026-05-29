@@ -1,0 +1,107 @@
+{
+  "hero": {
+    "newcomerBadge": "Hướng dẫn người mới",
+    "recommendedBadge": "Lộ trình đề xuất",
+    "title": "Từ một ý tưởng bất chợt, để AI dẫn bạn viết cuốn tiểu thuyết đầu tiên",
+    "description": "Đi theo lộ trình này, bạn không cần biết viết đề cương, lập bảng nhân vật hay hoạch định tập sách. Bạn chỉ cần đưa ý tưởng và đưa ra những lựa chọn quan trọng — AI sẽ chia cả cuốn sách thành các bước có thể tiến tới.",
+    "startCta": "Bắt đầu cuốn tiểu thuyết đầu tiên",
+    "configureModelCta": "Cấu hình mô hình"
+  },
+  "modelNotice": {
+    "title": "Cấu hình mô hình trước khi bắt đầu viết",
+    "description": "Đạo diễn tự động, viết chính văn và rà soát chương đều cần một mô hình khả dụng. Hoàn tất nhà cung cấp, API Key và mô hình mặc định trước sẽ giúp quy trình mở sách mượt mà hơn.",
+    "cta": "Đi cấu hình mô hình"
+  },
+  "guide": {
+    "title": "Lộ trình đề xuất",
+    "description": "Lần đầu sử dụng, làm theo lộ trình này để đi từ ý tưởng đến chương có thể viết.",
+    "steps": {
+      "configureModel": {
+        "title": "Cấu hình mô hình",
+        "description": "Trước tiên hãy cấu hình nhà cung cấp, API Key và mô hình mặc định trong cài đặt hệ thống, để đạo diễn tự động và viết chương sau này có thể chạy trôi chảy."
+      },
+      "inputInspiration": {
+        "title": "Nhập một câu cảm hứng",
+        "description": "Chỉ cần đề tài, nhân vật chính, xung đột hay một ý tưởng còn mơ hồ là đủ — AI sẽ giúp bạn chuyển thành định hướng mở sách."
+      },
+      "letAutoDirector": {
+        "title": "Để AI đạo diễn tự động mở sách",
+        "description": "Hệ thống sẽ sinh ra định hướng toàn truyện, gói tiêu đề và phần chuẩn bị mở sách, chia kế hoạch phức tạp thành các bước có thể xác nhận."
+      },
+      "confirmDirection": {
+        "title": "Xác nhận định hướng",
+        "description": "Chọn phương án bạn muốn viết nhất trong danh sách ứng viên; nếu chưa ưng, có thể tạo thêm hoặc chỉ tinh chỉnh phương án đã chọn."
+      },
+      "advanceToWriting": {
+        "title": "Đẩy tiến tới mức có thể viết",
+        "description": "Để AI tiếp tục chuẩn bị mạch truyện chính, nhân vật, chiến lược tập và phân chia chương, đến khi dự án đủ điều kiện viết chương."
+      },
+      "enterChapterExecution": {
+        "title": "Bước vào viết chương",
+        "description": "Viết, rà và sửa theo từng chương; khi muốn tăng tốc, có thể để tác vụ sản xuất toàn cuốn tự đẩy tiếp."
+      },
+      "reviewTasks": {
+        "title": "Theo dõi tác vụ và hậu kỳ",
+        "description": "Trung tâm tác vụ xử lý thất bại, hàng đợi và trạng thái chạy; trang hậu kỳ đạo diễn tập trung xử lý các mục chất lượng cần thu hồi."
+      }
+    }
+  },
+  "goals": {
+    "title": "Chọn lối vào theo mục tiêu",
+    "description": "Không cần hiểu mọi chức năng — chọn lối vào theo việc bạn muốn hoàn thành.",
+    "entries": {
+      "startFromScratch": {
+        "title": "Bắt đầu từ con số 0",
+        "description": "Phù hợp khi bạn chỉ có một ý tưởng, chưa rõ đề tài, điểm hấp dẫn, nhân vật chính hay tình tiết đầu.",
+        "action": "Bắt đầu cuốn tiểu thuyết đầu tiên"
+      },
+      "continueProject": {
+        "title": "Tiếp tục dự án",
+        "description": "Quay lại danh sách tiểu thuyết, chọn cuốn đáng tiếp tục nhất rồi hoàn tất kế hoạch hoặc viết chương.",
+        "action": "Mở danh sách tiểu thuyết"
+      },
+      "configureProvider": {
+        "title": "Cấu hình nhà cung cấp mô hình",
+        "description": "Điền giao diện nhà cung cấp, API Key và mô hình mặc định để đảm bảo chuỗi viết luôn có mô hình khả dụng.",
+        "action": "Mở cài đặt hệ thống"
+      },
+      "handleTasks": {
+        "title": "Xử lý tác vụ",
+        "description": "Xem các tác vụ đang chạy, hàng đợi và thất bại ở nền; ưu tiên những vấn đề ảnh hưởng việc viết tiếp.",
+        "action": "Mở trung tâm tác vụ"
+      },
+      "directorFollowUps": {
+        "title": "Hậu kỳ đạo diễn",
+        "description": "Tập trung xử lý các mục chất lượng do đạo diễn tự động để lại, giúp cả cuốn tiếp tục tiến tới hoàn thành.",
+        "action": "Xem hậu kỳ đạo diễn"
+      },
+      "tuneStyle": {
+        "title": "Tinh chỉnh văn phong",
+        "description": "Đúc kết phong cách văn bạn thích thành tài sản văn phong, rồi gắn vào tiểu thuyết để tái sử dụng lâu dài.",
+        "action": "Vào công cụ văn phong"
+      }
+    }
+  },
+  "faq": {
+    "title": "Câu hỏi thường gặp",
+    "description": "Khi chưa chắc chắn, hãy xem những gợi ý này trước.",
+    "items": {
+      "needOutline": {
+        "question": "Tôi có cần biết viết đề cương không?",
+        "answer": "Không cần. Lần đầu dùng, chỉ cần nhập một câu cảm hứng, để AI đạo diễn tự động đề xuất định hướng cả cuốn, rồi xác nhận theo từng bước."
+      },
+      "knowledgeBaseRequired": {
+        "question": "Có bắt buộc dùng kho tri thức không?",
+        "answer": "Không bắt buộc. Trước hết dùng đạo diễn tự động đẩy cuốn sách tới mức có thể viết; khi cần tài liệu tham khảo, kết quả phân tích sách hay thiết lập dài hạn, mới dùng kho tri thức."
+      },
+      "taskFailed": {
+        "question": "Tác vụ thất bại thì làm sao?",
+        "answer": "Vào trung tâm tác vụ để xem nguyên nhân thất bại. Sau khi xử lý các vấn đề thường gặp về mô hình, mạng hay phân quyền, bạn có thể quay lại dự án ban đầu để tiếp tục."
+      },
+      "qualityPending": {
+        "question": "“Chất lượng chờ thu hồi” nghĩa là gì?",
+        "answer": "Nghĩa là hệ thống tạm ghi nhận các vấn đề chất lượng thông thường, ưu tiên viết tiếp cả cuốn trước, sau đó sẽ tập trung sửa các chương này."
+      }
+    }
+  }
+}

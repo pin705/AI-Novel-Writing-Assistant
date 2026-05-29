@@ -1,3 +1,4 @@
+import { useTranslation } from "@/i18n";
 import { cn } from "@/lib/utils";
 import type {
   ChapterExecutionFlowStage,
@@ -33,6 +34,7 @@ function dotClassName(status: ChapterExecutionFlowStageStatus, isCurrent: boolea
 
 export default function ChapterExecutionStatusFlow(props: ChapterExecutionStatusFlowProps) {
   const { stages, currentStageKey, currentStageNote } = props;
+  const { t } = useTranslation();
 
   return (
     <div className="space-y-3 rounded-2xl border border-border/70 bg-muted/20 p-3">
@@ -55,8 +57,8 @@ export default function ChapterExecutionStatusFlow(props: ChapterExecutionStatus
       </div>
       <div className="text-xs leading-6 text-muted-foreground">
         <span className="font-medium text-foreground">
-          当前阶段：
-          {stages.find((stage) => stage.key === currentStageKey)?.label ?? "未开始"}
+          {t("novels.chapterStatusFlow.currentStage")}
+          {stages.find((stage) => stage.key === currentStageKey)?.label ?? t("novels.chapterStatusFlow.notStarted")}
         </span>
         <span className="ml-2">{currentStageNote}</span>
       </div>

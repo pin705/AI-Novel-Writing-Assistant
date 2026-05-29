@@ -1,0 +1,29 @@
+{
+  "expand": "Mở rộng thanh điều hướng",
+  "collapse": "Thu gọn thanh điều hướng",
+  "groups": {
+    "creation": "Sáng tác",
+    "assets": "Tài nguyên",
+    "system": "Hệ thống"
+  },
+  "items": {
+    "home": "Trang chủ",
+    "help": "Hướng dẫn nhập môn",
+    "novels": "Danh sách tiểu thuyết",
+    "creativeHub": "Trung tâm sáng tác",
+    "bookAnalysis": "Phân tích tác phẩm",
+    "tasks": "Trung tâm tác vụ",
+    "autoDirectorFollowUps": "Theo dõi đạo diễn",
+    "genres": "Thư viện thể loại nền",
+    "storyModes": "Thư viện mô thức triển khai",
+    "titles": "Xưởng đặt tiêu đề",
+    "knowledge": "Kho tri thức",
+    "worlds": "Thế giới quan",
+    "writingFormula": "Bộ máy phong cách viết",
+    "antiAiRules": "Quy tắc chống AI",
+    "baseCharacters": "Thư viện nhân vật nền",
+    "promptWorkbench": "Quản lý prompt",
+    "modelRoutes": "Định tuyến mô hình",
+    "settings": "Cài đặt hệ thống"
+  }
+}

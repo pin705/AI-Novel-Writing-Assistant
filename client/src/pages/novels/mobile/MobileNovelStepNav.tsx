@@ -1,5 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "@/i18n";
 import { cn } from "@/lib/utils";
 import {
   NOVEL_WORKSPACE_FLOW_STEPS,
@@ -18,10 +19,11 @@ export default function MobileNovelStepNav({
   workflowCurrentTab,
   onSelectTab,
 }: MobileNovelStepNavProps) {
+  const { t } = useTranslation();
   const steps = [...NOVEL_WORKSPACE_FLOW_STEPS, ...NOVEL_WORKSPACE_TOOL_TABS];
 
   return (
-    <nav className="mobile-novel-step-nav -mx-4 flex gap-2 overflow-x-auto px-4 pb-1" aria-label="小说创作步骤">
+    <nav className="mobile-novel-step-nav -mx-4 flex gap-2 overflow-x-auto px-4 pb-1" aria-label={t("novels.mobile.stepNavAriaLabel")}>
       {steps.map((step, index) => {
         const isActive = activeTab === step.key;
         const isRecommended = workflowCurrentTab === step.key && workflowCurrentTab !== activeTab;
@@ -46,7 +48,7 @@ export default function MobileNovelStepNav({
               <span className="max-w-32 truncate">{step.label}</span>
               {isRecommended ? (
                 <Badge variant="secondary" className="rounded-full px-1.5 py-0 text-[10px]">
-                  流程推荐
+                  {t("novels.mobile.flowRecommend")}
                 </Badge>
               ) : null}
             </span>

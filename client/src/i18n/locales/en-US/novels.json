@@ -1,0 +1,237 @@
+{
+  "filters": {
+    "all": "All",
+    "draft": "Drafts",
+    "published": "Published",
+    "writingModeAll": "Writing type: All",
+    "original": "Original",
+    "continuation": "Continuation"
+  },
+  "common": {
+    "progress": "Progress {{percent}}%",
+    "backgroundRunning": "Running in background",
+    "noIntro": "No description",
+    "noAutoDirectorTask": "No auto-director task detected. List shown by basic novel assets.",
+    "currentStage": "Current stage: {{stage}}",
+    "currentStageWithAction": "Current stage: {{stage}}{{action}}",
+    "lastHealthyStage": "Last healthy stage: {{stage}}",
+    "suggestedContinue": "Suggested next step: {{action}}",
+    "project": "Project: {{value}}",
+    "storyline": "Storyline: {{value}}",
+    "outline": "Outline: {{value}}",
+    "resource": "Resources: {{value}}",
+    "world": "World: {{name}}",
+    "chapterCount": "Chapters: {{value}}",
+    "characterCount": "Characters: {{value}}",
+    "tokenUsage": "Total tokens: {{value}}",
+    "stats": "Chapters: {{chapters}}, Characters: {{characters}}, Total tokens: {{tokens}}",
+    "autoDirectorRunning": "AI is advancing the project in background",
+    "directorStageDefault": "Auto-director"
+  },
+  "progressStatus": {
+    "completed": "Completed",
+    "inProgress": "In progress",
+    "rework": "Needs rework",
+    "blocked": "Blocked",
+    "notStarted": "Not started"
+  },
+  "actions": {
+    "directorCreate": "Start with AI auto-director",
+    "manualCreate": "Create novel manually",
+    "recoveryPending": "Recovery pending",
+    "aiCockpit": "AI cockpit",
+    "continueExecuting": "Continuing execution...",
+    "continueAutoExecute": "Continue auto-executing {{scope}}",
+    "defaultScope": "current chapter range",
+    "continuing": "Continuing...",
+    "continueDirector": "Continue director",
+    "confirmDirection": "Confirm book-level direction",
+    "enterChapterExecution": "Enter chapter execution",
+    "viewProgress": "View progress",
+    "executionDetails": "Execution details",
+    "preview": "Preview",
+    "exporting": "Exporting...",
+    "export": "Export",
+    "deleting": "Deleting...",
+    "delete": "Delete",
+    "reload": "Reload",
+    "reread": "Reread",
+    "continueAutoExecuteFailed": "Failed to continue auto-executing the current chapter range.",
+    "continueAutoExecuteScopeFailed": "Failed to continue auto-executing {{scope}}.",
+    "continueDirectorFailed": "Failed to continue auto-director.",
+    "editNovel": "Edit novel"
+  },
+  "list": {
+    "loadErrorTitle": "Failed to load novel list",
+    "loadErrorDescription": "Cannot read the project list right now. You can try again.",
+    "emptyTitle": "No novels yet",
+    "emptyFilteredTitle": "No novels match these filters",
+    "emptyDescription": "First time? We recommend tapping \"Start with AI auto-director\" in the top right so the system can set up direction and prep for you.",
+    "emptyFilteredDescription": "Adjust the filters above, or just create a new novel project.",
+    "confirmDelete": "Delete \"{{title}}\"? This will remove the novel immediately.",
+    "deleteSuccess": "Novel deleted.",
+    "deleteFailed": "Failed to delete novel.",
+    "exportStarted": "Export started.",
+    "exportFailed": "Failed to export novel.",
+    "cockpitTitle": "AI cockpit",
+    "cockpitDescription": "View the AI progress and next action for \"{{title}}\".",
+    "cockpitDescriptionGeneric": "View this book's AI progress and next action.",
+    "cockpitLoading": "Loading this book's AI status...",
+    "cockpitError": "Cannot read AI status for this book. Please try again later.",
+    "cockpitFallback": "This book has no AI auto tasks that need attention."
+  },
+  "create": {
+    "title": "Create novel project",
+    "description": "Clarify upfront who this book is for, what hooks readers, and what the first 30 chapters need to deliver. These settings drive storyline planning, world boundaries, writing suggestions and AI generation behavior — you can still adjust after creation.",
+    "submitLabel": "Create and enter project"
+  },
+  "preview": {
+    "title": "Novel preview",
+    "fallbackTitle": "Novel preview",
+    "loading": "Loading...",
+    "error": "Cannot load preview.",
+    "empty": "No chapters to preview.",
+    "back": "Back",
+    "backToList": "Back to novel list",
+    "downloadTxt": "Download TXT",
+    "downloadMd": "Download Markdown",
+    "missingNovelTitle": "Missing novel info",
+    "missingNovelDescription": "Go back to the novel list and pick a work to preview.",
+    "subtitle": "Read generated chapters in order. Great for checking flow, pacing and what's been written so far.",
+    "openWorkspace": "Open workspace",
+    "editChapter": "Edit this chapter",
+    "loadErrorTitle": "Failed to load preview",
+    "loadErrorDescription": "Cannot read chapters right now. You can reload.",
+    "noChaptersTitle": "No chapters yet",
+    "noChaptersDescription": "Go to the workspace to generate a chapter outline or content first, then come back to preview the full book.",
+    "enterWorkspace": "Enter workspace",
+    "tocTitle": "Chapter table of contents",
+    "tocSummary": "{{generated}}/{{total}} chapters generated, about {{words}} words.",
+    "chapterOrder": "Chapter {{order}}",
+    "chapterTitleWithOrder": "Chapter {{order}}: {{title}}",
+    "selectChapter": "Select a chapter",
+    "untitledChapter": "Untitled chapter",
+    "hasContent": "Has content",
+    "noContent": "No content",
+    "wordsSuffix": "{{value}} words",
+    "chapterStatusDotWords": "{{status}} · {{words}} words",
+    "copied": "Copied",
+    "copyChapter": "Copy chapter",
+    "noChapterContentTitle": "This chapter has no body yet",
+    "noChapterContentDescription": "Generate or write the body in the chapter editor, then the full content will appear here.",
+    "copyEmptyError": "This chapter has no content to copy.",
+    "copySuccess": "Chapter copied to clipboard.",
+    "copyFailed": "Copy failed. Please select the text and copy manually."
+  },
+  "chapterStatus": {
+    "completed": "Body completed",
+    "pendingReview": "Pending review",
+    "needsRepair": "Needs repair",
+    "generating": "Generating",
+    "pendingGeneration": "Pending generation",
+    "unplanned": "Unplanned",
+    "unmarked": "Unmarked"
+  },
+  "chapterEdit": {
+    "loadingEditor": "Loading chapter editor...",
+    "loadError": "Failed to load chapter. Refresh and try again.",
+    "notFound": "Cannot find the chapter. It may have been deleted, or the link is incomplete."
+  },
+  "editor": {
+    "exportFullStarted": "Full-book export started.",
+    "exportStepStarted": "Current-step export started.",
+    "exportFailed": "Export failed.",
+    "takeoverDismissed": "Director takeover reminder collapsed. You can still continue from Execution details when needed.",
+    "noContinuableDirectorTask": "No auto-director task to continue.",
+    "noAutoExecuteDirectorTask": "No auto-director task available for auto-execution.",
+    "noExecutableAction": "No action available to execute.",
+    "actionExecuted": "Action executed.",
+    "actionFailed": "Failed to execute action."
+  },
+  "chapter": {
+    "loading": "Loading...",
+    "saving": "Saving...",
+    "saved": "Saved",
+    "saveFailed": "Save failed.",
+    "title": "Chapter title",
+    "content": "Chapter body",
+    "back": "Back",
+    "wordCount": "Word count: {{value}}"
+  },
+  "characterDefault": {
+    "protagonist": "Protagonist"
+  },
+  "roles": {
+    "protagonist": "Protagonist",
+    "antagonist": "Antagonist"
+  },
+  "worldInjection": {
+    "injected": "World rules context injected",
+    "notBound": "No world is bound. Generation will not inject world rules."
+  },
+  "mobile": {
+    "stepNavAriaLabel": "Novel writing steps",
+    "flowRecommend": "Flow suggested"
+  },
+  "basicTab": {
+    "takeoverTitle": "Let the AI take over from this project",
+    "takeoverDescription": "If you already filled in basic info, you can hand off to auto-director from the current step and choose to continue existing progress or re-run the current step.",
+    "positioningTitle": "Book positioning and basic info",
+    "saveBasicInfo": "Save basic info",
+    "supplementTitle": "Writing style and world reinforcement",
+    "supplementDescription": "Quick title fill is right next to the title field above. This area is for confirming the writing style and tidying up the book's world boundaries before drafting.",
+    "supplementMeta": "Style suggestions / World usage"
+  },
+  "collapsibleSummary": {
+    "expand": "Expand",
+    "collapse": "Collapse"
+  },
+  "directorTakeoverPanel": {
+    "intro": "Before takeover we read the project's real progress, and clearly tell you what will be skipped, continued or re-run this time."
+  },
+  "characterDiagnostics": {
+    "title": "Cast and relationship diagnostics",
+    "description": "Better expanded when you need to fill roles, find gaps or sort out relationships. For day-to-day editing, see the character workspace below."
+  },
+  "candidateDialog": {
+    "title": "Confirm book-level direction",
+    "description": "Compare the book directions the AI proposes. You can tweak the title or plan first, then pick one to create the project."
+  },
+  "chapterStatusFlow": {
+    "currentStage": "Current stage: ",
+    "notStarted": "Not started"
+  },
+  "worldSlice": {
+    "refreshed": "Refreshed the world settings this book will use.",
+    "saved": "Saved this book's world setting retentions."
+  },
+  "chapterPlanning": {
+    "hasBlockingIssues": "Open high-priority audit issues exist. We recommend re-planning subsequent chapters.",
+    "noBlockingIssues": "No blocking audit issues right now. No need to re-plan subsequent chapters."
+  },
+  "chapterDetailMode": {
+    "purpose": "Chapter goal",
+    "boundary": "Execution boundary",
+    "taskSheet": "Task sheet"
+  },
+  "basicInfoForm": {
+    "recommend": "Recommended"
+  },
+  "characterFocus": {
+    "currentProtagonist": "Editing protagonist: {{name}}",
+    "currentRole": "Editing character: {{name}}",
+    "currentGoalPending": "Protagonist goal to be filled",
+    "relationPending": "Relation to protagonist to be filled",
+    "protagonistBadge": "Protagonist",
+    "currentGoal": "Current goal: {{value}}",
+    "relationToProtagonist": "Relation to protagonist: {{value}}",
+    "identity": "Role: {{value}}",
+    "identityUndefined": "Undefined",
+    "lastAppearance": "Last appearance: {{value}}",
+    "lastAppearanceChapter": "Chapter {{order}}",
+    "lastAppearanceNone": "None",
+    "storyFunction": "Story function: {{value}}",
+    "currentState": "Current state: {{value}}",
+    "valuePending": "To be filled"
+  }
+}

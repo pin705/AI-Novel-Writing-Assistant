@@ -1,17 +1,19 @@
 import type { TitleSuggestionStyle } from "@ai-novel/shared/types/title";
 
-export function getTitleStyleLabel(style: TitleSuggestionStyle): string {
+type Translator = (key: string, values?: Record<string, string | number>) => string;
+
+export function getTitleStyleLabel(style: TitleSuggestionStyle, t: Translator): string {
   switch (style) {
     case "literary":
-      return "叙事感";
+      return t("titles.styles.literary");
     case "conflict":
-      return "冲突钩子";
+      return t("titles.styles.conflict");
     case "suspense":
-      return "悬念感";
+      return t("titles.styles.suspense");
     case "high_concept":
-      return "高概念";
+      return t("titles.styles.high_concept");
     default:
-      return "标题策略";
+      return t("titles.styles.default");
   }
 }
 

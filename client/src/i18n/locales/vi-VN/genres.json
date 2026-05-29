@@ -1,0 +1,76 @@
+{
+  "page": {
+    "title": "Thư viện thể loại nền",
+    "description": "Quản lý thể loại nền của tác phẩm theo dạng cây, ví dụ tu tiên, huyền huyễn, đô thị, lịch sử giả tưởng. Nó trả lời câu hỏi “đây là sách gì”, và sẽ được dùng như tài sản thể loại chính thức của dự án tiểu thuyết, không chỉ là ô nhập tạm.",
+    "totalCount": "Số thể loại nền hiện có: {{count}}",
+    "createRoot": "Tạo cây thể loại nền",
+    "loadingTree": "Đang tải cây thể loại nền...",
+    "emptyTitle": "Chưa có thể loại nền nào",
+    "emptyDescription": "Bạn có thể tự tạo một thể loại gốc, hoặc để AI sinh sẵn một cây phân cấp đầy đủ.",
+    "startCreating": "Bắt đầu tạo"
+  },
+  "toast": {
+    "deleted": "Đã xoá thể loại nền.",
+    "created": "Đã tạo cây thể loại nền.",
+    "generated": "AI đã sinh xong cây thể loại nền.",
+    "updated": "Đã cập nhật thể loại nền."
+  },
+  "confirm": {
+    "deleteWithDescendants": "Xác nhận xoá thể loại nền «{{name}}»? Thao tác này sẽ xoá luôn {{count}} thể loại con bên dưới và không thể khôi phục.",
+    "deleteSingle": "Xác nhận xoá thể loại nền «{{name}}»? Thao tác này không thể khôi phục."
+  },
+  "createDialog": {
+    "title": "Tạo cây thể loại nền",
+    "description": "Chọn vị trí cha trước, rồi tự nhập cấu trúc hoặc để AI sinh sẵn một bản nháp. Nơi này quản lý thể loại nền của tác phẩm — tức là “đây là sách gì”.",
+    "aiSectionTitle": "Sinh bằng AI",
+    "aiSectionHint": "Phù hợp khi muốn sinh sẵn cùng lúc các nhánh chính, nhánh con và cấp sâu hơn rồi tinh chỉnh tay.",
+    "aiPromptPlaceholder": "Ví dụ: Tôi muốn làm tuyến trưởng thành siêu phàm đô thị thiên về độc giả nữ, điểm bán chính là lật ngược thân phận, vận hành thế lực và quan hệ giàu cảm xúc.",
+    "generating": "Đang sinh...",
+    "generate": "Sinh cây thể loại nền",
+    "resetDraft": "Đặt lại bản nháp",
+    "parentLabel": "Thể loại nền cha",
+    "parentNoneOption": "Không có cha, tạo làm thể loại gốc",
+    "cancel": "Huỷ",
+    "saving": "Đang lưu...",
+    "save": "Lưu cây thể loại nền"
+  },
+  "editDialog": {
+    "title": "Chỉnh sửa thể loại nền",
+    "description": "Có thể đổi tên, mô tả và vị trí gắn. Nút con và tiểu thuyết đã liên kết vẫn được giữ nguyên.",
+    "cancel": "Huỷ",
+    "saving": "Đang lưu...",
+    "save": "Lưu thay đổi",
+    "nameLabel": "Tên",
+    "descriptionLabel": "Mô tả",
+    "parentLabel": "Thể loại nền cha",
+    "parentNoneOption": "Không có cha, làm thể loại gốc",
+    "missingError": "Thể loại nền không tồn tại."
+  },
+  "treeEditor": {
+    "levelRoot": "Loại chính",
+    "levelChild": "Loại con",
+    "levelDeeper": "Loại cấp dưới",
+    "rootHint": "Đây sẽ là nút gốc được tạo trong hệ thống.",
+    "childHint": "Sẽ được lưu như nút con của loại cấp trên.",
+    "addChild": "Thêm loại con",
+    "addDeeper": "Thêm loại cấp dưới",
+    "nameLabel": "Tên",
+    "namePlaceholderRoot": "Ví dụ: Đô thị dị năng",
+    "namePlaceholderChild": "Ví dụ: Chốn công sở siêu phàm",
+    "descriptionLabel": "Mô tả",
+    "descriptionPlaceholder": "Mô tả lõi thể loại, điểm sướng, tuyến chính thường gặp hoặc kỳ vọng của độc giả.",
+    "removeNode": "Xoá nút hiện tại"
+  },
+  "treeItem": {
+    "expand": "Mở rộng",
+    "collapse": "Thu gọn",
+    "novelBadge": "Tiểu thuyết {{count}}",
+    "childBadge": "Loại con {{count}}",
+    "noDescription": "Chưa có mô tả.",
+    "addChild": "Thêm loại con",
+    "edit": "Sửa",
+    "delete": "Xoá",
+    "deleting": "Đang xoá...",
+    "deleteBlockedTitle": "Hãy gỡ liên kết các tiểu thuyết thuộc loại này hoặc loại con trước khi xoá."
+  }
+}

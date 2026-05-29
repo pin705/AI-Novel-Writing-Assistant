@@ -1,0 +1,508 @@
+{
+  "layout": {
+    "taskRecovery": {
+      "title": "Phát hiện tác vụ cần khôi phục",
+      "description": "Khi khởi động, hệ thống thấy có tác vụ nền bị gián đoạn trước khi máy chủ khởi động lại. Hệ thống sẽ không tự tiếp tục, bạn hãy xác nhận từng cái rồi quyết định có khôi phục hay không.",
+      "later": "Để sau",
+      "resumeAll": "Tiếp tục tất cả",
+      "resumeAllPending": "Đang khôi phục tất cả...",
+      "resumeSingle": "Tiếp tục mục này",
+      "resumeSinglePending": "Đang khôi phục...",
+      "openLocation": "Mở vị trí tác vụ",
+      "ownerLabel": "Thuộc về: {{value}}",
+      "currentStage": "Giai đoạn hiện tại: {{value}}",
+      "currentItem": "Vị trí gián đoạn: {{value}}",
+      "resumeAction": "Đề xuất hành động: {{value}}",
+      "recoveryHint": "Gợi ý khôi phục: {{value}}",
+      "statusRunning": "Đang chạy thì gián đoạn",
+      "statusQueued": "Đang xếp hàng thì gián đoạn",
+      "kinds": {
+        "novel_workflow": "Quy trình chính tiểu thuyết",
+        "novel_pipeline": "Dây chuyền chương",
+        "book_analysis": "Phân tích sách",
+        "style_extraction": "Trích xuất văn phong",
+        "image": "Tác vụ hình ảnh"
+      },
+      "toasts": {
+        "resumeStarted": "Đã bắt đầu khôi phục tác vụ.",
+        "resumeFailed": "Khôi phục tác vụ thất bại.",
+        "resumeAllStarted": "Đã bắt đầu khôi phục {{count}} tác vụ.",
+        "resumeAllEmpty": "Hiện không có tác vụ nào để khôi phục.",
+        "resumeAllFailed": "Khôi phục hàng loạt thất bại."
+      }
+    },
+    "desktopBootstrap": {
+      "appTitle": "Bàn làm việc viết tiểu thuyết AI",
+      "betaBadge": "Bản desktop Beta",
+      "shellNote": "Trang này chỉ xuất hiện chốc lát khi bản desktop khởi động, để gối thời gian khởi động dịch vụ cục bộ, tránh thấy màn hình trắng hoặc cửa sổ trống.",
+      "currentProgress": "Tiến độ hiện tại",
+      "status": "Trạng thái",
+      "lastUpdated": "Cập nhật gần nhất",
+      "logsTitle": "Nhật ký và chẩn đoán",
+      "logsHint": "Nếu khởi động bị treo, dịch vụ cục bộ thoát sớm, hoặc bạn muốn đo thời gian khởi động, có thể xem trực tiếp nhật ký desktop.",
+      "openLogs": "Mở thư mục nhật ký",
+      "copyLogPath": "Sao chép đường dẫn nhật ký",
+      "restart": "Khởi động lại",
+      "states": {
+        "launching": "Đang chuẩn bị",
+        "startingServer": "Khởi động engine cục bộ",
+        "loadingUi": "Tải bàn làm việc",
+        "ready": "Sẵn sàng",
+        "error": "Khởi động bị chặn"
+      },
+      "stages": {
+        "launching": "Chuẩn bị khởi động",
+        "appReady": "Ứng dụng sẵn sàng",
+        "splashShown": "Đã hiện màn hình chờ",
+        "serverStarting": "Dịch vụ cục bộ đang khởi động",
+        "serverHealthy": "Dịch vụ cục bộ sẵn sàng",
+        "rendererReady": "Giao diện đã sẵn sàng",
+        "mainWindowShown": "Cửa sổ chính đã hiện",
+        "error": "Khởi động thất bại"
+      },
+      "progressHints": {
+        "launching": "Đang chuẩn bị môi trường desktop và tài nguyên khởi động.",
+        "startingServer": "Bản desktop cần khởi động dịch vụ cục bộ trước rồi mới vào bàn làm việc chính.",
+        "loadingUi": "Dịch vụ cục bộ đã sẵn sàng, đang chuyển sang bàn làm việc chính.",
+        "ready": "Quá trình khởi động đã hoàn tất.",
+        "error": "Có sự cố khi khởi động, hãy xem nhật ký trước rồi thử lại."
+      },
+      "updater": {
+        "sectionTitle": "Kiểm tra phiên bản",
+        "currentVersion": "Bản hiện tại",
+        "availableVersion": "Bản có sẵn",
+        "checkedAt": "Thời điểm kiểm tra",
+        "checking": "Đang kiểm tra",
+        "recheck": "Kiểm tra lại",
+        "check": "Kiểm tra cập nhật",
+        "download": "Tải bản cập nhật",
+        "installRestart": "Khởi động lại để cài",
+        "progress": " Tiến độ tải {{percent}}%.",
+        "status": {
+          "disabled": "Không khả dụng",
+          "idle": "Chờ kiểm tra",
+          "checking": "Đang kiểm tra",
+          "updateAvailable": "Có bản cập nhật",
+          "downloading": "Đang tải",
+          "downloaded": "Chờ cài đặt",
+          "notAvailable": "Đã mới nhất",
+          "error": "Kiểm tra thất bại"
+        },
+        "hints": {
+          "portable": "Bản portable cần tải gói cài đặt mới và thay thủ công.",
+          "devBuild": "Bản chạy lập trình không kết nối kênh phát hành, chỉ bản đóng gói mới tự kiểm tra phiên bản desktop.",
+          "idleError": "Khi khởi động bị chặn sẽ kiểm tra phiên bản desktop song song, tiện cài bản sửa lỗi trước.",
+          "idleDefault": "Trước khi vào bàn làm việc sẽ kiểm tra phiên bản desktop, có bản mới sẽ thông báo ở đây.",
+          "checking": "Đang kiểm tra phiên bản, có bản mới sẽ nhắc tải về.",
+          "updateAvailable": "Bản desktop {{version}} đã có, nên tải gói cập nhật trước.",
+          "fallbackVersion": "phiên bản mới",
+          "downloading": "Đang tải gói cập nhật, hãy giữ ứng dụng mở.",
+          "downloaded": "Đã tải gói cập nhật, khởi động lại để hoàn tất cài đặt.",
+          "notAvailable": "Bản đã cài luôn đồng bộ với kênh phát hành.",
+          "errorFallback": "Kiểm tra phiên bản thất bại, hãy thử lại sau."
+        }
+      }
+    },
+    "desktopLegacyImport": {
+      "titleSuggested": "Đã phát hiện cơ sở dữ liệu cục bộ phiên bản cũ",
+      "titleManual": "Nhập cơ sở dữ liệu cục bộ cũ",
+      "descriptionSuggested": "Bản desktop đã phát hiện cơ sở dữ liệu cục bộ bạn dùng ở bản web/dev trước đây, có thể nhập một lần để tiếp quản tiểu thuyết, API Key và kho tri thức cũ.",
+      "descriptionManual": "Bản desktop mặc định dùng thư mục dữ liệu riêng. Nếu trước đây bạn đã có dữ liệu cục bộ ở bản web/dev, có thể chọn tệp dev.db cũ để nhập vào bản desktop.",
+      "freshBadge": "Kho desktop hiện tại trông trống",
+      "detectedPath": "Đã phát hiện kho cũ: {{path}}",
+      "detectedPathWithLabel": "Đã phát hiện kho cũ: {{path}} ({{label}})",
+      "backupNote": "Trước khi nhập sẽ tự sao lưu cơ sở dữ liệu desktop hiện tại vào: {{path}}",
+      "closeOldProcess": "Trước khi nhập hãy đóng tiến trình web/dev cũ để tránh tệp SQLite còn đang ghi.",
+      "importDetected": "Nhập dữ liệu cũ đã phát hiện",
+      "chooseAnotherDb": "Chọn tệp dev.db khác",
+      "chooseDb": "Chọn tệp dev.db cũ để nhập",
+      "preparing": "Đang chuẩn bị...",
+      "detectFailed": "Dò dữ liệu cũ thất bại.",
+      "importFailed": "Nhập dữ liệu cũ thất bại.",
+      "importScheduled": "Đang chuẩn bị nhập dữ liệu cũ, ứng dụng sẽ tự khởi động lại một lần."
+    },
+    "desktopModelSetup": {
+      "settingsTitle": "Hoàn tất cấu hình Desktop",
+      "settingsBadge": "Bản desktop",
+      "settingsDescription": "Hoàn tất ít nhất một nhà cung cấp mô hình đang bật và mô hình mặc định ở đây trước khi quay lại bàn làm việc.",
+      "settingsBody": "Bản desktop đóng gói đang chạy bình thường, nhưng vẫn cần cấu hình nhà cung cấp khả dụng.",
+      "usableProviders": "Số nhà cung cấp khả dụng hiện tại: {{count}}",
+      "blockerTitle": "Hãy cấu hình nhà cung cấp mô hình trước",
+      "blockerDescription": "Bản desktop Windows đã cài đặt đúng, nhưng chưa thể bắt đầu quy trình viết cho tới khi có ít nhất một nhà cung cấp và mô hình mặc định.",
+      "blockerHint": "Mở trang cài đặt hiện có, điền API key hoặc endpoint cục bộ, chọn mô hình mặc định rồi lưu lại.",
+      "openSettings": "Mở cài đặt mô hình",
+      "openHelp": "Xem hướng dẫn nhập môn"
+    },
+    "novelWorkspaceRail": {
+      "creationWorkspace": "Bàn sáng tác",
+      "defaultNovelTitle": "Bàn làm việc tiểu thuyết",
+      "expand": "Mở rộng điều hướng sáng tác",
+      "collapse": "Thu gọn điều hướng sáng tác",
+      "backToList": "Quay lại danh sách tiểu thuyết",
+      "flowProgress": "Quy trình: {{stage}}",
+      "history": "Lịch sử phiên bản",
+      "openProgressTitle": "Xem tiến độ đạo diễn: {{status}}",
+      "openProgress": "Xem tiến độ đạo diễn",
+      "switchProjectNav": "Chuyển sang điều hướng dự án",
+      "progressDialogTitle": "Tiến độ đạo diễn AI",
+      "progressDialogDescription": "Xem các bước triển khai, tiến triển gần đây và mức dùng AI cho cuốn này.",
+      "stepStatus": {
+        "current": "Bước hiện tại",
+        "inFlow": "Đang trong quy trình",
+        "viewing": "Đang xem",
+        "done": "Đã xong",
+        "pending": "Chờ triển khai"
+      },
+      "taskStatus": {
+        "running": "Đang chạy",
+        "queued": "Xếp hàng",
+        "waitingApproval": "Chờ duyệt",
+        "failed": "Sự cố",
+        "succeeded": "Hoàn tất",
+        "idle": "Rảnh"
+      },
+      "summary": {
+        "interrupted": "Tác vụ nền đã gián đoạn, mở chi tiết thực thi để xem nguyên nhân.",
+        "waitingFor": "Đang chờ xử lý: {{stage}}",
+        "aiAdvancing": "AI đang triển khai {{stage}}",
+        "noActiveTask": "Hiện chưa có tác vụ đạo diễn nền, bạn có thể tiếp tục sáng tác thủ công.",
+        "pleaseHandlePoint": "Hãy xem điểm dừng hiện tại",
+        "nextStep": "Bước tiếp theo: {{label}}",
+        "needsAttention": "Cần xử lý: {{reason}}"
+      },
+      "errors": {
+        "noActiveTask": "Hiện không có tác vụ đạo diễn tự động để tiếp tục.",
+        "continueFailed": "Tiếp tục đạo diễn tự động thất bại."
+      }
+    },
+    "serverStartup": {
+      "title": "Đang kết nối dịch vụ sáng tác cục bộ",
+      "description": "Trang đã sẵn sàng, hệ thống sẽ tự vào bàn làm việc khi dịch vụ khả dụng.",
+      "recheck": "Kiểm tra lại"
+    },
+    "mobileSiteShell": {
+      "appTitle": "Bàn làm việc tiểu thuyết AI",
+      "openBook": "Mở sách",
+      "openMore": "Mở thêm lối vào",
+      "closeMore": "Đóng thêm lối vào",
+      "moreTitle": "Thêm lối vào",
+      "moreDescription": "Chọn không gian làm việc bạn muốn tiếp tục.",
+      "fallbackTitle": "Tính năng khác",
+      "routes": {
+        "home": "Trang chủ",
+        "help": "Hướng dẫn nhập môn",
+        "novels": "Tiểu thuyết",
+        "novelCreate": "Tạo tiểu thuyết",
+        "novelPreview": "Xem trước tiểu thuyết",
+        "novelEdit": "Không gian tiểu thuyết",
+        "chapterEdit": "Nội dung chương",
+        "creativeHub": "Trung tâm sáng tác",
+        "chatLegacy": "Chat phiên bản cũ",
+        "bookAnalysis": "Phân tích sách",
+        "tasks": "Tác vụ",
+        "autoDirectorFollowUps": "Theo dõi đạo diễn",
+        "knowledge": "Kho tri thức",
+        "genres": "Nền thể loại",
+        "storyModes": "Chế độ triển khai",
+        "titles": "Xưởng tiêu đề",
+        "promptWorkbench": "Quản lý prompt",
+        "modelRoutes": "Định tuyến mô hình",
+        "settings": "Cài đặt hệ thống",
+        "worlds": "Thế giới quan",
+        "worldGenerator": "Sinh thế giới",
+        "worldWorkspace": "Bàn làm việc thế giới",
+        "styleEngine": "Engine văn phong",
+        "antiAiRules": "Quy tắc chống AI",
+        "baseCharacters": "Nhân vật nền"
+      },
+      "primary": {
+        "home": "Trang chủ",
+        "novels": "Tiểu thuyết",
+        "creation": "Sáng tác",
+        "tasks": "Tác vụ",
+        "more": "Thêm"
+      },
+      "moreGroups": {
+        "creationAid": "Hỗ trợ sáng tác",
+        "assets": "Kho tài sản",
+        "worldsAndSystem": "Thế giới & hệ thống"
+      }
+    }
+  },
+  "common": {
+    "selectField": {
+      "placeholder": "Hãy chọn",
+      "empty": "Chưa có lựa chọn"
+    },
+    "searchableSelect": {
+      "placeholder": "Hãy chọn",
+      "searchPlaceholder": "Tìm kiếm",
+      "empty": "Không có lựa chọn"
+    },
+    "llmSelector": {
+      "badge": "Mô hình",
+      "providerPlaceholder": "Chọn nhà cung cấp",
+      "providerNoneAvailable": "Hãy cấu hình nhà cung cấp khả dụng trước",
+      "modelPlaceholder": "Chọn mô hình",
+      "modelUnavailable": "Chưa có mô hình khả dụng",
+      "searchModel": "Tìm mô hình",
+      "noModels": "Không có mô hình khả dụng",
+      "noProvidersHelper": "Hiện chưa có nhà cung cấp mô hình nào được cấu hình và bật. Hãy vào cài đặt hệ thống để hoàn tất API Key và mô hình.",
+      "temperatureLabel": "Temperature (0~2)",
+      "maxTokensLabel": "Max Tokens (để trống = không giới hạn)"
+    },
+    "aiRevisionWorkspace": {
+      "instructionTitle": "Hướng dẫn AI chỉnh sửa",
+      "instructionPlaceholder": "Nhập yêu cầu chỉnh sửa, ví dụ: rút gọn phần thừa, tăng xung đột, giữ nguyên các thiết lập cũ.",
+      "selectionTitle": "Nội dung đang chọn (sẽ dùng để tối ưu chính xác)",
+      "selectionHint": "Khi không có nội dung được chọn, chỉ hỗ trợ tối ưu toàn văn.",
+      "optimizing": "Đang tối ưu...",
+      "previewFull": "Xem trước tối ưu toàn văn",
+      "previewSelection": "Chỉ tối ưu phần đã chọn",
+      "previewTitle": "Xem trước",
+      "applyPreview": "Áp dụng",
+      "cancelPreview": "Huỷ xem trước"
+    },
+    "streamOutput": {
+      "defaultTitle": "Kết quả AI",
+      "defaultEmpty": "Đang chờ dòng đầu ra...",
+      "generating": "Đang sinh nội dung...",
+      "wordCount": "Số ký tự: {{count}}",
+      "stop": "Dừng sinh"
+    }
+  },
+  "autoDirector": {
+    "approvalPoints": {
+      "risk": {
+        "high": "Rủi ro cao",
+        "medium": "Rủi ro vừa",
+        "low": "Rủi ro thấp"
+      },
+      "summaryNone": "Sẽ không tự duyệt điểm phê duyệt nào",
+      "summaryEtc": "{{labels}} v.v., tổng {{count}} mục"
+    },
+    "approvalStrategy": {
+      "panelTitle": "Cách tự động triển khai",
+      "fullAutoTitle": "AI tự triển khai",
+      "fullAutoDescription": "Tự động triển khai trong phạm vi mục tiêu; chỉ dừng khi mô hình không khả dụng, dịch vụ lỗi, bảo vệ chính văn hoặc rủi ro không thể khôi phục.",
+      "copilotTitle": "AI phụ tá xác nhận",
+      "copilotDescription": "Theo uỷ quyền duyệt nâng cao để cho qua các điểm rủi ro thấp, các điểm khác do bạn quyết định.",
+      "summaryFullAuto": "Tự triển khai: hệ thống sẽ tự xác nhận quy hoạch, thực thi chương, sửa chất lượng và quy hoạch lại cần thiết trong phạm vi mục tiêu.",
+      "summaryCopilot": "Ranh giới phụ tá xác nhận: {{summary}}. Các điểm phê duyệt còn lại sẽ đợi bạn xác nhận.",
+      "advancedTitle": "Uỷ quyền duyệt nâng cao"
+    },
+    "cockpit": {
+      "title": "Buồng lái AI",
+      "view": "Xem",
+      "fallbackReason": "Không có tác vụ AI tự triển khai nào cần bạn xử lý.",
+      "fallbackStatus": "Chưa kích hoạt",
+      "states": {
+        "processing": "AI đang xử lý",
+        "needsConfirmation": "Chờ bạn xác nhận",
+        "paused": "Đã tạm dừng",
+        "needsAttention": "Có lỗi cần xử lý",
+        "completed": "Đã hoàn tất",
+        "idle": "Chưa kích hoạt"
+      },
+      "datePlaceholder": "—",
+      "lessThanOneSecond": "<1 giây",
+      "secondsUnit": "{{count}} giây",
+      "minutesUnit": "{{count}} phút",
+      "minutesSecondsUnit": "{{minutes}} phút {{seconds}} giây",
+      "usageLine": {
+        "callCount": "{{count}} lượt gọi",
+        "promptTokens": "Vào {{count}}",
+        "completionTokens": "Ra {{count}}",
+        "totalTokens": "Tổng {{count}} Tokens",
+        "duration": "Tổng thời gian gọi {{duration}}"
+      },
+      "renderAction": {
+        "confirmContinue": "Xác nhận và tiếp tục",
+        "fallback": "Tiếp tục xử lý",
+        "openNovel": "Mở tiểu thuyết"
+      },
+      "artifactTypes": {
+        "book_contract": "Cam kết cấp sách",
+        "story_macro": "Quy hoạch cốt truyện",
+        "character_cast": "Nhân vật",
+        "volume_strategy": "Phân quyển",
+        "chapter_task_sheet": "Phiếu nhiệm vụ",
+        "chapter_draft": "Chính văn",
+        "audit_report": "Kiểm duyệt",
+        "repair_ticket": "Sửa lỗi",
+        "reader_promise": "Cam kết với người đọc",
+        "character_governance_state": "Trạng thái nhân vật",
+        "world_skeleton": "Khung thế giới",
+        "source_knowledge_pack": "Bộ tri thức nguồn",
+        "chapter_retention_contract": "Cam kết lưu giữ",
+        "continuity_state": "Tính liền mạch",
+        "rolling_window_review": "Tổng kết gần đây"
+      },
+      "recoveryActions": {
+        "retry": "Thử lại bước hiện tại",
+        "resume_after_review": "Xem nguyên nhân rồi tiếp tục",
+        "switch_model": "Đổi mô hình rồi tiếp tục",
+        "confirm_protected_content": "Xác nhận giới hạn nội dung bảo vệ",
+        "manual_repair": "Xử lý vấn đề chương trước"
+      },
+      "workerStates": {
+        "idle": "Chưa chạy",
+        "queued_waiting_worker": "Chờ tiếp nhận",
+        "leased_starting": "Đang tiếp nhận",
+        "running_step": "Đang tự triển khai",
+        "waiting_gate": "Chờ xác nhận",
+        "auto_recovering": "Đang khôi phục",
+        "cancelled": "Đã dừng",
+        "failed_recoverable": "Chờ khôi phục",
+        "failed_hard": "Cần xử lý",
+        "succeeded": "Hoàn tất"
+      },
+      "workerDetail": {
+        "queued": "Tác vụ đã xếp hàng, sau khi worker nền tiếp nhận sẽ tiếp tục triển khai.",
+        "running": "Worker nền đang xử lý tác vụ hiện tại.",
+        "stale": "Sau khi worker nền gián đoạn sẽ thử khôi phục từ tiến độ gần nhất.",
+        "noBackgroundAction": "Hiện không có hành động nền nào đang xếp hàng hoặc chạy.",
+        "label": "Thực thi nền",
+        "queueCount": "Xếp hàng",
+        "leasedCount": "Tiếp nhận",
+        "runningCount": "Đang chạy",
+        "recoveringCount": "Khôi phục",
+        "waitingForLease": "Chờ tiếp nhận {{duration}}"
+      },
+      "circuitBreaker": {
+        "title": "Tự triển khai đã tạm dừng",
+        "fallback": "Hệ thống thấy việc tiếp tục tự triển khai có thể tiếp tục thất bại.",
+        "recovery": "Đề xuất: {{action}}."
+      },
+      "usagePanel": {
+        "title": "Mức dùng AI",
+        "stagesTitle": "Mức dùng theo giai đoạn",
+        "stepsTitle": "Bước triển khai"
+      },
+      "artifacts": {
+        "title": "Sản phẩm",
+        "affectedChapters": "Ảnh hưởng {{count}} chương",
+        "needsReview": "{{count}} sản phẩm cần soát lại",
+        "recentRepairs": "{{count}} bản ghi sửa lỗi",
+        "newVersions": "{{count}} sản phẩm có phiên bản mới"
+      },
+      "nextAction": "Bước tiếp theo: {{label}}",
+      "historyTitle": "Lịch sử tự động",
+      "historyDuration": "Mất {{duration}}",
+      "processing": "Đang xử lý...",
+      "executionDetails": "Chi tiết thực thi"
+    },
+    "directorBookAutomationCard": {
+      "projectNav": "Điều hướng dự án"
+    },
+    "runtimeProjection": {
+      "title": "Tiến độ đạo diễn",
+      "primaryFallback": "Đang chờ đồng bộ trạng thái triển khai",
+      "attentionFallback": "Hãy xử lý điểm dừng hiện tại.",
+      "needsAttention": "Cần bạn xử lý: {{text}}",
+      "pausedReason": "Lý do tạm dừng: {{text}}",
+      "policy": "Cách triển khai: {{mode}}",
+      "updatedAt": "Cập nhật: {{value}}",
+      "recentEvents": "Tiến triển gần đây",
+      "datePlaceholder": "—",
+      "policyModes": {
+        "suggest_only": "Chỉ gợi ý",
+        "run_next_step": "Triển khai bước kế tiếp",
+        "auto_safe_scope": "Tự triển khai phạm vi an toàn",
+        "default": "Triển khai tới điểm kiểm tra"
+      },
+      "statuses": {
+        "running": "Đang triển khai",
+        "waiting_approval": "Chờ xác nhận",
+        "blocked": "Đã tạm dừng",
+        "failed": "Thất bại",
+        "completed": "Hoàn tất",
+        "default": "Chờ bắt đầu"
+      },
+      "qualityDebt": "Chất lượng cần thu hồi{{detail}}. Hệ thống sẽ tiếp tục viết các chương sau và thu hồi các vấn đề này ở giai đoạn sửa chất lượng.",
+      "qualityDebtChapters": ": chương {{chapters}}",
+      "qualityBudget": "{{chapter}} ngân sách chất lượng: sửa cục bộ {{patch}}/1, viết lại cả chương {{rewrite}}/1, quy hoạch lại cửa sổ {{replan}}/1. {{nextAction}}",
+      "qualityBudgetCurrentChapter": "Chương hiện tại",
+      "qualityBudgetSpecificChapter": "Chương {{order}}",
+      "rootCauses": {
+        "replan": "Vấn đề hiện tại do nhiệm vụ chương lệch nhau, hệ thống cần điều chỉnh các chương lân cận trước.",
+        "obligation": "Chính văn đã sinh, nhưng vẫn còn nội dung bắt buộc của chương này chưa hoàn thành.",
+        "repairExhausted": "Chính văn đã sinh, nhưng sau khi tự sửa vẫn còn vấn đề chặn cần xử lý.",
+        "draftMissing": "Chính văn chưa sinh thành công, cần thực thi lại chương hiện tại."
+      },
+      "obligationsLine": "Vẫn cần xử lý: {{summaries}}",
+      "activeExecution": "Thực thi nền: {{label}}",
+      "activeExecutionWithClass": "Thực thi nền: {{label}} · {{class}}",
+      "activeExecutionFallback": "Tác vụ đạo diễn tự động",
+      "waitingReason": "Lý do chờ: {{reason}}",
+      "executionQueue": "Hàng đợi thực thi: {{queued}} đang chờ",
+      "executionProcessing": "{{count}} đang xử lý",
+      "executor": "Worker: {{id}}",
+      "nextAction": "Bước tiếp theo: {{label}}",
+      "recommendedReason": "Lý do đề xuất: {{reason}}",
+      "autopilotRecoverable": "AI có thể tiếp tục từ tiến độ hiện tại.",
+      "metrics": {
+        "planning": "Quy hoạch",
+        "chapters": "Chương",
+        "quality": "Chất lượng",
+        "currentAction": "Hành động hiện tại"
+      },
+      "usagePanel": {
+        "title": "Mức dùng AI",
+        "stages": "Mức dùng theo giai đoạn",
+        "steps": "Bước triển khai"
+      },
+      "usageLine": {
+        "callCount": "{{count}} lượt gọi",
+        "promptTokens": "Vào {{count}}",
+        "completionTokens": "Ra {{count}}",
+        "totalTokens": "Tổng {{count}} Tokens",
+        "duration": "Tổng thời gian gọi {{duration}}",
+        "lessThanOneSecond": "<1 giây",
+        "secondsUnit": "{{count}} giây",
+        "minutesUnit": "{{count}} phút",
+        "minutesSecondsUnit": "{{minutes}} phút {{seconds}} giây"
+      }
+    }
+  },
+  "creativeHub": {
+    "openButton": "Tiếp tục trong Trung tâm sáng tác"
+  },
+  "knowledge": {
+    "bindingPanel": {
+      "defaultTitle": "Tri thức tham chiếu",
+      "documentDescription": "Sau khi gắn, các tài liệu này sẽ là nguồn tri thức mặc định của đối tượng.",
+      "saving": "Đang lưu...",
+      "save": "Lưu gắn kết"
+    },
+    "documentPicker": {
+      "auto": "Tự động",
+      "custom": "Tuỳ chỉnh",
+      "autoHint": "Đang dùng quy tắc tự động: nếu đối tượng đã gắn tài liệu thì ưu tiên dùng tài liệu gắn, ngược lại quay về dùng toàn bộ tài liệu đang bật.",
+      "searchPlaceholder": "Tìm tài liệu tri thức",
+      "loading": "Đang tải...",
+      "empty": "Chưa có tài liệu nào để chọn.",
+      "selectedCount": "Đã chọn {{count}} tài liệu. Để trống đồng nghĩa với tắt truy vấn kho tri thức."
+    }
+  },
+  "workflow": {
+    "aiTakeover": {
+      "modeLabels": {
+        "loading": "Đang tải",
+        "running": "AI đang đảm nhận",
+        "waiting": "Chờ xác nhận",
+        "actionRequired": "Cần xử lý",
+        "failed": "Thực thi lỗi"
+      },
+      "progressStatus": {
+        "running": "Đang triển khai",
+        "waiting": "Chờ bạn xác nhận",
+        "actionRequired": "Cần bạn xử lý",
+        "failed": "Đã gián đoạn"
+      },
+      "taskTag": "Tác vụ #{{id}}",
+      "progressLabel": "Tiến độ quy trình",
+      "checkpointLabel": "Điểm kiểm tra gần nhất: {{label}}"
+    }
+  }
+}

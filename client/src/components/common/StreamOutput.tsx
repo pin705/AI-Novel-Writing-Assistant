@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "@/i18n";
 import MarkdownViewer from "./MarkdownViewer";
 
 interface StreamOutputProps {
@@ -10,7 +11,10 @@ interface StreamOutputProps {
   emptyText?: string;
 }
 
-export default function StreamOutput({ isStreaming, content, onAbort, title = "AI 输出", emptyText = "等待流式输出..." }: StreamOutputProps) {
+export default function StreamOutput({ isStreaming, content, onAbort, title, emptyText }: StreamOutputProps) {
+  const { t } = useTranslation();
+  const resolvedTitle = title ?? t("components.common.streamOutput.defaultTitle");
+  const resolvedEmptyText = emptyText ?? t("components.common.streamOutput.defaultEmpty");
   const wordCount = content.trim().length;
 
   return (
@@ -21,22 +25,24 @@ export default function StreamOutput({ isStreaming, content, onAbort, title = "A
       transition={{ duration: 0.2 }}
     >
       <div className="mb-3 flex items-center justify-between gap-2">
-        <span className="text-sm font-medium">{title}</span>
+        <span className="text-sm font-medium">{resolvedTitle}</span>
         <div className="flex items-center gap-2">
           {isStreaming ? (
-            <span className="text-xs text-muted-foreground">正在生成...</span>
+            <span className="text-xs text-muted-foreground">{t("components.common.streamOutput.generating")}</span>
           ) : (
-            <span className="text-xs text-muted-foreground">字数：{wordCount}</span>
+            <span className="text-xs text-muted-foreground">
+              {t("components.common.streamOutput.wordCount", { count: wordCount })}
+            </span>
           )}
           {isStreaming && onAbort ? (
             <Button size="sm" variant="secondary" onClick={onAbort}>
-              停止生成
+              {t("components.common.streamOutput.stop")}
             </Button>
           ) : null}
         </div>
       </div>
 
-      <MarkdownViewer content={content || emptyText} />
+      <MarkdownViewer content={content || resolvedEmptyText} />
     </motion.div>
   );
 }

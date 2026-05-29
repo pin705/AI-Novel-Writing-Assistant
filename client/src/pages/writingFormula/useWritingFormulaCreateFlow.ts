@@ -16,6 +16,7 @@ import {
   createStyleProfileFromTemplate,
 } from "@/api/styleEngine";
 import { queryKeys } from "@/api/queryKeys";
+import type { Translator } from "./writingFormulaRulePresentation";
 
 export type WritingFormulaMaterialSource = "direct_text" | "knowledge_document" | "book_analysis";
 
@@ -56,6 +57,7 @@ export const INITIAL_WRITING_FORMULA_CREATE_FORM: WritingFormulaCreateFormState 
 };
 
 interface UseWritingFormulaCreateFlowOptions {
+  t: Translator;
   llm: {
     provider?: string;
     model?: string;
@@ -86,6 +88,7 @@ function readCreatedProfileName(task: UnifiedTaskDetail | null | undefined): str
 }
 
 export function useWritingFormulaCreateFlow({
+  t,
   llm,
   refreshStyleData,
   onImmediateProfileCreated,
@@ -158,7 +161,7 @@ export function useWritingFormulaCreateFlow({
       }
       handledTerminalTaskIdRef.current = pendingExtractionTaskId;
       setPendingExtractionTaskId("");
-      onFlowMessage("写法提取任务不存在或已被清理，请重新提交。");
+      onFlowMessage(t("writingFormula.messages.extractionTaskMissing"));
       return;
     }
 
@@ -174,14 +177,14 @@ export function useWritingFormulaCreateFlow({
 
     if (task.status === "succeeded") {
       const profileId = readCreatedProfileId(task);
-      const profileName = readCreatedProfileName(task) || form.extractName.trim() || "新写法";
+      const profileName = readCreatedProfileName(task) || form.extractName.trim() || t("writingFormula.errors.extractFallbackNewName");
       if (!profileId) {
-        onFlowMessage("写法提取任务已完成，但没有拿到自动保存结果。");
+        onFlowMessage(t("writingFormula.messages.extractionTaskAutoSavedNoResult"));
         return;
       }
       resetCreateFlow();
       void refreshStyleData().then(() => {
-        onAutoSavedProfileReady(profileId, `写法“${profileName}”已自动保存，已经为你打开当前写法编辑。`);
+        onAutoSavedProfileReady(profileId, t("writingFormula.messages.extractionTaskAutoSaved", { name: profileName }));
       });
       return;
     }
@@ -189,8 +192,8 @@ export function useWritingFormulaCreateFlow({
     const failureMessage = task.failureSummary
       ?? task.lastError
       ?? (task.status === "cancelled"
-        ? "写法提取任务已取消。"
-        : "写法提取任务失败，请稍后重试。");
+        ? t("writingFormula.messages.extractionTaskCancelled")
+        : t("writingFormula.messages.extractionTaskFailed"));
     onFlowMessage(failureMessage);
   }, [
     extractionTaskQuery.data,
@@ -200,6 +203,7 @@ export function useWritingFormulaCreateFlow({
     onFlowMessage,
     pendingExtractionTaskId,
     refreshStyleData,
+    t,
   ]);
 
   const createManualMutation = useMutation({
@@ -211,7 +215,7 @@ export function useWritingFormulaCreateFlow({
       }
       resetCreateFlow();
       await refreshStyleData();
-      onImmediateProfileCreated(profile, `写法“${profile.name}”已经创建，可以继续补规则、试写或绑定到目标。`);
+      onImmediateProfileCreated(profile, t("writingFormula.messages.manualCreated", { name: profile.name }));
     },
   });
 
@@ -231,7 +235,7 @@ export function useWritingFormulaCreateFlow({
       }
       resetCreateFlow();
       await refreshStyleData();
-      onImmediateProfileCreated(profile, `写法“${profile.name}”已经生成，可以继续补规则、试写或绑定到目标。`);
+      onImmediateProfileCreated(profile, t("writingFormula.messages.briefCreated", { name: profile.name }));
     },
   });
 
@@ -244,7 +248,7 @@ export function useWritingFormulaCreateFlow({
       }
       resetCreateFlow();
       await refreshStyleData();
-      onImmediateProfileCreated(profile, `模板写法“${profile.name}”已经创建，可以继续补规则、试写或绑定到目标。`);
+      onImmediateProfileCreated(profile, t("writingFormula.messages.templateCreated", { name: profile.name }));
     },
   });
 
@@ -261,7 +265,7 @@ export function useWritingFormulaCreateFlow({
     onSuccess: (response) => {
       const task = response.data;
       if (!task) {
-        onFlowMessage("写法提取任务提交成功，但没有拿到任务详情。");
+        onFlowMessage(t("writingFormula.messages.extractionTaskSubmittedNoDetail"));
         return;
       }
       handledTerminalTaskIdRef.current = "";
@@ -284,7 +288,7 @@ export function useWritingFormulaCreateFlow({
     onSuccess: (response) => {
       const task = response.data;
       if (!task) {
-        onFlowMessage("写法提取任务提交成功，但没有拿到任务详情。");
+        onFlowMessage(t("writingFormula.messages.extractionTaskSubmittedNoDetail"));
         return;
       }
       handledTerminalTaskIdRef.current = "";
@@ -308,7 +312,7 @@ export function useWritingFormulaCreateFlow({
       }
       resetCreateFlow();
       await refreshStyleData();
-      onImmediateProfileCreated(profile, `写法“${profile.name}”来自拆书结果，你可以继续检查规则、试写，或绑定到目标。`);
+      onImmediateProfileCreated(profile, t("writingFormula.messages.fromBookAnalysis", { name: profile.name }));
     },
   });
 

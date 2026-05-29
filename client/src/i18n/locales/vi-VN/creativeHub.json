@@ -1,0 +1,539 @@
+{
+  "common": {
+    "title": "Trung tâm sáng tác",
+    "defaultThreadTitle": "Cuộc trò chuyện mới",
+    "unboundLabel": "Chưa gắn",
+    "unknown": "Không rõ",
+    "default": "Mặc định",
+    "successLabel": "Thành công",
+    "failedLabel": "Thất bại",
+    "needsConfirmation": "Cần xác nhận"
+  },
+  "page": {
+    "novelLabel": "Tiểu thuyết {{value}}",
+    "worldLabel": "Thế giới quan {{value}}",
+    "taskLabel": "Tác vụ {{value}}",
+    "bookAnalysisLabel": "Phân tích {{value}}",
+    "formulaLabel": "Công thức {{value}}",
+    "baseCharacterLabel": "Nhân vật {{value}}",
+    "styleProfileLabel": "Văn phong {{value}}",
+    "knowledgeDocumentsLabel": "{{count}} tài liệu tri thức",
+    "checkpointLabel": "Checkpoint {{value}}",
+    "draftNoticeTitle": "Đang hoàn thiện",
+    "draftNoticeDescription": "Mô-đun này còn đang phát triển; tạm thời dùng cho chẩn đoán vấn đề sáng tác, thảo luận phương án và đẩy tiến nhẹ.",
+    "createNovelPrompt": "Tạo một cuốn tiểu thuyết tên \"{{title}}\".",
+    "errors": {
+      "threadNotInitialized": "Luồng Trung tâm sáng tác chưa được khởi tạo.",
+      "missingCheckpoint": "Không tìm được checkpoint lịch sử tương ứng, không thể tạo nhánh mới từ tin nhắn này.",
+      "savePreflightFailed": "Lưu điều kiện trước sản xuất thất bại.",
+      "createThreadMessage": "Creative Hub thread list updated."
+    }
+  },
+  "threadList": {
+    "title": "Danh sách luồng",
+    "create": "Tạo luồng mới",
+    "empty": "Chưa có luồng Trung tâm sáng tác nào.",
+    "status": {
+      "busy": "Đang chạy",
+      "interrupted": "Cần xử lý",
+      "error": "Bất thường",
+      "idle": "Rảnh"
+    },
+    "archive": "Lưu trữ",
+    "unarchive": "Bỏ lưu trữ",
+    "delete": "Xoá"
+  },
+  "conversation": {
+    "emptyTitle": "Trung tâm sáng tác",
+    "emptyHint": "Hãy ném vào đây vấn đề sáng tác đang khiến bạn bí; tôi sẽ giúp phán đoán, mổ xẻ, rồi mới quyết có thực thi hay không.",
+    "composerPlaceholder": "Mô tả vấn đề tác phẩm, điểm do dự hoặc vòng sáng tác bạn muốn đẩy tiến; Enter để gửi, Shift+Enter để xuống dòng.",
+    "send": "Gửi",
+    "stop": "Dừng",
+    "quickActions": {
+      "setDirection": "Đưa cho tôi định hướng",
+      "diagnose": "Chẩn đoán trước",
+      "askPromise": "Tôi cần lời hứa truyện",
+      "converge": "Hội tụ khởi tạo",
+      "setDirectionPrompt": "Dựa trên thông tin hiện có, cho tôi 3 phương án định hướng một câu cho cuốn sách này.",
+      "diagnosePrompt": "Giúp tôi phán đoán điểm yếu lớn nhất của thiết lập hiện tại, và nói tôi nên bổ sung phần nào trước.",
+      "askPromisePrompt": "Cho tôi 3 lời hứa truyện hấp dẫn hơn, yêu cầu khí chất khác biệt rõ rệt.",
+      "convergePrompt": "Đừng vội thực thi — hãy hội tụ thông tin hiện có thành một phương án khởi tạo có thể đưa vào sản xuất."
+    }
+  },
+  "message": {
+    "previousBranch": "Nhánh trước",
+    "nextBranch": "Nhánh sau",
+    "edit": "Sửa",
+    "regenerate": "Tạo lại",
+    "editComposerPlaceholder": "Chỉnh sửa tin nhắn này rồi tạo nhánh mới",
+    "cancel": "Huỷ",
+    "sendNewBranch": "Gửi nhánh mới",
+    "reasoningLabel": "Quá trình suy luận"
+  },
+  "inlineTool": {
+    "approval": {
+      "defaultTitle": "Chờ phê duyệt",
+      "defaultSummary": "Thao tác có tác động lớn đang chờ xác nhận.",
+      "unknownTarget": "Mục tiêu không rõ",
+      "notePlaceholder": "Ghi chú phê duyệt (tuỳ chọn)",
+      "approve": "Đồng ý và tiếp tục",
+      "reject": "Từ chối"
+    },
+    "generic": {
+      "title": "Gọi công cụ · {{toolName}}",
+      "showArgs": "Xem tham số",
+      "hideArgs": "Ẩn tham số",
+      "argsCollapsed": "Tham số yêu cầu được thu gọn mặc định; nhấn \"Xem tham số\" để mở.",
+      "fallbackSummary": "Công cụ đã trả kết quả."
+    }
+  },
+  "toolResult": {
+    "expand": "Mở chi tiết",
+    "collapse": "Ẩn chi tiết",
+    "collapsedHint": "Mặc định ẩn kết quả chi tiết và tóm tắt đầy đủ; nhấn \"Mở chi tiết\" để xem.",
+    "fallbackSummary": "Công cụ đã trả kết quả.",
+    "parsedBadge": "Đã phân tích",
+    "unnamedItem": "Mục chưa đặt tên",
+    "novelStatus": {
+      "in_progress": "Đang viết",
+      "not_started": "Chưa bắt đầu",
+      "completed": "Đã hoàn tất",
+      "rework": "Đang chỉnh sửa lại",
+      "blocked": "Bị chặn"
+    },
+    "novels": {
+      "totalFound": "Đã tìm thấy {{total}} cuốn tiểu thuyết",
+      "totalFoundShown": "Đã tìm thấy {{total}} cuốn tiểu thuyết, hiển thị {{shown}} cuốn đầu tiên",
+      "chapterCount": "{{count}} chương",
+      "chapterUnknown": "Chưa rõ chương",
+      "setAsWorkspace": "Đặt làm không gian hiện tại",
+      "setAsWorkspacePrompt": "Đặt \"{{title}}\" làm không gian hiện tại"
+    },
+    "workspace": {
+      "createdMessage": "Tiểu thuyết mới đã tạo và gắn với luồng hiện tại.",
+      "selectedMessage": "Luồng hiện tại đã chuyển sang không gian tiểu thuyết này.",
+      "currentChapterCount": "Số chương hiện tại: {{count}}",
+      "viewProgress": "Xem tiến độ hiện tại",
+      "designFirstChapter": "Bắt đầu thiết kế chương 1",
+      "viewFirstChapters": "Xem hai chương đầu",
+      "viewProgressPrompt": "Cuốn này đang viết tới chương nào",
+      "designFirstChapterPrompt": "Lên kế hoạch chương 1 cho cuốn này",
+      "viewFirstChaptersPrompt": "Hai chương đầu đã viết những gì",
+      "untitledNovel": "Tiểu thuyết chưa đặt tên"
+    },
+    "world": {
+      "boundMessage": "Đã gắn thế giới quan \"{{world}}\".",
+      "untitledWorld": "Thế giới quan chưa đặt tên",
+      "currentNovelFallback": "Tiểu thuyết hiện tại",
+      "viewRules": "Xem ràng buộc thế giới quan",
+      "checkConflicts": "Kiểm tra xung đột thế giới quan",
+      "viewRulesPrompt": "Xem các quy tắc thế giới quan của cuốn hiện tại",
+      "checkConflictsPrompt": "Kiểm tra xem cuốn hiện tại và thế giới quan có xung đột không",
+      "generatedTitle": "Đã sinh thế giới quan",
+      "generatedDescription": "Đã sinh thế giới quan \"{{world}}\"."
+    },
+    "production": {
+      "continueGeneration": "Tiếp tục sinh toàn cuốn",
+      "viewProgress": "Xem tiến độ toàn cuốn",
+      "viewBlockers": "Xem điểm chặn",
+      "viewTaskStatus": "Xem trạng thái tác vụ",
+      "continueGenerationPrompt": "Tiếp tục sinh cuốn tiểu thuyết hiện tại",
+      "viewProgressPrompt": "Việc sinh toàn cuốn đang tới bước nào",
+      "viewBlockersPrompt": "Vì sao việc sinh toàn cuốn chưa khởi động",
+      "viewTaskStatusPrompt": "Liệt kê trạng thái tác vụ hệ thống hiện tại",
+      "viewCharacterStatus": "Xem trạng thái nhân vật",
+      "viewCharacterStatusPrompt": "Xem trạng thái nhân vật của cuốn hiện tại",
+      "syncChapterDirectory": "Đồng bộ danh mục chương",
+      "startGeneration": "Khởi động sinh toàn cuốn",
+      "currentNovelFallback": "Tiểu thuyết hiện tại",
+      "currentStage": "Giai đoạn hiện tại: {{value}}",
+      "chapterCatalog": "Danh mục chương: {{chapters}} chương",
+      "chapterCatalogWithTarget": "Danh mục chương: {{chapters}}/{{target}} chương",
+      "pipelineStatus": "Viết toàn cuốn: {{value}}",
+      "pipelineStatusFallback": "Chưa khởi động",
+      "failureSummary": "Tóm tắt lỗi: {{value}}",
+      "stageLabel": "Giai đoạn",
+      "stageStatus": "Trạng thái: {{value}}",
+      "unknownStage": "Giai đoạn không rõ",
+      "characterGeneratedTitle": "Đã sinh nhân vật cốt lõi",
+      "characterGeneratedDescription": "Đã sinh {{count}} nhân vật cốt lõi.",
+      "storyBibleGeneratedTitle": "Đã sinh \"Story Bible\"",
+      "storyBibleGeneratedFallback": "Story Bible của cuốn hiện tại đã được sinh.",
+      "outlineGeneratedTitle": "Đã sinh xu hướng phát triển",
+      "outlineGeneratedFallback": "Xu hướng phát triển của cuốn hiện tại đã được sinh.",
+      "structuredOutlineTitle": "Đã sinh dàn ý có cấu trúc",
+      "structuredOutlineWithCount": "Đã sinh {{count}} chương dàn ý có cấu trúc.",
+      "structuredOutlineFallback": "Dàn ý có cấu trúc của cuốn hiện tại đã được sinh.",
+      "chaptersSyncedTitle": "Đã đồng bộ danh mục chương",
+      "chaptersSyncedWithCount": "Đã đồng bộ {{count}} mục chương.",
+      "chaptersSyncedFallback": "Đã đồng bộ danh mục chương."
+    },
+    "pipeline": {
+      "previewTitle": "Xem trước viết toàn cuốn",
+      "queueTitle": "Tác vụ viết toàn cuốn",
+      "scopeSingleChapter": "Chương {{value}}",
+      "scopeChapterRange": "Chương {{start}} đến chương {{end}}",
+      "scopeFallback": "Phạm vi chương hiện tại",
+      "previewDescription": "Đã hoàn tất xem trước viết toàn cuốn cho {{scope}}; có thể vào phê duyệt hoặc tiếp tục chẩn đoán.",
+      "queueDescriptionWithJob": "Tác vụ viết toàn cuốn cho {{scope}} đã khởi động (tác vụ {{jobId}}).",
+      "queueDescription": "Tác vụ viết toàn cuốn cho {{scope}} đã khởi động."
+    },
+    "diagnostic": {
+      "detailsPrefix": "Chi tiết: {{value}}",
+      "advicePrefix": "Gợi ý: {{value}}",
+      "continueDiagnose": "Chẩn đoán tiếp",
+      "continueDiagnosePrompt": "Tiếp tục giải thích nguyên nhân thất bại và gợi ý khôi phục"
+    },
+    "list": {
+      "empty": "Hiện không có kết quả để hiển thị.",
+      "statusPrefix": "Trạng thái: {{value}}",
+      "refine": "Lọc tiếp",
+      "refinePrompt": "Tiếp tục tinh chỉnh kết quả danh sách này"
+    },
+    "chapter": {
+      "chapterOrder": "Chương {{order}}",
+      "fallbackTitle": "Nội dung chương",
+      "titleSuffix": " \"{{title}}\"",
+      "empty": "Hiện chưa có nội dung chương để hiển thị.",
+      "summarize": "Tóm tắt tiếp",
+      "checkConflict": "Kiểm tra xung đột",
+      "summarizePrompt": "Tóm tắt diễn biến chính của đoạn này",
+      "checkConflictPrompt": "Kiểm tra chương này có xung đột với thế giới quan hay các phần trước không"
+    }
+  },
+  "activityFeed": {
+    "statusLabel": {
+      "running": "Đang chạy",
+      "queued": "Đang xếp hàng",
+      "waiting_approval": "Chờ phê duyệt",
+      "succeeded": "Đã hoàn tất",
+      "failed": "Thất bại",
+      "cancelled": "Đã huỷ",
+      "interrupted": "Chờ xác nhận"
+    },
+    "runStatusTitle": "Trạng thái chạy",
+    "runStatusFallback": "Trạng thái hiện tại: {{status}}",
+    "toolCallTitle": "Gọi công cụ · {{toolName}}",
+    "toolInputFallback": "Đang chuẩn bị đầu vào cho công cụ.",
+    "toolResultSuccessTitle": "{{toolName}} chạy thành công",
+    "toolResultFailedTitle": "{{toolName}} chạy thất bại",
+    "toolOutputFallback": "Công cụ trả về kết quả rỗng.",
+    "interruptTitleFallback": "Chờ phê duyệt",
+    "approvedTitle": "Đã duyệt",
+    "rejectedTitle": "Đã từ chối",
+    "approvalRecorded": "Hành động phê duyệt đã được ghi nhận.",
+    "errorTitle": "Lỗi khi chạy",
+    "reasoningTitle": "Cập nhật suy luận",
+    "plannerTitle": "Nhận diện ý định",
+    "plannerSummary": "Yêu cầu này được nhận diện là {{intent}}, nguồn {{source}}",
+    "plannerConfidence": "Độ tin cậy {{value}}",
+    "checkpointTitle": "Đã lưu checkpoint",
+    "checkpointSummary": "Checkpoint {{value}} đã ghi vào lịch sử luồng.",
+    "fallbackEventTitle": "Sự kiện hệ thống",
+    "plannerSourceLabel": "Nguồn",
+    "plannerIntentLabel": "Ý định",
+    "plannerConfidenceLabel": "Độ tin cậy"
+  },
+  "debugTrace": {
+    "title": "Chi tiết chạy",
+    "runLabel": "Run {{value}}",
+    "currentRun": "Thông tin gỡ lỗi vòng hiện tại",
+    "entryCount": "{{count}} mục",
+    "expand": "Mở chi tiết",
+    "collapse": "Thu gọn",
+    "empty": "Vòng hiện tại chưa có thông tin gỡ lỗi để hiển thị.",
+    "collapsedNote": "Mặc định ẩn chi tiết chạy nền, công cụ và checkpoint; mở ra để xem toàn bộ vết gỡ lỗi.",
+    "kind": {
+      "runStatus": "Trạng thái chạy",
+      "toolCall": "Gọi công cụ",
+      "toolCompleted": "Công cụ hoàn tất",
+      "toolFailed": "Công cụ thất bại",
+      "approval": "Kết quả phê duyệt",
+      "runError": "Lỗi khi chạy",
+      "reasoning": "Cập nhật suy luận",
+      "planner": "Nhận diện ý định",
+      "checkpoint": "Checkpoint"
+    },
+    "entry": {
+      "runStatusTitle": "Trạng thái chạy",
+      "runStatusFallback": "Trạng thái hiện tại: {{status}}",
+      "toolInputFallback": "Đang chuẩn bị đầu vào cho công cụ.",
+      "toolOutputFallback": "Công cụ trả về kết quả rỗng.",
+      "approvedTitle": "Đã duyệt",
+      "rejectedTitle": "Đã từ chối",
+      "approvalNoteFallback": "Hành động phê duyệt đã được ghi nhận.",
+      "errorTitle": "Lỗi khi chạy",
+      "reasoningTitle": "Cập nhật suy luận",
+      "plannerTitle": "Nhận diện ý định",
+      "plannerSummary": "Nguồn: {{source}}; ý định: {{intent}}",
+      "confidence": "Độ tin cậy {{value}}",
+      "checkpointTitle": "Đã ghi checkpoint",
+      "checkpointSummary": "Checkpoint {{value}} đã ghi vào lịch sử luồng."
+    }
+  },
+  "turnSummary": {
+    "title": "Tóm tắt đẩy tiến sáng tác",
+    "currentStage": "Giai đoạn hiện tại: {{value}}",
+    "status": {
+      "succeeded": "Đã hoàn tất",
+      "interrupted": "Chờ xác nhận",
+      "failed": "Thất bại",
+      "cancelled": "Đã huỷ",
+      "running": "Đang chạy"
+    },
+    "intent": "Phán đoán vòng này",
+    "action": "Đẩy tiến vòng này",
+    "impact": "Thay đổi đã xác nhận",
+    "next": "Gợi ý vòng tiếp",
+    "continueAlongSuggestion": "Tiếp tục theo hướng này"
+  },
+  "novelSetup": {
+    "title": "Khởi tạo sách mới",
+    "stage": {
+      "readyForProduction": "Sẵn sàng vào sản xuất",
+      "readyForPlanning": "Sẵn sàng vào kế hoạch",
+      "default": "Đang khởi tạo"
+    },
+    "progressLabel": "Đã sẵn sàng {{completed}}/{{total}} mục",
+    "progressFormat": "{{percent}}%",
+    "progressBadge": "progress",
+    "checklist": {
+      "requiredForProduction": "Bắt buộc trước sản xuất",
+      "statusReady": "ready",
+      "statusPartial": "partial",
+      "statusMissing": "missing",
+      "currentPrefix": "Hiện tại: {{value}}",
+      "fillThis": "Bổ sung mục này",
+      "giveAlternatives": "Đưa cho tôi phương án"
+    },
+    "pendingHeading": "Cần xác nhận trước sản xuất",
+    "pendingList": "{{names}}",
+    "pendingEnding": " v.v.",
+    "pendingNamesSeparator": ", ",
+    "generateChecklist": "Tạo danh sách xác nhận",
+    "generateChecklistPrompt": "Tóm tắt các điều kiện còn cần xác nhận trước khi cuốn sách vào sản xuất toàn cuốn, sắp theo độ ưu tiên.",
+    "batchAlternatives": "Đưa hàng loạt phương án",
+    "batchAlternativesPrompt": "Dựa trên thông tin cuốn hiện tại, cho mỗi điều kiện then chốt còn thiếu trước sản xuất ra 3 phương án để tôi chọn từng mục.",
+    "nextQuestionHeading": "Câu hỏi tiếp",
+    "continueGuided": "Tiếp tục theo dẫn dắt",
+    "viewSummary": "Xem tóm tắt khởi tạo",
+    "viewSummaryPrompt": "Tóm tắt độ hoàn thiện khởi tạo của cuốn này và cho biết còn thiếu thông tin then chốt nào."
+  },
+  "sidebar": {
+    "workspaceTitle": "Không gian sáng tác",
+    "currentFocus": "Tiêu điểm hiện tại",
+    "unnamedThread": "Luồng chưa đặt tên",
+    "resourceBindings": "Gắn tài nguyên",
+    "currentNovel": "Tiểu thuyết hiện tại",
+    "unboundNovel": "Chưa gắn tiểu thuyết",
+    "newNovelPlaceholder": "Nhập tiêu đề tiểu thuyết mới",
+    "listNovels": "Xem tiểu thuyết",
+    "listNovelsPrompt": "Liệt kê các không gian tiểu thuyết có thể dùng",
+    "createAndAttach": "Tạo và gắn",
+    "chapter": "Chương",
+    "world": "Thế giới quan",
+    "task": "Tác vụ",
+    "bookAnalysis": "Phân tích sách",
+    "formula": "Công thức viết",
+    "baseCharacter": "Nhân vật nền",
+    "knowledgeDocuments": "Tài liệu tri thức: {{count}} mục",
+    "thread": {
+      "status": {
+        "busy": "Đang thực thi",
+        "interrupted": "Cần xử lý",
+        "error": "Bất thường",
+        "idle": "Rảnh",
+        "uninitialized": "Chưa khởi tạo"
+      }
+    },
+    "turnStatus": {
+      "succeeded": "Đã hoàn tất",
+      "interrupted": "Chờ xác nhận",
+      "failed": "Thất bại",
+      "cancelled": "Đã huỷ",
+      "running": "Đang chạy"
+    },
+    "focus": {
+      "novelSetupInProgress": "Đang bổ sung thông tin khởi tạo của \"{{title}}\".",
+      "fallback": "Sau khi gắn tác phẩm hoặc đưa ra mục tiêu sáng tác, trung tâm sẽ liên tục đẩy tiến quanh luồng hiện tại."
+    },
+    "stageFallback": {
+      "setupCompleted": "Khởi tạo hoàn tất",
+      "setupPendingPlanning": "Khởi tạo chờ kế hoạch",
+      "setupInProgress": "Đang khởi tạo",
+      "notStarted": "Chưa bắt đầu"
+    },
+    "blocker": {
+      "title": "Điểm chặn hiện tại",
+      "risk": "Rủi ro hiện tại",
+      "focus": "Tiêu điểm hiện tại",
+      "status": "Trạng thái hiện tại",
+      "details": {
+        "waitingApproval": "Chờ xác nhận: {{title}}",
+        "targetType": "Loại mục tiêu: {{value}}",
+        "targetId": "Đối tượng: {{value}}",
+        "errorCode": "Mã lỗi: {{value}}",
+        "recoveryHint": "Gợi ý khôi phục: {{value}}",
+        "currentStage": "Giai đoạn hiện tại: {{value}}",
+        "stage": "Giai đoạn: {{value}}",
+        "status": "Trạng thái: {{value}}",
+        "nextSuggestion": "Gợi ý tiếp theo: {{value}}"
+      },
+      "actions": {
+        "viewPending": "Xem mục chờ xác nhận",
+        "viewPendingPrompt": "Tóm tắt các quyết định sáng tác đang chờ xác nhận và đề xuất cách xử lý",
+        "generateRecovery": "Tạo phương án khôi phục",
+        "generateRecoveryPrompt": "Phân tích nguyên nhân thất bại hiện tại và đưa ra các bước khôi phục",
+        "handleBlocker": "Xử lý điểm chặn",
+        "handleBlockerPrompt": "Phân tích điểm chặn sản xuất hiện tại và tiếp tục đẩy tiến",
+        "followSuggestion": "Theo gợi ý mà tiếp"
+      },
+      "summary": {
+        "noBlocker": "Hiện không có điểm chặn nào cần xử lý ngay, có thể tiếp tục sáng tác."
+      }
+    },
+    "progress": {
+      "title": "Đẩy tiến hiện tại",
+      "actionDone": "Hành động đã thực hiện",
+      "impact": "Ảnh hưởng & thay đổi",
+      "nextStep": "Gợi ý bước tiếp",
+      "followSuggestion": "Theo gợi ý mà tiếp",
+      "empty": "Luồng hiện tại chưa có tóm tắt vòng nào. Sau khi gửi một yêu cầu sáng tác, đẩy tiến vòng này và gợi ý bước kế sẽ hiện ở đây."
+    },
+    "production": {
+      "title": "Giai đoạn sáng tác",
+      "currentStage": "Giai đoạn hiện tại",
+      "chapterProgress": "Tiến độ chương",
+      "assetCompletion": "Hoàn tất tài sản",
+      "pipelineStatus": "Pipeline sản xuất",
+      "pipelineStatusFallback": "Chưa khởi động",
+      "empty": "Luồng hiện tại chưa có trạng thái sản xuất toàn cuốn. Sau khi chọn tiểu thuyết và khởi động sáng tác toàn cuốn, giai đoạn và tiến độ sẽ hiện ở đây."
+    },
+    "debug": {
+      "title": "Thông tin gỡ lỗi",
+      "runtimeDetails": "Hiển thị chi tiết chạy",
+      "currentRuntime": "Mặc định hiện tại",
+      "collapsed": "thu gọn",
+      "expanded": "mở rộng",
+      "runtimeDetailsContext": "{{state}} chi tiết chạy bên trong tin nhắn",
+      "switchToExpand": "Đổi sang mặc định mở rộng",
+      "switchToCollapse": "Đổi sang mặc định thu gọn",
+      "threadState": "Trạng thái luồng",
+      "threadId": "ID luồng",
+      "threadStatusLabel": "Trạng thái luồng",
+      "latestRun": "Run mới nhất",
+      "currentCheckpoint": "Checkpoint hiện tại",
+      "modelRouting": "Định tuyến mô hình",
+      "provider": "Provider",
+      "model": "Model",
+      "temperature": "Temperature",
+      "maxTokens": "Max tokens",
+      "default": "Mặc định",
+      "recentTurn": "Vòng gần nhất",
+      "turnStatusLabel": "Trạng thái vòng",
+      "turnStage": "Giai đoạn vòng",
+      "summaryCheckpoint": "Checkpoint tóm tắt"
+    }
+  },
+  "productionStarter": {
+    "title": "Sản xuất toàn cuốn",
+    "currentNovelContinue": "Sẽ tiếp tục sản xuất \"{{title}}\".",
+    "currentNovelFallback": "Tiểu thuyết hiện tại",
+    "globalMode": "Đang ở chế độ toàn cục — có thể tạo sách mới và khởi động sản xuất toàn cuốn.",
+    "hint": "Khuyến nghị xác nhận trước: thể loại, văn phong, ngôi kể, tiết tấu, độ dài chương, độ tự do AI. Điều kiện càng đủ, độ lệch toàn cuốn càng nhỏ.",
+    "novelTitlePlaceholder": "Tiêu đề tiểu thuyết",
+    "descriptionPlaceholder": "Giới thiệu / Thiết lập cốt lõi",
+    "genrePlaceholder": "Thể loại, ví dụ: Huyền huyễn phương Đông / Đô thị huyền nghi",
+    "styleTonePlaceholder": "Giọng văn, ví dụ: Lạnh lùng nặng nề / Vui tươi nhiệt huyết",
+    "narrativePovPlaceholder": "Ngôi kể",
+    "pacePlaceholder": "Tiết tấu",
+    "projectModePlaceholder": "Chế độ hợp tác",
+    "emotionPlaceholder": "Cường độ cảm xúc",
+    "aiFreedomPlaceholder": "Độ tự do AI",
+    "narrativePov": {
+      "firstPerson": "Ngôi thứ nhất",
+      "thirdPerson": "Ngôi thứ ba",
+      "mixed": "Góc nhìn hỗn hợp"
+    },
+    "pace": {
+      "slow": "Tiết tấu chậm",
+      "balanced": "Tiết tấu cân bằng",
+      "fast": "Tiết tấu nhanh"
+    },
+    "projectMode": {
+      "aiLed": "AI dẫn dắt",
+      "coPilot": "Người-máy phối hợp",
+      "draftMode": "Ưu tiên bản nháp",
+      "autoPipeline": "Pipeline tự động"
+    },
+    "level": {
+      "low": "Thấp",
+      "medium": "Vừa",
+      "high": "Cao"
+    },
+    "targetChapterPlaceholder": "Số chương mục tiêu",
+    "defaultChapterLengthPlaceholder": "Độ dài chương mặc định (chữ)",
+    "worldTypePlaceholder": "Loại thế giới quan (tuỳ chọn)",
+    "submitting": "Đang xử lý...",
+    "submitContinue": "Tiếp tục sản xuất toàn cuốn",
+    "submitStart": "Khởi động sản xuất toàn cuốn",
+    "viewProgress": "Xem tiến độ",
+    "viewProgressPrompt": "Việc sinh toàn cuốn đang tới bước nào",
+    "viewBlockers": "Xem điểm chặn",
+    "viewBlockersPrompt": "Vì sao việc sinh toàn cuốn chưa khởi động",
+    "generateAlternatives": "Tạo phương án",
+    "generateAlternativesPrompt": "Dựa trên thông tin cuốn hiện tại, cho mỗi yếu tố trước sản xuất (thể loại, văn phong, ngôi kể, tiết tấu, độ dài chương, độ tự do AI) ra 3 phương án.",
+    "prompt": {
+      "continueHeader": "Tiếp tục sinh cuốn tiểu thuyết hiện tại. Số chương mục tiêu: {{count}}.",
+      "createHeader": "Tạo cuốn tiểu thuyết {{count}} chương tên \"{{title}}\" và bắt đầu sinh toàn cuốn.",
+      "description": "Bổ sung thiết lập: {{value}}.",
+      "descriptionCreate": "Giới thiệu: {{value}}.",
+      "genre": "Sở thích thể loại: {{value}}.",
+      "genreCreate": "Thể loại: {{value}}.",
+      "styleTone": "Giọng văn: {{value}}.",
+      "narrativePov": "Ngôi kể: {{value}}.",
+      "pace": "Tiết tấu: {{value}}.",
+      "projectMode": "Chế độ hợp tác: {{value}}.",
+      "emotionIntensity": "Cường độ cảm xúc: {{value}}.",
+      "aiFreedom": "Độ tự do AI: {{value}}.",
+      "chapterLength": "Độ dài chương mặc định: khoảng {{value}} chữ.",
+      "worldType": "Sở thích loại thế giới quan: {{value}}.",
+      "worldTypeCreate": "Loại thế giới quan: {{value}}."
+    }
+  },
+  "plannerLabels": {
+    "intent": {
+      "social_opening": "Mở đầu giao tiếp nhẹ",
+      "list_novels": "Liệt kê tiểu thuyết",
+      "list_worlds": "Liệt kê thế giới quan",
+      "query_task_status": "Truy vấn trạng thái tác vụ",
+      "create_novel": "Tạo tiểu thuyết",
+      "select_novel_workspace": "Đổi không gian tiểu thuyết",
+      "bind_world_to_novel": "Gắn thế giới quan vào tiểu thuyết",
+      "unbind_world_from_novel": "Bỏ gắn thế giới quan",
+      "produce_novel": "Sản xuất toàn cuốn",
+      "query_novel_production_status": "Truy vấn trạng thái sản xuất toàn cuốn",
+      "query_novel_title": "Truy vấn tiêu đề tiểu thuyết",
+      "query_chapter_content": "Truy vấn nội dung chương",
+      "query_progress": "Truy vấn tiến độ sáng tác",
+      "inspect_failure_reason": "Chẩn đoán nguyên nhân thất bại",
+      "write_chapter": "Viết chương",
+      "rewrite_chapter": "Viết lại chương",
+      "save_chapter_draft": "Lưu bản nháp chương",
+      "start_pipeline": "Khởi động pipeline",
+      "inspect_characters": "Xem kế hoạch nhân vật",
+      "inspect_timeline": "Xem dòng thời gian",
+      "inspect_world": "Xem thế giới quan",
+      "search_knowledge": "Tìm trong kho tri thức",
+      "ideate_novel_setup": "Tạo phương án thiết lập",
+      "general_chat": "Trò chuyện thông thường",
+      "unknown": "Ý định chưa nhận diện",
+      "unmapped": "Ý định chưa được ánh xạ"
+    },
+    "source": {
+      "llm": "Nhận diện bởi LLM",
+      "unknown": "Nguồn không rõ",
+      "unmapped": "Nguồn chưa được ánh xạ"
+    }
+  }
+}

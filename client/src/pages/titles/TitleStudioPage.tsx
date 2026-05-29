@@ -6,10 +6,12 @@ import { getNovelList } from "@/api/novel";
 import { queryKeys } from "@/api/queryKeys";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useTranslation } from "@/i18n";
 import TitleFactoryPanel from "./components/TitleFactoryPanel";
 import TitleLibraryPanel from "./components/TitleLibraryPanel";
 
 export default function TitleStudioPage() {
+  const { t } = useTranslation();
   const [tab, setTab] = useState("factory");
   const genreTreeQuery = useQuery({
     queryKey: queryKeys.genres.all,
@@ -28,16 +30,16 @@ export default function TitleStudioPage() {
     <div className="mx-auto max-w-6xl space-y-4">
       <Card>
         <CardHeader className="space-y-2">
-          <CardTitle>标题工坊</CardTitle>
+          <CardTitle>{t("titles.page.title")}</CardTitle>
           <CardDescription>
-            把“标题生成”和“标题沉淀”统一成正式资产模块。工坊负责产出候选，标题库负责复用和统计。
+            {t("titles.page.description")}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Tabs value={tab} onValueChange={setTab} className="space-y-4">
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="factory">标题工坊</TabsTrigger>
-              <TabsTrigger value="library">标题库</TabsTrigger>
+              <TabsTrigger value="factory">{t("titles.page.tabFactory")}</TabsTrigger>
+              <TabsTrigger value="library">{t("titles.page.tabLibrary")}</TabsTrigger>
             </TabsList>
 
             <TabsContent value="factory">

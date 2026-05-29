@@ -1,0 +1,33 @@
+{
+  "directorTaskNotice": {
+    "defaultActionLabel": "Sửa nhanh tiêu đề chương",
+    "chapterTitleWarningLabel": "Sửa nhanh tiêu đề chương"
+  },
+  "novelWorkflowTaskUi": {
+    "defaultScopeLabel": "Chương 1-10",
+    "autoExecutionRunning": "Đang tự thực thi {{scope}}",
+    "autoExecutionPaused": "Đã tạm dừng tự thực thi {{scope}}",
+    "autoExecutionCancelled": "Đã huỷ tự thực thi {{scope}}",
+    "checkpoints": {
+      "candidateSelectionRequired": "Chờ xác nhận hướng đi cấp sách",
+      "bookContractReady": "Book Contract đã sẵn sàng",
+      "characterSetupRequired": "Chuẩn bị nhân vật chờ duyệt",
+      "volumeStrategyReady": "Chiến lược cuốn chờ duyệt",
+      "replanRequired": "Chờ quy hoạch lại",
+      "workflowCompleted": "Đạo diễn tự động đã hoàn tất",
+      "fallback": "Đạo diễn tự động"
+    },
+    "statuses": {
+      "running": "Đạo diễn tự động đang chạy",
+      "queued": "Đạo diễn tự động đang xếp hàng",
+      "failed": "Đạo diễn tự động thất bại",
+      "cancelled": "Đạo diễn tự động đã huỷ"
+    },
+    "description": {
+      "autoRunning": "AI đang chạy nền tiếp tục {{scope}}, tiến độ hiện tại {{percent}}%.",
+      "autoPaused": "Tự thực thi {{scope}} đã dừng ở giai đoạn batch, hãy xem tác vụ rồi quyết định có tiếp tục tự thực thi không.",
+      "resumeSuggestion": "Khuyên tiếp tục: {{label}}",
+      "nextAction": "Bước tiếp theo: {{label}}"
+    }
+  }
+}

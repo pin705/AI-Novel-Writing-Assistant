@@ -8,6 +8,7 @@ import {
 } from "@/api/tasks";
 import { queryKeys } from "@/api/queryKeys";
 import { toast } from "@/components/ui/toast";
+import { useTranslation } from "@/i18n";
 
 const DISMISSED_RECOVERY_SIGNATURE_STORAGE_KEY = "ai-novel.task-recovery.dismissed-signature";
 
@@ -60,6 +61,7 @@ function writeDismissedRecoverySignature(signature: string): void {
 
 export function TaskRecoveryProvider({ children }: { children: ReactNode }) {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
   const [manualOpen, setManualOpen] = useState(false);
   const [dismissedSignature, setDismissedSignature] = useState(() => readDismissedRecoverySignature());
   const [acceptedRecoveryKeys, setAcceptedRecoveryKeys] = useState<Set<string>>(() => new Set());
@@ -101,12 +103,14 @@ export function TaskRecoveryProvider({ children }: { children: ReactNode }) {
         next.add(recoveryItemKey(variables));
         return next;
       });
-      toast.success("已开始恢复任务。");
+      toast.success(t("components.layout.taskRecovery.toasts.resumeStarted"));
       refreshTaskState();
       void recoveryQuery.refetch();
     },
     onError: (error) => {
-      toast.error(error instanceof Error ? error.message : "恢复任务失败。");
+      toast.error(error instanceof Error
+        ? error.message
+        : t("components.layout.taskRecovery.toasts.resumeFailed"));
     },
   });
 
@@ -121,12 +125,16 @@ export function TaskRecoveryProvider({ children }: { children: ReactNode }) {
         }
         return next;
       });
-      toast.success(resumedCount > 0 ? `已开始恢复 ${resumedCount} 个任务。` : "当前没有可恢复任务。");
+      toast.success(resumedCount > 0
+        ? t("components.layout.taskRecovery.toasts.resumeAllStarted", { count: resumedCount })
+        : t("components.layout.taskRecovery.toasts.resumeAllEmpty"));
       refreshTaskState();
       void recoveryQuery.refetch();
     },
     onError: (error) => {
-      toast.error(error instanceof Error ? error.message : "批量恢复任务失败。");
+      toast.error(error instanceof Error
+        ? error.message
+        : t("components.layout.taskRecovery.toasts.resumeAllFailed"));
     },
   });
 

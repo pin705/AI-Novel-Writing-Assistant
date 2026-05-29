@@ -30,16 +30,16 @@ export const emptyForm: RuleFormState = {
   autoRewrite: false,
 };
 
-export const typeLabels: Record<AntiAiRule["type"], string> = {
-  forbidden: "禁用",
-  risk: "风险",
-  encourage: "鼓励",
+export const typeLabelKeys: Record<AntiAiRule["type"], string> = {
+  forbidden: "antiAiRules.ruleTypes.forbidden",
+  risk: "antiAiRules.ruleTypes.risk",
+  encourage: "antiAiRules.ruleTypes.encourage",
 };
 
-export const severityLabels: Record<AntiAiRule["severity"], string> = {
-  low: "低",
-  medium: "中",
-  high: "高",
+export const severityLabelKeys: Record<AntiAiRule["severity"], string> = {
+  low: "antiAiRules.ruleSeverities.low",
+  medium: "antiAiRules.ruleSeverities.medium",
+  high: "antiAiRules.ruleSeverities.high",
 };
 
 export function ruleToForm(rule: AntiAiRule): RuleFormState {

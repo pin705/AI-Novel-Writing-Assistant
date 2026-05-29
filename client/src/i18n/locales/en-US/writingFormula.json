@@ -1,0 +1,726 @@
+{
+  "page": {
+    "kicker": "Style Engine V2",
+    "title": "Style engine",
+    "openInCreativeHub": "Take this style to the Creative Hub"
+  },
+  "messages": {
+    "fromBookAnalysis": "Style \"{{name}}\" came from a book analysis — you can keep reviewing rules, run test writes, or bind it to a target.",
+    "extractionTaskQueued": "Style extraction task \"{{title}}\" was submitted. It runs in the background and auto-saves; the result will open automatically when done.",
+    "extractionTaskMissing": "The style extraction task is missing or has been cleaned up — please submit again.",
+    "extractionTaskAutoSavedNoResult": "The extraction task finished, but no auto-saved result came back.",
+    "extractionTaskCancelled": "Style extraction task was cancelled.",
+    "extractionTaskFailed": "Style extraction task failed — please retry later.",
+    "extractionTaskAutoSaved": "Style \"{{name}}\" was auto-saved — the editor is open and ready.",
+    "extractionTaskSubmittedNoDetail": "Style extraction task was submitted, but no task details came back.",
+    "manualCreated": "Style \"{{name}}\" has been created — keep adding rules, run test writes, or bind it to a target.",
+    "briefCreated": "Style \"{{name}}\" has been generated — keep adding rules, run test writes, or bind it to a target.",
+    "templateCreated": "Template style \"{{name}}\" has been created — keep adding rules, run test writes, or bind it to a target.",
+    "reextractWithFeatures": "Re-extracted {{count}} features — confirm them and save.",
+    "reextractEmpty": "Still no usable features this round — check whether the source sample is complete enough.",
+    "saved": "Style profile saved.",
+    "deleted": "This style has been deleted.",
+    "bindingCreated": "This style will now participate in generation for the target.",
+    "rewriteDone": "Revised draft is ready — keep reviewing and tuning inside Strip AI flavor.",
+    "deleteConfirm": "Delete \"{{name}}\"? This cannot be undone.",
+    "fallbackProfileName": "this style"
+  },
+  "errors": {
+    "sourceContentRequired": "Prepare a source sample first.",
+    "selectProfileFirst": "Pick a style first.",
+    "extractFallbackName": "Text-extracted style",
+    "extractFallbackNewName": "New style"
+  },
+  "editorDialog": {
+    "title": "Edit current style",
+    "description": "This window only manages the style's own settings. Apply, test, and Strip AI flavor each live in their own entry to avoid mixing them together."
+  },
+  "workbenchDialog": {
+    "title": "Apply and test the current style",
+    "description": "This window only handles binding to novels and chapters and running test writes — it does not change the style's own fields."
+  },
+  "cleanDialog": {
+    "title": "Strip AI flavor",
+    "description": "This window only detects and revises prose. It does not edit style fields and does not mix in binding or test-write actions."
+  },
+  "advancedWorkspace": {
+    "intro": "Now editing the settings for style \"{{name}}\". Apply, test, and Strip AI flavor are in their own entries — this view focuses on the style itself.",
+    "introEmpty": "No style is loaded for editing. Head back to the style list and select or create one."
+  },
+  "bookStyle": {
+    "title": "Set the book-level default style from the novel info page",
+    "description": "The style engine creates, tests, and organizes style assets. The default style for this novel is chosen on the novel info page, then carried into the director and writing flows.",
+    "entryHeading": "Where to go now",
+    "entryWithNovel": "The default style for this novel{{novelLabel}} now lives on the novel info page.",
+    "entryWithoutNovel": "Open a novel's info page first to confirm its book-level default style.",
+    "novelLabel": " \"{{title}}\"",
+    "splitTitle": "What each entry handles",
+    "splitNovelPage": "Novel page: pick the default style for this novel, trigger recommendations, compare candidates, and decide when to feed it to the auto-director.",
+    "splitEngine": "Style engine: keep organizing style assets, running test writes, stripping AI flavor, and managing rules.",
+    "nextHeading": "Next step",
+    "nextDescription": "Head to the novel page to confirm this book's default style. If the asset library doesn't have a good fit yet, come back to the style engine to create or refine one.",
+    "goToNovelPage": "Set default style on the novel page",
+    "editCurrent": "Edit current style",
+    "createNew": "Create a new style"
+  },
+  "cleanFlow": {
+    "title": "Strip the AI flavor out of this draft",
+    "description": "Detection points out the passages that read like template copy, then a revised draft is generated for direct comparison. Recurring issues are summarized into rule suggestions so you can bring them back to the style editor.",
+    "inputHeading": "Original draft",
+    "inputPlaceholder": "Paste the passage you want to strip AI flavor from.",
+    "detecting": "Detecting...",
+    "detect": "Detect first",
+    "generatingRewrite": "Generating revised draft...",
+    "generateRewrite": "Generate revised draft",
+    "issueHeading": "Issue cards & risk score",
+    "riskScoreLabel": "Risk score",
+    "issueEmpty": "Run detection first — this panel will tell you which passages sound most like AI and why they pull readers out of the story.",
+    "diffHeading": "Diff before vs. after",
+    "diffHint": "A lightweight line-by-line comparison so you can quickly tell whether the revision flattens template feel or also strips the original voice.",
+    "diffOriginal": "Original {{index}}",
+    "diffRewrite": "Revised {{index}}",
+    "diffEmpty": "Once you generate a revision, the before/after comparison will show up here.",
+    "suggestionHeading": "Recurring issues worth turning into rules",
+    "suggestionHint": "This pass won't force-write anything; it gathers recurring issues into suggestions so you can decide in the style editor whether to lock them in.",
+    "viewEditor": "Open the style editor",
+    "suggestionEmpty": "Once detection surfaces issues, rule suggestions will appear here."
+  },
+  "cleanPanel": {
+    "title": "Strip AI flavor",
+    "introWithProfile": "Detecting and revising according to style \"{{name}}\". This panel only addresses AI flavor in the prose — it does not modify the style's own fields.",
+    "introEmpty": "Pick a style from the list first, then come back to detect prose.",
+    "antiAiHeading": "Anti-AI constraints in effect",
+    "antiAiHint": "If this style is bound to anti-AI rules, detection and rewriting will judge problems against those constraints first.",
+    "antiAiEmpty": "This style isn't bound to any explicit anti-AI rules. Detection will rely more on generic risk heuristics, so results may not match expectations.",
+    "detectHeading": "Detect prose",
+    "detectHint": "Paste the prose you want to inspect. Submitting a complete scene at a time makes it easier to surface narration-, dialogue-, and exposition-voice issues.",
+    "detectPlaceholder": "Paste prose for detection",
+    "runDetect": "Run detection",
+    "runRewrite": "Quick revise",
+    "riskScore": "Risk score: {{score}}",
+    "detectionEmpty": "Detection results land here, calling out which sentences sound most like AI voice, why they read as risky, and which directions to try.",
+    "rewriteResult": "Revision output"
+  },
+  "createDialog": {
+    "title": "Create style",
+    "description": "Pick the lightest starting path. After creation, the style editor opens automatically so you can keep adding rules, running test writes, and binding to targets.",
+    "tabs": {
+      "quickStart": "From template",
+      "blank": "Blank / AI",
+      "extract": "From material"
+    },
+    "quickStart": {
+      "intro": "When clear rules aren't ready yet, starting from a template is the lightest path. You can keep refining afterwards.",
+      "templateBadge": "Template",
+      "applicableTo": "Best for: {{value}}",
+      "creating": "Creating...",
+      "createFromTemplate": "Create from this template"
+    },
+    "blank": {
+      "intro": "You can hand-build a blank style, or describe the reading feel you want and let the AI sketch the first skeleton.",
+      "manualTitle": "Blank manual create",
+      "manualHint": "Good when you already know what kind of style you want to maintain and just need a shell.",
+      "manualNamePlaceholder": "e.g. Urban high-conflict fast-progression",
+      "manualCreating": "Creating...",
+      "manualSubmit": "Create blank style",
+      "aiTitle": "Let AI sketch one for me",
+      "aiHint": "Good when you only know how you want the reading to feel and don't want to fill rule fields by hand yet.",
+      "aiNamePlaceholder": "Style name (optional)",
+      "aiCategoryPlaceholder": "Category (optional)",
+      "aiBriefPlaceholder": "e.g. brisk overall pace, dense conflict, direct dialogue, no emotional dragging — suits urban and hot-blooded progression novels.",
+      "aiGenerating": "AI generating...",
+      "aiSubmit": "Have AI generate a style"
+    },
+    "extract": {
+      "intro": "Create a style from source material. Direct text and knowledge-base documents go through a background extraction task; book analyses use their voice and craft sections directly.",
+      "namePlaceholder": "Style name",
+      "categoryPlaceholder": "Category (optional)",
+      "directTextPlaceholder": "Paste the reference text you want the style extracted from. Ideally include at least one complete scene.",
+      "knowledgeSearchPlaceholder": "Search by knowledge document title or file name",
+      "knowledgeLoading": "Searching knowledge documents...",
+      "knowledgeNotFound": "No knowledge documents available. Upload originals to the knowledge base first, then come back here to create a style.",
+      "knowledgeSelected": "Selected",
+      "knowledgeMeta": "Active version v{{version}} · {{versionCount}} versions · {{analysisCount}} book analyses",
+      "knowledgeProcessingTitle": "How to process the source",
+      "knowledgeSnapshot": "Source snapshot {{value}}",
+      "knowledgeSampleHint": "The style asset still keeps the full source preview; the model only reads representative samples to avoid feeding an entire long work in one shot.",
+      "knowledgeFullTextWarning": "Full-text extraction sends the entire active version to the model. For long works, prefer representative sampling first.",
+      "knowledgePreviewLoading": "Loading the selected document's active version...",
+      "knowledgeActiveVersion": "Active version v{{version}} · {{value}}",
+      "knowledgeMissingActive": "The selected document has no active version and cannot be submitted.",
+      "knowledgeEmptyContent": "The active version's content is empty and cannot be submitted.",
+      "knowledgePromptSelect": "After you pick a knowledge document, the system reads the active version and freezes a snapshot when the task is submitted.",
+      "knowledgeTitleSuffix": "{{title}} style",
+      "bookAnalysisSearchPlaceholder": "Search by analysis title or source document",
+      "bookAnalysisLoading": "Searching book analyses...",
+      "bookAnalysisNotFound": "No available book analyses. Once you finish one, you can generate a style directly from here.",
+      "bookAnalysisAvailable": "Ready to generate",
+      "bookAnalysisMeta": "Source version v{{version}} · {{summary}}",
+      "bookAnalysisFallbackSummary": "Book analysis ready for style generation",
+      "bookAnalysisTitleSuffix": "{{title}} style",
+      "submit": {
+        "bookAnalysis": "Create style from book analysis",
+        "knowledge": "Extract from knowledge source and auto-save",
+        "directText": "Submit extraction task and auto-save",
+        "generating": "Generating...",
+        "submitting": "Submitting task...",
+        "running": "Background task in progress..."
+      },
+      "bookAnalysisPanel": {
+        "title": "Generate from book analysis",
+        "hint": "This path reads the voice and craft sections of the analysis and opens the style editor right after generating.",
+        "sourceLabel": "Source document: {{title}} · v{{version}}",
+        "promptSelect": "After picking a book analysis, the system uses its voice and craft sections to generate the style — no background task is involved."
+      },
+      "presetPanel": {
+        "title": "Retention strategy",
+        "hint": "Decide how much of the original fingerprint to keep first — the system applies this strategy when it auto-generates and saves.",
+        "currentScheme": "Current scheme",
+        "presetSubmitHint": "Submits with \"{{label}}\" to the background. Once it finishes, the style is auto-saved — no manual save needed."
+      },
+      "task": {
+        "title": "Background task",
+        "taskTitle": "Task title: {{title}}",
+        "stage": "Stage: {{value}}",
+        "stageWaiting": "Waiting to schedule",
+        "progress": "Progress: {{percent}}%",
+        "failure": "Failure reason: {{reason}}",
+        "openTaskCenter": "Open the Task Center",
+        "noTaskHint": "Once submitted, the system handles extraction, applies your retention strategy, and saves the style in the background. You can close this dialog — the result will open automatically when done."
+      }
+    },
+    "extractionPresets": {
+      "imitate": {
+        "label": "Hew close to the source",
+        "summary": "Retain strong fingerprints and expressive habits — best for short-term imitation, voice trials, and side-by-side study."
+      },
+      "balanced": {
+        "label": "Keep the core reading feel",
+        "summary": "Keep reading feel and pacing, soften overly strong fingerprints — works for most projects out of the box."
+      },
+      "transfer": {
+        "label": "Only carry over reusable skeleton",
+        "summary": "Retain reusable pacing, structure, and dialogue logic — best for long projects and book-wide defaults."
+      }
+    },
+    "materialSources": {
+      "directText": {
+        "label": "Paste text directly",
+        "summary": "Hand the sample text to a background extraction task — great when you already have a passage or chapter."
+      },
+      "knowledgeDocument": {
+        "label": "Knowledge document",
+        "summary": "Pick a knowledge document's active version — the system freezes the full-text snapshot and learns from representative samples."
+      },
+      "bookAnalysis": {
+        "label": "Book analysis",
+        "summary": "Use the voice and craft results inside a book analysis directly to generate a style."
+      }
+    },
+    "knowledgeProcessing": {
+      "representativeSample": {
+        "label": "Smart sampling",
+        "summary": "Sample representative passages from the opening, middle, late, and closing sections — better for long works in both speed and stability.",
+        "badge": "Recommended"
+      },
+      "fullText": {
+        "label": "Full-text extraction",
+        "summary": "Feed the entire active version to the model — good for short docs; long works may be slower and more likely to hit context or timeout limits."
+      }
+    },
+    "taskStatus": {
+      "none": "No task",
+      "queued": "Queued",
+      "running": "Running",
+      "succeeded": "Succeeded",
+      "failed": "Failed",
+      "cancelled": "Cancelled",
+      "pending": "Awaiting approval"
+    },
+    "knowledgeStatus": {
+      "enabled": "Available",
+      "disabled": "Disabled",
+      "archived": "Archived"
+    },
+    "charCount": "{{value}} chars",
+    "charCountZero": "0 chars"
+  },
+  "editorPanel": {
+    "title": "Edit current style",
+    "delete": "Delete",
+    "emptyPrompt": "Head back to the style list, pick a style, then come here to edit.",
+    "starterNotice": "This is one of the preset starter styles. Modify it for your project directly — no need to copy first.",
+    "primaryGuide": "If you'd rather not face a wall of technical fields up front, focus on the four essentials first: style name, summary, applicable genres, and anti-AI rules. The four advanced rule blocks below are the system's finer-grain control layer — leave them alone if you're unsure.",
+    "basics": {
+      "title": "Basic positioning",
+      "hint": "State up front how this style should feel to read — this content is also surfaced first when the list expands.",
+      "name": {
+        "label": "Style name",
+        "hint": "This is the main title you'll recognize this style by in the list — include the genre or reading feel where possible."
+      },
+      "category": {
+        "label": "Category",
+        "hint": "For your own filing — e.g. urban, fantasy, romance, fast-progression hot-blooded.",
+        "placeholder": "e.g. Urban hot-blooded"
+      },
+      "description": {
+        "label": "One-line summary",
+        "hint": "One complete sentence describing the reading feel, pacing, or character voice this style should produce.",
+        "placeholder": "e.g. dense conflict, fast pacing, direct dialogue, externalized emotion — suits urban progression novels."
+      },
+      "tags": {
+        "label": "Tags",
+        "hint": "For your own retrieval — short keywords, comma-separated.",
+        "placeholder": "e.g. wish-fulfillment, fast pace, strong conflict"
+      },
+      "applicableGenres": {
+        "label": "Applicable genres",
+        "hint": "Tell the system which genres or scenarios this style fits — comma-separated.",
+        "placeholder": "e.g. urban, hot-blooded, progression"
+      }
+    },
+    "source": {
+      "title": "Source evidence and extracted features",
+      "hint": "This is the \"evidence layer\" of the style. Styles extracted from text or knowledge documents rely on this for review and re-extraction. Feature notes, evidence, scores, preset suggestions, and recommended rules all live here.",
+      "sourceContent": {
+        "label": "Source sample",
+        "hint": "Keep the text used when this style was extracted. The more complete the sample, the more stable the features the system can pull.",
+        "placeholder": "The source sample used when extracting this style asset"
+      },
+      "featuresTitle": "Enable extracted features",
+      "featuresHint": "Style features pulled from the source are listed here. Checked means it stays in this style.",
+      "featuresCount": " Currently {{count}} items.",
+      "reextract": "Re-extract features",
+      "reextracting": "Re-extracting...",
+      "evidence": "Evidence: {{value}}",
+      "importance": "Importance {{value}}",
+      "imitationValue": "Imitation value {{value}}",
+      "transferability": "Transferability {{value}}",
+      "fingerprintRisk": "Fingerprint risk {{value}}",
+      "rulePatchLabel": "{{label}} rules",
+      "summaryOnlyRules": "Only summary-level rules right now",
+      "noExtractedFeatures": "This text-based style has no selectable feature entries yet. Click \"Re-extract features\" to rebuild the feature pool from the source sample.",
+      "presetSuggestionTitle": "Extraction preset suggestions",
+      "presetSuggestionHint": "The model suggests three retention plans. The one currently saved is highlighted so you can decide whether to switch retention strength.",
+      "presetCurrent": "Currently applied",
+      "presetCountKeep": "Keep {{count}}",
+      "presetCountWeaken": "Soften {{count}}",
+      "presetCountRemove": "Drop {{count}}",
+      "antiAiSuggestionTitle": "Anti-AI rules suggested by the model",
+      "antiAiSuggestionHint": "These rules were recommended for binding during extraction. Bound rules are highlighted; unbound ones still keep the original suggested name.",
+      "antiAiBound": " · Bound",
+      "antiAiRecommended": " · Recommended, not bound",
+      "antiAiOriginal": " · Original suggestion"
+    },
+    "decisions": {
+      "keep": "Keep",
+      "weaken": "Soften",
+      "remove": "Drop"
+    },
+    "rulePatchLabels": {
+      "narrativeRules": "Narrative progression",
+      "characterRules": "Character expression",
+      "languageRules": "Language texture",
+      "rhythmRules": "Rhythm and density"
+    },
+    "analysis": {
+      "title": "Analysis draft for the system",
+      "hint": "This isn't reader-facing copy — it's a note for you and the system on later review. Explain why this style is worth keeping and its most important qualities.",
+      "placeholder": "e.g. this style keeps strong pacing and direct dialogue front and center, not detailed lyricism."
+    },
+    "rules": {
+      "title": "Advanced rule blocks",
+      "hint": "These four blocks are the machine-readable rule layer the system actually reads at runtime. When unsure about a field, read the title and hint first, then decide. If only the \"summary\" field shows up, the extraction stayed at summary level and fine-grained fields are still sparse.",
+      "compatibilityNotice": "Compatibility fields are mainly for legacy assets and limited experiments: {{fields}}. For stable reading feel, focus on the expression-level summaries and anti-AI rules.",
+      "narrative": {
+        "title": "Narrative progression rules",
+        "hint": "Controls how the plot moves, how scenes close, multi-POV usage, and whether loop hooks are allowed."
+      },
+      "character": {
+        "title": "Character expression rules",
+        "hint": "Controls how characters speak, how emotion surfaces, whether self-reflection is encouraged, and whether saving face is prioritized."
+      },
+      "language": {
+        "title": "Language texture rules",
+        "hint": "Controls sentence roughness, colloquial level, sentence variation, and whether incomplete sentences are allowed."
+      },
+      "rhythm": {
+        "title": "Rhythm and density rules",
+        "hint": "Controls pacing speed, paragraph density, and whether action takes priority over explanation."
+      },
+      "card": {
+        "empty": "This rule block has no readable fields yet. Lean on the summary and anti-AI rules above; open the advanced JSON when fine compatibility is truly needed.",
+        "showAdvanced": "View or edit advanced JSON",
+        "advancedHint": "This keeps the raw JSON entry point — mainly for legacy asset compatibility or fine tuning. The readable fields above are usually enough.",
+        "parseError": "The current JSON structure can't be parsed. The system will fall back to an empty object on save — fix the format first."
+      }
+    },
+    "antiAi": {
+      "title": "Bind anti-AI rules",
+      "hint": "This decides which problems the system guards against during detection and revision. The clearer the binding, the more directed \"Strip AI flavor\" becomes."
+    },
+    "saveFooter": "After saving, the expanded details, Strip AI flavor detection, and apply/test all read the new settings.",
+    "save": "Save current style"
+  },
+  "imitateFlow": {
+    "title": "Imitate a style",
+    "description": "Give me a concrete reference passage and I'll break it into an executable style — then you decide whether to hug it tightly, keep the skeleton, or only carry over the reusable parts.",
+    "step1": "1. Enter the reference text",
+    "namePlaceholder": "Style name, e.g. Cool realist dialogue flow",
+    "categoryPlaceholder": "Category (optional)",
+    "sourceTextPlaceholder": "Paste the reference text you want to imitate. Include at least one full scene so the system can pick up narrative distance, dialogue feel, and sentence rhythm.",
+    "extracting": "Extracting features...",
+    "extractButton": "2. Extract features first",
+    "step2": "2. Pick how much to keep",
+    "currentScheme": "Current scheme",
+    "presetHint": "`imitate` suits short imitation exercises, `balanced` works for most projects, and `transfer` is best for book-wide binding — it actively avoids high-fingerprint risk.",
+    "presetEmpty": "Finish feature extraction first — the three retention strategies and their reading-feel notes will appear here.",
+    "step3": "3. Preview the style skeleton about to be saved",
+    "step3Hint": "After saving, the style editor opens automatically — keep tuning rules, bind it to a target, or take it straight into a test write.",
+    "saving": "Saving style...",
+    "saveButton": "4. Save as a style asset",
+    "previewEmpty": "No features to preview yet. Finish feature extraction first, then decide how to save."
+  },
+  "landing": {
+    "myAssets": "My style assets",
+    "heroTitle": "Pick a style first, then decide whether to edit, apply, or strip AI flavor.",
+    "heroDescription": "The home page surfaces every style asset you have. Expanding a card shows its reading feel, rule summary, anti-AI constraints, and current maturity.",
+    "createNew": "Create a new style",
+    "bookHint": "Book-level defaults live on the novel info page — the novel itself picks the asset to use, then carries it into the director and writing flows.",
+    "emptyTitle": "No style assets yet",
+    "emptyDescription": "Create the first style now — you can come back later to add rules, run test writes, and bind targets.",
+    "emptyCta": "Create your first style",
+    "customHeading": "Styles you created",
+    "customHint": "These are the reusable assets you've shaped — pick from here first.",
+    "starterHeading": "Starter styles you can edit",
+    "starterHint": "These preset assets are good for borrowing a skeleton, then reshaping into your own project's style.",
+    "profileCountSets": "{{count}} sets",
+    "summaryFallback": "No style summary yet.",
+    "recentBinding": "Recent binding: {{title}}",
+    "actions": {
+      "edit": "Edit settings",
+      "workbench": "Apply & test",
+      "clean": "Strip AI flavor",
+      "delete": "Delete",
+      "deleting": "Deleting..."
+    },
+    "detail": {
+      "readingFeelTitle": "Reading feel & positioning",
+      "readingFeelHint": "This column lets you quickly judge what this style is going for and which projects it's best for first.",
+      "sourcePreviewLabel": "Source sample excerpt",
+      "rulesTitle": "Rule summary",
+      "rulesHint": "These are the four rule layers that actually drive the reading feel — easy to understand from the list directly.",
+      "narrative": "Narrative",
+      "character": "Character",
+      "language": "Language",
+      "rhythm": "Rhythm",
+      "antiAiTitle": "Anti-AI constraints",
+      "antiAiHint": "This decides which risks the system watches most closely during detection and revision.",
+      "extractionAntiAiSuggestion": "Extraction additionally suggested {{count}} anti-AI rules — good for further fine-tuning.",
+      "antiAiEmpty": "This style has no explicit anti-AI constraints bound, so \"Strip AI flavor\" will be less directional.",
+      "overviewTitle": "Asset overview",
+      "overviewHint": "This column mainly helps you gauge how mature this style is right now.",
+      "sourceLabel": "Source",
+      "updatedLabel": "Last updated",
+      "enabledFeatures": "Enabled features",
+      "highRiskFeatures": "High-risk fingerprints",
+      "currentPreset": "Current preset",
+      "availablePresets": "Available presets",
+      "boundTargets": "Bound targets",
+      "recentNovel": "Recent novel",
+      "applicableGenres": "Applicable genres",
+      "featureCount": "{{count}} items",
+      "bindingCount": "{{count}} bindings",
+      "presetUnlocked": "Not locked",
+      "presetEmpty": "None",
+      "noBoundNovel": "Not bound to a novel yet",
+      "genresEmpty": "Not filled in",
+      "nextStepTitle": "Next step",
+      "nextStepHint": "Each button now owns a single job — they no longer jump into the same panel.",
+      "nextEdit": "Edit settings: maintain the style's own notes, rules, and anti-AI constraints.",
+      "nextWorkbench": "Apply & test: bind to a novel or chapter and run a test write.",
+      "nextClean": "Strip AI flavor: only detection and revision — no style field changes."
+    }
+  },
+  "rulesPanel": {
+    "title": "Anti-AI rules",
+    "enabledCount": "{{enabled}} / {{total}} rules enabled",
+    "intro": "View, create, and tune anti-AI rules in the Rules Center. The style editor decides which rules bind to the current style.",
+    "goToCenter": "Open the Rules Center"
+  },
+  "sidebar": {
+    "pickFirstTitle": "Pick a style first, then fine-tune",
+    "pickFirstIntro": "On your first run, don't try to understand every rule field. Pick a preset that feels closest to what you want, then rename, retag, and adjust rules — it's much smoother.",
+    "editableTitle": "Editable style assets",
+    "editableHint": "Including {{count}} presets — copy the idea, then refine.",
+    "templatesTitle": "Built-in templates",
+    "templatesHint": "Great for quickly spinning up a new style instead of starting from scratch.",
+    "createOrImport": "Create or import style",
+    "switchTitle": "Switch current style",
+    "switchHint": "This panel only switches the edit target in the dialog. The full asset list is on the home page.",
+    "yourProfilesHeading": "Styles you created",
+    "starterProfilesHeading": "Preset starter styles",
+    "starterBadge": "Preset",
+    "emptyPrompt": "No style assets yet. Click \"Create or import style\" above and spin one up from a template — the lightest path.",
+    "dialog": {
+      "title": "Create or import style",
+      "description": "Start with \"Quick start\" or the sentence-based generator in \"Blank / AI\". Use \"Extract from text\" once you have stable sample text in hand.",
+      "tabs": {
+        "quickStart": "Quick start",
+        "blank": "Blank / AI",
+        "extract": "Extract from text"
+      },
+      "quickStart": {
+        "intro": "A few editable starter styles are over on the left. To spin up another, generating from a template is lighter — then tune it for your project.",
+        "templateBadge": "Template",
+        "applicableTo": "Best for: {{value}}",
+        "creating": "Creating...",
+        "createFromTemplate": "Quick-create from this template"
+      },
+      "blank": {
+        "intro": "Two light ways to start: build a blank manually if you know which rules to maintain, or describe the feel you want and let AI sketch the skeleton.",
+        "manualTitle": "Blank manual create",
+        "manualHint": "Good when you know which style rules to maintain and just want a shell to fill in.",
+        "manualNamePlaceholder": "e.g. My female-lead urban relationship style",
+        "manualCreating": "Creating...",
+        "manualSubmit": "Create blank style",
+        "aiTitle": "Let AI sketch one for me",
+        "aiHint": "When you'd rather not study rule fields yet, describe the reading feel, character, or references — AI will sketch an editable style.",
+        "aiNamePlaceholder": "Style name (optional — leave blank and AI names it)",
+        "aiCategoryPlaceholder": "Category (optional)",
+        "aiBriefPlaceholder": "e.g. similar to \"The Distant Savior\" — restrained overall, philosophical, dialogue with edge, less inspirational pep talk, more real-world friction.",
+        "aiGenerating": "AI generating...",
+        "aiSubmit": "Have AI generate a style"
+      },
+      "extract": {
+        "intro": "For when you have stable reference text and want the system to extract features before editing. Without a ready sample, start from a template or AI first.",
+        "namePlaceholder": "Style name",
+        "categoryPlaceholder": "Category (optional)",
+        "sourcePlaceholder": "Paste reference text",
+        "extracting": "Extracting...",
+        "submit": "Have AI extract features and create"
+      }
+    }
+  },
+  "workbench": {
+    "title": "Apply and test the current style",
+    "intro": "This panel only handles two things: binding this style to a novel/chapter/task and running a test write to check the result. \"Strip AI flavor\" lives in its own entry now and is no longer mixed in here.",
+    "bindingTitle": "Bind to a target",
+    "bindingHint": "Once bound, this style participates in generation for the matching novel, chapter, or task. Higher priority means earlier influence; higher weight means stronger participation.",
+    "bindingLevel": "Binding level",
+    "bindingTargets": {
+      "novel": "Whole book",
+      "chapter": "Chapter",
+      "task": "This task"
+    },
+    "selectNovel": "Novel",
+    "selectChapter": "Pick chapter",
+    "selectChapterPlaceholder": "Pick chapter",
+    "chapterOptionLabel": "{{order}}. {{title}}",
+    "taskTargetLabel": "Task identifier",
+    "taskTargetPlaceholder": "e.g. chapter-draft-001",
+    "priority": "Priority",
+    "weight": "Weight",
+    "createBinding": "Create binding",
+    "bindingLine": "{{type}} / {{id}} / P{{priority}} / W{{weight}}",
+    "deleteBinding": "Delete",
+    "bindingsEmpty": "This style isn't bound to any target yet. Bind it to a novel or chapter first so downstream generation will pick it up automatically.",
+    "testWriteTitle": "Run a test write",
+    "testWriteHint": "When you're unsure whether the style has truly landed, generating or rewriting a passage is the most direct check.",
+    "testWriteMode": "Test mode",
+    "testModes": {
+      "generate": "Generate prose",
+      "rewrite": "Rewrite text"
+    },
+    "topicLabel": "Test topic",
+    "topicPlaceholder": "e.g. the protagonist's first public comeback",
+    "rewriteLabel": "Text to rewrite",
+    "rewritePlaceholder": "Paste the prose you want this style to rewrite",
+    "runTestWrite": "Run test write",
+    "testWriteEmpty": "Test-write output lands here. Use it to judge whether the style's pacing, dialogue feel, and overall voice are in place."
+  },
+  "rulePresentation": {
+    "narrativeEmpty": "No explicit narrative progression summary yet.",
+    "characterEmpty": "No explicit character expression summary yet.",
+    "languageEmpty": "No explicit language texture summary yet.",
+    "rhythmEmpty": "No explicit rhythm summary yet.",
+    "fieldLabels": {
+      "narrativeRules": {
+        "summary": "Overall progression feel",
+        "progressionMode": "Progression mode",
+        "sceneUnitPattern": "Scene unit",
+        "multiPov": "Multi-POV",
+        "looping": "Loop hooks",
+        "endingStyle": "Ending style",
+        "povSwitchStyle": "POV switching"
+      },
+      "characterRules": {
+        "summary": "Character expression overview",
+        "dialogueStyle": "Dialogue style",
+        "emotionExpression": "Emotion surfacing",
+        "defenseMechanisms": "Defense mechanisms",
+        "allowSelfReflection": "Self-reflection",
+        "facePriority": "Face priority"
+      },
+      "languageRules": {
+        "summary": "Language texture overview",
+        "register": "Register",
+        "roughness": "Roughness",
+        "sentenceVariation": "Sentence variation",
+        "allowIncompleteSentences": "Incomplete sentences",
+        "allowSwearing": "Colloquial swearing",
+        "allowUselessDetails": "Slice-of-life detail"
+      },
+      "rhythmRules": {
+        "summary": "Rhythm overview",
+        "pace": "Pace",
+        "paragraphDensity": "Paragraph density",
+        "allowFragmentedFlow": "Fragmented flow",
+        "actionOverExplanation": "Action over explanation"
+      }
+    },
+    "fieldValues": {
+      "progressionMode": {
+        "time_sequence": "Chronological order",
+        "goal_driven": "Goal-driven progression",
+        "mystery_escalation": "Mystery escalation",
+        "relationship_push_pull": "Relationship push-pull",
+        "multi_thread": "Multi-thread interweave",
+        "scene_immersion": "Immersive scenes",
+        "fact_driven": "Fact-driven progression",
+        "contrast_driven": "Contrast-driven progression"
+      },
+      "endingStyle": {
+        "unresolved": "Leaves the core conflict open",
+        "hook": "Ends on a hook",
+        "suspense": "Suspense ending",
+        "emotional_hook": "Emotional hook ending",
+        "cross_hook": "Cross-thread hook ending",
+        "soft_open": "Soft open ending",
+        "pressure_continue": "Pressure-continuing ending",
+        "bitter_aftertaste": "Bitter aftertaste ending"
+      },
+      "povSwitchStyle": {
+        "controlled": "Controlled switching"
+      },
+      "emotionExpression": {
+        "behavior_only": "Surfaces only through action",
+        "dialogue_and_action": "Surfaces through dialogue and action",
+        "reaction_only": "Surfaces mostly through reaction",
+        "subtext": "Surfaces through subtext",
+        "mixed": "Mixed dialogue, action, and reaction",
+        "light_behavior": "Surfaces through light action and reaction",
+        "suppressed": "Held back, not stated outright",
+        "deadpan": "Deadpan reactions"
+      },
+      "dialogueStyle": {
+        "short_colloquial": "Short colloquial lines",
+        "direct": "Direct and hard-edged",
+        "restrained": "Restrained, holding back",
+        "subtext_heavy": "Heavy subtext",
+        "distinct_by_role": "Clearly distinct per role",
+        "daily_natural": "Daily natural tone",
+        "informational": "Informational, restrained dialogue",
+        "deadpan_colloquial": "Deadpan colloquial"
+      },
+      "register": {
+        "colloquial": "Colloquial",
+        "direct": "Direct and crisp",
+        "restrained": "Restrained",
+        "natural": "Natural everyday",
+        "flexible": "Flexible by character",
+        "professional": "Professional restraint"
+      },
+      "sentenceVariation": {
+        "high": "High variation",
+        "medium": "Medium variation",
+        "medium_high": "Medium-high variation"
+      },
+      "pace": {
+        "medium_fast": "Medium-fast",
+        "fast": "Fast",
+        "medium": "Medium",
+        "medium_slow": "Medium-slow",
+        "balanced": "Balanced",
+        "slow": "Slow"
+      },
+      "paragraphDensity": {
+        "high": "High density",
+        "medium": "Medium density",
+        "medium_high": "Medium-high density"
+      }
+    },
+    "booleanValues": {
+      "multiPov": {
+        "true": "Multi-POV switching allowed",
+        "false": "Try to stay in a single POV"
+      },
+      "looping": {
+        "true": "Loop hooks allowed",
+        "false": "Stay linear"
+      },
+      "allowSelfReflection": {
+        "true": "Explicit self-reflection allowed",
+        "false": "Minimize direct self-reflection"
+      },
+      "facePriority": {
+        "true": "Prioritize saving face",
+        "false": "Don't force face-saving"
+      },
+      "allowIncompleteSentences": {
+        "true": "Incomplete sentences allowed",
+        "false": "Keep sentences complete"
+      },
+      "allowSwearing": {
+        "true": "Light swearing allowed",
+        "false": "Avoid swearing"
+      },
+      "allowUselessDetails": {
+        "true": "Slice-of-life noise allowed",
+        "false": "Trim irrelevant noise"
+      },
+      "allowFragmentedFlow": {
+        "true": "Fragmented progression allowed",
+        "false": "Keep progression coherent"
+      },
+      "actionOverExplanation": {
+        "true": "Action comes before explanation",
+        "false": "Explanation matters more than action"
+      },
+      "default": {
+        "true": "Yes",
+        "false": "No"
+      }
+    },
+    "roughnessValue": "{{value}} / 100"
+  },
+  "landingItems": {
+    "sourceTypes": {
+      "manual": "Hand-organized",
+      "from_text": "Text extraction",
+      "from_book_analysis": "From book analysis",
+      "from_knowledge_document": "Knowledge base source",
+      "from_current_work": "Distilled from current work",
+      "other": "Other source"
+    },
+    "readingFeelLine": "Reading promise: {{value}}",
+    "languageLine": "Language texture: {{value}}",
+    "dialogueLine": "Dialogue style: {{value}}",
+    "emotionLine": "Emotion surfacing: {{value}}",
+    "antiAiLine": "Anti-AI constraints: {{value}}",
+    "antiAiSeparator": "; ",
+    "summaryFallback": "No style summary yet.",
+    "readingFeelFallback": "This style hasn't spelled out its reading-feel positioning yet.",
+    "originLabels": {
+      "starter": "Preset",
+      "aiGenerated": "AI generated",
+      "fromText": "Text extraction",
+      "fromBookAnalysis": "From book analysis",
+      "fromKnowledge": "Knowledge base",
+      "fromCurrentWork": "Current work",
+      "manual": "Created manually"
+    },
+    "ruleSummarySeparator": "; ",
+    "ruleSummaryEntry": "{{label}}: {{value}}"
+  }
+}

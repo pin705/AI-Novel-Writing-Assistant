@@ -6,11 +6,27 @@ import {
   summarizeSelectedAutoDirectorEvents,
 } from "./autoDirectorEventOptions.ts";
 
-test("auto director event options expose Chinese labels and preserve event codes in drafts", () => {
+// Identity translator returns the key unchanged so we can assert on i18n keys
+// instead of locale-specific strings.
+const identityT = (key, vars) => {
+  if (!vars) return key;
+  return Object.keys(vars).reduce(
+    (acc, name) => acc.replace(new RegExp(`\\{\\{\\s*${name}\\s*\\}\\}`, "g"), String(vars[name])),
+    key,
+  );
+};
+
+test("auto director event options expose translation keys and preserve event codes in drafts", () => {
   assert.equal(AUTO_DIRECTOR_EVENT_OPTIONS[0]?.code, "auto_director.approval_required");
-  assert.equal(AUTO_DIRECTOR_EVENT_OPTIONS[0]?.label, "自动继续待处理");
+  assert.equal(
+    AUTO_DIRECTOR_EVENT_OPTIONS[0]?.labelKey,
+    "settings.autoDirectorEvents.approvalRequired.label",
+  );
   assert.equal(AUTO_DIRECTOR_EVENT_OPTIONS[1]?.code, "auto_director.auto_approved");
-  assert.equal(AUTO_DIRECTOR_EVENT_OPTIONS[1]?.label, "AI 已自动通过");
+  assert.equal(
+    AUTO_DIRECTOR_EVENT_OPTIONS[1]?.labelKey,
+    "settings.autoDirectorEvents.autoApproved.label",
+  );
 
   const draft = buildAutoDirectorChannelDraft({
     baseUrl: "https://book.example.com",
@@ -35,18 +51,25 @@ test("auto director event options expose Chinese labels and preserve event codes
   assert.deepEqual(draft.wecom.eventTypes, ["auto_director.completed"]);
 });
 
-test("auto director event summary renders Chinese labels instead of raw codes", () => {
-  assert.equal(summarizeSelectedAutoDirectorEvents([]), "未订阅事件");
+test("auto director event summary resolves event codes to label keys via the translator", () => {
   assert.equal(
-    summarizeSelectedAutoDirectorEvents(["auto_director.approval_required"]),
-    "自动继续待处理",
+    summarizeSelectedAutoDirectorEvents([], identityT),
+    "settings.autoDirectorChannel.noSubscribedEvents",
   );
   assert.equal(
-    summarizeSelectedAutoDirectorEvents([
-      "auto_director.approval_required",
-      "auto_director.exception",
-      "auto_director.completed",
-    ]),
-    "自动继续待处理、运行异常 等 3 项",
+    summarizeSelectedAutoDirectorEvents(["auto_director.approval_required"], identityT),
+    "settings.autoDirectorEvents.approvalRequired.label",
+  );
+  assert.equal(
+    summarizeSelectedAutoDirectorEvents(
+      [
+        "auto_director.approval_required",
+        "auto_director.exception",
+        "auto_director.completed",
+      ],
+      identityT,
+    ),
+    // Selected summary key with vars interpolated by our identity translator.
+    "settings.autoDirectorChannel.selectedSummary",
   );
 });

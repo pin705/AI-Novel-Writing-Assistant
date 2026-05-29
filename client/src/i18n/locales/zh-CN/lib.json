@@ -1,0 +1,33 @@
+{
+  "directorTaskNotice": {
+    "defaultActionLabel": "快速修复章节标题",
+    "chapterTitleWarningLabel": "快速修复章节标题"
+  },
+  "novelWorkflowTaskUi": {
+    "defaultScopeLabel": "第 1-10 章",
+    "autoExecutionRunning": "{{scope}}自动执行中",
+    "autoExecutionPaused": "{{scope}}自动执行已暂停",
+    "autoExecutionCancelled": "{{scope}}自动执行已取消",
+    "checkpoints": {
+      "candidateSelectionRequired": "等待确认书级方向",
+      "bookContractReady": "Book Contract 已就绪",
+      "characterSetupRequired": "角色准备待审核",
+      "volumeStrategyReady": "卷战略待审核",
+      "replanRequired": "等待重规划",
+      "workflowCompleted": "自动导演已完成",
+      "fallback": "自动导演"
+    },
+    "statuses": {
+      "running": "自动导演进行中",
+      "queued": "自动导演排队中",
+      "failed": "自动导演失败",
+      "cancelled": "自动导演已取消"
+    },
+    "description": {
+      "autoRunning": "AI 正在后台继续执行{{scope}}，当前进度 {{percent}}%。",
+      "autoPaused": "{{scope}}自动执行在批量阶段暂停了，建议先查看任务，再决定是否继续自动执行。",
+      "resumeSuggestion": "推荐继续：{{label}}",
+      "nextAction": "下一步：{{label}}"
+    }
+  }
+}

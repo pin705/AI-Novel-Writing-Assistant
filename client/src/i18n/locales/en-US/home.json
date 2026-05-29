@@ -1,0 +1,69 @@
+{
+  "metrics": {
+    "liveTitle": "Currently auto-running",
+    "liveHint": "Recent projects still being progressed in the background by the auto-director or auto-execution.",
+    "actionTitle": "Awaiting your input",
+    "actionHint": "Recent projects waiting for review, failed, or cancelled and needing your next decision.",
+    "readyTitle": "Ready for chapter writing",
+    "readyHint": "Recent projects that have reached the writing-ready stage and can move into chapter execution.",
+    "failedTitle": "Failed background tasks",
+    "failedHint": "Total failed tasks from the Task Center; handle them in a batch later."
+  },
+  "recommend": {
+    "newcomer": "Newcomer pick",
+    "lowBarrier": "Low-barrier launch",
+    "titleHasNovels": "Want to start the next book quickly? Hand it to the AI auto-director.",
+    "titleEmpty": "First time here? Let the AI auto-director start a book with you.",
+    "description": "Give it a rough idea and the AI will draft directions, a title pack, and the launch prep, pausing for your confirmation at key stages — no need to figure out the whole structure up front.",
+    "hintA": "Great when genre, hook, and the first-30-chapter promise are not yet clear",
+    "hintB": "Also great for quickly scaffolding a new project you can keep building on",
+    "directorCta": "Launch with AI auto-director",
+    "manualCta": "Create novel manually",
+    "helpCta": "Getting started"
+  },
+  "continueRecent": {
+    "title": "Resume recent project",
+    "description": "The home page should take you straight back to the book most worth continuing.",
+    "errorMessage": "Can't read the project list right now, so the home page can't recommend a next step.",
+    "emptyMessage": "You haven't started a novel project yet. For your first run we recommend going straight through the AI auto-director — it'll set up direction and writing prep for you.",
+    "openProject": "Open project",
+    "executionDetails": "Execution details",
+    "noAutoDirectorTask": "No auto-director task",
+    "progress": "Progress {{percent}}%",
+    "updatedAt": "Updated: {{value}}",
+    "chapterCount": "Chapters: {{value}}",
+    "characterCount": "Characters: {{value}}",
+    "currentStage": "Current stage: {{value}}",
+    "lastHealthyStage": "Last healthy stage: {{value}}",
+    "stage": "Stage: {{value}}"
+  },
+  "novelLead": {
+    "worldBound": "This project is bound to world \"{{world}}\" — continue writing right away.",
+    "noDescription": "This project has no summary yet — jump into the editor to keep going."
+  },
+  "actions": {
+    "continueExecuting": "Continuing...",
+    "continueAutoExecute": "Resume auto-execution of {{scope}}",
+    "defaultScope": "the current chapter range",
+    "continuing": "Continuing...",
+    "continueDirector": "Resume director",
+    "confirmDirection": "Confirm book-level direction",
+    "enterChapterExecution": "Enter chapter execution",
+    "viewProgress": "View progress",
+    "editNovel": "Edit novel",
+    "continueAutoExecuteFailed": "Failed to resume auto-execution of the current chapter range.",
+    "continueDirectorFailed": "Failed to resume the auto-director."
+  },
+  "quickActions": {
+    "title": "Quick actions",
+    "description": "Common entry points and the easiest launch options for newcomers.",
+    "createBookAnalysis": "New book analysis",
+    "backgroundTasks": "Background tasks"
+  },
+  "recent": {
+    "title": "Recent projects",
+    "description": "More than titles — current stage and recovery entry are shown here too.",
+    "errorMessage": "Can't load recent projects right now; try again later.",
+    "emptyMessage": "No novel projects yet — start from \"Create novel\"."
+  }
+}

@@ -2,8 +2,8 @@ import type { AutoDirectorChannelSettings } from "@/api/settings";
 
 export interface AutoDirectorEventOption {
   code: string;
-  label: string;
-  description: string;
+  labelKey: string;
+  descriptionKey: string;
 }
 
 export interface AutoDirectorChannelDraft {
@@ -25,38 +25,38 @@ export interface AutoDirectorChannelDraft {
 export const AUTO_DIRECTOR_EVENT_OPTIONS: AutoDirectorEventOption[] = [
   {
     code: "auto_director.approval_required",
-    label: "自动继续待处理",
-    description: "自动导演卡在需要继续或确认的节点时通知你处理。",
+    labelKey: "settings.autoDirectorEvents.approvalRequired.label",
+    descriptionKey: "settings.autoDirectorEvents.approvalRequired.description",
   },
   {
     code: "auto_director.auto_approved",
-    label: "AI 已自动通过",
-    description: "系统按审批授权通过检查点并继续执行时通知你。",
+    labelKey: "settings.autoDirectorEvents.autoApproved.label",
+    descriptionKey: "settings.autoDirectorEvents.autoApproved.description",
   },
   {
     code: "auto_director.exception",
-    label: "运行异常",
-    description: "自动导演执行报错、失败或进入异常状态时通知你。",
+    labelKey: "settings.autoDirectorEvents.exception.label",
+    descriptionKey: "settings.autoDirectorEvents.exception.description",
   },
   {
     code: "auto_director.recovered",
-    label: "异常恢复",
-    description: "之前异常的自动导演任务恢复执行时通知你。",
+    labelKey: "settings.autoDirectorEvents.recovered.label",
+    descriptionKey: "settings.autoDirectorEvents.recovered.description",
   },
   {
     code: "auto_director.completed",
-    label: "执行完成",
-    description: "自动导演任务顺利完成当前阶段或整体流程时通知你。",
+    labelKey: "settings.autoDirectorEvents.completed.label",
+    descriptionKey: "settings.autoDirectorEvents.completed.description",
   },
   {
     code: "auto_director.progress_changed",
-    label: "进度变化",
-    description: "自动导演跨阶段或关键进度变化时通知你。",
+    labelKey: "settings.autoDirectorEvents.progressChanged.label",
+    descriptionKey: "settings.autoDirectorEvents.progressChanged.description",
   },
 ];
 
-const AUTO_DIRECTOR_EVENT_LABEL_MAP = new Map(
-  AUTO_DIRECTOR_EVENT_OPTIONS.map((item) => [item.code, item.label]),
+const AUTO_DIRECTOR_EVENT_LABEL_KEY_MAP = new Map(
+  AUTO_DIRECTOR_EVENT_OPTIONS.map((item) => [item.code, item.labelKey]),
 );
 
 export function buildAutoDirectorChannelDraft(
@@ -93,15 +93,25 @@ export function buildAutoDirectorChannelDraft(
   };
 }
 
-export function summarizeSelectedAutoDirectorEvents(codes: string[]): string {
+export function summarizeSelectedAutoDirectorEvents(
+  codes: string[],
+  t: (key: string, vars?: Record<string, string | number>) => string,
+): string {
   const labels = codes
-    .map((code) => AUTO_DIRECTOR_EVENT_LABEL_MAP.get(code))
+    .map((code) => {
+      const key = AUTO_DIRECTOR_EVENT_LABEL_KEY_MAP.get(code);
+      return key ? t(key) : null;
+    })
     .filter((label): label is string => Boolean(label));
+  const separator = t("settings.autoDirectorChannel.joinSeparator");
   if (labels.length === 0) {
-    return "未订阅事件";
+    return t("settings.autoDirectorChannel.noSubscribedEvents");
   }
   if (labels.length <= 2) {
-    return labels.join("、");
+    return labels.join(separator);
   }
-  return `${labels.slice(0, 2).join("、")} 等 ${labels.length} 项`;
+  return t("settings.autoDirectorChannel.selectedSummary", {
+    summary: labels.slice(0, 2).join(separator),
+    count: labels.length,
+  });
 }

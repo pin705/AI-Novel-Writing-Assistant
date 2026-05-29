@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { useTranslation } from "@/i18n";
 import type { LLMConfigState } from "../bookAnalysis.types";
 import { formatDate, formatStatus } from "../bookAnalysis.utils";
 
@@ -54,22 +55,23 @@ export default function BookAnalysisSidebar(props: BookAnalysisSidebarProps) {
     onCreate,
     onOpenAnalysis,
   } = props;
+  const { t } = useTranslation();
 
   return (
     <div className="space-y-4">
       <Card>
         <CardHeader>
-          <CardTitle>创建拆书分析</CardTitle>
+          <CardTitle>{t("bookAnalysis.sidebar.create.title")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <div className="text-sm font-medium">知识文档</div>
+            <div className="text-sm font-medium">{t("bookAnalysis.sidebar.create.documentLabel")}</div>
             <select
               className="h-10 w-full rounded-md border bg-background px-3 text-sm"
               value={selectedDocumentId}
               onChange={(event) => onSelectDocument(event.target.value)}
             >
-              <option value="">选择文档</option>
+              <option value="">{t("bookAnalysis.sidebar.create.selectDocumentPlaceholder")}</option>
               {documentOptions.map((document) => (
                 <option key={document.id} value={document.id}>
                   {document.title}
@@ -79,24 +81,26 @@ export default function BookAnalysisSidebar(props: BookAnalysisSidebarProps) {
           </div>
 
           <div className="space-y-2">
-            <div className="text-sm font-medium">文档版本</div>
+            <div className="text-sm font-medium">{t("bookAnalysis.sidebar.create.versionLabel")}</div>
             <select
               className="h-10 w-full rounded-md border bg-background px-3 text-sm"
               value={selectedVersionId}
               onChange={(event) => onSelectVersion(event.target.value)}
               disabled={!selectedDocumentId}
             >
-              <option value="">使用当前激活版本</option>
+              <option value="">{t("bookAnalysis.sidebar.create.useActiveVersionPlaceholder")}</option>
               {versionOptions.map((version) => (
                 <option key={version.id} value={version.id}>
-                  v{version.versionNumber} {version.isActive ? "（当前）" : ""}
+                  {version.isActive
+                    ? t("bookAnalysis.sidebar.create.versionLabelActiveFormat", { version: version.versionNumber })
+                    : t("bookAnalysis.sidebar.create.versionLabelFormat", { version: version.versionNumber })}
                 </option>
               ))}
             </select>
           </div>
 
           <div className="space-y-2">
-            <div className="text-sm font-medium">模型</div>
+            <div className="text-sm font-medium">{t("bookAnalysis.sidebar.create.modelLabel")}</div>
             <LLMSelector
               value={llmConfig}
               onChange={(next) =>
@@ -117,16 +121,19 @@ export default function BookAnalysisSidebar(props: BookAnalysisSidebarProps) {
               checked={includeTimeline}
               onChange={(event) => onIncludeTimelineChange(event.target.checked)}
             />
-            生成故事时间线（默认关闭）
+            {t("bookAnalysis.sidebar.create.includeTimelineLabel")}
           </label>
 
           <Button className="w-full" onClick={onCreate} disabled={!selectedDocumentId || createPending}>
-            创建
+            {t("bookAnalysis.sidebar.create.submit")}
           </Button>
 
           {sourceDocument ? (
             <div className="rounded-md border bg-muted/20 p-3 text-sm text-muted-foreground">
-              版本数：{sourceDocument.versions.length} | 拆书分析：{sourceDocument.bookAnalysisCount}
+              {t("bookAnalysis.sidebar.create.sourceSummary", {
+                versions: sourceDocument.versions.length,
+                count: sourceDocument.bookAnalysisCount,
+              })}
             </div>
           ) : null}
         </CardContent>
@@ -134,22 +141,26 @@ export default function BookAnalysisSidebar(props: BookAnalysisSidebarProps) {
 
       <Card>
         <CardHeader>
-          <CardTitle>分析列表</CardTitle>
+          <CardTitle>{t("bookAnalysis.sidebar.list.title")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
-          <Input value={keyword} onChange={(event) => onKeywordChange(event.target.value)} placeholder="搜索标题或关键词" />
+          <Input
+            value={keyword}
+            onChange={(event) => onKeywordChange(event.target.value)}
+            placeholder={t("bookAnalysis.sidebar.list.searchPlaceholder")}
+          />
           <select
             className="h-10 w-full rounded-md border bg-background px-3 text-sm"
             value={status}
             onChange={(event) => onStatusChange(event.target.value as BookAnalysisStatus | "")}
           >
-            <option value="">全部状态</option>
-            <option value="draft">草稿</option>
-            <option value="queued">排队中</option>
-            <option value="running">运行中</option>
-            <option value="succeeded">成功</option>
-            <option value="failed">失败</option>
-            <option value="archived">已归档</option>
+            <option value="">{t("bookAnalysis.sidebar.list.filterAll")}</option>
+            <option value="draft">{t("bookAnalysis.status.draft")}</option>
+            <option value="queued">{t("bookAnalysis.status.queued")}</option>
+            <option value="running">{t("bookAnalysis.status.running")}</option>
+            <option value="succeeded">{t("bookAnalysis.status.succeeded")}</option>
+            <option value="failed">{t("bookAnalysis.status.failed")}</option>
+            <option value="archived">{t("bookAnalysis.status.archived")}</option>
           </select>
 
           <div className="space-y-2">
@@ -166,18 +177,26 @@ export default function BookAnalysisSidebar(props: BookAnalysisSidebarProps) {
                   <div className="min-w-0">
                     <div className="truncate font-medium">{item.title}</div>
                     <div className="mt-1 text-xs text-muted-foreground">
-                      {item.documentTitle} | v{item.documentVersionNumber}
+                      {t("bookAnalysis.sidebar.list.documentVersionFormat", {
+                        title: item.documentTitle,
+                        version: item.documentVersionNumber,
+                      })}
                     </div>
                   </div>
                   <div className="flex shrink-0 gap-1">
                     {item.publishedDocumentId && (
-                      <Badge variant="secondary" className="text-xs">已发布</Badge>
+                      <Badge variant="secondary" className="text-xs">
+                        {t("bookAnalysis.sidebar.list.publishedBadge")}
+                      </Badge>
                     )}
-                    <Badge variant="outline">{formatStatus(item.status)}</Badge>
+                    <Badge variant="outline">{formatStatus(item.status, t)}</Badge>
                   </div>
                 </div>
                 <div className="mt-2 text-xs text-muted-foreground">
-                  进度 {Math.round(item.progress * 100)}% | 更新于 {formatDate(item.updatedAt)}
+                  {t("bookAnalysis.sidebar.list.progressFormat", {
+                    percent: Math.round(item.progress * 100),
+                    updatedAt: formatDate(item.updatedAt, t),
+                  })}
                 </div>
                 {item.lastError ? (
                   <div className="mt-2 line-clamp-2 text-xs text-destructive">{item.lastError}</div>
@@ -187,7 +206,7 @@ export default function BookAnalysisSidebar(props: BookAnalysisSidebarProps) {
 
             {analyses.length === 0 ? (
               <div className="rounded-md border border-dashed p-4 text-sm text-muted-foreground">
-                暂无拆书分析，请先选择知识文档并创建。
+                {t("bookAnalysis.sidebar.list.empty")}
               </div>
             ) : null}
           </div>

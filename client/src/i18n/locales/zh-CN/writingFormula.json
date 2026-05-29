@@ -1,0 +1,726 @@
+{
+  "page": {
+    "kicker": "Style Engine V2",
+    "title": "写法引擎",
+    "openInCreativeHub": "把这套写法带去创作中枢"
+  },
+  "messages": {
+    "fromBookAnalysis": "写法“{{name}}”来自拆书结果，你可以继续检查规则、试写，或绑定到目标。",
+    "extractionTaskQueued": "写法提取任务“{{title}}”已提交。系统会在后台自动提取并保存，完成后会自动打开结果。",
+    "extractionTaskMissing": "写法提取任务不存在或已被清理，请重新提交。",
+    "extractionTaskAutoSavedNoResult": "写法提取任务已完成，但没有拿到自动保存结果。",
+    "extractionTaskCancelled": "写法提取任务已取消。",
+    "extractionTaskFailed": "写法提取任务失败，请稍后重试。",
+    "extractionTaskAutoSaved": "写法“{{name}}”已自动保存，已经为你打开当前写法编辑。",
+    "extractionTaskSubmittedNoDetail": "写法提取任务提交成功，但没有拿到任务详情。",
+    "manualCreated": "写法“{{name}}”已经创建，可以继续补规则、试写或绑定到目标。",
+    "briefCreated": "写法“{{name}}”已经生成，可以继续补规则、试写或绑定到目标。",
+    "templateCreated": "模板写法“{{name}}”已经创建，可以继续补规则、试写或绑定到目标。",
+    "reextractWithFeatures": "已重新提取 {{count}} 条特征，请确认后保存。",
+    "reextractEmpty": "这次仍然没有生成可用特征，建议检查原文样本是否足够完整。",
+    "saved": "写法资产保存完成。",
+    "deleted": "这套写法已删除。",
+    "bindingCreated": "这套写法会参与目标对象的生成。",
+    "rewriteDone": "修订稿已经生成，可以继续在去 AI 味里检查和调整。",
+    "deleteConfirm": "确认删除“{{name}}”吗？删除后无法恢复。",
+    "fallbackProfileName": "这套写法"
+  },
+  "errors": {
+    "sourceContentRequired": "请先准备原文样本。",
+    "selectProfileFirst": "请先选择写法资产。",
+    "extractFallbackName": "文本提取写法",
+    "extractFallbackNewName": "新写法"
+  },
+  "editorDialog": {
+    "title": "编辑当前写法",
+    "description": "这里专门整理写法本身的设定说明。应用测试和去 AI 味已经拆到独立入口，避免混在一个窗口里。"
+  },
+  "workbenchDialog": {
+    "title": "当前写法的应用与测试",
+    "description": "这里专门处理绑定到小说、章节和试写验证，不修改写法字段本身。"
+  },
+  "cleanDialog": {
+    "title": "去 AI 味",
+    "description": "这里专门做正文检测和修正，不进入写法字段编辑，也不混入绑定和试写操作。"
+  },
+  "advancedWorkspace": {
+    "intro": "当前正在维护「{{name}}」这套写法的设定说明。应用测试和去 AI 味已经拆到独立入口，这里只负责把写法本身整理清楚。",
+    "introEmpty": "当前还没有可编辑的写法。请先回到写法页列表，选中或新建一套写法。"
+  },
+  "bookStyle": {
+    "title": "从小说基础信息设置书级默认写法",
+    "description": "写法引擎负责创建、测试和整理写法资产。当前小说要使用哪套默认写法，请回到小说基础信息里确认，再带入后续导演和正文流程。",
+    "entryHeading": "现在应该从哪里进入",
+    "entryWithNovel": "当前小说{{novelLabel}}的“默认写法”已经放到小说基础信息页里。",
+    "entryWithoutNovel": "请先进入某本小说的基础信息页，在那里确认书级默认写法。",
+    "novelLabel": "《{{title}}》",
+    "splitTitle": "两个入口分别负责什么",
+    "splitNovelPage": "小说页：为当前小说选择默认写法，触发推荐、比较候选，并决定何时带入自动导演。",
+    "splitEngine": "写法引擎：继续负责整理写法资产、试写、去 AI 味和规则管理。",
+    "nextHeading": "下一步",
+    "nextDescription": "先去小说页确认这本书的默认写法。如果当前资产库里还没有合适的写法，再回到写法引擎创建或整理资产。",
+    "goToNovelPage": "去小说页设置默认写法",
+    "editCurrent": "编辑当前写法",
+    "createNew": "新建一套写法"
+  },
+  "cleanFlow": {
+    "title": "给这段稿子去 AI 味",
+    "description": "检测先帮你指出哪一段写得像模板话，再给一版可以直接比较的修订稿。重复出现的问题，我会顺手整理成规则建议，方便你带回当前写法编辑继续处理。",
+    "inputHeading": "原稿输入",
+    "inputPlaceholder": "粘贴你想先去 AI 味的一段正文。",
+    "detecting": "正在检测...",
+    "detect": "先做检测",
+    "generatingRewrite": "正在生成修订稿...",
+    "generateRewrite": "一键生成修订稿",
+    "issueHeading": "问题卡与风险分",
+    "riskScoreLabel": "风险分",
+    "issueEmpty": "先跑一次检测，这里会告诉你哪些段落最像 AI 在说话，以及它们为什么让读者出戏。",
+    "diffHeading": "修订前后 diff",
+    "diffHint": "这里按段落行做轻量对比，方便你快速判断这次修正是在压模板感，还是把原有语气也一起削掉了。",
+    "diffOriginal": "原稿 {{index}}",
+    "diffRewrite": "修订稿 {{index}}",
+    "diffEmpty": "一键修订后，这里会直接出现前后对照。",
+    "suggestionHeading": "可沉淀成规则的重复问题",
+    "suggestionHint": "这一版不会强行替你落库，但会先把重复问题整理成建议，方便你带回当前写法编辑决定是否固化。",
+    "viewEditor": "查看当前写法编辑",
+    "suggestionEmpty": "检测出问题后，这里才会出现可沉淀的规则建议。"
+  },
+  "cleanPanel": {
+    "title": "去 AI 味",
+    "introWithProfile": "当前按「{{name}}」这套写法来做检测和修正。这里只处理正文的 AI 味，不会改写法字段本身。",
+    "introEmpty": "先从列表里选中一套写法，再来检测正文。",
+    "antiAiHeading": "当前会优先参考的反 AI 约束",
+    "antiAiHint": "如果这套写法绑了反 AI 规则，检测和修正会优先按这些约束去判断问题。",
+    "antiAiEmpty": "这套写法还没有绑定明确的反 AI 规则。当前检测会更依赖通用风险判断，结果可能不够贴合你的预期。",
+    "detectHeading": "检测正文",
+    "detectHint": "粘贴你想检查的正文。建议一次给一段完整场景，这样更容易看出叙述腔、对白腔和解释腔的问题。",
+    "detectPlaceholder": "粘贴待检测正文",
+    "runDetect": "执行检测",
+    "runRewrite": "一键修正",
+    "riskScore": "风险分：{{score}}",
+    "detectionEmpty": "检测结果会在这里显示，重点告诉你哪些句段最像 AI 腔、为什么会被判成风险，以及可以往什么方向改。",
+    "rewriteResult": "修正结果"
+  },
+  "createDialog": {
+    "title": "创建写法",
+    "description": "先选最省力的起步方式。创建完成后会自动打开当前写法编辑，继续补规则、试写和绑定。",
+    "tabs": {
+      "quickStart": "模板起步",
+      "blank": "空白 / AI",
+      "extract": "从素材提取"
+    },
+    "quickStart": {
+      "intro": "手里还没有明确规则时，先从模板起一套最省力。后面都可以继续改。",
+      "templateBadge": "模板",
+      "applicableTo": "适合：{{value}}",
+      "creating": "创建中...",
+      "createFromTemplate": "基于这套创建"
+    },
+    "blank": {
+      "intro": "你可以手动建一个空白写法，也可以先说一句想要的读感，让 AI 帮你搭第一版骨架。",
+      "manualTitle": "手动空白创建",
+      "manualHint": "适合你已经知道自己要维护什么类型的写法，只想先建一个空壳。",
+      "manualNamePlaceholder": "例如：都市强冲突快推流",
+      "manualCreating": "创建中...",
+      "manualSubmit": "创建空白写法",
+      "aiTitle": "AI 帮我先搭一套",
+      "aiHint": "适合你只知道想写成什么感觉，还不想先手填规则字段。",
+      "aiNamePlaceholder": "写法名称（可选）",
+      "aiCategoryPlaceholder": "分类（可选）",
+      "aiBriefPlaceholder": "例如：整体推进快，冲突密集，对话直接，情绪不拖泥带水，适合都市和热血升级文。",
+      "aiGenerating": "AI 生成中...",
+      "aiSubmit": "AI 生成一套写法"
+    },
+    "extract": {
+      "intro": "从素材中创建写法。文本和知识库原文会进入后台提取任务；拆书结果会直接使用文风与技法分析生成写法。",
+      "namePlaceholder": "写法名称",
+      "categoryPlaceholder": "分类（可选）",
+      "directTextPlaceholder": "粘贴你想提取手感的参考文本。建议至少给一段完整场景。",
+      "knowledgeSearchPlaceholder": "搜索知识库文档标题或文件名",
+      "knowledgeLoading": "检索知识库文档中...",
+      "knowledgeNotFound": "没有找到可用知识库文档。可以先到知识库上传原文，再回到这里创建写法。",
+      "knowledgeSelected": "已选择",
+      "knowledgeMeta": "活动版本 v{{version}} · {{versionCount}} 个版本 · {{analysisCount}} 个拆书结果",
+      "knowledgeProcessingTitle": "原文处理方式",
+      "knowledgeSnapshot": "来源快照 {{value}}",
+      "knowledgeSampleHint": "写法资产会继续保留完整来源预览；模型只读取代表性样本，避免长篇全文一次性超出模型承载能力。",
+      "knowledgeFullTextWarning": "全文提取会把活动版本全文交给模型。长篇原文建议先使用智能抽样。",
+      "knowledgePreviewLoading": "读取所选文档的活动版本...",
+      "knowledgeActiveVersion": "活动版本 v{{version}} · {{value}}",
+      "knowledgeMissingActive": "所选文档缺少活动版本，不能提交。",
+      "knowledgeEmptyContent": "活动版本正文为空，不能提交。",
+      "knowledgePromptSelect": "选择一个知识库文档后，系统会读取活动版本全文并在提交任务时冻结快照。",
+      "knowledgeTitleSuffix": "{{title}}写法",
+      "bookAnalysisSearchPlaceholder": "搜索拆书标题或来源文档",
+      "bookAnalysisLoading": "检索拆书结果中...",
+      "bookAnalysisNotFound": "没有找到可用拆书结果。完成拆书后，可以在这里直接生成写法。",
+      "bookAnalysisAvailable": "可生成",
+      "bookAnalysisMeta": "来源版本 v{{version}} · {{summary}}",
+      "bookAnalysisFallbackSummary": "拆书结果可用于生成写法",
+      "bookAnalysisTitleSuffix": "{{title}}写法",
+      "submit": {
+        "bookAnalysis": "从拆书结果创建写法",
+        "knowledge": "从知识库原文提取并自动保存",
+        "directText": "提交提取任务并自动保存",
+        "generating": "生成中...",
+        "submitting": "提交任务中...",
+        "running": "后台任务进行中..."
+      },
+      "bookAnalysisPanel": {
+        "title": "拆书结果生成",
+        "hint": "这一路会直接读取拆书里的文风与技法小节，生成后立即打开写法编辑。",
+        "sourceLabel": "来源文档：{{title}} · v{{version}}",
+        "promptSelect": "选择一个拆书结果后，系统会用文风与技法分析生成写法，不进入后台提取任务。"
+      },
+      "presetPanel": {
+        "title": "保留策略",
+        "hint": "先决定你要保留多少原始指纹，系统会按这个策略自动生成并保存写法。",
+        "currentScheme": "当前方案",
+        "presetSubmitHint": "会按“{{label}}”提交后台任务。任务完成后系统会自动保存，不需要再手动点一次保存成写法。"
+      },
+      "task": {
+        "title": "后台任务",
+        "taskTitle": "任务标题：{{title}}",
+        "stage": "执行阶段：{{value}}",
+        "stageWaiting": "等待调度",
+        "progress": "任务进度：{{percent}}%",
+        "failure": "异常原因：{{reason}}",
+        "openTaskCenter": "去任务中心查看",
+        "noTaskHint": "提交后系统会在后台完成提取、套用保留策略并自动保存写法。你可以先关掉弹窗，完成后会自动打开结果。"
+      }
+    },
+    "extractionPresets": {
+      "imitate": {
+        "label": "尽量贴近原文",
+        "summary": "尽量保留强烈指纹和表达习惯，适合短期临摹、风格试写和对照学习。"
+      },
+      "balanced": {
+        "label": "保留主要读感",
+        "summary": "保留读感和推进节奏，弱化过强指纹，适合大多数项目直接使用。"
+      },
+      "transfer": {
+        "label": "只迁移可复用骨架",
+        "summary": "更多保留可复用的节奏、结构和对白逻辑，适合长期项目和整书默认写法。"
+      }
+    },
+    "materialSources": {
+      "directText": {
+        "label": "直接粘贴文本",
+        "summary": "把样本文本交给后台提取任务，适合手里已有片段或章节。"
+      },
+      "knowledgeDocument": {
+        "label": "知识库原文",
+        "summary": "选择知识库文档活动版本，系统冻结全文快照后用代表性样本学习写法。"
+      },
+      "bookAnalysis": {
+        "label": "拆书结果",
+        "summary": "直接使用拆书里的文风与技法结果生成写法。"
+      }
+    },
+    "knowledgeProcessing": {
+      "representativeSample": {
+        "label": "智能抽样",
+        "summary": "从开篇、中段、后段和收束抽取代表性样本，适合长篇原文，速度和稳定性更好。",
+        "badge": "推荐"
+      },
+      "fullText": {
+        "label": "全文提取",
+        "summary": "把活动版本全文作为模型输入，适合短文档；长篇可能更慢，也更容易触发模型上下文或超时限制。"
+      }
+    },
+    "taskStatus": {
+      "none": "暂无任务",
+      "queued": "排队中",
+      "running": "处理中",
+      "succeeded": "已完成",
+      "failed": "失败",
+      "cancelled": "已取消",
+      "pending": "等待审批"
+    },
+    "knowledgeStatus": {
+      "enabled": "可用",
+      "disabled": "停用",
+      "archived": "归档"
+    },
+    "charCount": "{{value}} 字",
+    "charCountZero": "0 字"
+  },
+  "editorPanel": {
+    "title": "编辑当前写法",
+    "delete": "删除",
+    "emptyPrompt": "请先回到写法页列表，选中一套写法后再进入这里编辑。",
+    "starterNotice": "这是系统预置给你的起步写法。可以直接按自己的项目修改，不需要先复制一份再编辑。",
+    "primaryGuide": "如果你不想一上来就面对一堆技术字段，先维护这四块最重要：写法名称、简介、适用题材、反 AI 规则。 下面四组高级规则是给系统更精细的控制层，不熟悉时可以先少动。",
+    "basics": {
+      "title": "基础定位",
+      "hint": "先把这套写法到底想写成什么感觉讲清楚，列表页展开时也会优先展示这里的内容。",
+      "name": {
+        "label": "写法名称",
+        "hint": "这是你以后在列表里识别这套写法的主标题，尽量写出题材或读感。"
+      },
+      "category": {
+        "label": "分类",
+        "hint": "用于给自己归档，比如都市、玄幻、言情、热血快推流。",
+        "placeholder": "例如：都市热血"
+      },
+      "description": {
+        "label": "一句话简介",
+        "hint": "用一句完整的话说明这套写法要产生什么读感、推进感或人物表达气质。",
+        "placeholder": "例如：冲突密集、推进快、对白直接、情绪外显，适合都市升级文。"
+      },
+      "tags": {
+        "label": "标签",
+        "hint": "给自己做检索用，写几个短词即可，逗号分隔。",
+        "placeholder": "例如：爽文, 快节奏, 强冲突"
+      },
+      "applicableGenres": {
+        "label": "适用题材",
+        "hint": "告诉系统这套写法更适合什么题材或场景，逗号分隔。",
+        "placeholder": "例如：都市, 热血, 升级流"
+      }
+    },
+    "source": {
+      "title": "原文依据与提取特征",
+      "hint": "这部分是这套写法的“证据层”。从文本或知识库原文提取出来的写法，后续回看和重提取都会依赖这里。 这里会把特征说明、证据、分数、预设建议和推荐规则一起展示出来。",
+      "sourceContent": {
+        "label": "原文样本",
+        "hint": "这里保存提取这套写法时参考过的文本。样本越完整，系统越容易提取到稳定特征。",
+        "placeholder": "这套写法资产提取时使用的原文样本"
+      },
+      "featuresTitle": "提取特征启用",
+      "featuresHint": "这里会列出原文里抽出来的风格特征。勾选表示继续保留到这套写法里。",
+      "featuresCount": " 当前共 {{count}} 项。",
+      "reextract": "重新提取特征",
+      "reextracting": "重提取中...",
+      "evidence": "证据：{{value}}",
+      "importance": "重要度 {{value}}",
+      "imitationValue": "仿写价值 {{value}}",
+      "transferability": "迁移性 {{value}}",
+      "fingerprintRisk": "指纹风险 {{value}}",
+      "rulePatchLabel": "{{label}}规则",
+      "summaryOnlyRules": "当前只有摘要级规则",
+      "noExtractedFeatures": "这条文本写法还没生成可选特征条目。可以点“重新提取特征”，重新从原文样本生成完整特征池。",
+      "presetSuggestionTitle": "提取预设建议",
+      "presetSuggestionHint": "这里展示模型给出的三套保留方案。当前保存到写法里的选择会单独标出来，方便你判断是不是要换一种保留力度。",
+      "presetCurrent": "当前套用",
+      "presetCountKeep": "保留 {{count}}",
+      "presetCountWeaken": "弱化 {{count}}",
+      "presetCountRemove": "剥离 {{count}}",
+      "antiAiSuggestionTitle": "模型建议的反 AI 规则",
+      "antiAiSuggestionHint": "这些是提取阶段推荐一起绑定的规则。已绑定会直接标出来，未绑定的也会继续保留原始建议名。",
+      "antiAiBound": " · 已绑定",
+      "antiAiRecommended": " · 推荐未绑定",
+      "antiAiOriginal": " · 原始建议"
+    },
+    "decisions": {
+      "keep": "保留",
+      "weaken": "弱化",
+      "remove": "剥离"
+    },
+    "rulePatchLabels": {
+      "narrativeRules": "剧情推进",
+      "characterRules": "人物表达",
+      "languageRules": "语言质感",
+      "rhythmRules": "节奏密度"
+    },
+    "analysis": {
+      "title": "给系统看的分析草稿",
+      "hint": "这里不是给读者看的文案，而是给你自己和系统回看时用的补充说明。可以写为什么保留这套写法、它最重要的气质是什么。",
+      "placeholder": "例如：这套写法重点保留强推进和直给对白，不追求细腻抒情。"
+    },
+    "rules": {
+      "title": "高级规则块",
+      "hint": "这四块是系统真正执行时会读取的机器规则层。不了解字段含义时，可以先看标题和说明，再决定是否要改。 如果当前主要显示“总述”字段，说明这次提取更多给出了摘要级规则，细颗粒兼容字段还不算多。",
+      "compatibilityNotice": "兼容字段主要用于旧资产兼容和少量实验场景：{{fields}}。需要稳定控制读感时，优先维护表达层摘要和反 AI 规则。",
+      "narrative": {
+        "title": "剧情推进规则",
+        "hint": "控制剧情怎么推进、场景怎么收束、是否多视角、是否允许回钩。"
+      },
+      "character": {
+        "title": "人物表达规则",
+        "hint": "控制人物怎么说话、情绪怎么外露、是否倾向自省、是否优先保住体面。"
+      },
+      "language": {
+        "title": "语言质感规则",
+        "hint": "控制句子粗粝度、口语程度、句式变化、是否允许不完整句。"
+      },
+      "rhythm": {
+        "title": "节奏密度规则",
+        "hint": "控制推进快慢、段落密度、动作和解释谁更优先。"
+      },
+      "card": {
+        "empty": "这块规则当前还没有可读字段。你可以先依赖上面的简介和反 AI 规则，确实需要精细兼容时再展开高级 JSON。",
+        "showAdvanced": "查看或编辑高级 JSON",
+        "advancedHint": "这里保留原始 JSON 入口，主要用于兼容旧资产或做精细调参。常规情况下先看上面的可读字段即可。",
+        "parseError": "当前 JSON 结构无法正常识别。保存时系统会尽量回退为空对象，建议先修正格式再保存。"
+      }
+    },
+    "antiAi": {
+      "title": "绑定反 AI 规则",
+      "hint": "这里决定系统在检测和修正文稿时优先防什么问题。规则绑得越清楚，“去 AI 味”越有方向感。"
+    },
+    "saveFooter": "保存后，这套写法的展开详情、去 AI 味检测和应用测试都会同步读取新设定。",
+    "save": "保存当前写法"
+  },
+  "imitateFlow": {
+    "title": "模仿一种写法",
+    "description": "你先给我一段明确的参考文本，我把它拆成可执行写法，再决定是贴近模仿、保留骨架，还是只迁移可复用部分。",
+    "step1": "1. 输入参考文本",
+    "namePlaceholder": "写法名称，例如：冷感现实对话流",
+    "categoryPlaceholder": "分类（可选）",
+    "sourceTextPlaceholder": "粘贴你想模仿的参考文本。建议至少给一段完整场景，让系统能看出叙事距离、对白手感和句式节奏。",
+    "extracting": "正在提取特征...",
+    "extractButton": "2. 先提取特征",
+    "step2": "2. 选择保留程度",
+    "currentScheme": "当前方案",
+    "presetHint": "`imitate` 更适合临摹试写，`balanced` 适合大多数项目，`transfer` 更适合整书绑定，能主动避开高指纹风险。",
+    "presetEmpty": "先完成特征提取，这里才会出现三种保留策略和对应的读感说明。",
+    "step3": "3. 预览即将保存的写法骨架",
+    "step3Hint": "保存后会自动进入当前写法编辑，你可以继续调整规则、绑定到目标，或者直接拿去试写。",
+    "saving": "正在保存写法...",
+    "saveButton": "4. 保存为写法资产",
+    "previewEmpty": "还没有可预览的特征。先完成特征提取，再决定保存方式。"
+  },
+  "landing": {
+    "myAssets": "我的写法资产",
+    "heroTitle": "先选一套写法，再决定要编辑、应用还是去 AI 味。",
+    "heroDescription": "首页负责看清你已有的写法资产。展开后会直接展示这套写法的读感定位、规则摘要、反 AI 约束和当前成熟度。",
+    "createNew": "新建一套写法",
+    "bookHint": "书级默认写法请从小说基础信息进入，由小说来选择要使用的写法资产，再带入后续导演和正文流程。",
+    "emptyTitle": "当前还没有写法资产",
+    "emptyDescription": "先创建第一套写法，后面再回来慢慢补规则、做试写和绑定目标。",
+    "emptyCta": "去创建第一套写法",
+    "customHeading": "你自己创建的写法",
+    "customHint": "这些是你沉淀下来的可复用资产，应该优先在这里挑。",
+    "starterHeading": "可直接改的起步写法",
+    "starterHint": "这些预置资产适合先借一套骨架，再按当前项目改成自己的写法。",
+    "profileCountSets": "{{count}} 套",
+    "summaryFallback": "暂无写法摘要。",
+    "recentBinding": "最近绑定：{{title}}",
+    "actions": {
+      "edit": "编辑设定",
+      "workbench": "应用与测试",
+      "clean": "去 AI 味",
+      "delete": "删除",
+      "deleting": "删除中..."
+    },
+    "detail": {
+      "readingFeelTitle": "读感与定位",
+      "readingFeelHint": "这一列帮助你快速判断这套写法想写成什么感觉，适合先拿来做哪类项目。",
+      "sourcePreviewLabel": "原文样本片段",
+      "rulesTitle": "规则摘要",
+      "rulesHint": "这里把这套写法真正控制读感的四层规则读出来，方便你在列表里先看懂。",
+      "narrative": "剧情推进",
+      "character": "人物表达",
+      "language": "语言质感",
+      "rhythm": "节奏控制",
+      "antiAiTitle": "反 AI 约束",
+      "antiAiHint": "这部分决定系统在检测和修正文稿时会优先盯住哪些风险。",
+      "extractionAntiAiSuggestion": "这套写法在提取阶段额外建议了 {{count}} 条反 AI 规则，适合后续继续精配。",
+      "antiAiEmpty": "这套写法还没有绑定明确的反 AI 约束，所以“去 AI 味”时可读性会偏弱。",
+      "overviewTitle": "资产概览",
+      "overviewHint": "这一列主要帮你判断这套写法现在成熟到什么程度。",
+      "sourceLabel": "来源",
+      "updatedLabel": "最近更新",
+      "enabledFeatures": "启用特征",
+      "highRiskFeatures": "高风险指纹",
+      "currentPreset": "当前预设",
+      "availablePresets": "可选预设",
+      "boundTargets": "已绑定目标",
+      "recentNovel": "最近小说",
+      "applicableGenres": "适用题材",
+      "featureCount": "{{count}} 项",
+      "bindingCount": "{{count}} 个",
+      "presetUnlocked": "未锁定",
+      "presetEmpty": "暂无",
+      "noBoundNovel": "还没有绑定到小说",
+      "genresEmpty": "未填写",
+      "nextStepTitle": "下一步",
+      "nextStepHint": "三个按钮现在各自只负责一件事，不会再跳到同一块内容里。",
+      "nextEdit": "编辑设定：维护这套写法本身的说明、规则和反 AI 约束。",
+      "nextWorkbench": "应用与测试：绑定到小说或章节，并做试写验证。",
+      "nextClean": "去 AI 味：只处理正文检测和修正，不改写法字段。"
+    }
+  },
+  "rulesPanel": {
+    "title": "反 AI 规则",
+    "enabledCount": "启用 {{enabled}} / {{total}} 条规则",
+    "intro": "在规则中心查看、创建和调整反 AI 规则；写法编辑区继续负责选择哪些规则绑定到当前写法。",
+    "goToCenter": "进入规则中心"
+  },
+  "sidebar": {
+    "pickFirstTitle": "先选一套写法再微调",
+    "pickFirstIntro": "第一次使用时，不用先理解所有规则字段。先从预置写法里挑一套最像你想写的感觉，再进去改名字、标签和规则，会顺很多。",
+    "editableTitle": "可直接编辑的写法资产",
+    "editableHint": "其中预置 {{count}} 套，适合直接复制思路后再改。",
+    "templatesTitle": "内置模板",
+    "templatesHint": "适合快速新建一套新写法，不必从空白开始。",
+    "createOrImport": "新建或导入写法",
+    "switchTitle": "切换当前写法",
+    "switchHint": "这里负责切换弹窗中的编辑对象。完整资产列表在首页查看。",
+    "yourProfilesHeading": "你创建的写法",
+    "starterProfilesHeading": "预置起步写法",
+    "starterBadge": "预置",
+    "emptyPrompt": "当前还没有写法资产。点上方“新建或导入写法”，先从模板快速起一套最省心。",
+    "dialog": {
+      "title": "新建或导入写法",
+      "description": "推荐先走“快速开始”或“空白 / AI”里的句子生成。手里有稳定样本文本时，再使用“从文本提取”。",
+      "tabs": {
+        "quickStart": "快速开始",
+        "blank": "空白 / AI",
+        "extract": "从文本提取"
+      },
+      "quickStart": {
+        "intro": "左侧放了几套可直接修改的起步写法。想再新开一套时，从模板快速生成会更省力，再按项目微调。",
+        "templateBadge": "模板",
+        "applicableTo": "适合：{{value}}",
+        "creating": "创建中...",
+        "createFromTemplate": "基于这套快速新建"
+      },
+      "blank": {
+        "intro": "这里有两种轻量起步方式：如果你清楚自己要维护一套规则，就手动建空白；如果你只知道“想写成什么感觉”，直接写一句话交给 AI 搭骨架。",
+        "manualTitle": "手动空白创建",
+        "manualHint": "适合你清楚自己要维护哪类风格规则，只想先建一个空壳再慢慢补。",
+        "manualNamePlaceholder": "例如：我的女频都市关系写法",
+        "manualCreating": "创建中...",
+        "manualSubmit": "创建空白写法",
+        "aiTitle": "AI 帮我先搭一套",
+        "aiHint": "不想先研究规则字段时，直接描述你想要的读感、气质或参考方向，AI 会先生成一套可编辑写法。",
+        "aiNamePlaceholder": "写法名称（可选，不填就让 AI 来取）",
+        "aiCategoryPlaceholder": "分类（可选）",
+        "aiBriefPlaceholder": "例如：类似于《遥远的救世主》的写法，整体克制、思辨感强，对话带锋芒，少鸡汤，多现实摩擦。",
+        "aiGenerating": "AI 生成中...",
+        "aiSubmit": "AI 生成一套写法"
+      },
+      "extract": {
+        "intro": "适合你手里有一段稳定的参考文本，想让系统先提取特征再进入编辑。没有现成样本时，建议先从模板或 AI 起步。",
+        "namePlaceholder": "写法名称",
+        "categoryPlaceholder": "分类（可选）",
+        "sourcePlaceholder": "粘贴参考文本",
+        "extracting": "提取中...",
+        "submit": "AI 提取特征并创建"
+      }
+    }
+  },
+  "workbench": {
+    "title": "当前写法的应用与测试",
+    "intro": "这里只处理两件事：把这套写法绑定到小说/章节/任务，以及先试写一段看看效果。 “去 AI 味”已经拆成独立入口，不再和这里混在一起。",
+    "bindingTitle": "绑定到目标",
+    "bindingHint": "绑定后，这套写法会在对应小说、章节或任务里参与生成。优先级越高，影响越靠前；权重越高，参与程度越强。",
+    "bindingLevel": "绑定层级",
+    "bindingTargets": {
+      "novel": "整本书",
+      "chapter": "章节",
+      "task": "本次任务"
+    },
+    "selectNovel": "所属小说",
+    "selectChapter": "选择章节",
+    "selectChapterPlaceholder": "选择章节",
+    "chapterOptionLabel": "{{order}}. {{title}}",
+    "taskTargetLabel": "任务标识",
+    "taskTargetPlaceholder": "例如：chapter-draft-001",
+    "priority": "优先级",
+    "weight": "权重",
+    "createBinding": "创建绑定",
+    "bindingLine": "{{type}} / {{id}} / P{{priority}} / W{{weight}}",
+    "deleteBinding": "删除",
+    "bindingsEmpty": "这套写法还没有绑定到任何目标。先绑定到小说或章节，后面的生成链路才会自动带上它。",
+    "testWriteTitle": "先试写一段",
+    "testWriteHint": "不确定这套写法到底有没有落地成功时，先生成一段或改写一段，是最直观的验证方式。",
+    "testWriteMode": "试写方式",
+    "testModes": {
+      "generate": "生成正文",
+      "rewrite": "改写文本"
+    },
+    "topicLabel": "试写主题",
+    "topicPlaceholder": "例如：主角第一次公开翻盘",
+    "rewriteLabel": "待改写文本",
+    "rewritePlaceholder": "粘贴你想用这套写法改写的正文",
+    "runTestWrite": "执行试写",
+    "testWriteEmpty": "这里会显示试写结果。你可以用它判断这套写法的推进感、对白质感和整体语气是否已经到位。"
+  },
+  "rulePresentation": {
+    "narrativeEmpty": "还没有明确剧情推进摘要。",
+    "characterEmpty": "还没有明确人物表达摘要。",
+    "languageEmpty": "还没有明确语言质感摘要。",
+    "rhythmEmpty": "还没有明确节奏控制摘要。",
+    "fieldLabels": {
+      "narrativeRules": {
+        "summary": "整体推进感",
+        "progressionMode": "推进方式",
+        "sceneUnitPattern": "场景单位",
+        "multiPov": "多视角",
+        "looping": "循环回钩",
+        "endingStyle": "收尾方式",
+        "povSwitchStyle": "视角切换"
+      },
+      "characterRules": {
+        "summary": "人物表达总述",
+        "dialogueStyle": "对白风格",
+        "emotionExpression": "情绪外显",
+        "defenseMechanisms": "防御机制",
+        "allowSelfReflection": "自省表达",
+        "facePriority": "体面优先"
+      },
+      "languageRules": {
+        "summary": "语言质感总述",
+        "register": "语言基调",
+        "roughness": "粗粝度",
+        "sentenceVariation": "句式变化",
+        "allowIncompleteSentences": "不完整句",
+        "allowSwearing": "粗口口语",
+        "allowUselessDetails": "生活杂音"
+      },
+      "rhythmRules": {
+        "summary": "节奏控制总述",
+        "pace": "推进速度",
+        "paragraphDensity": "段落密度",
+        "allowFragmentedFlow": "碎片化推进",
+        "actionOverExplanation": "动作优先"
+      }
+    },
+    "fieldValues": {
+      "progressionMode": {
+        "time_sequence": "按时间顺推",
+        "goal_driven": "目标驱动推进",
+        "mystery_escalation": "悬疑逐层加压",
+        "relationship_push_pull": "关系拉扯推进",
+        "multi_thread": "多线交织推进",
+        "scene_immersion": "场景沉浸推进",
+        "fact_driven": "事实驱动推进",
+        "contrast_driven": "反差驱动推进"
+      },
+      "endingStyle": {
+        "unresolved": "不收束核心困境",
+        "hook": "结尾抛钩子",
+        "suspense": "悬念式收尾",
+        "emotional_hook": "情绪钩子收尾",
+        "cross_hook": "交叉线钩子收尾",
+        "soft_open": "柔开放收尾",
+        "pressure_continue": "压力延续式收尾",
+        "bitter_aftertaste": "苦涩余味收尾"
+      },
+      "povSwitchStyle": {
+        "controlled": "受控切换"
+      },
+      "emotionExpression": {
+        "behavior_only": "只通过动作外露",
+        "dialogue_and_action": "对白和动作共同外露",
+        "reaction_only": "主要通过反应外露",
+        "subtext": "通过言外之意外露",
+        "mixed": "对白、动作和反应混合外露",
+        "light_behavior": "以轻动作轻反应外露",
+        "suppressed": "压住不直说",
+        "deadpan": "冷反应式外露"
+      },
+      "dialogueStyle": {
+        "short_colloquial": "短句口语式",
+        "direct": "直接硬朗",
+        "restrained": "克制收着说",
+        "subtext_heavy": "言外之意重",
+        "distinct_by_role": "按角色明显拉开口吻差异",
+        "daily_natural": "日常自然口吻",
+        "informational": "信息型克制对白",
+        "deadpan_colloquial": "冷面口语式"
+      },
+      "register": {
+        "colloquial": "口语化",
+        "direct": "直接明快",
+        "restrained": "克制收束",
+        "natural": "自然日常",
+        "flexible": "随角色灵活变化",
+        "professional": "专业克制"
+      },
+      "sentenceVariation": {
+        "high": "变化大",
+        "medium": "变化适中",
+        "medium_high": "变化偏大"
+      },
+      "pace": {
+        "medium_fast": "中快",
+        "fast": "快",
+        "medium": "中速",
+        "medium_slow": "中慢",
+        "balanced": "均衡",
+        "slow": "慢"
+      },
+      "paragraphDensity": {
+        "high": "高密度",
+        "medium": "中密度",
+        "medium_high": "中高密度"
+      }
+    },
+    "booleanValues": {
+      "multiPov": {
+        "true": "允许多视角切换",
+        "false": "尽量保持单视角"
+      },
+      "looping": {
+        "true": "允许循环回钩",
+        "false": "尽量直线推进"
+      },
+      "allowSelfReflection": {
+        "true": "允许明确自省",
+        "false": "尽量少做直白自省"
+      },
+      "facePriority": {
+        "true": "优先保住体面",
+        "false": "不强求体面"
+      },
+      "allowIncompleteSentences": {
+        "true": "允许不完整句",
+        "false": "句子尽量完整"
+      },
+      "allowSwearing": {
+        "true": "允许带一点粗口或脏字",
+        "false": "尽量避免粗口"
+      },
+      "allowUselessDetails": {
+        "true": "允许保留生活杂音",
+        "false": "尽量减少无关杂音"
+      },
+      "allowFragmentedFlow": {
+        "true": "允许碎片化推进",
+        "false": "尽量保持完整推进"
+      },
+      "actionOverExplanation": {
+        "true": "动作先于解释",
+        "false": "解释比动作更重要"
+      },
+      "default": {
+        "true": "是",
+        "false": "否"
+      }
+    },
+    "roughnessValue": "{{value}} / 100"
+  },
+  "landingItems": {
+    "sourceTypes": {
+      "manual": "手动整理",
+      "from_text": "从文本提取",
+      "from_book_analysis": "拆书生成",
+      "from_knowledge_document": "知识库原文",
+      "from_current_work": "当前工作提炼",
+      "other": "其他来源"
+    },
+    "readingFeelLine": "读感承诺：{{value}}",
+    "languageLine": "语言质感：{{value}}",
+    "dialogueLine": "对白风格：{{value}}",
+    "emotionLine": "情绪外显：{{value}}",
+    "antiAiLine": "反 AI 约束：{{value}}",
+    "antiAiSeparator": "；",
+    "summaryFallback": "暂无写法摘要。",
+    "readingFeelFallback": "这套写法还没有写清楚读感定位。",
+    "originLabels": {
+      "starter": "预置",
+      "aiGenerated": "AI生成",
+      "fromText": "文本提取",
+      "fromBookAnalysis": "拆书生成",
+      "fromKnowledge": "知识库原文",
+      "fromCurrentWork": "当前作品",
+      "manual": "手动创建"
+    },
+    "ruleSummarySeparator": "；",
+    "ruleSummaryEntry": "{{label}}：{{value}}"
+  }
+}

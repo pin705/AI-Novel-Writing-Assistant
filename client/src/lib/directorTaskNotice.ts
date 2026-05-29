@@ -1,12 +1,18 @@
 import type { DirectorTaskNotice } from "@ai-novel/shared/types/novelDirector";
 import type { UnifiedTaskDetail } from "@ai-novel/shared/types/task";
+import type { TranslateValues } from "@/i18n";
+
+type Translator = (key: string, values?: TranslateValues) => string;
 
 type StructuredOutlineTaskLike = Pick<
   UnifiedTaskDetail,
   "id" | "sourceResource" | "resumeTarget" | "failureSummary" | "meta"
 >;
 
-export function parseDirectorTaskNotice(meta: Record<string, unknown> | null | undefined): DirectorTaskNotice | null {
+export function parseDirectorTaskNotice(
+  meta: Record<string, unknown> | null | undefined,
+  t: Translator,
+): DirectorTaskNotice | null {
   const raw = meta && typeof meta === "object" ? (meta as { taskNotice?: unknown }).taskNotice : null;
   if (!raw || typeof raw !== "object") {
     return null;
@@ -26,7 +32,7 @@ export function parseDirectorTaskNotice(meta: Record<string, unknown> | null | u
         type: notice.action.type === "open_structured_outline" ? "open_structured_outline" : "open_structured_outline",
         label: typeof notice.action.label === "string" && notice.action.label.trim()
           ? notice.action.label.trim()
-          : "快速修复章节标题",
+          : t("lib.directorTaskNotice.defaultActionLabel"),
         volumeId: typeof notice.action.volumeId === "string" && notice.action.volumeId.trim()
           ? notice.action.volumeId.trim()
           : null,
@@ -77,7 +83,10 @@ export function buildTaskNoticeRoute(
   );
 }
 
-export function resolveChapterTitleWarning(task: StructuredOutlineTaskLike | null | undefined): {
+export function resolveChapterTitleWarning(
+  task: StructuredOutlineTaskLike | null | undefined,
+  t: Translator,
+): {
   summary: string;
   route: string | null;
   label: string;
@@ -89,12 +98,12 @@ export function resolveChapterTitleWarning(task: StructuredOutlineTaskLike | nul
   const seedResumeTarget = task.meta && typeof task.meta === "object"
     ? (task.meta as { seedPayload?: { resumeTarget?: { volumeId?: string | null } | null } | null }).seedPayload?.resumeTarget
     : null;
-  const taskNotice = parseDirectorTaskNotice(task.meta);
+  const taskNotice = parseDirectorTaskNotice(task.meta, t);
   if (taskNotice && isChapterTitleDiversitySummary(taskNotice.summary)) {
     return {
       summary: taskNotice.summary,
       route: buildTaskNoticeRoute(task, taskNotice),
-      label: "快速修复章节标题",
+      label: t("lib.directorTaskNotice.chapterTitleWarningLabel"),
       volumeId: taskNotice.action?.volumeId ?? task.resumeTarget?.volumeId ?? seedResumeTarget?.volumeId ?? null,
     };
   }
@@ -104,7 +113,7 @@ export function resolveChapterTitleWarning(task: StructuredOutlineTaskLike | nul
   return {
     summary: task.failureSummary?.trim() ?? "",
     route: buildStructuredOutlineRoute(task, task.resumeTarget?.volumeId ?? seedResumeTarget?.volumeId ?? null),
-    label: "快速修复章节标题",
+    label: t("lib.directorTaskNotice.chapterTitleWarningLabel"),
     volumeId: task.resumeTarget?.volumeId ?? seedResumeTarget?.volumeId ?? null,
   };
 }

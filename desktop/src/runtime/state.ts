@@ -1,4 +1,5 @@
 import { EventEmitter } from "node:events";
+import { t } from "../i18n";
 import { resolveDesktopLogsDir, resolveDesktopMainLogFile } from "./paths";
 
 export type DesktopBootstrapState = "launching" | "starting-server" | "loading-ui" | "ready" | "error";
@@ -110,8 +111,8 @@ export const desktopBootstrapStore = new SnapshotStore<DesktopBootstrapSnapshot>
   createBootstrapSnapshot({
     state: "launching",
     stage: "launching",
-    title: "正在启动桌面工作区",
-    detail: "正在准备桌面运行时和本地工作区。",
+    title: t("status.starting"),
+    detail: t("status.startingDetail"),
     canRetry: false,
   }),
 );

@@ -26,6 +26,12 @@ import {
   desktopUpdaterStore,
 } from "./runtime/state";
 import { initializeDesktopUpdater, type DesktopUpdaterController } from "./runtime/updater";
+import {
+  getDesktopHtmlLang,
+  setDesktopLocale,
+  t,
+  type DesktopLocale,
+} from "./i18n";
 
 const APP_USER_MODEL_ID = "com.ai-novel.desktop";
 const MAIN_WINDOW_BACKGROUND = "#08101f";
@@ -112,10 +118,10 @@ function updateBootstrapProgress(): void {
     setBootstrapSnapshot(createBootstrapSnapshot({
       state: "starting-server",
       stage: "server-starting",
-      title: "正在启动本地写作引擎",
+      title: t("status.startingServerTitle"),
       detail: rendererReady
-        ? "桌面启动壳已经显示，正在等待打包后的本地服务进入可用状态。"
-        : "正在拉起桌面本地服务，并准备用户数据目录。",
+        ? t("status.startingServerDetailAfterRenderer")
+        : t("status.startingServerDetail"),
     }));
     return;
   }
@@ -124,8 +130,8 @@ function updateBootstrapProgress(): void {
     setBootstrapSnapshot(createBootstrapSnapshot({
       state: "loading-ui",
       stage: "server-healthy",
-      title: "正在加载桌面工作区",
-      detail: "本地服务已经可用，正在渲染桌面端首屏工作区。",
+      title: t("status.loadingUiTitle"),
+      detail: t("status.loadingUiDetail"),
     }));
     return;
   }
@@ -133,8 +139,8 @@ function updateBootstrapProgress(): void {
   setBootstrapSnapshot(createBootstrapSnapshot({
     state: "ready",
     stage: "main-window-shown",
-    title: "桌面工作区已就绪",
-    detail: "启动壳、本地服务和工作区界面都已准备完成。",
+    title: t("status.workspaceReadyTitle"),
+    detail: t("status.workspaceReadyDetail"),
     canRetry: false,
   }));
   maybeScheduleUpdateCheck();
@@ -151,8 +157,8 @@ function showMainWindowIfReady(): void {
   appendBootstrapStage(
     "main-window-shown",
     serverHealthy
-      ? "主窗口已经显示。"
-      : "主窗口已经显示，本地服务仍在继续启动中。",
+      ? t("status.mainWindowShownReady")
+      : t("status.mainWindowShownPending"),
   );
   closeSplashWindow();
   updateBootstrapProgress();
@@ -200,6 +206,15 @@ function createMainWindow(port: number): BrowserWindow {
   return window;
 }
 
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 function createSplashHtml(): string {
   const brandMark = `
     <svg width="96" height="96" viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -221,14 +236,14 @@ function createSplashHtml(): string {
   `;
 
   return `<!DOCTYPE html>
-  <html lang="zh-CN">
+  <html lang="${getDesktopHtmlLang()}">
     <head>
       <meta charset="UTF-8" />
       <meta
         http-equiv="Content-Security-Policy"
         content="default-src 'none'; style-src 'unsafe-inline'; img-src data:"
       />
-      <title>AI 小说创作工作台</title>
+      <title>${escapeHtml(t("splash.documentTitle"))}</title>
       <style>
         :root {
           color-scheme: dark;
@@ -301,8 +316,8 @@ function createSplashHtml(): string {
     <body>
       <main class="panel">
         ${brandMark}
-        <div class="title">AI 小说创作工作台</div>
-        <p class="subtitle">正在准备桌面启动壳和打包后的本地写作引擎。</p>
+        <div class="title">${escapeHtml(t("splash.title"))}</div>
+        <p class="subtitle">${escapeHtml(t("splash.subtitle"))}</p>
         <div class="meter"><span></span></div>
       </main>
     </body>
@@ -336,8 +351,8 @@ async function bootstrapDesktopApp(): Promise<void> {
   setBootstrapSnapshot(createBootstrapSnapshot({
     state: "launching",
     stage: "app-ready",
-    title: "正在启动桌面工作区",
-    detail: "Electron 已就绪，正在打开桌面启动壳。",
+    title: t("status.appReadyTitle"),
+    detail: t("status.appReadyDetail"),
     canRetry: false,
   }));
 
@@ -346,8 +361,8 @@ async function bootstrapDesktopApp(): Promise<void> {
   setBootstrapSnapshot(createBootstrapSnapshot({
     state: "launching",
     stage: "splash-shown",
-    title: "桌面启动壳已显示",
-    detail: "正在准备桌面运行时环境和随包资源。",
+    title: t("status.splashShownTitle"),
+    detail: t("status.splashShownDetail"),
     canRetry: false,
   }));
   initializeDesktopUpdaterController();
@@ -359,8 +374,8 @@ async function bootstrapDesktopApp(): Promise<void> {
     setBootstrapSnapshot(createBootstrapSnapshot({
       state: "launching",
       stage: "splash-shown",
-      title: "正在导入旧版本地数据",
-      detail: "正在把你选择的旧 web 本地数据库接管到桌面版数据目录。",
+      title: t("status.importingLegacyTitle"),
+      detail: t("status.importingLegacyDetail"),
       canRetry: false,
     }));
     importLegacyDatabaseFromPath(pendingImportPath);
@@ -402,10 +417,10 @@ async function showBootstrapFailureDialog(error: unknown): Promise<void> {
   const errorMessage = error instanceof Error ? error.message : String(error);
   const result = await dialog.showMessageBox({
     type: "error",
-    title: "AI 小说创作工作台启动失败",
-    message: "桌面应用未能完成初始化。",
-    detail: `${errorMessage}\n\n日志目录:\n${logDir}\n\n日志文件:\n${logFilePath}`,
-    buttons: ["打开日志目录", "复制日志路径", "退出"],
+    title: t("error.startupFailedTitle"),
+    message: t("error.startupFailedMessage"),
+    detail: t("error.startupFailedDetail", { errorMessage, logDir, logFilePath }),
+    buttons: [t("error.openLogs"), t("error.copyLogPath"), t("error.exit")],
     defaultId: 0,
     cancelId: 2,
     noLink: true,
@@ -511,6 +526,13 @@ function registerDesktopIpcHandlers(): void {
     };
   });
 
+  ipcMain.on("desktop:set-locale", (_event, locale: unknown) => {
+    if (typeof locale !== "string") return;
+    const supported: readonly string[] = ["zh-CN", "vi-VN", "en-US"];
+    if (!supported.includes(locale)) return;
+    setDesktopLocale(locale as DesktopLocale);
+  });
+
   ipcMain.on("desktop:renderer-ready", () => {
     if (rendererReady) {
       return;
@@ -547,7 +569,7 @@ async function handleBootstrapFailure(error: unknown): Promise<void> {
   setBootstrapSnapshot(createBootstrapSnapshot({
     state: "error",
     stage: "error",
-    title: "桌面启动失败",
+    title: t("error.bootstrapErrorTitle"),
     detail: errorMessage,
   }));
 

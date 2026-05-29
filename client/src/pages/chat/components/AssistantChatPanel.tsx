@@ -13,6 +13,9 @@ import type { SSEFrame } from "@ai-novel/shared/types/api";
 import type { ChatMessage } from "@/store/chatStore";
 import MarkdownViewer from "@/components/common/MarkdownViewer";
 import { API_BASE_URL } from "@/lib/constants";
+import { useTranslation } from "@/i18n";
+
+type Translator = (key: string, values?: Record<string, string | number | undefined | null>) => string;
 
 type ChatMode = "standard" | "agent";
 type ContextMode = "global" | "novel";
@@ -43,7 +46,7 @@ interface AssistantChatPanelProps {
   onPersistConversation: (payload: { sessionId: string; messages: ChatMessage[]; runId?: string }) => Promise<void>;
 }
 
-function extractMessageText(message: ThreadMessage): string {
+function extractMessageText(message: ThreadMessage, t: Translator): string {
   return message.content
     .map((part) => {
       if (part.type === "text" || part.type === "reasoning") {
@@ -53,20 +56,20 @@ function extractMessageText(message: ThreadMessage): string {
         return part.title ? `${part.title} (${part.url})` : part.url;
       }
       if (part.type === "tool-call") {
-        return `[工具:${part.toolName}]`;
+        return t("chat.thread.toolPart", { name: part.toolName });
       }
       if (part.type === "data") {
         try {
           return JSON.stringify(part.data);
         } catch {
-          return "[数据]";
+          return t("chat.thread.dataPart");
         }
       }
       if (part.type === "image") {
-        return `[图片:${part.filename ?? "未命名"}]`;
+        return t("chat.thread.imagePart", { name: part.filename ?? t("chat.thread.unnamed") });
       }
       if (part.type === "file") {
-        return `[文件:${part.filename ?? "未命名"}]`;
+        return t("chat.thread.filePart", { name: part.filename ?? t("chat.thread.unnamed") });
       }
       return "";
     })
@@ -75,10 +78,10 @@ function extractMessageText(message: ThreadMessage): string {
     .trim();
 }
 
-function toChatMessages(messages: readonly ThreadMessage[]): ChatMessage[] {
+function toChatMessages(messages: readonly ThreadMessage[], t: Translator): ChatMessage[] {
   return messages
     .map((message) => {
-      const content = extractMessageText(message);
+      const content = extractMessageText(message, t);
       if (!content) {
         return null;
       }
@@ -111,6 +114,7 @@ function UserMessage() {
 }
 
 function AssistantMessage() {
+  const { t } = useTranslation();
   return (
     <MessagePrimitive.If hasContent>
       <MessagePrimitive.Root className="mr-auto max-w-[88%] rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-900 shadow-sm">
@@ -123,7 +127,7 @@ function AssistantMessage() {
             ),
             Reasoning: ({ text }: { text: string }) => (
               <div className="mb-3 rounded-xl border border-amber-300 bg-amber-50 p-3 text-xs">
-                <div className="mb-1 text-[11px] text-amber-700">推理过程</div>
+                <div className="mb-1 text-[11px] text-amber-700">{t("chat.thread.reasoningTitle")}</div>
                 <MarkdownViewer content={text} />
               </div>
             ),
@@ -173,6 +177,7 @@ export default function AssistantChatPanel({
   onValidationError,
   onPersistConversation,
 }: AssistantChatPanelProps) {
+  const { t } = useTranslation();
   const seedMessages = useMemo(
     () =>
       initialMessages.map((message) => ({
@@ -192,7 +197,7 @@ export default function AssistantChatPanel({
         let streamError: string | null = null;
         try {
           if (chatMode === "agent" && contextMode === "novel" && !novelId.trim()) {
-            const message = "小说模式下必须先选择小说。";
+            const message = t("chat.thread.novelModeRequired");
             onValidationError(message);
             throw new Error(message);
           }
@@ -201,12 +206,12 @@ export default function AssistantChatPanel({
           const payloadMessages = options.messages
             .map((message) => ({
               role: message.role as "user" | "assistant" | "system",
-              content: extractMessageText(message),
+              content: extractMessageText(message, t),
             }))
             .filter((message) => message.content.length > 0)
             .slice(-20);
           if (payloadMessages.length === 0) {
-            payloadMessages.push({ role: "user", content: "继续当前任务。" });
+            payloadMessages.push({ role: "user", content: t("chat.thread.continueTask") });
           }
 
           const response = await fetch(`${API_BASE_URL}/chat`, {
@@ -234,7 +239,7 @@ export default function AssistantChatPanel({
           });
 
           if (!response.ok || !response.body) {
-            throw new Error(`请求失败，状态码 ${response.status}`);
+            throw new Error(t("chat.thread.requestFailedStatus", { status: response.status }));
           }
 
           const reader = response.body.getReader();
@@ -325,11 +330,11 @@ export default function AssistantChatPanel({
 
           const finalAssistantText = fullContent.trim() || reasoningContent.trim();
           const persistedMessages = [
-            ...toChatMessages(options.messages),
+            ...toChatMessages(options.messages, t),
             {
               id: `msg_${Date.now()}`,
               role: "assistant" as const,
-              content: finalAssistantText || "（空响应）",
+              content: finalAssistantText || t("chat.thread.emptyResponse"),
               createdAt: new Date().toISOString(),
             },
           ];
@@ -341,7 +346,7 @@ export default function AssistantChatPanel({
 
           return;
         } catch (error) {
-          streamError = error instanceof Error ? error.message : "消息发送失败。";
+          streamError = error instanceof Error ? error.message : t("chat.thread.sendFailed");
           onStreamStateChange({ isStreaming: false, error: streamError });
           throw error;
         } finally {
@@ -369,6 +374,7 @@ export default function AssistantChatPanel({
       provider,
       runId,
       systemPrompt,
+      t,
       temperature,
     ],
   );
@@ -383,11 +389,11 @@ export default function AssistantChatPanel({
         <ThreadPrimitive.Viewport className="max-h-[52vh] space-y-4 overflow-auto rounded-2xl bg-gradient-to-b from-slate-50 to-slate-100/70 p-4 ring-1 ring-slate-200">
           <ThreadPrimitive.Empty>
             <div className="mx-auto mt-8 max-w-[680px] px-2 text-center">
-              <h3 className="text-4xl font-semibold tracking-tight text-slate-900">你好！</h3>
-              <p className="mt-2 text-2xl text-slate-500">今天想一起完善哪段剧情？</p>
+              <h3 className="text-4xl font-semibold tracking-tight text-slate-900">{t("chat.thread.greeting")}</h3>
+              <p className="mt-2 text-2xl text-slate-500">{t("chat.thread.subgreeting")}</p>
               <div className="mt-8 grid gap-3 md:grid-cols-2">
                 <ThreadPrimitive.Suggestion
-                  prompt="帮我梳理《遥远的救世主V2》的世界观硬约束，并指出当前大纲冲突点。"
+                  prompt={t("chat.thread.suggestion1Prompt")}
                   send={false}
                   asChild
                 >
@@ -395,12 +401,12 @@ export default function AssistantChatPanel({
                     type="button"
                     className="rounded-2xl border border-slate-200 bg-white p-4 text-left transition hover:border-slate-300 hover:bg-slate-50"
                   >
-                    <div className="text-sm font-medium text-slate-900">世界观一致性检查</div>
-                    <div className="mt-1 text-xs text-slate-500">快速识别硬冲突并给出修复方向</div>
+                    <div className="text-sm font-medium text-slate-900">{t("chat.thread.suggestion1Title")}</div>
+                    <div className="mt-1 text-xs text-slate-500">{t("chat.thread.suggestion1Description")}</div>
                   </button>
                 </ThreadPrimitive.Suggestion>
                 <ThreadPrimitive.Suggestion
-                  prompt="重写第3章结尾，增强戏剧张力，并保持角色口吻一致。"
+                  prompt={t("chat.thread.suggestion2Prompt")}
                   send={false}
                   asChild
                 >
@@ -408,8 +414,8 @@ export default function AssistantChatPanel({
                     type="button"
                     className="rounded-2xl border border-slate-200 bg-white p-4 text-left transition hover:border-slate-300 hover:bg-slate-50"
                   >
-                    <div className="text-sm font-medium text-slate-900">章节重写草案</div>
-                    <div className="mt-1 text-xs text-slate-500">聚焦结尾张力与角色一致性</div>
+                    <div className="text-sm font-medium text-slate-900">{t("chat.thread.suggestion2Title")}</div>
+                    <div className="mt-1 text-xs text-slate-500">{t("chat.thread.suggestion2Description")}</div>
                   </button>
                 </ThreadPrimitive.Suggestion>
               </div>
@@ -426,7 +432,7 @@ export default function AssistantChatPanel({
         <ComposerPrimitive.Root className="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
           <ComposerPrimitive.Input
             className="min-h-[110px] w-full resize-none rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm outline-none transition focus:border-slate-400 focus:bg-white"
-            placeholder="输入消息并回车发送，Shift+Enter 换行。"
+            placeholder={t("chat.thread.inputPlaceholder")}
             submitMode="enter"
           />
           <div className="mt-3 flex gap-2">
@@ -435,7 +441,7 @@ export default function AssistantChatPanel({
                 type="button"
                 className="rounded-xl bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-800"
               >
-                发送
+                {t("chat.thread.send")}
               </button>
             </ComposerPrimitive.Send>
             <ComposerPrimitive.Cancel asChild>
@@ -443,7 +449,7 @@ export default function AssistantChatPanel({
                 type="button"
                 className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
               >
-                停止
+                {t("chat.thread.stop")}
               </button>
             </ComposerPrimitive.Cancel>
           </div>

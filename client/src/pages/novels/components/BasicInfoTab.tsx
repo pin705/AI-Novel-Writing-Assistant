@@ -1,4 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useTranslation } from "@/i18n";
 import type { BasicTabProps } from "./NovelEditView.types";
 import NovelBasicInfoForm from "./NovelBasicInfoForm";
 import NovelStyleRecommendationCard from "./NovelStyleRecommendationCard";
@@ -10,16 +11,17 @@ import DirectorTakeoverEntryPanel from "./DirectorTakeoverEntryPanel";
 import { NovelCoverCard } from "./cover/NovelCoverCard";
 
 export default function BasicInfoTab(props: BasicTabProps) {
+  const { t } = useTranslation();
   return (
     <div className="space-y-4">
       <DirectorTakeoverEntryPanel
-        title="让 AI 从当前项目继续接管"
-        description="如果你已经填过基础信息，可以直接从当前步骤开始自动接管，并选择继续已有进度或重跑当前步。"
+        title={t("novels.basicTab.takeoverTitle")}
+        description={t("novels.basicTab.takeoverDescription")}
         entry={props.directorTakeoverEntry}
       />
       <Card>
         <CardHeader>
-          <CardTitle>书级定位与基本信息</CardTitle>
+          <CardTitle>{t("novels.basicTab.positioningTitle")}</CardTitle>
         </CardHeader>
         <CardContent>
           <NovelBasicInfoForm
@@ -35,7 +37,7 @@ export default function BasicInfoTab(props: BasicTabProps) {
             onFormChange={props.onFormChange}
             onSubmit={props.onSave}
             isSubmitting={props.isSaving}
-            submitLabel="保存基本信息"
+            submitLabel={t("novels.basicTab.saveBasicInfo")}
             titleQuickFill={(
               <NovelCreateTitleQuickFill
                 basicForm={props.basicForm}
@@ -67,9 +69,9 @@ export default function BasicInfoTab(props: BasicTabProps) {
       <details className="group rounded-2xl border border-border/70 bg-background/95 p-4">
         <summary className="cursor-pointer list-none">
           <CollapsibleSummary
-            title="写法与世界补强"
-            description="标题快速选填已经放在上方标题字段旁。这里保留开写前的写法确认和本书世界边界整理。"
-            meta="写法建议 / 世界使用"
+            title={t("novels.basicTab.supplementTitle")}
+            description={t("novels.basicTab.supplementDescription")}
+            meta={t("novels.basicTab.supplementMeta")}
           />
         </summary>
 

@@ -1,0 +1,103 @@
+{
+  "header": {
+    "eyebrow": "提示词管理",
+    "title": "Prompt Workbench",
+    "subtitle": "查看内置提示词，并为主要写作链路追加自定义补充要求；当前只开放部分章节写作、审校和修复提示词。",
+    "refresh": "刷新目录"
+  },
+  "list": {
+    "searchPlaceholder": "搜索 id、任务类型、上下文或槽位",
+    "loading": "正在读取提示词目录...",
+    "empty": "没有匹配的提示词。",
+    "canAddendum": "可补充"
+  },
+  "managementStatus": {
+    "complete": "元数据完整",
+    "missing_context_requirements": "缺上下文需求",
+    "missing_editable_slots": "缺编辑槽位"
+  },
+  "materialImportance": {
+    "must": "必需",
+    "high": "重要",
+    "medium": "辅助",
+    "low": "参考"
+  },
+  "entrypoint": {
+    "creative_hub": "创作中枢",
+    "auto_director": "自动导演",
+    "chapter_pipeline": "章节流水线",
+    "manual_test": "手动测试"
+  },
+  "detail": {
+    "purpose": "提示词用途",
+    "basicInfo": "基础信息",
+    "capabilities": "能力标记",
+    "noCapabilities": "当前提示词未声明结构化能力标记。",
+    "contextRequirements": "上下文需求",
+    "noContextRequirements": "未声明上下文需求。",
+    "required": "必需",
+    "optional": "辅助",
+    "safeEditBoundary": "安全编辑边界",
+    "editableSlots": "可编辑槽位",
+    "noEditableSlots": "未开放表达槽位。",
+    "lockedFields": "锁定字段",
+    "addendumSectionTitle": "自定义补充要求",
+    "debugTitle": "调试查看",
+    "selectPromptHint": "请选择一个提示词。"
+  },
+  "preview": {
+    "placeholder": "选择提示词后点击预览，查看最终消息、上下文选择和诊断结果。",
+    "entrypointLabel": "入口",
+    "estimatedTokens": "估算 Token",
+    "selectedContext": "选中上下文",
+    "missingCount": "缺失项",
+    "finalMessages": "最终消息",
+    "contextDiagnosis": "上下文诊断"
+  },
+  "materials": {
+    "title": "资料检查",
+    "subtitle": "按当前提示词需要的资料组读取小说资料，确认资料是否齐全。",
+    "loading": "读取中...",
+    "load": "读取资料",
+    "novelIdPlaceholder": "novelId",
+    "chapterIdPlaceholder": "chapterId",
+    "taskIdPlaceholder": "taskId",
+    "budgetPlaceholder": "资料预算",
+    "requiredGroups": "需要的资料组",
+    "noRequiredGroups": "当前提示词未声明资料需求，将读取默认核心资料组。",
+    "received": "已拿到",
+    "missingGroups": "缺资料组",
+    "missingInputs": "缺输入",
+    "warnings": "裁剪提醒",
+    "missingInputsList": "需要补充输入：{{value}}",
+    "missingGroupsList": "未拿到资料：{{value}}",
+    "tokensSuffix": "tokens",
+    "placeholder": "输入小说 ID 后读取资料，检查当前提示词开工前的资料是否齐全。",
+    "joinSeparator": "、"
+  },
+  "previewActions": {
+    "title": "预览诊断",
+    "subtitle": "查看最终消息、上下文选择和诊断结果。",
+    "previewing": "预览中...",
+    "generate": "生成预览"
+  },
+  "addendum": {
+    "unsupportedNotice": "这个提示词不接收自定义补充要求。内置提示词仍可查看，真实调用不会读取这里的补充内容。",
+    "orderHeader": "实际生效顺序",
+    "orderDescription": "启用后，系统会先追加全局补充要求，再追加本书补充要求。内置提示词、结构化输出和工具边界保持不变。",
+    "globalTitle": "全局补充要求",
+    "globalDescription": "适合写所有小说都希望遵守的风格偏好、禁用表达和审校重点。",
+    "novelTitle": "本书补充要求",
+    "novelDescription": "适合写当前小说独有的写法偏好、禁忌、人物表达边界和修文保留原则。",
+    "enabled": "已启用",
+    "disabled": "未启用",
+    "stop": "停用",
+    "enable": "启用",
+    "delete": "删除",
+    "titlePlaceholder": "补充要求标题",
+    "contentPlaceholder": "写入希望模型长期遵守的补充要求，例如文风偏好、禁用表达、审校重点或修复保留原则。",
+    "charCountHint": "{{count}}/4000 字。补充要求会作为上下文追加，不会修改内置提示词。",
+    "save": "保存",
+    "selectNovel": "选择小说后编辑本书补充"
+  }
+}

@@ -23,6 +23,7 @@ import {
 } from "@/lib/directorTaskNotice";
 import { extractWorkflowActivityTags } from "@/lib/novelWorkflowActivityTags";
 import { useDirectorChapterTitleRepair } from "@/hooks/useDirectorChapterTitleRepair";
+import { useTranslation } from "@/i18n";
 
 type DirectorExecutionViewMode = "execution_progress" | "execution_failed";
 
@@ -298,7 +299,8 @@ export default function NovelAutoDirectorProgressPanel({
   isConfirmingAndContinuing = false,
   onOpenTaskCenter,
 }: NovelAutoDirectorProgressPanelProps) {
-  const taskChapterTitleWarning = resolveChapterTitleWarning(task);
+  const { t } = useTranslation();
+  const taskChapterTitleWarning = resolveChapterTitleWarning(task, t);
   const chapterTitleRepairMutation = useDirectorChapterTitleRepair();
   const runtimeTaskId = task?.id ?? taskId;
   const snapshotQuery = useQuery({

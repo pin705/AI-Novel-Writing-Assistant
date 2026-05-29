@@ -15,6 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useTranslation } from "@/i18n";
 import { cn } from "@/lib/utils";
 import { AUTO_DIRECTOR_MOBILE_CLASSES } from "@/mobile/autoDirector";
 
@@ -40,44 +41,54 @@ function formatPriority(priority: AutoDirectorFollowUpItem["priority"]): string 
   return priority;
 }
 
-function formatStatus(status: TaskStatus): string {
-  if (status === "waiting_approval") return "等待审批";
-  if (status === "failed") return "失败";
-  if (status === "cancelled") return "已取消";
-  if (status === "running") return "运行中";
-  if (status === "queued") return "排队中";
-  return "已完成";
-}
-
-function formatSection(section: AutoDirectorFollowUpSection): string {
-  if (section === "needs_validation") return "需校验";
-  if (section === "exception") return "异常";
-  if (section === "pending") return "待处理";
-  if (section === "auto_progress") return "自动推进";
-  return "已替代";
-}
-
-function formatActiveSection(section: AutoDirectorFollowUpSection | ""): string {
-  return section ? formatSection(section) : "全部分区";
-}
-
-function buildChannelBadges(item: AutoDirectorFollowUpItem): string[] {
-  const labels: string[] = [];
+function buildChannelBadges(item: AutoDirectorFollowUpItem, labels: { dingtalk: string; wecom: string }): string[] {
+  const out: string[] = [];
   if (item.channelCapabilities.dingtalk) {
-    labels.push("钉钉可直达");
+    out.push(labels.dingtalk);
   }
   if (item.channelCapabilities.wecom) {
-    labels.push("企微可直达");
+    out.push(labels.wecom);
   }
-  return labels;
-}
-
-function formatItemType(item: AutoDirectorFollowUpItem): string {
-  return item.itemType === "auto_approval_record" ? "最近自动通过" : "正在推进";
+  return out;
 }
 
 export function AutoDirectorFollowUpListPanel(props: AutoDirectorFollowUpListPanelProps) {
+  const { t } = useTranslation();
   const totalPages = props.pagination ? Math.max(1, Math.ceil(props.pagination.total / props.pagination.pageSize)) : 1;
+
+  const noneLabel = t("autoDirectorFollowUps.detail.noneValue");
+
+  const formatStatus = (status: TaskStatus): string => {
+    if (status === "waiting_approval") return t("autoDirectorFollowUps.status.waitingApproval");
+    if (status === "failed") return t("autoDirectorFollowUps.status.failed");
+    if (status === "cancelled") return t("autoDirectorFollowUps.status.cancelled");
+    if (status === "running") return t("autoDirectorFollowUps.status.running");
+    if (status === "queued") return t("autoDirectorFollowUps.status.queued");
+    return t("autoDirectorFollowUps.status.succeeded");
+  };
+
+  const formatSection = (section: AutoDirectorFollowUpSection): string => {
+    if (section === "needs_validation") return t("autoDirectorFollowUps.section.needsValidation");
+    if (section === "exception") return t("autoDirectorFollowUps.section.exception");
+    if (section === "pending") return t("autoDirectorFollowUps.section.pending");
+    if (section === "auto_progress") return t("autoDirectorFollowUps.section.autoProgress");
+    return t("autoDirectorFollowUps.section.replaced");
+  };
+
+  const formatActiveSection = (section: AutoDirectorFollowUpSection | ""): string => {
+    return section ? formatSection(section) : t("autoDirectorFollowUps.list.allSections");
+  };
+
+  const formatItemType = (item: AutoDirectorFollowUpItem): string => {
+    return item.itemType === "auto_approval_record"
+      ? t("autoDirectorFollowUps.list.autoApprovalRecord")
+      : t("autoDirectorFollowUps.list.inProgress");
+  };
+
+  const channelLabels = {
+    dingtalk: t("autoDirectorFollowUps.list.channelDingtalk"),
+    wecom: t("autoDirectorFollowUps.list.channelWecom"),
+  };
 
   return (
     <Card className="min-w-0 overflow-hidden">
@@ -88,10 +99,10 @@ export function AutoDirectorFollowUpListPanel(props: AutoDirectorFollowUpListPan
         <div className={AUTO_DIRECTOR_MOBILE_CLASSES.followUpFilterGrid}>
           <Select value={props.activeReason || "__all__"} onValueChange={(value) => props.onFilterChange("reason", value === "__all__" ? "" : value)}>
             <SelectTrigger className={AUTO_DIRECTOR_MOBILE_CLASSES.followUpFilterTrigger}>
-              <SelectValue placeholder="全部原因" />
+              <SelectValue placeholder={t("autoDirectorFollowUps.list.allReasons")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="__all__">全部原因</SelectItem>
+              <SelectItem value="__all__">{t("autoDirectorFollowUps.list.allReasons")}</SelectItem>
               {(props.filters?.reasons ?? []).map((reason) => (
                 <SelectItem key={reason} value={reason}>{reason}</SelectItem>
               ))}
@@ -100,10 +111,10 @@ export function AutoDirectorFollowUpListPanel(props: AutoDirectorFollowUpListPan
 
           <Select value={props.activeStatus || "__all__"} onValueChange={(value) => props.onFilterChange("status", value === "__all__" ? "" : value)}>
             <SelectTrigger className={AUTO_DIRECTOR_MOBILE_CLASSES.followUpFilterTrigger}>
-              <SelectValue placeholder="全部状态" />
+              <SelectValue placeholder={t("autoDirectorFollowUps.list.allStatuses")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="__all__">全部状态</SelectItem>
+              <SelectItem value="__all__">{t("autoDirectorFollowUps.list.allStatuses")}</SelectItem>
               {(props.filters?.statuses ?? []).map((status) => (
                 <SelectItem key={status} value={status}>{formatStatus(status)}</SelectItem>
               ))}
@@ -112,12 +123,12 @@ export function AutoDirectorFollowUpListPanel(props: AutoDirectorFollowUpListPan
 
           <Select value={props.activeSupportsBatch || "__all__"} onValueChange={(value) => props.onFilterChange("supportsBatch", value === "__all__" ? "" : value)}>
             <SelectTrigger className={AUTO_DIRECTOR_MOBILE_CLASSES.followUpFilterTrigger}>
-              <SelectValue placeholder="批量能力" />
+              <SelectValue placeholder={t("autoDirectorFollowUps.list.batchAbility")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="__all__">全部</SelectItem>
-              <SelectItem value="true">仅可批量</SelectItem>
-              <SelectItem value="false">仅不可批量</SelectItem>
+              <SelectItem value="__all__">{t("autoDirectorFollowUps.list.all")}</SelectItem>
+              <SelectItem value="true">{t("autoDirectorFollowUps.list.onlyBatch")}</SelectItem>
+              <SelectItem value="false">{t("autoDirectorFollowUps.list.onlyNonBatch")}</SelectItem>
             </SelectContent>
           </Select>
 
@@ -125,16 +136,16 @@ export function AutoDirectorFollowUpListPanel(props: AutoDirectorFollowUpListPan
 
         <div className="space-y-3">
           {props.loading ? (
-            <div className={`rounded-md border border-dashed p-6 text-sm text-muted-foreground ${AUTO_DIRECTOR_MOBILE_CLASSES.wrapText}`}>正在加载跟进项...</div>
+            <div className={`rounded-md border border-dashed p-6 text-sm text-muted-foreground ${AUTO_DIRECTOR_MOBILE_CLASSES.wrapText}`}>{t("autoDirectorFollowUps.list.loading")}</div>
           ) : null}
 
           {!props.loading && props.items.length === 0 ? (
             <div className={`rounded-md border border-dashed p-6 text-sm text-muted-foreground ${AUTO_DIRECTOR_MOBILE_CLASSES.wrapText}`}>
               {props.activeSection === "auto_progress"
-                ? "当前没有正在推进的任务或最近自动通过记录。"
+                ? t("autoDirectorFollowUps.list.emptyAutoProgress")
                 : props.activeSection === "replaced"
-                  ? "当前没有被新任务替代的旧任务。"
-                  : "当前没有符合条件的导演跟进项。"}
+                  ? t("autoDirectorFollowUps.list.emptyReplaced")
+                  : t("autoDirectorFollowUps.list.emptyDefault")}
             </div>
           ) : null}
 
@@ -179,14 +190,18 @@ export function AutoDirectorFollowUpListPanel(props: AutoDirectorFollowUpListPan
                   <Badge variant="outline">{item.reasonLabel}</Badge>
                   <Badge variant="outline">{formatPriority(item.priority)}</Badge>
                   {item.executionScope ? <Badge variant="outline" className={`max-w-full whitespace-normal text-left ${AUTO_DIRECTOR_MOBILE_CLASSES.wrapText}`}>{item.executionScope}</Badge> : null}
-                  {item.supportsBatch ? <Badge variant="secondary">可批量</Badge> : null}
-                  {buildChannelBadges(item).map((label) => (
+                  {item.supportsBatch ? <Badge variant="secondary">{t("autoDirectorFollowUps.list.supportsBatchBadge")}</Badge> : null}
+                  {buildChannelBadges(item, channelLabels).map((label) => (
                     <Badge key={`${item.directorTaskId}:${label}`} variant="secondary">{label}</Badge>
                   ))}
                 </div>
 
                 <div className={`mt-2 text-xs text-muted-foreground ${AUTO_DIRECTOR_MOBILE_CLASSES.wrapText}`}>
-                  当前阶段：{item.currentStage ?? "暂无"} · 当前模型：{item.currentModel ?? "暂无"} · 更新时间：{new Date(item.updatedAt).toLocaleString()}
+                  {t("autoDirectorFollowUps.list.metaLine", {
+                    stage: item.currentStage ?? noneLabel,
+                    model: item.currentModel ?? noneLabel,
+                    updatedAt: new Date(item.updatedAt).toLocaleString(),
+                  })}
                 </div>
               </button>
             );
@@ -195,7 +210,11 @@ export function AutoDirectorFollowUpListPanel(props: AutoDirectorFollowUpListPan
 
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="text-xs text-muted-foreground">
-            第 {props.pagination?.page ?? 1} / {totalPages} 页，共 {props.pagination?.total ?? 0} 条
+            {t("autoDirectorFollowUps.list.pageInfo", {
+              page: props.pagination?.page ?? 1,
+              total: totalPages,
+              count: props.pagination?.total ?? 0,
+            })}
           </div>
           <div className="grid grid-cols-2 gap-2 sm:flex">
             <Button
@@ -205,7 +224,7 @@ export function AutoDirectorFollowUpListPanel(props: AutoDirectorFollowUpListPan
               disabled={(props.pagination?.page ?? 1) <= 1}
               onClick={() => props.onPageChange((props.pagination?.page ?? 1) - 1)}
             >
-              上一页
+              {t("autoDirectorFollowUps.list.prevPage")}
             </Button>
             <Button
               variant="outline"
@@ -214,7 +233,7 @@ export function AutoDirectorFollowUpListPanel(props: AutoDirectorFollowUpListPan
               disabled={(props.pagination?.page ?? 1) >= totalPages}
               onClick={() => props.onPageChange((props.pagination?.page ?? 1) + 1)}
             >
-              下一页
+              {t("autoDirectorFollowUps.list.nextPage")}
             </Button>
           </div>
         </div>

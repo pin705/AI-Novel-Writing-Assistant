@@ -1,0 +1,92 @@
+{
+  "page": {
+    "title": "标题工坊",
+    "description": "把“标题生成”和“标题沉淀”统一成正式资产模块。工坊负责产出候选，标题库负责复用和统计。",
+    "tabFactory": "标题工坊",
+    "tabLibrary": "标题库"
+  },
+  "factory": {
+    "modelSection": "模型设置",
+    "modeNovel": "按小说生成",
+    "modeBrief": "自由工坊",
+    "modeAdapt": "参考改编",
+    "selectNovel": "选择小说项目",
+    "selectNovelPlaceholder": "请选择项目",
+    "selectNovelHint": "直接复用当前系统已有的“项目上下文标题生成”能力，适合已经沉淀了简介和类型的作品。",
+    "briefLabel": "创作简报",
+    "briefPlaceholder": "描述题材、主角卖点、冲突、文风和读者期待。越具体，标题越有区分度。",
+    "genreFilterLabel": "类型过滤",
+    "genreFilterNone": "不指定类型",
+    "referenceLabel": "参考标题",
+    "referencePlaceholder": "例如：我在废土捡属性",
+    "adaptBriefLabel": "当前作品简报",
+    "adaptBriefPlaceholder": "说明你的作品题材、人物与卖点。系统会参考标题节奏，但不会直接照抄。",
+    "countLabel": "生成数量",
+    "generating": "生成中...",
+    "generate": "生成标题候选",
+    "emptyMessage": "选择一种工坊模式后开始生成，结果会在这里出现。",
+    "primaryAction": "复制标题",
+    "errors": {
+      "selectNovel": "请先选择一个小说项目。"
+    },
+    "toast": {
+      "generated": "已生成 {{count}} 个标题候选。",
+      "saved": "标题已加入标题库。",
+      "copied": "标题已复制到剪贴板。"
+    },
+    "saveDescription": {
+      "novel": "来源项目：{{title}}",
+      "novelFallback": "未命名项目",
+      "adapt": "参考标题：{{reference}}"
+    },
+    "saveKeywords": {
+      "adapt": "改编灵感 / {{reference}}"
+    }
+  },
+  "library": {
+    "searchLabel": "搜索",
+    "searchPlaceholder": "匹配标题、说明或关键词",
+    "genreLabel": "类型",
+    "genreAll": "全部类型",
+    "sortLabel": "排序",
+    "sortNewest": "最新加入",
+    "sortHot": "使用次数",
+    "sortClickRate": "点击潜力",
+    "loading": "正在加载标题库...",
+    "emptyTitle": "标题库还是空的",
+    "emptyHint": "先去标题工坊生成一批候选，再把值得复用的标题沉淀进来。",
+    "estimate": "预估 {{value}}",
+    "usedBadge": "使用 {{count}}",
+    "keywordsLine": "关键词：{{value}}",
+    "addedAt": "加入时间：{{value}}",
+    "copy": "复制",
+    "markUsed": "标记已采用",
+    "marking": "更新中...",
+    "delete": "删除",
+    "deleting": "删除中...",
+    "confirmDelete": "确认删除标题「{{title}}」？",
+    "pagination": "第 {{page}} / {{totalPages}} 页，共 {{total}} 条",
+    "prev": "上一页",
+    "next": "下一页",
+    "toast": {
+      "deleted": "标题已删除。",
+      "marked": "标题使用次数已更新。",
+      "copied": "标题已复制到剪贴板。"
+    }
+  },
+  "suggestion": {
+    "estimate": "预估 {{value}}",
+    "selected": "当前选中",
+    "copy": "复制",
+    "save": "加入标题库",
+    "saving": "保存中...",
+    "emptyDefault": "还没有生成任何标题。"
+  },
+  "styles": {
+    "literary": "叙事感",
+    "conflict": "冲突钩子",
+    "suspense": "悬念感",
+    "high_concept": "高概念",
+    "default": "标题策略"
+  }
+}

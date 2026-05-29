@@ -52,4 +52,7 @@ contextBridge.exposeInMainWorld("__AI_NOVEL_DESKTOP__", {
   restartApp: () => ipcRenderer.invoke("desktop:restart-app"),
   importLegacyDatabase: (options?: { preferSuggested?: boolean }) =>
     ipcRenderer.invoke("desktop:import-legacy-database", options),
+  setLocale: (locale: string) => {
+    ipcRenderer.send("desktop:set-locale", locale);
+  },
 });

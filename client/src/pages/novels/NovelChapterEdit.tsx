@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getChapterEditorWorkspace, getNovelDetail } from "@/api/novel";
 import { queryKeys } from "@/api/queryKeys";
+import { useTranslation } from "@/i18n";
 import ChapterEditorShell from "./components/chapterEditor/ChapterEditorShell";
 
 function PageStateCard(props: { message: string }) {
@@ -16,6 +17,7 @@ function PageStateCard(props: { message: string }) {
 export default function NovelChapterEdit() {
   const { id = "", chapterId = "" } = useParams();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const novelDetailQuery = useQuery({
     queryKey: queryKeys.novels.detail(id),
@@ -37,7 +39,7 @@ export default function NovelChapterEdit() {
   if (novelDetailQuery.isLoading && !detail) {
     return (
       <div className="flex h-full min-h-0 flex-col gap-4">
-        <PageStateCard message="正在加载章节编辑器..." />
+        <PageStateCard message={t("novels.chapterEdit.loadingEditor")} />
       </div>
     );
   }
@@ -45,7 +47,7 @@ export default function NovelChapterEdit() {
   if (novelDetailQuery.isError) {
     return (
       <div className="flex h-full min-h-0 flex-col gap-4">
-        <PageStateCard message="章节数据加载失败，请刷新后重试。" />
+        <PageStateCard message={t("novels.chapterEdit.loadError")} />
       </div>
     );
   }
@@ -53,7 +55,7 @@ export default function NovelChapterEdit() {
   if (!chapter) {
     return (
       <div className="flex h-full min-h-0 flex-col gap-4">
-        <PageStateCard message="没有找到对应章节，可能已被删除或当前链接不完整。" />
+        <PageStateCard message={t("novels.chapterEdit.notFound")} />
       </div>
     );
   }

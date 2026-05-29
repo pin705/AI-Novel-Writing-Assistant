@@ -1,0 +1,237 @@
+{
+  "filters": {
+    "all": "全部",
+    "draft": "草稿",
+    "published": "已发布",
+    "writingModeAll": "创作类型: 全部",
+    "original": "原创",
+    "continuation": "续写"
+  },
+  "common": {
+    "progress": "进度 {{percent}}%",
+    "backgroundRunning": "后台运行中",
+    "noIntro": "暂无简介",
+    "noAutoDirectorTask": "当前未检测到自动导演任务，列表按小说基础资产展示。",
+    "currentStage": "当前阶段：{{stage}}",
+    "currentStageWithAction": "当前阶段：{{stage}}{{action}}",
+    "lastHealthyStage": "最近健康阶段：{{stage}}",
+    "suggestedContinue": "建议继续：{{action}}",
+    "project": "项目：{{value}}",
+    "storyline": "主线：{{value}}",
+    "outline": "大纲：{{value}}",
+    "resource": "资源：{{value}}",
+    "world": "世界观：{{name}}",
+    "chapterCount": "章节数：{{value}}",
+    "characterCount": "角色数：{{value}}",
+    "tokenUsage": "累计 Token：{{value}}",
+    "stats": "章节数：{{chapters}}，角色数：{{characters}}，累计 Token：{{tokens}}",
+    "autoDirectorRunning": "AI 正在后台持续推进",
+    "directorStageDefault": "自动导演"
+  },
+  "progressStatus": {
+    "completed": "已完成",
+    "inProgress": "进行中",
+    "rework": "待返工",
+    "blocked": "受阻",
+    "notStarted": "未开始"
+  },
+  "actions": {
+    "directorCreate": "AI 自动导演开书",
+    "manualCreate": "手动创建小说",
+    "recoveryPending": "待恢复任务",
+    "aiCockpit": "AI 驾驶舱",
+    "continueExecuting": "继续执行中...",
+    "continueAutoExecute": "继续自动执行{{scope}}",
+    "defaultScope": "当前章节范围",
+    "continuing": "继续中...",
+    "continueDirector": "继续导演",
+    "confirmDirection": "继续确认书级方向",
+    "enterChapterExecution": "进入章节执行",
+    "viewProgress": "查看推进状态",
+    "executionDetails": "执行详情",
+    "preview": "预览",
+    "exporting": "导出中...",
+    "export": "导出",
+    "deleting": "删除中...",
+    "delete": "删除",
+    "reload": "重新加载",
+    "reread": "重新读取",
+    "continueAutoExecuteFailed": "继续自动执行当前章节范围失败。",
+    "continueAutoExecuteScopeFailed": "继续自动执行{{scope}}失败。",
+    "continueDirectorFailed": "继续自动导演失败。",
+    "editNovel": "编辑小说"
+  },
+  "list": {
+    "loadErrorTitle": "加载小说列表失败",
+    "loadErrorDescription": "当前无法读取项目列表，可以重试一次。",
+    "emptyTitle": "暂无小说",
+    "emptyFilteredTitle": "暂无符合筛选条件的小说",
+    "emptyDescription": "第一次使用时，推荐直接点右上角\"AI 自动导演开书\"，让系统先帮你搭好方向与开写准备。",
+    "emptyFilteredDescription": "可以调整上方筛选条件，或直接创建新的小说项目。",
+    "confirmDelete": "确认删除《{{title}}》吗？该操作会直接删除当前小说。",
+    "deleteSuccess": "小说已删除。",
+    "deleteFailed": "删除小说失败。",
+    "exportStarted": "导出已开始。",
+    "exportFailed": "导出小说失败。",
+    "cockpitTitle": "AI 驾驶舱",
+    "cockpitDescription": "查看《{{title}}》的 AI 推进状态和下一步动作。",
+    "cockpitDescriptionGeneric": "查看这本书的 AI 推进状态和下一步动作。",
+    "cockpitLoading": "读取这本书的 AI 状态...",
+    "cockpitError": "无法读取这本书的 AI 状态，请稍后重试。",
+    "cockpitFallback": "这本书没有需要处理的 AI 自动推进任务。"
+  },
+  "create": {
+    "title": "创建小说项目",
+    "description": "先把这本书写给谁、靠什么吸引追读、前 30 章要兑现什么定义清楚。这里的设置会直接影响后续主线规划、世界边界、写法建议和 AI 生成行为，创建后仍可继续调整。",
+    "submitLabel": "创建并进入项目"
+  },
+  "preview": {
+    "title": "小说预览",
+    "fallbackTitle": "小说预览",
+    "loading": "加载中...",
+    "error": "无法加载预览。",
+    "empty": "暂无章节可预览。",
+    "back": "返回",
+    "backToList": "返回小说列表",
+    "downloadTxt": "下载 TXT",
+    "downloadMd": "下载 Markdown",
+    "missingNovelTitle": "缺少小说信息",
+    "missingNovelDescription": "返回小说列表后重新选择要预览的作品。",
+    "subtitle": "按章节阅读已生成正文，适合检查连贯性、节奏和已经写出的内容。",
+    "openWorkspace": "打开工作区",
+    "editChapter": "编辑本章",
+    "loadErrorTitle": "加载预览失败",
+    "loadErrorDescription": "当前无法读取小说章节，可以重新加载。",
+    "noChaptersTitle": "还没有章节",
+    "noChaptersDescription": "先进入小说工作区生成章节目录或正文，再回到这里预览整本内容。",
+    "enterWorkspace": "进入小说工作区",
+    "tocTitle": "章节目录",
+    "tocSummary": "已生成正文 {{generated}}/{{total}} 章，约 {{words}} 字。",
+    "chapterOrder": "第 {{order}} 章",
+    "chapterTitleWithOrder": "第 {{order}} 章：{{title}}",
+    "selectChapter": "选择章节",
+    "untitledChapter": "未命名章节",
+    "hasContent": "有正文",
+    "noContent": "无正文",
+    "wordsSuffix": "{{value}} 字",
+    "chapterStatusDotWords": "{{status}} · {{words}} 字",
+    "copied": "已复制",
+    "copyChapter": "复制正文",
+    "noChapterContentTitle": "本章还没有正文",
+    "noChapterContentDescription": "进入章节编辑页生成或补写正文后，这里会显示完整内容。",
+    "copyEmptyError": "当前章节还没有可复制的正文。",
+    "copySuccess": "正文已复制到剪贴板。",
+    "copyFailed": "复制失败，请手动选择正文后复制。"
+  },
+  "chapterStatus": {
+    "completed": "正文完成",
+    "pendingReview": "待审校",
+    "needsRepair": "待修复",
+    "generating": "生成中",
+    "pendingGeneration": "待生成",
+    "unplanned": "未规划",
+    "unmarked": "未标记"
+  },
+  "chapterEdit": {
+    "loadingEditor": "正在加载章节编辑器...",
+    "loadError": "章节数据加载失败，请刷新后重试。",
+    "notFound": "没有找到对应章节，可能已被删除或当前链接不完整。"
+  },
+  "editor": {
+    "exportFullStarted": "整本书导出已开始。",
+    "exportStepStarted": "当前步骤导出已开始。",
+    "exportFailed": "导出失败。",
+    "takeoverDismissed": "已收起这条导演接管提醒。需要时仍可从执行详情继续处理。",
+    "noContinuableDirectorTask": "当前没有可继续的自动导演任务。",
+    "noAutoExecuteDirectorTask": "当前没有可继续自动执行的自动导演任务。",
+    "noExecutableAction": "当前没有可执行的动作。",
+    "actionExecuted": "已执行动作。",
+    "actionFailed": "执行动作失败。"
+  },
+  "chapter": {
+    "loading": "加载中...",
+    "saving": "保存中...",
+    "saved": "已保存",
+    "saveFailed": "保存失败。",
+    "title": "章节标题",
+    "content": "章节正文",
+    "back": "返回",
+    "wordCount": "字数：{{value}}"
+  },
+  "characterDefault": {
+    "protagonist": "主角"
+  },
+  "roles": {
+    "protagonist": "主角",
+    "antagonist": "反派"
+  },
+  "worldInjection": {
+    "injected": "已注入世界规则上下文",
+    "notBound": "当前未绑定世界观，生成过程不会注入世界规则。"
+  },
+  "mobile": {
+    "stepNavAriaLabel": "小说创作步骤",
+    "flowRecommend": "流程推荐"
+  },
+  "basicTab": {
+    "takeoverTitle": "让 AI 从当前项目继续接管",
+    "takeoverDescription": "如果你已经填过基础信息，可以直接从当前步骤开始自动接管，并选择继续已有进度或重跑当前步。",
+    "positioningTitle": "书级定位与基本信息",
+    "saveBasicInfo": "保存基本信息",
+    "supplementTitle": "写法与世界补强",
+    "supplementDescription": "标题快速选填已经放在上方标题字段旁。这里保留开写前的写法确认和本书世界边界整理。",
+    "supplementMeta": "写法建议 / 世界使用"
+  },
+  "collapsibleSummary": {
+    "expand": "展开查看",
+    "collapse": "收起内容"
+  },
+  "directorTakeoverPanel": {
+    "intro": "接管前会先读取当前项目真实进度，并明确告诉你这次会跳过、继续还是重跑哪些步骤。"
+  },
+  "characterDiagnostics": {
+    "title": "角色阵容与关系诊断",
+    "description": "这些内容更适合在需要补位、查缺口或梳理关系时再展开。日常编辑先看下方角色资产工作台。"
+  },
+  "candidateDialog": {
+    "title": "确认书级方案",
+    "description": "比较 AI 给出的整本书方向。你可以先微调标题或方案，再选用一套创建项目。"
+  },
+  "chapterStatusFlow": {
+    "currentStage": "当前阶段：",
+    "notStarted": "未开始"
+  },
+  "worldSlice": {
+    "refreshed": "已重新整理这本书会用到的世界设定。",
+    "saved": "已保存这本书的世界设定保留项。"
+  },
+  "chapterPlanning": {
+    "hasBlockingIssues": "存在未解决的高优先级审计问题，建议重规划后续章节。",
+    "noBlockingIssues": "当前没有阻塞性审计问题，无需重规划后续章节。"
+  },
+  "chapterDetailMode": {
+    "purpose": "章节目标",
+    "boundary": "执行边界",
+    "taskSheet": "任务单"
+  },
+  "basicInfoForm": {
+    "recommend": "推荐"
+  },
+  "characterFocus": {
+    "currentProtagonist": "当前编辑主角：{{name}}",
+    "currentRole": "当前编辑角色：{{name}}",
+    "currentGoalPending": "待补全主角目标",
+    "relationPending": "待补全与主角关系",
+    "protagonistBadge": "主角",
+    "currentGoal": "当前目标：{{value}}",
+    "relationToProtagonist": "与主角关系：{{value}}",
+    "identity": "身份：{{value}}",
+    "identityUndefined": "未定义",
+    "lastAppearance": "最近出场：{{value}}",
+    "lastAppearanceChapter": "第{{order}}章",
+    "lastAppearanceNone": "暂无",
+    "storyFunction": "故事作用：{{value}}",
+    "currentState": "当前状态：{{value}}",
+    "valuePending": "待补全"
+  }
+}

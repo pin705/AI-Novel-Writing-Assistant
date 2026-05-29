@@ -7,6 +7,7 @@ import { queryKeys } from "@/api/queryKeys";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useTranslation } from "@/i18n";
 import { APP_RUNTIME, APP_RUNTIME_IS_PACKAGED } from "@/lib/constants";
 import DesktopLegacyDataImportCard from "./DesktopLegacyDataImportCard";
 
@@ -16,6 +17,7 @@ function hasUsableDesktopProviderConfig(providerConfigs: APIKeyStatus[]): boolea
 
 export default function DesktopModelSetupGate() {
   const location = useLocation();
+  const { t } = useTranslation();
   const shouldCheckDesktopSetup = APP_RUNTIME === "desktop" && APP_RUNTIME_IS_PACKAGED;
   const settingsQuery = useQuery({
     queryKey: queryKeys.settings.apiKeys,
@@ -46,19 +48,19 @@ export default function DesktopModelSetupGate() {
       <Card className="mb-4 border-amber-300 bg-amber-50/90">
         <CardHeader>
           <div className="flex flex-wrap items-center gap-2">
-            <CardTitle>Complete Desktop Setup</CardTitle>
-            <Badge variant="outline">Desktop install</Badge>
+            <CardTitle>{t("components.layout.desktopModelSetup.settingsTitle")}</CardTitle>
+            <Badge variant="outline">{t("components.layout.desktopModelSetup.settingsBadge")}</Badge>
           </div>
           <CardDescription>
-            Finish at least one active model provider and default model here before returning to the main workspace.
+            {t("components.layout.desktopModelSetup.settingsDescription")}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-3 text-sm text-muted-foreground">
           <p>
-            The packaged desktop app is running normally, but it still needs a usable provider configuration.
+            {t("components.layout.desktopModelSetup.settingsBody")}
           </p>
           <p>
-            Current usable providers: {configuredProviderCount}
+            {t("components.layout.desktopModelSetup.usableProviders", { count: configuredProviderCount })}
           </p>
           <DesktopLegacyDataImportCard />
         </CardContent>
@@ -71,25 +73,24 @@ export default function DesktopModelSetupGate() {
       <Card className="w-full max-w-2xl border-amber-300 shadow-2xl">
         <CardHeader className="space-y-3">
           <div className="flex flex-wrap items-center gap-2">
-            <CardTitle>Set Up A Model Provider First</CardTitle>
-            <Badge variant="outline">Desktop install</Badge>
+            <CardTitle>{t("components.layout.desktopModelSetup.blockerTitle")}</CardTitle>
+            <Badge variant="outline">{t("components.layout.desktopModelSetup.settingsBadge")}</Badge>
           </div>
           <CardDescription>
-            The Windows desktop app is installed correctly, but it cannot start the writing workflow until at least one
-            model provider and default model are configured.
+            {t("components.layout.desktopModelSetup.blockerDescription")}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="rounded-md border border-dashed bg-muted/30 p-4 text-sm text-muted-foreground">
-            Open the existing settings page, fill in an API key or local endpoint, choose a default model, and save it.
+            {t("components.layout.desktopModelSetup.blockerHint")}
           </div>
           <DesktopLegacyDataImportCard />
           <div className="flex flex-wrap gap-3">
             <Button asChild size="lg">
-              <Link to="/settings">Open model settings</Link>
+              <Link to="/settings">{t("components.layout.desktopModelSetup.openSettings")}</Link>
             </Button>
             <Button asChild size="lg" variant="outline">
-              <Link to="/help">查看新手上路</Link>
+              <Link to="/help">{t("components.layout.desktopModelSetup.openHelp")}</Link>
             </Button>
           </div>
         </CardContent>

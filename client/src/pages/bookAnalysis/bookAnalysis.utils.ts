@@ -1,43 +1,48 @@
 import type { BookAnalysisDetail, BookAnalysisSection, BookAnalysisStatus } from "@ai-novel/shared/types/bookAnalysis";
 import type { SectionDraft } from "./bookAnalysis.types";
 
-export function formatStatus(status: BookAnalysisStatus | BookAnalysisSection["status"]): string {
+type Translator = (key: string, values?: Record<string, string | number | undefined | null>) => string;
+
+export function formatStatus(
+  status: BookAnalysisStatus | BookAnalysisSection["status"],
+  t: Translator,
+): string {
   switch (status) {
     case "draft":
-      return "草稿";
+      return t("bookAnalysis.status.draft");
     case "queued":
-      return "排队中";
+      return t("bookAnalysis.status.queued");
     case "running":
-      return "运行中";
+      return t("bookAnalysis.status.running");
     case "succeeded":
-      return "成功";
+      return t("bookAnalysis.status.succeeded");
     case "failed":
-      return "失败";
+      return t("bookAnalysis.status.failed");
     case "archived":
-      return "已归档";
+      return t("bookAnalysis.status.archived");
     case "idle":
-      return "待处理";
+      return t("bookAnalysis.status.idle");
     default:
       return status;
   }
 }
 
-export function formatStage(stage?: string | null): string {
+export function formatStage(stage: string | null | undefined, t: Translator): string {
   switch (stage) {
     case "loading_cache":
-      return "查缓存";
+      return t("bookAnalysis.stage.loadingCache");
     case "preparing_notes":
-      return "准备 notes";
+      return t("bookAnalysis.stage.preparingNotes");
     case "generating_sections":
-      return "生成章节";
+      return t("bookAnalysis.stage.generatingSections");
     default:
-      return stage?.trim() || "暂无";
+      return stage?.trim() || t("bookAnalysis.common.none");
   }
 }
 
-export function formatDate(value?: string | null): string {
+export function formatDate(value: string | null | undefined, t: Translator): string {
   if (!value) {
-    return "暂无";
+    return t("bookAnalysis.common.none");
   }
   return new Date(value).toLocaleString();
 }
